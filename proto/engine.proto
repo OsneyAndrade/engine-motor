@@ -1,0 +1,60 @@
+syntax = "proto3";
+package engine;
+
+// Algoritmos disponíveis para o motor adaptativo (Data Distillation)
+enum Algorithm {
+  AUTO          = 0;  // Seleção automática baseada em inteligência adaptativa
+  ZSTD_FAST     = 1;  // Modelo de alta velocidade
+  ZSTD_BALANCED = 2;  // Modelo balanceado (equilíbrio densidade/velocidade)
+  ZSTD_MAX      = 3;  // Modelo de alta densidade (máximo ROI de storage)
+  LZ4           = 4;  // Modelo de ultra-velocidade (baixa latência)
+  PASSTHROUGH   = 5;  // Bypass para dados já destilados ou aleatórios
+}
+
+// Unidade de armazenamento deduplicada
+message Block {
+  bytes data = 1;        // Essência do bloco (se não for duplicata)
+  int32 algorithm = 2;   // Estratégia utilizada neste bloco
+  bytes hash = 3;        // Identificador BLAKE3 (64KB raw)
+  bool deduplicated = 4; // Flag de hit no cache de deduplicação
+  uint32 original_len = 5; // Tamanho original para auditoria
+}
+
+// Envelope de Essência (Dado Destilado)
+message ProcessedFile {
+  int32 version = 1;
+  string original_name = 2;
+  repeated string original_names = 15;  // Lista de todos os nomes que este conteúdo já teve (para deduplicação resiliente)
+  string original_mime = 3;
+  uint64 original_size = 4;
+  uint64 processed_size = 5; // Tamanho total da essência gerada
+
+  float savings_pct = 6;
+  int32 algorithm = 7;
+  int32 compression_level = 8;
+  string dictionary_id = 9;  // ID do Modelo de Contexto utilizado
+
+  bytes data = 10;           // Essência para itens pequenos (<32KB)
+  repeated Block blocks = 11; // Blocos de essência para itens volumosos (>32KB)
+
+  FileMetrics file_metrics = 12;
+
+  // Global Deduplication Pointer Fields
+  string pointer_to = 13;    // Aponta para o nome do arquivo .syn original se isto for uma cópia
+  bytes file_hash = 14;      // Hash BLAKE3 de 32 bytes do arquivo bruto inteiro
+
+  // Resiliência de Datacenter
+  uint32 ref_count = 16;     // Contador de referências persistente (quantos arquivos apontam para este conteúdo)
+  uint64 envelope_checksum = 17;  // BLAKE3 do envelope serializado (para detectar corrupção em disco)
+  int64 created_at = 18;     // Timestamp de criação (Unix millis)
+  int64 updated_at = 19;     // Timestamp da última atualização (Unix millis)
+}
+
+message FileMetrics {
+  double throughput_mbps = 1;
+  double compression_ratio = 2;
+  uint64 dedup_savings_bytes = 3;
+  double processing_time_ms = 4;
+  string algorithm_used = 5;
+  string strategy_reason = 6;
+}

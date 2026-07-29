@@ -1,0 +1,28 @@
+# Dockerfile para desenvolvimento com hot-reload
+FROM rust:1.88-slim-bookworm
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    cmake \
+    clang \
+    protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install cargo-watch para hot-reload automático
+RUN cargo install cargo-watch
+
+# Cria diretório de dados (vault, watch, etc) fora do /app
+RUN mkdir -p /data/essence_vault /data/watch_in
+
+# Expõe porta
+EXPOSE 3002
+
+# Environment
+ENV RUST_LOG=debug
+
+# Hot-reload: recompila e restarta quando código muda
+CMD ["cargo", "watch", "-x", "run"]

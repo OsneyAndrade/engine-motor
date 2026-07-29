@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syntra | Dashboard</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/static/assets/favicon.png">
+    <!-- Tailwind CSS JIT -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+                        secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+                        sidebar: {
+                            DEFAULT: "hsl(var(--sidebar-background))",
+                            foreground: "hsl(var(--sidebar-foreground))",
+                            primary: "hsl(var(--sidebar-primary))",
+                            "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+                            accent: "hsl(var(--sidebar-accent))",
+                            "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+                            border: "hsl(var(--sidebar-border))",
+                            ring: "hsl(var(--sidebar-ring))",
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <!-- BasecoatUI CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.11/dist/basecoat.cdn.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.11/dist/js/all.min.js" defer></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.2;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--muted-foreground);
+            margin-top: 0.25rem;
+        }
+
+        .metric-sub {
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
+        /* Remove gap and padding-top from BasecoatUI cards */
+        .card {
+            gap: 0 !important;
+        }
+
+        .card>header h2 {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        /* Language selector options color */
+        #lang-select option {
+            color: black;
+        }
+
+        /* Animation for simulation */
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .5;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-background text-foreground antialiased flex h-screen overflow-hidden">
+
+    <aside id="sidebar"
+        class="sidebar border-r flex flex-col w-64 shrink-0 transition-transform bg-sidebar text-sidebar-foreground"
+        data-side="left">
+        <nav aria-label="Sidebar navigation" class="flex flex-col h-full">
+            <header class="p-6 border-b border-sidebar-border flex items-center justify-center">
+                <a href="#" class="w-full flex items-center justify-center">
+                    <img src="/static/assets/logo.png" alt="Syntra Logo" class="h-16 w-auto object-contain">
+                </a>
+            </header>
+
+            <section class="scrollbar flex-1 overflow-y-auto px-2 py-4">
+                <div role="group">
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="#" onclick="showSection('dashboard'); return false;" id="nav-dashboard"
+                                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+                                aria-current="page">
+                                <i data-lucide="layout-dashboard" class="size-4"></i>
+                                <span data-i18n="nav_dashboard">Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('files'); return false;" id="nav-files"
+                                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors">
+                                <i data-lucide="files" class="size-4"></i>
+                                <span data-i18n="nav_files">Arquivos Processados</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('simulation'); return false;" id="nav-simulation"
+                                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors">
+                                <i data-lucide="activity" class="size-4"></i>
+                                <span data-i18n="nav_simulation">Simulação</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <footer class="p-4 border-t border-sidebar-border mt-auto">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] text-muted-foreground font-semibold"
+                            data-i18n="status_label">STATUS</span>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <i data-lucide="server" class="size-3 text-muted-foreground"></i>
+                            <span id="conn-badge" class="badge-secondary text-[10px] font-medium">● <span
+                                    data-i18n="online">ONLINE</span></span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="text-[10px] text-muted-foreground font-semibold"
+                            data-i18n="version_label">VERSION</span>
+                        <span class="text-xs font-bold mt-1">v0.3.0</span>
+                    </div>
+                </div>
+                <!-- Language Selector -->
+                <div class="relative">
+                    <select id="lang-select" class="input w-full text-xs h-8 pl-8 cursor-pointer"
+                        onchange="changeLanguage(this.value)">
+                        <option value="pt" data-i18n="lang_pt">Português (BR)</option>
+                        <option value="en" data-i18n="lang_en">English</option>
+                        <option value="es" data-i18n="lang_es">Español</option>
+                    </select>
+                    <i data-lucide="globe"
+                        class="size-3.5 absolute left-2.5 top-2.5 text-muted-foreground pointer-events-none"></i>
+                </div>
+            </footer>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto bg-muted/20 m-0">
+        <div class="p-8 mx-auto space-y-6">
+
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="space-y-6">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight flex items-center gap-2">
+                            <span data-i18n="dash_title">Dashboard</span>
+                        </h1>
+                        <p class="text-sm text-muted-foreground mt-2" data-i18n="dash_subtitle">
+                            Syntra engine — real-time datacenter performance
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Metric Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="card p-5">
+                        <div class="flex items-center justify-between pb-2">
+                            <span class="metric-label" data-i18n="eff_rate">Reduction rate</span>
+                            <i data-lucide="percent" class="size-4 text-muted-foreground"></i>
+                        </div>
+                        <div id="roi-pct" class="metric-value">—</div>
+                        <div class="metric-sub text-green-500 flex items-center gap-1">
+                            <i data-lucide="trending-up" class="size-3"></i>
+                            <span data-i18n="essence_distilled">Savings achieved</span>
+                        </div>
+                    </div>
+
+                    <div class="card p-5">
+                        <div class="flex items-center justify-between pb-2">
+                            <span class="metric-label" data-i18n="vol_in">Total volume in</span>
+                            <i data-lucide="hard-drive-download" class="size-4 text-muted-foreground"></i>
+                        </div>
+                        <div id="bytes-in" class="metric-value">—</div>
+                        <div class="metric-sub text-muted-foreground" data-i18n="raw_ingested">Raw ingested</div>
+                    </div>
+
+                    <div class="card p-5">
+                        <div class="flex items-center justify-between pb-2">
+                            <span class="metric-label" data-i18n="vol_out">Essence volume out</span>
+                            <i data-lucide="hard-drive-upload" class="size-4 text-muted-foreground"></i>
+                        </div>
+                        <div id="bytes-out" class="metric-value">—</div>
+                        <div id="savings-sub" class="metric-sub text-green-500 flex items-center gap-1">
+                            <i data-lucide="save" class="size-3"></i> <span data-i18n="saved">Saved</span>: —
+                        </div>
+                    </div>
+
+                    <div class="card p-5">
+                        <div class="flex items-center justify-between pb-2">
+                            <span class="metric-label" data-i18n="items_proc">Items processed</span>
+                            <i data-lucide="files" class="size-4 text-muted-foreground"></i>
+                        </div>
+                        <div id="items-count" class="metric-value">—</div>
+                        <div id="latency-sub" class="metric-sub text-sky-500 flex items-center gap-1">
+                            <i data-lucide="zap" class="size-3"></i> <span data-i18n="avg_lat">Avg latency</span>: —
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy Table + System Resources -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="card">
+                        <header class="pt-0 p-6 pb-2">
+                            <h2 class="font-semibold" data-i18n="sysres_title">System resources</h2>
+                            <p class="text-sm text-muted-foreground" data-i18n="sysres_sub">Cpu and ram usage</p>
+                        </header>
+                        <div class="pb-0 p-6 space-y-6">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="cpu" class="size-4 text-muted-foreground"></i>
+                                        <span class="text-sm font-medium" data-i18n="cpu_load">Cpu load</span>
+                                    </div>
+                                    <span id="system-cpu" class="text-sm font-bold tabular-nums">—</span>
+                                </div>
+                                <div class="w-full h-24 rounded overflow-hidden relative border border-border">
+                                    <canvas id="cpuChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="pt-4 border-t">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="memory-stick" class="size-4 text-muted-foreground"></i>
+                                        <span class="text-sm font-medium" data-i18n="ram_usage">Ram usage</span>
+                                    </div>
+                                    <span id="system-ram" class="text-sm font-bold tabular-nums">—</span>
+                                </div>
+                                <div class="w-full h-24 rounded overflow-hidden relative border border-border">
+                                    <canvas id="ramChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card col-span-1 lg:col-span-2">
+                        <header class="pt-0 p-6 pb-2">
+                            <h2 class="font-semibold" data-i18n="strat_title">Processing strategies</h2>
+                            <p class="text-sm text-muted-foreground" data-i18n="strat_sub">Real-time pipeline status and
+                                item counts</p>
+                        </header>
+                        <div class="p-6 pt-0">
+                            <table class="table w-full">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="pipeline"
+                                            class="text-left py-2 font-medium text-muted-foreground text-sm">Pipeline
+                                        </th>
+                                        <th data-i18n="items"
+                                            class="text-left py-2 font-medium text-muted-foreground text-sm">Items</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="strategy-table" class="border-t">
+                                    <!-- Real-time data -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Files Section (Hidden by default) -->
+            <div id="files-section" style="margin-top: 0px;" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight" data-i18n="files_title">Arquivos Processados</h1>
+                        <p class="text-sm text-muted-foreground mt-1" data-i18n="files_subtitle">
+                            Gerencie e reconstrua arquivos processados
+                        </p>
+                    </div>
+                    <button onclick="loadFiles()" class="btn btn-primary flex items-center gap-2">
+                        <i data-lucide="refresh-cw" class="size-4"></i>
+                        <span data-i18n="refresh_files">Atualizar</span>
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="flex gap-3">
+                    <div class="relative w-full">
+                        <i data-lucide="search"
+                            class="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"></i>
+                        <input type="text" id="file-search" oninput="filterFiles()" class="input w-full pl-10 h-10"
+                            placeholder="Buscar por nome do arquivo..." data-i18n-placeholder="search_placeholder">
+                        <button id="clear-search" onclick="clearSearch()"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground hidden">
+                            <i data-lucide="x" class="size-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-0 card">
+                    <div class="p-0">
+                        <div class="overflow-x-auto">
+                            <table class="table w-full">
+                                <thead class="bg-muted/50">
+                                    <tr>
+                                        <th data-i18n="tbl_name"
+                                            class="text-left px-6 py-3 font-medium text-muted-foreground text-sm">Nome
+                                            do arquivo</th>
+                                        <th data-i18n="tbl_data"
+                                            class="text-left px-6 py-3 font-medium text-muted-foreground text-sm">
+                                            Dados</th>
+                                        <th data-i18n="tbl_time"
+                                            class="text-left px-6 py-3 font-medium text-muted-foreground text-sm">Tempo
+                                        </th>
+                                        <th data-i18n="tbl_actions"
+                                            class="text-center px-6 py-3 font-medium text-muted-foreground text-sm">
+                                            Ações
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="files-table" class="divide-y text-sm">
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted-foreground py-12">
+                                            <div class="flex flex-col items-center gap-2">
+                                                <i data-lucide="loader-2"
+                                                    class="size-6 animate-spin text-muted-foreground/50"></i>
+                                                <span data-i18n="loading_files">Carregando...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
+                        <div id="files-pagination"
+                            class="flex items-center justify-between p-4 border-t hidden bg-muted/20">
+                            <div class="text-sm text-muted-foreground">
+                                <span id="files-showing-text" data-i18n="showing_text">Mostrando 1-10 de 0</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="files-prev-btn" onclick="changeFilesPage(-1)" class="btn btn-outline btn-sm"
+                                    disabled>
+                                    <i data-lucide="chevron-left" class="size-4 mr-1"></i> <span
+                                        data-i18n="prev_page">Anterior</span>
+                                </button>
+                                <span id="files-page-info" class="text-sm py-1.5 px-3 font-medium">Página 1</span>
+                                <button id="files-next-btn" onclick="changeFilesPage(1)" class="btn btn-outline btn-sm"
+                                    disabled>
+                                    <span data-i18n="next_page">Próxima</span> <i data-lucide="chevron-right"
+                                        class="size-4 ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulation Section (Hidden by default) -->
+            <div id="simulation-section" class="hidden space-y-6">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight" data-i18n="sim_title">Simulação Interativa</h1>
+                        <p class="text-sm text-muted-foreground mt-1" data-i18n="sim_subtitle">
+                            Teste a Syntra com seus próprios arquivos
+                        </p>
+                    </div>
+                    <button onclick="clearSimulation()" class="btn btn-outline flex items-center gap-2">
+                        <i data-lucide="rotate-ccw" class="size-4"></i>
+                        <span data-i18n="sim_clear">Limpar sessão</span>
+                    </button>
+                </div>
+
+                <!-- Single Full-Width Layout -->
+                <div class="w-full">
+                    <!-- Upload Area - Ocupa espaço completo inicialmente -->
+                    <div id="drop-zone"
+                        class="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-primary/50 hover:bg-muted/5 transition-all cursor-pointer min-h-[500px] flex flex-col items-center justify-center">
+                        <input type="file" id="file-input" class="hidden">
+                        <i data-lucide="upload-cloud" class="size-12 mx-auto text-muted-foreground/50 mb-4"></i>
+                        <p class="text-xl font-medium" data-i18n="sim_drop_title">Selecione um arquivo para processar
+                        </p>
+                        <p class="text-sm text-muted-foreground mt-2" data-i18n="sim_drop_subtitle">Arraste e solte ou
+                            clique para selecionar</p>
+                    </div>
+
+                    <!-- Result Card - Inicialmente oculto, ocupa espaço completo quando visível -->
+                    <div id="result-card-wrapper" class="hidden card">
+                        <div id="current-file-card" class="p-6 min-h-[500px]">
+                            <!-- Conteúdo será inserido dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div class="card max-w-md w-full mx-4 shadow-xl">
+            <div class="p-6 space-y-4">
+                <div class="flex items-center gap-3 text-destructive">
+                    <i data-lucide="alert-triangle" class="size-6"></i>
+                    <h3 class="text-lg font-semibold">Confirmar exclusão</h3>
+                </div>
+                <p id="delete-modal-message" class="text-muted-foreground"></p>
+                <div class="flex gap-3 justify-end pt-2">
+                    <button onclick="closeDeleteModal()" class="btn btn-outline">
+                        Cancelar
+                    </button>
+                    <button id="delete-modal-confirm" class="btn btn-destructive">
+                        Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Use Lucide Icons
+        lucide.createIcons();
+
+        const i18n = {
+            'pt': {
+                nav_title: "Navegação",
+                nav_dashboard: "Painel de controle",
+                nav_files: "Arquivos processados",
+                nav_simulation: "Simulação",
+                dash_title: "Painel de controle",
+                dash_subtitle: "Syntra engine — performance em tempo real",
+                uptime: "Tempo de atividade",
+                eff_rate: "Taxa de redução",
+                essence_distilled: "Economia realizada",
+                vol_in: "Entrada total",
+                raw_ingested: "Dados brutos",
+                vol_out: "Volume de essência",
+                saved: "Economia",
+                items_proc: "Arquivos processados",
+                avg_lat: "Média de latência",
+                volume: "Volume",
+                cpu_load: "Uso de CPU",
+                ram_usage: "Uso de RAM",
+                mean_lat: "Sla latência",
+                sla_ok: "Sla < 500ms",
+                sla_warn: "Alerta sla ⚠",
+                strat_title: "Algoritmos de redução",
+                strat_sub: "Arquivos processados por tipo de algoritmo",
+                pipeline: "Algoritmo",
+                items: "Arquivos",
+                status: "Status",
+                sysres_title: "Recursos do sistema",
+                sysres_sub: "Métricas globais de uso",
+                s_balanced: "Equilibrado",
+                s_fast: "Y1",
+                s_ultra: "X1",
+                s_pass: "Sem redução",
+                files_title: "Cofre de essência",
+                files_subtitle: "Arquivos reduzidos na arquitetura",
+                refresh_files: "Atualizar",
+                files_list_title: "Essence vault",
+                files_list_subtitle: "Arquivos reduzidos e prontos para reconstrução",
+                tbl_name: "Nome do arquivo",
+                tbl_data: "Dados",
+                tbl_time: "Tempo",
+                tbl_actions: "Ações",
+                tbl_status: "Status",
+                status_deduplicated: "Deduplicado",
+                search_placeholder: "Buscar por nome do arquivo...",
+                search_by_name: "Por nome",
+                no_files_found: "Nenhum arquivo encontrado",
+                loading_files: "Carregando a base de arquivos...",
+                no_files: "Nenhum arquivo no sistema ainda",
+                btn_download: "Ver",
+                btn_delete: "Apagar",
+                status_label: "Status",
+                version_label: "Versão",
+                online: "Online",
+                offline: "Offline",
+                lang_pt: "Português (BR)",
+                lang_en: "English",
+                lang_es: "Español",
+                active: "Ativo",
+                idle: "Inativo",
+                showing_text: "Mostrando {from}-{to} de {total}",
+                page_x_of_y: "Página {page} de {total}",
+                prev_page: "Anterior",
+                next_page: "Próxima",
+                error_loading_files: "Erro ao carregar arquivos",
+                error_download: "Erro ao baixar arquivo",
+                confirm_delete: "Tem certeza que deseja excluir {filename}?",
+                error_delete: "Erro ao excluir arquivo",
+                modal_cancel: "Cancelar",
+                modal_delete: "Excluir",
+                sim_title: "Simulação Interativa",
+                sim_subtitle: "Teste a Syntra com seus próprios arquivos",
+                sim_clear: "Limpar sessão",
+                sim_drop_title: "Selecione um arquivo para processar",
+                sim_drop_subtitle: "Arraste e solte ou clique para selecionar",
+                sim_no_file: "Nenhum arquivo processado ainda",
+                sim_processing_error: "Erro ao processar arquivo",
+                sim_time_upload: "Upload completo",
+                sim_time_process: "Tempo de processamento",
+                sim_time_total: "Tempo total",
+                sim_reconstructing: "Reconstruindo arquivo...",
+                sim_reconstructed: "Reconstruído",
+                sim_time_reconstruct: "Reconstrução"
+            },
+            'en': {
+                nav_title: "Navigation",
+                nav_dashboard: "Dashboard",
+                nav_files: "Processed files",
+                nav_simulation: "Simulation",
+                dash_title: "Dashboard",
+                dash_subtitle: "Syntra engine — real-time datacenter performance",
+                uptime: "Uptime",
+                eff_rate: "Reduction rate",
+                essence_distilled: "Savings achieved",
+                vol_in: "Total in",
+                raw_ingested: "Raw data",
+                vol_out: "Essence volume",
+                saved: "Saved",
+                items_proc: "Processed items",
+                avg_lat: "Avg latency",
+                volume: "Volume",
+                cpu_load: "CPU usage",
+                ram_usage: "RAM usage",
+                mean_lat: "Sla latency",
+                sla_ok: "Sla < 500ms",
+                sla_warn: "Sla warning ⚠",
+                strat_title: "Reduction algorithms",
+                strat_sub: "Files processed by algorithm type",
+                pipeline: "Algorithm",
+                items: "Files",
+                status: "Status",
+                sysres_title: "System resources",
+                sysres_sub: "Global utilization metrics",
+                s_balanced: "Balanced",
+                s_fast: "Y1",
+                s_ultra: "X1",
+                s_pass: "No reduction",
+                files_title: "Essence vault",
+                files_subtitle: "Reduced files in the infrastructure architecture",
+                refresh_files: "Refresh",
+                files_list_title: "Vault storage",
+                files_list_subtitle: "Reduced files ready for reconstruction",
+                tbl_name: "Filename",
+                tbl_data: "Data",
+                tbl_time: "Time",
+                tbl_actions: "Actions",
+                tbl_status: "Status",
+                status_deduplicated: "Deduplicated",
+                search_placeholder: "Search by filename...",
+                search_by_name: "By name",
+                no_files_found: "No files found",
+                loading_files: "Loading file database...",
+                no_files: "No files in the system yet",
+                btn_download: "View",
+                btn_delete: "Delete",
+                status_label: "Status",
+                version_label: "Version",
+                online: "Online",
+                offline: "Offline",
+                lang_pt: "Portuguese (BR)",
+                lang_en: "English",
+                lang_es: "Spanish",
+                active: "Active",
+                idle: "Idle",
+                showing_text: "Showing {from}-{to} of {total}",
+                page_x_of_y: "Page {page} of {total}",
+                prev_page: "Previous",
+                next_page: "Next",
+                error_loading_files: "Error loading files",
+                error_download: "Error downloading file",
+                confirm_delete: "Are you sure you want to delete {filename}?",
+                error_delete: "Error deleting file",
+                modal_cancel: "Cancel",
+                modal_delete: "Delete",
+                sim_title: "Interactive Simulation",
+                sim_subtitle: "Test Syntra with your own files",
+                sim_clear: "Clear session",
+                sim_drop_title: "Select a file to process",
+                sim_drop_subtitle: "Drag and drop or click to select",
+                sim_no_file: "No file processed yet",
+                sim_processing_error: "Error processing file",
+                sim_time_upload: "Upload complete",
+                sim_time_process: "Processing time",
+                sim_time_total: "Total time",
+                sim_reconstructing: "Reconstructing file...",
+                sim_reconstructed: "Reconstructed",
+                sim_time_reconstruct: "Reconstruction"
+            },
+            'es': {
+                nav_title: "Navegación",
+                nav_dashboard: "Panel de control",
+                nav_files: "Archivos procesados",
+                nav_simulation: "Simulación",
+                dash_title: "Panel de control",
+                dash_subtitle: "Syntra engine — rendimiento en tiempo real",
+                uptime: "Tiempo de actividad",
+                eff_rate: "Tasa de reducción",
+                essence_distilled: "Ahorro realizado",
+                vol_in: "Entrada total",
+                raw_ingested: "Datos brutos",
+                vol_out: "Volumen de esencia",
+                saved: "Ahorro",
+                items_proc: "Elementos procesados",
+                avg_lat: "Latencia media",
+                volume: "Volumen",
+                cpu_load: "Uso de CPU",
+                ram_usage: "Uso de RAM",
+                mean_lat: "Latencia sla",
+                sla_ok: "Sla < 500ms",
+                sla_warn: "Alerta sla ⚠",
+                strat_title: "Algoritmos de reducción",
+                strat_sub: "Archivos procesados por tipo de algoritmo",
+                pipeline: "Algoritmo",
+                items: "Archivos",
+                status: "Estado",
+                sysres_title: "Recursos del sistema",
+                sysres_sub: "Métricas globales de utilización",
+                s_balanced: "Equilibrado",
+                s_fast: "Y1",
+                s_ultra: "X1",
+                s_pass: "Sin reducción",
+                files_title: "Caja fuerte de esencia",
+                files_subtitle: "Archivos reducidos en la arquitectura de infraestructura",
+                refresh_files: "Actualizar",
+                files_list_title: "Almacenamiento de la caja fuerte",
+                files_list_subtitle: "Archivos reducidos listos para reconstrucción",
+                tbl_name: "Nombre del archivo",
+                tbl_data: "Datos",
+                tbl_time: "Tiempo",
+                tbl_actions: "Acciones",
+                tbl_status: "Estado",
+                status_deduplicated: "Duplicado",
+                search_placeholder: "Buscar por nombre de archivo...",
+                search_by_name: "Por nombre",
+                no_files_found: "No se encontraron archivos",
+                loading_files: "Cargando base de datos de archivos...",
+                no_files: "Aún no hay archivos en el sistema",
+                btn_download: "Ver",
+                btn_delete: "Eliminar",
+                status_label: "Estado",
+                version_label: "Versión",
+                online: "En línea",
+                offline: "Desconectado",
+                lang_pt: "Portugués (BR)",
+                lang_en: "Inglés",
+                lang_es: "Español",
+                active: "Activo",
+                idle: "Inactivo",
+                showing_text: "Mostrando {from}-{to} de {total}",
+                page_x_of_y: "Página {page} de {total}",
+                prev_page: "Anterior",
+                next_page: "Siguiente",
+                error_loading_files: "Error al cargar archivos",
+                error_download: "Error al descargar archivo",
+                confirm_delete: "¿Está seguro de que desea eliminar {filename}?",
+                error_delete: "Error al eliminar archivo",
+                modal_cancel: "Cancelar",
+                modal_delete: "Eliminar",
+                sim_title: "Simulación Interactiva",
+                sim_subtitle: "Prueba Syntra con tus propios archivos",
+                sim_clear: "Limpiar sesión",
+                sim_drop_title: "Selecciona un archivo para procesar",
+                sim_drop_subtitle: "Arrastra y suelta o haz clic para seleccionar",
+                sim_no_file: "Ningún archivo procesado aún",
+                sim_processing_error: "Error al procesar archivo",
+                sim_time_upload: "Carga completa",
+                sim_time_process: "Tiempo de procesamiento",
+                sim_time_total: "Tiempo total",
+                sim_reconstructing: "Reconstruyendo archivo...",
+                sim_reconstructed: "Reconstruido",
+                sim_time_reconstruct: "Reconstrucción"
+            }
+        };
+
+        let currentLang = 'pt';
+
+        function t(key) {
+            return i18n[currentLang][key] || i18n['en'][key] || key;
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[currentLang][key]) {
+                    el.innerText = i18n[currentLang][key];
+                }
+            });
+            // Update search input placeholder
+            const searchInput = document.getElementById('file-search');
+            if (searchInput) {
+                searchInput.placeholder = i18n[currentLang].search_placeholder;
+            }
+            // Update select options
+            document.querySelector('#lang-select option[value="pt"]').textContent = i18n[currentLang].lang_pt;
+            document.querySelector('#lang-select option[value="en"]').textContent = i18n[currentLang].lang_en;
+            document.querySelector('#lang-select option[value="es"]').textContent = i18n[currentLang].lang_es;
+            updateStats(); // Force re-render of dynamic content
+            // Update pagination texts if on files page (check if variable exists)
+            if (typeof currentFilesPage !== 'undefined' && currentFilesPage > 0) renderFilesPage();
+        }
+
+        function formatBytes(bytes) {
+            if (!bytes || bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function stratRow(nameKey, count) {
+            const badge = count > 0
+                ? `<span class="badge badge-success text-xs font-medium">${t('active')}</span>`
+                : `<span class="badge badge-secondary text-xs opacity-50">${t('idle')}</span>`;
+            return `<tr class="border-b last:border-0"><td class="py-3 px-2">${t(nameKey)}</td><td class="py-3 tabular-nums font-medium">${count}</td></tr>`;
+        }
+
+        let isOnline = false;
+
+        function setTxt(id, txt) { const el = document.getElementById(id); if (el) el.innerText = txt; }
+        function setHtml(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+        function setClass(id, cls) { const el = document.getElementById(id); if (el) el.className = cls; }
+
+        async function updateStats() {
+            try {
+                const response = await fetch('/stats');
+                const data = await response.json();
+
+                if (!isOnline) {
+                    isOnline = true;
+                    // Switch to live components status
+                    setHtml('pulse-dot', '<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full size-3 bg-green-500"></span>');
+                    setClass('conn-badge', 'badge badge-success text-[10px] font-medium');
+                    setTxt('conn-badge', '● ' + t('online'));
+                }
+
+                // Efficiency metrics
+                if (data.roi) {
+                    setTxt('roi-pct', data.roi.efficiency_pct);
+                    setTxt('bytes-in', formatBytes(data.roi.total_bytes_in));
+                    setTxt('bytes-out', formatBytes(data.roi.essence_bytes_out));
+                    setTxt('items-count', data.roi.items_processed);
+                    const saved = data.roi.total_bytes_in - data.roi.essence_bytes_out;
+                    setHtml('savings-sub', `<i data-lucide="save" class="size-3"></i> <span data-i18n="saved">${t('saved')}</span>: ${formatBytes(saved)}`);
+                }
+
+                // Mean Latency
+                if (data.latency) {
+                    const latCount = data.latency.count;
+                    const latSum = data.latency.sum_ms;
+                    const meanMs = latCount > 0 ? (latSum / latCount).toFixed(1) : 0;
+                    setHtml('latency-sub', `<i data-lucide="zap" class="size-3"></i> <span data-i18n="avg_lat">${t('avg_lat')}</span>: ${meanMs}ms`);
+                }
+
+                // Call lucide icons replacing after innerHTML replacement
+                lucide.createIcons();
+
+                // Uptime
+                if (data.uptime_seconds !== undefined) {
+                    const s = data.uptime_seconds;
+                    const h = Math.floor(s / 3600).toString().padStart(2, '0');
+                    const m = Math.floor((s % 3600) / 60).toString().padStart(2, '0');
+                    const sec = (s % 60).toString().padStart(2, '0');
+                    setTxt('uptime-text', `${h}:${m}:${sec}`);
+                }
+
+                // System Telemetry
+                if (data.system) {
+                    setTxt('system-cpu', data.system.cpu_usage_pct);
+                    setTxt('system-ram', data.system.ram_used_human);
+
+                    const cpuPct = parseFloat(data.system.cpu_usage_pct) || 0;
+                    const ramGib = (data.system.ram_used_bytes || 0) / (1024 * 1024 * 1024);
+
+                    cpuData.push(cpuPct);
+                    cpuData.shift();
+                    ramData.push(ramGib);
+                    ramData.shift();
+
+                    if (cpuChart) cpuChart.update();
+                    if (ramChart) ramChart.update();
+                }
+
+                // Strategy Table - apenas algoritmos com dados reais
+                if (data.processing_strategies) {
+                    const strat = data.processing_strategies;
+                    setHtml('strategy-table',
+                        stratRow('s_ultra', strat.ultra_fast) +
+                        (strat.fast > 0 ? stratRow('s_fast', strat.fast) : '')
+                    );
+                }
+
+            } catch (err) {
+                console.error("Dashboard error:", err);
+                if (isOnline) {
+                    isOnline = false;
+                    setHtml('pulse-dot', '<span class="relative inline-flex rounded-full size-3 bg-destructive"></span>');
+                    setClass('conn-badge', 'badge badge-destructive text-[10px] font-medium');
+                    setTxt('conn-badge', '● ' + t('offline'));
+                }
+            }
+        }
+
+        // Initialize translations on load
+        changeLanguage('pt');
+
+        setInterval(updateStats, 1000);
+        updateStats();
+    </script>
+
+    <script>
+        // Section Navigation
+        function showSection(section) {
+            const navDashboard = document.getElementById('nav-dashboard');
+            const navFiles = document.getElementById('nav-files');
+            const navSimulation = document.getElementById('nav-simulation');
+
+            const dashboardEl = document.getElementById('dashboard-section');
+            const filesEl = document.getElementById('files-section');
+            const simulationEl = document.getElementById('simulation-section');
+
+            // Hide all
+            dashboardEl.classList.add('hidden');
+            filesEl.classList.add('hidden');
+            simulationEl.classList.add('hidden');
+
+            // Remove aria-current
+            navDashboard?.removeAttribute('aria-current');
+            navFiles?.removeAttribute('aria-current');
+            navSimulation?.removeAttribute('aria-current');
+
+            // Show selected
+            if (section === 'simulation') {
+                simulationEl.classList.remove('hidden');
+                navSimulation?.setAttribute('aria-current', 'page');
+                initSimulation();
+            } else if (section === 'files') {
+                filesEl.classList.remove('hidden');
+                navFiles?.setAttribute('aria-current', 'page');
+                loadFiles();
+            } else {
+                dashboardEl.classList.remove('hidden');
+                navDashboard?.setAttribute('aria-current', 'page');
+            }
+
+            // Salva a seção atual no localStorage
+            localStorage.setItem('syntra-current-section', section);
+        }
+
+        // Restaura a seção salva ao carregar a página
+        function restoreSection() {
+            const savedSection = localStorage.getItem('syntra-current-section') || 'dashboard';
+            showSection(savedSection);
+        }
+
+        // Files Management
+        let allFiles = [];
+        let filteredFiles = [];
+        let currentFilesPage = 1;
+        const FILES_PER_PAGE = 8;
+        let searchTimeout = null;
+
+        function filterFiles() {
+            // Debounce: aguarda 300ms após o usuário parar de digitar
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadFiles();
+            }, 300);
+        }
+
+        function clearSearch() {
+            document.getElementById('file-search').value = '';
+            loadFiles();
+        }
+
+        async function loadFiles() {
+            const tbody = document.getElementById('files-table');
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted-foreground py-12"><div class="flex flex-col items-center gap-2"><i data-lucide="loader-2" class="size-6 animate-spin text-muted-foreground/50"></i><span data-i18n="loading_files">${t('loading_files')}</span></div></td></tr>`;
+            lucide.createIcons();
+            document.getElementById('files-pagination').classList.add('hidden');
+
+            try {
+                // Busca por nome no backend
+                const searchInput = document.getElementById('file-search').value.trim();
+                const clearBtn = document.getElementById('clear-search');
+
+                let url = '/api/files';
+                const params = new URLSearchParams();
+
+                if (searchInput !== '') {
+                    params.append('type', 'name');
+                    params.append('search', searchInput);
+                    clearBtn.classList.remove('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                }
+
+                if (params.toString()) {
+                    url += '?' + params.toString();
+                }
+
+                const response = await fetch(url);
+                allFiles = await response.json();
+
+                if (allFiles.length === 0) {
+                    const searchInputVal = document.getElementById('file-search').value.trim();
+                    if (searchInputVal !== '') {
+                        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted-foreground py-12"><div class="flex flex-col items-center gap-2"><i data-lucide="search-x" class="size-8 text-muted-foreground/30"></i> <span>${t('no_files_found')}</span></div></td></tr>`;
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted-foreground py-12"><div class="flex flex-col items-center gap-2"><i data-lucide="folder-open" class="size-8 text-muted-foreground/30"></i> <span>${t('no_files')}</span></div></td></tr>`;
+                    }
+                    lucide.createIcons();
+                    document.getElementById('files-pagination').classList.add('hidden');
+                    return;
+                }
+
+                filteredFiles = allFiles;
+                currentFilesPage = 1;
+                renderFilesPage();
+            } catch (err) {
+                console.error("Error loading files:", err);
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-destructive py-8 font-medium">${t('error_loading_files')}</td></tr>`;
+            }
+        }
+
+        function renderFilesPage() {
+            const tbody = document.getElementById('files-table');
+            const startIndex = (currentFilesPage - 1) * FILES_PER_PAGE;
+            const endIndex = Math.min(startIndex + FILES_PER_PAGE, filteredFiles.length);
+            const pageFiles = filteredFiles.slice(startIndex, endIndex);
+
+            if (filteredFiles.length === 0) {
+                const searchInput = document.getElementById('file-search').value.toLowerCase().trim();
+                if (searchInput !== '') {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted-foreground py-12"><div class="flex flex-col items-center gap-2"><i data-lucide="search-x" class="size-8 text-muted-foreground/30"></i> <span>${t('no_files_found')}</span></div></td></tr>`;
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted-foreground py-12"><div class="flex flex-col items-center gap-2"><i data-lucide="folder-open" class="size-8 text-muted-foreground/30"></i> <span>${t('no_files')}</span></div></td></tr>`;
+                }
+                lucide.createIcons();
+                document.getElementById('files-pagination').classList.add('hidden');
+                return;
+            }
+
+            tbody.innerHTML = pageFiles.map(file => {
+                const savingsPct = Math.floor(file.savings_pct);
+                const savingsClass = savingsPct > 0 ? 'text-green-500' : 'text-amber-500';
+                const isDeduplicated = file.essence_size === 0 || savingsPct === 100;
+
+                let dataDisplay;
+                if (isDeduplicated) {
+                    dataDisplay = `
+                        <span class="text-muted-foreground">${formatBytes(file.original_size)}</span>
+                        <i data-lucide="arrow-right" class="size-3.5 mx-1.5 inline-block text-muted-foreground/50"></i>
+                        <span class="badge badge-success text-xs font-medium"><i data-lucide="copy" class="size-3 mr-1"></i>${t('status_deduplicated')}</span>
+                        <span class="text-green-500 font-semibold ml-1">(100%)</span>
+                    `;
+                } else {
+                    dataDisplay = `
+                        <span class="text-muted-foreground">${formatBytes(file.original_size)}</span>
+                        <i data-lucide="arrow-right" class="size-3.5 mx-1.5 inline-block text-muted-foreground/50"></i>
+                        <span class="text-foreground">${formatBytes(file.essence_size)}</span>
+                        <span class="${savingsClass} font-semibold ml-1">(${savingsPct}%)</span>
+                    `;
+                }
+
+                // Formata o tempo de processamento
+                let timeDisplay;
+                if (file.processing_time_ms >= 1000) {
+                    timeDisplay = `${(file.processing_time_ms / 1000).toFixed(2)} s`;
+                } else if (file.processing_time_ms >= 1) {
+                    timeDisplay = `${file.processing_time_ms.toFixed(2)} ms`;
+                } else {
+                    timeDisplay = `${Math.round(file.processing_time_ms * 1000)} µs`;
+                }
+
+                return `
+                <tr class="hover:bg-muted/30 transition-colors">
+                    <td class="px-6 py-3 font-medium text-foreground">${escapeHtml(file.original_name)}</td>
+                    <td class="px-6 py-3 tabular-nums">${dataDisplay}</td>
+                    <td class="px-6 py-3 tabular-nums text-muted-foreground">${timeDisplay}</td>
+                    <td class="px-6 py-3 text-right">
+                        <div class="flex justify-center gap-2">
+                            <button class="btn btn-outline btn-sm h-8 px-2"
+                                data-file-id="${file.name}"
+                                data-file-name="${file.original_name.replace(/"/g, '&quot;')}"
+                                data-file-ts="${file.created_at}"
+                                onclick="downloadFileFromButton(this)">
+                                <i data-lucide="download" class="size-3.5"></i>
+                            </button>
+                            <button class="btn btn-destructive btn-sm h-8 px-2"
+                                data-file-id="${file.name}"
+                                data-file-name="${file.original_name.replace(/"/g, '&quot;')}"
+                                data-file-ts="${file.created_at}"
+                                onclick="deleteFileFromButton(this)">
+                                <i data-lucide="trash-2" class="size-3.5"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `}).join('');
+
+            lucide.createIcons();
+
+            // Update pagination controls
+            const totalPages = Math.ceil(filteredFiles.length / FILES_PER_PAGE);
+            const pagination = document.getElementById('files-pagination');
+            const prevBtn = document.getElementById('files-prev-btn');
+            const nextBtn = document.getElementById('files-next-btn');
+            const pageInfo = document.getElementById('files-page-info');
+            const showingText = document.getElementById('files-showing-text');
+
+            // Update pagination texts with i18n
+            const showingTemplate = t('showing_text').replace('{from}', startIndex + 1).replace('{to}', endIndex).replace('{total}', filteredFiles.length);
+            showingText.textContent = showingTemplate;
+            pageInfo.textContent = t('page_x_of_y').replace('{page}', currentFilesPage).replace('{total}', totalPages);
+            prevBtn.disabled = currentFilesPage === 1;
+            nextBtn.disabled = currentFilesPage >= totalPages;
+            pagination.classList.toggle('hidden', totalPages <= 1);
+        }
+
+        function changeFilesPage(delta) {
+            const totalPages = Math.ceil(filteredFiles.length / FILES_PER_PAGE);
+            const newPage = currentFilesPage + delta;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentFilesPage = newPage;
+                renderFilesPage();
+            }
+        }
+
+        // Extrai o filename do header Content-Disposition
+        function getFilenameFromContentDisposition(header) {
+            if (!header) return null;
+
+            // Tenta RFC 5987 (UTF-8): filename*=UTF-8''nome%20arquivo.pdf
+            const utf8Regex = /filename\*=UTF-8''([^;\s]+)/i;
+            const utf8Match = header.match(utf8Regex);
+            if (utf8Match) {
+                return decodeURIComponent(utf8Match[1]);
+            }
+
+            // Tenta formato simples: filename="arquivo.pdf" ou filename=arquivo.pdf
+            const simpleRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/i;
+            const simpleMatch = header.match(simpleRegex);
+            if (simpleMatch) {
+                let filename = simpleMatch[1];
+                // Remove aspas se presentes
+                filename = filename.replace(/^['"]|['"]$/g, '');
+                return filename;
+            }
+
+            return null;
+        }
+
+        async function downloadFile(id_hex, originalName, timestamp) {
+            try {
+                console.log('[Files] Download iniciado:', { id_hex, originalName, timestamp });
+
+                // Adiciona timestamp à URL para buscar o nome correto no banco
+                let downloadUrl = `/api/files/${encodeURIComponent(id_hex)}`;
+                if (timestamp) {
+                    downloadUrl += `?ts=${encodeURIComponent(timestamp)}`;
+                }
+
+                // Fetch com blob para download confiável
+                const response = await fetch(downloadUrl);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                // Extrai o filename do header Content-Disposition do servidor
+                const contentDisposition = response.headers.get('Content-Disposition');
+                const serverFilename = getFilenameFromContentDisposition(contentDisposition);
+
+                // Usa o nome do servidor (prioridade) ou o nome original do frontend
+                const finalName = serverFilename || originalName || 'download';
+
+                console.log('[Files] Filename:', {
+                    fromHeader: serverFilename,
+                    fromFrontend: originalName,
+                    final: finalName
+                });
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = finalName;
+
+                document.body.appendChild(a);
+                a.click();
+
+                // Limpa após um delay para garantir que o download iniciou
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }, 100);
+
+                console.log('[Files] Download concluído');
+            } catch (err) {
+                console.error("Error downloading file:", err);
+                alert(t('error_download'));
+            }
+        }
+
+        async function downloadFileFromButton(button) {
+            const fileId = button.getAttribute('data-file-id');
+            let fileName = button.getAttribute('data-file-name');
+            const fileTs = button.getAttribute('data-file-ts');
+            // Decodifica entidades HTML no nome do arquivo
+            if (fileName) {
+                const div = document.createElement('div');
+                div.innerHTML = fileName;
+                fileName = div.textContent || div.innerText || fileName;
+            }
+            await downloadFile(fileId, fileName, fileTs);
+        }
+
+        async function deleteFileFromButton(button) {
+            const fileId = button.getAttribute('data-file-id');
+            let fileName = button.getAttribute('data-file-name');
+            // Decodifica entidades HTML no nome do arquivo
+            if (fileName) {
+                const div = document.createElement('div');
+                div.innerHTML = fileName;
+                fileName = div.textContent || div.innerText || fileName;
+            }
+
+            showDeleteModal(fileName, fileId, async () => {
+                try {
+                    const response = await fetch(`/api/files/${encodeURIComponent(fileId)}`, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(errorText || 'Delete failed');
+                    }
+
+                    loadFiles();
+                } catch (err) {
+                    console.error("Error deleting file:", err);
+                    alert(t('error_delete') + ': ' + err.message);
+                }
+            });
+        }
+
+        function showDeleteModal(filename, fileId, onConfirm) {
+            const modal = document.getElementById('delete-modal');
+            const message = document.getElementById('delete-modal-message');
+            const confirmBtn = document.getElementById('delete-modal-confirm');
+
+            message.textContent = t('confirm_delete').replace('{filename}', filename);
+
+            // Remove previous event listeners
+            const newConfirmBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+            // Add click handler
+            newConfirmBtn.addEventListener('click', async () => {
+                newConfirmBtn.disabled = true;
+                newConfirmBtn.innerHTML = '<i data-lucide="loader-2" class="size-4 animate-spin"></i>';
+                lucide.createIcons();
+
+                await onConfirm();
+
+                closeDeleteModal();
+            });
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDeleteModal() {
+            const modal = document.getElementById('delete-modal');
+            const confirmBtn = document.getElementById('delete-modal-confirm');
+
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+
+            // Reset button
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = t('modal_delete');
+        }
+
+        // Close modal on backdrop click
+        document.getElementById('delete-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeDeleteModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeDeleteModal();
+            }
+        });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ---------------------------------------------------------------------------
+        // SIMULATION MODULE (Clean Version - Single File)
+        // ---------------------------------------------------------------------------
+
+        let simulationState = {
+            processing: false,
+            initialized: false
+        };
+
+        function initSimulation() {
+            // Evita inicializar múltiplas vezes
+            if (simulationState.initialized) return;
+            simulationState.initialized = true;
+
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('file-input');
+            const resultWrapper = document.getElementById('result-card-wrapper');
+
+            // Esconde o card de resultado inicialmente
+            if (resultWrapper) {
+                resultWrapper.classList.add('hidden');
+            }
+
+            if (!dropZone || !fileInput) return;
+
+            dropZone.onclick = null;
+            dropZone.ondragover = null;
+            dropZone.ondragleave = null;
+            dropZone.ondrop = null;
+            fileInput.onchange = null;
+
+            dropZone.addEventListener('click', () => fileInput.click());
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.add('border-primary', 'bg-muted/10');
+            });
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('border-primary', 'bg-muted/10');
+            });
+            dropZone.addEventListener('drop', handleDrop);
+            fileInput.addEventListener('change', handleFileSelect);
+        }
+
+        function resetSimulationUI() {
+            const dropZone = document.getElementById('drop-zone');
+            const resultWrapper = document.getElementById('result-card-wrapper');
+
+            // Esconde o card de resultado
+            if (resultWrapper) {
+                resultWrapper.classList.add('hidden');
+            }
+
+            // Mostra o drop-zone novamente
+            if (dropZone) {
+                dropZone.classList.remove('hidden');
+            }
+        }
+
+        async function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropZone = document.getElementById('drop-zone');
+            dropZone?.classList.remove('border-primary', 'bg-muted/10');
+            const files = Array.from(e.dataTransfer.files);
+            if (files.length > 0) {
+                await processSingleFile(files[0]);
+            }
+        }
+
+        async function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                await processSingleFile(files[0]);
+            }
+            // Limpa o input sem disparar novo evento
+            e.target.value = '';
+        }
+
+        async function processSingleFile(file) {
+            if (simulationState.processing) return;
+
+            simulationState.processing = true;
+            const uploadStartTime = performance.now();
+            showProcessingState(file);
+
+            try {
+                console.log('[SIM] Iniciando upload:', file.name, 'tamanho:', file.size);
+
+                const response = await fetch('/api/sim/process', {
+                    method: 'POST',
+                    headers: {
+                        'x-filename': file.name,
+                        'x-algo': 'auto'
+                    },
+                    body: file
+                });
+
+                const uploadEndTime = performance.now();
+                const uploadTime = uploadEndTime - uploadStartTime;
+
+                console.log('[SIM] Upload completo:', response.status);
+
+                if (!response.ok) {
+                    let errorMessage = `Erro HTTP ${response.status}`;
+                    try {
+                        const errorText = await response.text();
+                        errorMessage = errorText || errorMessage;
+                        console.error('[SIM] Erro:', errorMessage);
+                    } catch (e) {
+                        console.error('[SIM] Erro ao ler resposta:', e);
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                const result = await response.json();
+                const totalEndTime = performance.now();
+                const totalTime = totalEndTime - uploadStartTime;
+                const processTime = result.processing_time_ms || (totalTime - uploadTime);
+
+                console.log('[SIM] Processamento concluído:', result);
+                showCompleteState(result, { uploadTime, processTime, totalTime });
+
+            } catch (err) {
+                console.error('[SIM] Erro:', err);
+                showErrorState(file.name, err.message || err.toString());
+            } finally {
+                simulationState.processing = false;
+            }
+        }
+
+        function showProcessingState(file) {
+            const dropZone = document.getElementById('drop-zone');
+            const resultWrapper = document.getElementById('result-card-wrapper');
+            const card = document.getElementById('current-file-card');
+
+            // Esconde o drop-zone
+            if (dropZone) {
+                dropZone.classList.add('hidden');
+            }
+
+            // Mostra o card de resultado
+            if (resultWrapper) {
+                resultWrapper.classList.remove('hidden');
+            }
+
+            card.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full gap-6 py-12">
+                    <i data-lucide="loader-2" class="size-12 text-primary animate-spin"></i>
+                    <div class="text-center">
+                        <p class="font-medium text-xl">${escapeHtml(file.name)}</p>
+                        <p class="text-sm text-muted-foreground mt-2">Processando...</p>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function showCompleteState(result, times) {
+            const card = document.getElementById('current-file-card');
+            const savingsClass = result.savings_pct > 0 ? 'text-green-500' : 'text-amber-500';
+            const bytesSaved = result.original_size - result.reduced_size;
+
+            card.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full space-y-6 py-8">
+                    <!-- Header -->
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="check-circle-2" class="size-8 text-green-500"></i>
+                        <span class="font-semibold text-xl">${escapeHtml(result.original_name)}</span>
+                    </div>
+
+                    <!-- 4 Cards: Tamanho Original, Essência, Economia, Tempo -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
+                        <!-- Original Size -->
+                        <div class="p-6 bg-muted/30 border border-border rounded-lg text-center">
+                            <p class="text-xs text-muted-foreground uppercase mb-2">Original</p>
+                            <p class="font-bold text-2xl">${formatBytes(result.original_size)}</p>
+                        </div>
+
+                        <!-- Essence Size -->
+                        <div class="p-6 bg-blue-500/10 border border-blue-500/30 rounded-lg text-center">
+                            <p class="text-xs text-blue-500 uppercase mb-2">Essência</p>
+                            <p class="font-bold text-2xl text-blue-500">${formatBytes(result.reduced_size)}</p>
+                        </div>
+
+                        <!-- Economy -->
+                        <div class="p-6 bg-green-500/10 border border-green-500/30 rounded-lg text-center">
+                            <p class="text-xs text-green-500 uppercase mb-2">Economia</p>
+                            <p class="${savingsClass} font-bold text-2xl">${Math.floor(result.savings_pct * 10) / 10}%</p>
+                            <p class="text-xs text-muted-foreground mt-1">${formatBytes(bytesSaved)}</p>
+                        </div>
+
+                        <!-- Processing Time -->
+                        <div class="p-6 bg-purple-500/10 border border-purple-500/30 rounded-lg text-center">
+                            <p class="text-xs text-purple-500 uppercase mb-2">Tempo</p>
+                            <p class="font-bold text-2xl text-purple-500">${times.processTime.toFixed(0)}</p>
+                            <p class="text-xs text-muted-foreground mt-1">ms</p>
+                        </div>
+                    </div>
+
+                    <!-- Timing Details -->
+                    <div class="grid grid-cols-2 gap-4 w-full max-w-md text-center">
+                        <div class="text-sm">
+                            <span class="text-muted-foreground">Upload:</span>
+                            <span class="font-medium ml-2">${times.uploadTime.toFixed(0)} ms</span>
+                        </div>
+                        <div class="text-sm">
+                            <span class="text-muted-foreground">Processamento:</span>
+                            <span class="font-medium ml-2">${times.processTime.toFixed(0)} ms</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-center gap-4">
+                        <button onclick="resetSimulationUI()" class="btn btn-outline px-6 py-2.5 flex items-center gap-2">
+                            <i data-lucide="plus" class="size-4"></i>
+                            Novo arquivo
+                        </button>
+                        <button class="btn btn-primary px-8 py-2.5 flex items-center gap-2"
+                            data-sim-download-id="${result.download_id}"
+                            data-sim-file-name="${result.original_name.replace(/"/g, '&quot;')}"
+                            data-original-size="${result.original_size}"
+                            data-reduced-size="${result.reduced_size}"
+                            data-savings-pct="${result.savings_pct}"
+                            data-upload-time="${times.uploadTime.toFixed(0)}"
+                            data-process-time="${times.processTime.toFixed(0)}"
+                            onclick="downloadSimFileFromButton(this)">
+                            <i data-lucide="refresh-ccw" class="size-4"></i>
+                            Reconstruir
+                        </button>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function showErrorState(filename, errorMessage = '') {
+            const dropZone = document.getElementById('drop-zone');
+            const resultWrapper = document.getElementById('result-card-wrapper');
+            const card = document.getElementById('current-file-card');
+
+            // Esconde o drop-zone
+            if (dropZone) {
+                dropZone.classList.add('hidden');
+            }
+
+            // Mostra o card de resultado
+            if (resultWrapper) {
+                resultWrapper.classList.remove('hidden');
+            }
+
+            card.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full gap-6 py-12">
+                    <i data-lucide="x-circle" class="size-12 text-destructive"></i>
+                    <div class="text-center">
+                        <p class="font-medium text-xl">${escapeHtml(filename)}</p>
+                        <p class="text-destructive mt-2">${t('sim_processing_error')}</p>
+                        ${errorMessage ? `<p class="text-sm text-muted-foreground mt-2">${escapeHtml(errorMessage)}</p>` : ''}
+                    </div>
+                    <button onclick="resetSimulationUI()" class="btn btn-outline px-6 py-2 flex items-center gap-2">
+                        <i data-lucide="rotate-ccw" class="size-4"></i>
+                        Tentar novamente
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        async function downloadSimFile(downloadId, originalName) {
+            try {
+                console.log('[SIM] Download iniciado:', { downloadId, originalName });
+
+                const downloadUrl = `/api/sim/download/${downloadId}`;
+
+                // Fetch com blob para download confiável
+                const response = await fetch(downloadUrl);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                // Lê o tempo de reconstrução do header
+                const reconstructTimeMs = parseFloat(response.headers.get('x-reconstruct-time-ms') || '0');
+
+                // Extrai o filename do header Content-Disposition do servidor
+                const contentDisposition = response.headers.get('Content-Disposition');
+                const serverFilename = getFilenameFromContentDisposition(contentDisposition);
+
+                // Usa o nome do servidor (prioridade) ou o nome original do frontend
+                const finalName = serverFilename || originalName || 'download';
+
+                console.log('[SIM] Filename:', {
+                    fromHeader: serverFilename,
+                    fromFrontend: originalName,
+                    final: finalName
+                });
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = finalName;
+
+                document.body.appendChild(a);
+                a.click();
+
+                // Limpa após um delay para garantir que o download iniciou
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }, 100);
+
+                console.log('[SIM] Download concluído, tempo de reconstrução:', reconstructTimeMs, 'ms');
+
+                // Retorna o tempo de reconstrução do servidor
+                return reconstructTimeMs;
+            } catch (err) {
+                console.error("Erro ao baixar:", err);
+                alert(t('error_download'));
+                return 0;
+            }
+        }
+
+        async function downloadSimFileFromButton(button) {
+            const downloadId = button.getAttribute('data-sim-download-id');
+            let fileName = button.getAttribute('data-sim-file-name');
+            // Decodifica entidades HTML no nome do arquivo
+            if (fileName) {
+                const div = document.createElement('div');
+                div.innerHTML = fileName;
+                fileName = div.textContent || div.innerText || fileName;
+            }
+
+            // Captura métricas anteriores do botão
+            const originalSize = parseFloat(button.getAttribute('data-original-size') || 0);
+            const reducedSize = parseFloat(button.getAttribute('data-reduced-size') || 0);
+            const savingsPct = parseFloat(button.getAttribute('data-savings-pct') || 0);
+            const uploadTime = parseFloat(button.getAttribute('data-upload-time') || 0);
+            const processTime = parseFloat(button.getAttribute('data-process-time') || 0);
+
+            // Mostra estado de reconstrução
+            showReconstructingState(fileName);
+
+            // Chama o download e recebe o tempo de processamento do servidor
+            const reconstructTime = await downloadSimFile(downloadId, fileName);
+            const totalTime = uploadTime + processTime + reconstructTime;
+
+            // Mostra estado final com todas as métricas
+            showReconstructedState(fileName, originalSize, reducedSize, savingsPct, {
+                uploadTime,
+                processTime,
+                reconstructTime,
+                totalTime
+            });
+        }
+
+        function showReconstructingState(fileName) {
+            const card = document.getElementById('current-file-card');
+            card.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full gap-6 py-12">
+                    <i data-lucide="loader-2" class="size-12 text-primary animate-spin"></i>
+                    <div class="text-center">
+                        <p class="font-medium text-xl">${escapeHtml(fileName)}</p>
+                        <p class="text-sm text-muted-foreground mt-2">Reconstruindo arquivo...</p>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function showReconstructedState(fileName, originalSize, reducedSize, savingsPct, times) {
+            const card = document.getElementById('current-file-card');
+            const savingsClass = savingsPct > 0 ? 'text-green-500' : 'text-amber-500';
+            const bytesSaved = originalSize - reducedSize;
+            const totalProcessTime = times.processTime + times.reconstructTime;
+
+            card.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full space-y-6 py-8">
+                    <!-- Header -->
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="check-circle-2" class="size-8 text-green-500"></i>
+                        <span class="font-semibold text-xl">${escapeHtml(fileName)}</span>
+                        <span class="badge badge-success text-sm ml-2">Reconstruído</span>
+                    </div>
+
+                    <!-- 4 Cards: Tamanho Original, Essência, Economia, Tempo Total -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
+                        <!-- Original Size -->
+                        <div class="p-6 bg-muted/30 border border-border rounded-lg text-center">
+                            <p class="text-xs text-muted-foreground uppercase mb-2">Original</p>
+                            <p class="font-bold text-2xl">${formatBytes(originalSize)}</p>
+                        </div>
+
+                        <!-- Essence Size -->
+                        <div class="p-6 bg-blue-500/10 border border-blue-500/30 rounded-lg text-center">
+                            <p class="text-xs text-blue-500 uppercase mb-2">Essência</p>
+                            <p class="font-bold text-2xl text-blue-500">${formatBytes(reducedSize)}</p>
+                        </div>
+
+                        <!-- Economy -->
+                        <div class="p-6 bg-green-500/10 border border-green-500/30 rounded-lg text-center">
+                            <p class="text-xs text-green-500 uppercase mb-2">Economia</p>
+                            <p class="${savingsClass} font-bold text-2xl">${Math.floor(savingsPct * 10) / 10}%</p>
+                            <p class="text-xs text-muted-foreground mt-1">${formatBytes(bytesSaved)}</p>
+                        </div>
+
+                        <!-- Total Time -->
+                        <div class="p-6 bg-purple-500/10 border border-purple-500/30 rounded-lg text-center">
+                            <p class="text-xs text-purple-500 uppercase mb-2">Tempo total</p>
+                            <p class="font-bold text-2xl text-purple-500">${totalProcessTime.toFixed(0)}</p>
+                            <p class="text-xs text-muted-foreground mt-1">ms</p>
+                        </div>
+                    </div>
+
+                    <!-- Timing Details Breakdown -->
+                    <div class="grid grid-cols-3 gap-4 w-full max-w-lg text-center">
+                        <div class="text-sm">
+                            <span class="text-muted-foreground">Upload:</span>
+                            <span class="font-medium ml-1">${times.uploadTime.toFixed(0)} ms</span>
+                        </div>
+                        <div class="text-sm">
+                            <span class="text-muted-foreground">Processamento:</span>
+                            <span class="font-medium ml-1">${times.processTime.toFixed(0)} ms</span>
+                        </div>
+                        <div class="text-sm">
+                            <span class="text-muted-foreground">Reconstrução:</span>
+                            <span class="font-medium ml-1">${times.reconstructTime.toFixed(0)} ms</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="flex justify-center">
+                        <button onclick="resetSimulationUI()" class="btn btn-outline px-6 py-2.5 flex items-center gap-2">
+                            <i data-lucide="plus" class="size-4"></i>
+                            Novo arquivo
+                        </button>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function clearSimulation() {
+            const card = document.getElementById('current-file-card');
+            card.innerHTML = `
+                <div class="text-center text-muted-foreground py-8">
+                    <i data-lucide="file" class="size-8 mx-auto text-muted-foreground/30 mb-2"></i>
+                    <span data-i18n="sim_no_file">${t('sim_no_file')}</span>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // Chart Global Data
+        let cpuChart, ramChart;
+        const maxDataPoints = 60;
+        const cpuData = Array(maxDataPoints).fill(0);
+        const ramData = Array(maxDataPoints).fill(0);
+        const labels = Array(maxDataPoints).fill('');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Restaura a seção salva
+            restoreSection();
+
+            // Handle navigation state attributes
+            const setActiveLink = (currentId) => {
+                document.querySelectorAll('#sidebar nav a').forEach(a => {
+                    if (a.id === currentId) {
+                        a.setAttribute('aria-current', 'page');
+                    } else {
+                        a.removeAttribute('aria-current');
+                    }
+                });
+            };
+
+            // Initialize Charts
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                scales: {
+                    x: { display: false },
+                    y: {
+                        display: true,
+                        position: 'right',
+                        border: { display: false },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)', tickLength: 0 },
+                        ticks: { color: 'rgba(255, 255, 255, 0.5)', maxTicksLimit: 3, font: { size: 10 } }
+                    }
+                },
+                elements: {
+                    point: { radius: 0 },
+                    line: { borderWidth: 2, tension: 0.1 }
+                }
+            };
+
+            const ctxCpu = document.getElementById('cpuChart')?.getContext('2d');
+            if (ctxCpu) {
+                cpuChart = new Chart(ctxCpu, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: cpuData,
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            fill: true,
+                        }]
+                    },
+                    options: { ...chartOptions, scales: { ...chartOptions.scales, y: { ...chartOptions.scales.y, min: 0, max: 100 } } }
+                });
+            }
+
+            const ctxRam = document.getElementById('ramChart')?.getContext('2d');
+            if (ctxRam) {
+                ramChart = new Chart(ctxRam, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: ramData,
+                            borderColor: 'rgb(168, 85, 247)',
+                            backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                            fill: true,
+                        }]
+                    },
+                    options: { ...chartOptions, scales: { ...chartOptions.scales, y: { ...chartOptions.scales.y, min: 0 } } }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

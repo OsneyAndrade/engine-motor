@@ -1,0 +1,123 @@
+# ==============================================================================
+# Docker Compose PRODUÇÃO - Syntra Engine
+# ==============================================================================
+#
+# Este arquivo é otimizado para ambiente de produção com:
+# - PostgreSQL persistido
+# - Volume para vault (essências)
+# - Logs em nível INFO
+# - Restart automático
+# - Health checks
+#
+# Uso:
+#   docker-compose -f docker-compose.prod.yml up -d
+#
+# ==============================================================================
+
+services:
+  # ============================================================================
+  # PostgreSQL - Banco de Dados de Monitoramento
+  # ============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: syntra-postgres-prod
+    environment:
+      POSTGRES_USER: syntra
+      POSTGRES_PASSWORD: syntra123
+      POSTGRES_DB: syntra_monitoring
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U syntra"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - syntra-prod-network
+    restart: always
+
+  # ============================================================================
+  # Syntra Engine - Produção
+  # ============================================================================
+  syntra-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: syntra-engine-prod
+    environment:
+      # --------------------------------------------------------
+      # Banco de Dados
+      # --------------------------------------------------------
+      SYNTRA_DB_URL: postgres://syntra:syntra123@postgres:5432/syntra_monitoring
+
+      # --------------------------------------------------------
+      # Armazenamento
+      # --------------------------------------------------------
+      SYNTRA_VAULT_PATH: /data/essence_vault
+      SYNTRA_SLED_INDEX: /data/metadata_index.sled
+      SYNTRA_WATCH_DIR: /data/watch_in
+
+      # --------------------------------------------------------
+      # Servidor HTTP
+      # --------------------------------------------------------
+      SYNTRA_BIND_ADDR: 0.0.0.0:3002
+      SYNTRA_MAX_BODY_MB: 10240        # 10GB max upload
+
+      # --------------------------------------------------------
+      # Performance
+      # --------------------------------------------------------
+      RAYON_NUM_THREADS: ""             # Auto-detecta CPUs
+      SYNTRA_COMPRESS_MULTIPLIER: 4     # 4x operações I/O vs CPU
+
+      # --------------------------------------------------------
+      # Logs
+      # --------------------------------------------------------
+      RUST_LOG: engine=info,tower_http=info
+
+    ports:
+      - "3002:3002"
+    volumes:
+      # Vault persistido (essências)
+      - syntra_vault_prod:/data
+
+      # Watch directory para ingestão automática
+      # Monte um diretório local aqui se quiser processamento automático
+      - ./watch_in:/data/watch_in
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - syntra-prod-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    working_dir: /app
+
+# ==============================================================================
+# Volumes - Armazenamento Persistente
+# ==============================================================================
+volumes:
+  postgres_prod_data:
+    driver: local
+    name: syntra_postgres_prod_data
+
+  syntra_vault_prod:
+    driver: local
+    name: syntra_vault_prod
+
+# ==============================================================================
+# Networks
+# ==============================================================================
+networks:
+  syntra-prod-network:
+    driver: bridge
+    name: syntra-prod-network

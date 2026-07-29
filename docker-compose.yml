@@ -1,0 +1,60 @@
+services:
+  # PostgreSQL Database para Monitoramento (PADRÃO)
+  postgres:
+    image: postgres:16-alpine
+    container_name: syntra-postgres
+    environment:
+      POSTGRES_USER: syntra
+      POSTGRES_PASSWORD: syntra123
+      POSTGRES_DB: syntra_monitoring
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U syntra"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - syntra-network
+
+  # Syntra Engine - Desenvolvimento (com PostgreSQL)
+  syntra-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: engine
+    environment:
+      # PostgreSQL para desenvolvimento (padrão)
+      SYNTRA_DB_URL: postgres://syntra:syntra123@postgres:5432/syntra_monitoring
+      SYNTRA_VAULT_PATH: /data/essence_vault
+      SYNTRA_SLED_INDEX: /data/metadata_index.sled
+      SYNTRA_WATCH_DIR: /data/watch_in
+      SYNTRA_BIND_ADDR: 0.0.0.0:3002
+      RUST_LOG: debug
+      # === CONTROLE DE CPU/THREADS (MÁXIMO DESEMPENHO) ===
+      RAYON_NUM_THREADS: ''
+    ports:
+      - "3002:3002"
+    volumes:
+      - syntra_vault_dev:/data
+      # Watch directory montado para acesso fácil
+      - ./watch_in:/data/watch_in
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - syntra-network
+    restart: unless-stopped
+    working_dir: /app
+
+volumes:
+  postgres_data:
+    driver: local
+  syntra_vault_dev:
+    driver: local
+
+networks:
+  syntra-network:
+    driver: bridge
