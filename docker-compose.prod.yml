@@ -4,11 +4,10 @@ services:
     container_name: syntra-postgres-prod
     environment:
       POSTGRES_USER: syntra
-      POSTGRES_PASSWORD: syntra123
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD}
       POSTGRES_DB: syntra_monitoring
       PGDATA: /var/lib/postgresql/data/pgdata
-    ports:
-      - "5432:5432"
+    expose: ["5432"]
     volumes:
       - postgres_prod_data:/var/lib/postgresql/data
     healthcheck:
@@ -17,64 +16,61 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    networks:
-      - syntra-prod-network
+    networks: [syntra-prod-network]
     restart: always
 
-  syntra-engine:
+  engine:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: syntra-engine-prod
     environment:
-
-      SYNTRA_DB_URL: postgres://syntra:syntra123@postgres:5432/syntra_monitoring
+      SYNTRA_DB_URL: postgres://syntra:${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD}@postgres:5432/syntra_monitoring
 
       SYNTRA_VAULT_PATH: /data/essence_vault
       SYNTRA_SLED_INDEX: /data/metadata_index.sled
+      SYNTRA_DICT_PATH: /data/dictionaries
       SYNTRA_WATCH_DIR: /data/watch_in
 
-
       SYNTRA_BIND_ADDR: 0.0.0.0:3002
-      SYNTRA_MAX_BODY_MB: 10240        # 10GB max upload
+      SYNTRA_MAX_BODY_MB: 10240
 
-      RAYON_NUM_THREADS: ""             # Auto-detecta CPUs
-      SYNTRA_COMPRESS_MULTIPLIER: 4     # 4x operações I/O vs CPU
+      SYNTRA_DEFAULT_EFFORT: balanced
+      SYNTRA_VERIFY_ON_WRITE: "true"
+      SYNTRA_DICTIONARIES: "true"
 
-      RUST_LOG: engine=info,tower_http=info
+      SYNTRA_API_KEYS: ${SYNTRA_API_KEYS:?defina SYNTRA_API_KEYS}
+      SYNTRA_CORS_ORIGINS: ${SYNTRA_CORS_ORIGINS:-}
 
+      SYNTRA_WATCH_ENABLED: "false"
+
+      RAYON_NUM_THREADS: ""
+      SYNTRA_COMPRESS_MULTIPLIER: 4
+      RUST_LOG: engine=info,tower_http=warn
     ports:
       - "3002:3002"
     volumes:
-      # Vault persistido (essências)
-      - syntra_vault_prod:/data
-
-      - ./watch_in:/data/watch_in
-
+      - syntra_data_prod:/data
     depends_on:
       postgres:
         condition: service_healthy
-    networks:
-      - syntra-prod-network
+    networks: [syntra-prod-network]
     restart: always
+    stop_grace_period: 30s
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3002/ready"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
-    working_dir: /app
 
 volumes:
   postgres_prod_data:
-    driver: local
     name: syntra_postgres_prod_data
-
-  syntra_vault_prod:
-    driver: local
-    name: syntra_vault_prod
+  syntra_data_prod:
+    name: syntra_data_prod
 
 networks:
   syntra-prod-network:
-    driver: bridge
     name: syntra-prod-network
+    driver: bridge

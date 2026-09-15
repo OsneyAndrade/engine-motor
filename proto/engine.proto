@@ -1,60 +1,98 @@
 syntax = "proto3";
 package engine;
 
-// Algoritmos disponíveis para o motor adaptativo (Data Distillation)
 enum Algorithm {
-  AUTO          = 0;  // Seleção automática baseada em inteligência adaptativa
-  ZSTD_FAST     = 1;  // Modelo de alta velocidade
-  ZSTD_BALANCED = 2;  // Modelo balanceado (equilíbrio densidade/velocidade)
-  ZSTD_MAX      = 3;  // Modelo de alta densidade (máximo ROI de storage)
-  LZ4           = 4;  // Modelo de ultra-velocidade (baixa latência)
-  PASSTHROUGH   = 5;  // Bypass para dados já destilados ou aleatórios
+  AUTO          = 0;
+  ZSTD_FAST     = 1;
+  ZSTD_BALANCED = 2;
+  ZSTD_MAX      = 3;
+  LZ4           = 4;
+  PASSTHROUGH   = 5;
 }
 
-// Unidade de armazenamento deduplicada
+enum Codec {
+  CODEC_UNSPECIFIED = 0;
+  CODEC_STORED      = 1;
+  CODEC_LZ4         = 2;
+  CODEC_ZSTD        = 3;
+  CODEC_BROTLI      = 4;
+  CODEC_XZ          = 5;
+  CODEC_BZIP2       = 6;
+  CODEC_DEFLATE     = 7;
+}
+
+enum Transform {
+  TRANSFORM_UNSPECIFIED  = 0;
+  TRANSFORM_DELTA        = 1;
+  TRANSFORM_BYTE_SPLIT   = 2;
+  TRANSFORM_RLE          = 3;
+  TRANSFORM_CSV_COLUMNAR = 4;
+}
+
+message TransformStep {
+  int32  transform = 1;
+  uint32 width     = 2;
+  uint64 input_len = 3;
+}
+
+message DictionaryRef {
+  string id     = 1;
+  bytes  digest = 2;
+  uint32 size   = 3;
+}
+
 message Block {
-  bytes data = 1;        // Essência do bloco (se não for duplicata)
-  int32 algorithm = 2;   // Estratégia utilizada neste bloco
-  bytes hash = 3;        // Identificador BLAKE3 (64KB raw)
-  bool deduplicated = 4; // Flag de hit no cache de deduplicação
-  uint32 original_len = 5; // Tamanho original para auditoria
+  bytes  data         = 1;
+  int32  algorithm    = 2;
+  bytes  hash         = 3;
+  bool   deduplicated = 4;
+  uint32 original_len = 5;
+  int32  codec        = 6;
+  int32  codec_level  = 7;
 }
 
-// Envelope de Essência (Dado Destilado)
 message ProcessedFile {
-  int32 version = 1;
-  string original_name = 2;
-  repeated string original_names = 15;  // Lista de todos os nomes que este conteúdo já teve (para deduplicação resiliente)
-  string original_mime = 3;
-  uint64 original_size = 4;
-  uint64 processed_size = 5; // Tamanho total da essência gerada
+  int32           version        = 1;
+  string          original_name  = 2;
+  repeated string original_names = 15;
+  string          original_mime  = 3;
+  uint64          original_size  = 4;
+  uint64          processed_size = 5;
+  float           savings_pct    = 6;
 
-  float savings_pct = 6;
-  int32 algorithm = 7;
-  int32 compression_level = 8;
-  string dictionary_id = 9;  // ID do Modelo de Contexto utilizado
+  int32  algorithm         = 7;
+  int32  compression_level = 8;
+  string dictionary_id     = 9;
 
-  bytes data = 10;           // Essência para itens pequenos (<32KB)
-  repeated Block blocks = 11; // Blocos de essência para itens volumosos (>32KB)
+  bytes          data   = 10;
+  repeated Block blocks = 11;
 
   FileMetrics file_metrics = 12;
 
-  // Global Deduplication Pointer Fields
-  string pointer_to = 13;    // Aponta para o nome do arquivo .syn original se isto for uma cópia
-  bytes file_hash = 14;      // Hash BLAKE3 de 32 bytes do arquivo bruto inteiro
+  string pointer_to = 13;
+  bytes  file_hash  = 14;
 
-  // Resiliência de Datacenter
-  uint32 ref_count = 16;     // Contador de referências persistente (quantos arquivos apontam para este conteúdo)
-  uint64 envelope_checksum = 17;  // BLAKE3 do envelope serializado (para detectar corrupção em disco)
-  int64 created_at = 18;     // Timestamp de criação (Unix millis)
-  int64 updated_at = 19;     // Timestamp da última atualização (Unix millis)
+  uint32 ref_count         = 16;
+  uint64 envelope_checksum = 17;
+  int64  created_at        = 18;
+  int64  updated_at        = 19;
+
+  int32                  codec         = 20;
+  int32                  codec_level   = 21;
+  repeated TransformStep transforms    = 22;
+  DictionaryRef          dictionary    = 23;
+  string                 content_class = 24;
+  string                 plan_reason   = 25;
+  bool                   verified      = 26;
 }
 
 message FileMetrics {
-  double throughput_mbps = 1;
-  double compression_ratio = 2;
+  double throughput_mbps     = 1;
+  double compression_ratio   = 2;
   uint64 dedup_savings_bytes = 3;
-  double processing_time_ms = 4;
-  string algorithm_used = 5;
-  string strategy_reason = 6;
+  double processing_time_ms  = 4;
+  string algorithm_used      = 5;
+  string strategy_reason     = 6;
+  uint32 candidates_tried    = 7;
+  double reconstruct_ms      = 8;
 }

@@ -1,335 +1,378 @@
+use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
-use tokio::fs;
-use notify::{Watcher, RecursiveMode, Event, EventKind};
-use tracing::{info, warn, error};
-use tokio::time::{Duration, interval};
-use prost::Message;
-use std::time::Instant;
-use std::collections::HashSet;
+use std::time::Duration;
+
 use parking_lot::Mutex;
+use tokio::sync::Semaphore;
+use tokio::time::interval;
+use tracing::{debug, error, info, warn};
 
-use crate::EngineState;
-use crate::adaptive;
-use crate::compress;
-use crate::proto::{FileMetrics, ProcessedFile};
+use crate::service::{self, CompressRequest, EngineState};
 
-pub fn start_directory_watcher(state: Arc<EngineState>, watch_dir: impl AsRef<Path>) {
-    let watch_dir = watch_dir.as_ref().to_path_buf();
-    let _ = std::fs::create_dir_all(&watch_dir);
+const SCAN_INTERVAL: Duration = Duration::from_secs(2);
+const DRAIN_INTERVAL: Duration = Duration::from_millis(500);
+const STABILITY_STEP: Duration = Duration::from_millis(200);
+const STABILITY_SAMPLES: u8 = 3;
+const STABILITY_TIMEOUT: Duration = Duration::from_secs(60);
+const INGEST_CONCURRENCY: usize = 4;
 
-    // Buffer de coleta para lote (extremamente escalável)
-    let batch_buffer = Arc::new(Mutex::new(HashSet::<PathBuf>::new()));
+type Pending = Arc<Mutex<HashSet<PathBuf>>>;
 
-    // Rastreador de processamento ativo (debounce temporal)
-    let active_processing = Arc::new(dashmap::DashMap::<PathBuf, Instant>::new());
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct FileStamp {
+    size: u64,
+    mtime: Option<std::time::SystemTime>,
+}
 
-    let buffer_for_notify = batch_buffer.clone();
-    let active_for_notify = active_processing.clone();
-    let watch_dir_for_notify = watch_dir.clone();
+type Seen = Arc<dashmap::DashMap<PathBuf, FileStamp>>;
 
-    std::thread::spawn(move || {
-        info!("Iniciando Batch Watcher (Notify) em: {}", watch_dir_for_notify.display());
+pub fn start(state: Arc<EngineState>) {
+    let dir = PathBuf::from(&state.config.watch_dir);
+    if let Err(e) = std::fs::create_dir_all(&dir) {
+        error!("não foi possível criar {}: {e}; ingestão desativada", dir.display());
+        return;
+    }
 
-        let config = notify::Config::default().with_poll_interval(Duration::from_millis(100));
+    let pending: Pending = Arc::new(Mutex::new(HashSet::new()));
+    let inflight = Arc::new(dashmap::DashMap::<PathBuf, ()>::new());
+    let seen: Seen = Arc::new(dashmap::DashMap::new());
 
-        let mut watcher = match notify::RecommendedWatcher::new(
-            move |res: notify::Result<Event>| {
-                if let Ok(event) = res {
-                    match event.kind {
-                        EventKind::Create(_) | EventKind::Modify(_) | EventKind::Access(notify::event::AccessKind::Close(_)) => {
-                            let mut buffer = buffer_for_notify.lock();
-                            for path in event.paths {
-                                if path.is_file() {
-                                    // Debounce básico
-                                    if let Some(last_time) = active_for_notify.get(&path) {
-                                        if last_time.elapsed() < Duration::from_millis(500) {
-                                            continue;
-                                        }
-                                    }
-                                    buffer.insert(path);
-                                }
-                            }
-                        }
-                        _ => {}
-                    }
+    spawn_notify(dir.clone(), pending.clone());
+    spawn_scanner(dir.clone(), pending.clone(), inflight.clone(), seen.clone());
+    spawn_drainer(state, pending, inflight, seen);
+
+    info!(diretorio = %dir.display(), "ingestão por diretório ativa");
+}
+
+fn spawn_notify(dir: PathBuf, pending: Pending) {
+    std::thread::Builder::new()
+        .name("syntra-notify".into())
+        .spawn(move || {
+            use notify::{EventKind, RecursiveMode, Watcher};
+
+            let (tx, rx) = crossbeam_channel::unbounded();
+            let mut watcher = match notify::RecommendedWatcher::new(
+                move |res| {
+                    let _ = tx.send(res);
+                },
+                notify::Config::default(),
+            ) {
+                Ok(w) => w,
+                Err(e) => {
+                    warn!("notify indisponível ({e}); a varredura periódica cobre a ingestão");
+                    return;
                 }
-            },
-            config
-        ) {
-            Ok(w) => w,
-            Err(e) => {
-                warn!("Notify watcher falhou: {} - polling continuará", e);
+            };
+
+            if let Err(e) = watcher.watch(&dir, RecursiveMode::NonRecursive) {
+                warn!("falha ao observar {}: {e}; seguindo só com varredura", dir.display());
                 return;
             }
-        };
 
-        match watcher.watch(&watch_dir_for_notify, RecursiveMode::NonRecursive) {
-            Ok(_) => {
-                // Mantém a thread viva com um loop apropriado
-                loop {
-                    std::thread::sleep(Duration::from_secs(1));
-                }
-            }
-            Err(e) => {
-                warn!("Falha ao iniciar watch: {}", e);
-            }
-        }
-    });
-
-    let watch_dir_clone = watch_dir.clone();
-    let buffer_for_polling = batch_buffer.clone();
-    let active_for_poll = active_processing.clone();
-    let processed_files = Arc::new(dashmap::DashMap::<PathBuf, std::time::SystemTime>::new());
-
-    tokio::spawn(async move {
-        info!("Iniciando Polling Watcher (Batch Mode) em: {} (intervalo: 2s)", watch_dir_clone.display());
-        let mut poll_timer = interval(Duration::from_secs(2));
-
-        loop {
-            poll_timer.tick().await;
-
-            let mut entries = match fs::read_dir(&watch_dir_clone).await {
-                Ok(e) => e,
-                Err(_) => continue,
-            };
-
-            let mut found_paths = Vec::new();
-            while let Ok(Some(entry)) = entries.next_entry().await {
-                let path = entry.path();
-                if path.is_file() {
-                    let file_name = path.file_name().unwrap_or_default().to_string_lossy();
-                    // Ignora arquivos ocultos, temporários
-                    if file_name.starts_with('.') || file_name.ends_with(".tmp") {
-                        continue;
-                    }
-
-                    let file_meta = match tokio::fs::metadata(&path).await {
-                        Ok(meta) => meta,
-                        Err(_) => continue,
-                    };
-
-                    let modified_time = file_meta.modified().unwrap_or(std::time::SystemTime::UNIX_EPOCH);
-
-                    // Registra para processamento (sempre processa, não verifica modified_time anterior)
-                    if !active_for_poll.contains_key(&path) {
-                        found_paths.push((path, modified_time));
-                    }
-                }
-            }
-
-            if !found_paths.is_empty() {
-                let mut buffer = buffer_for_polling.lock();
-                for (path, modified_time) in found_paths {
-                    buffer.insert(path.clone());
-                    processed_files.insert(path, modified_time);
-                }
-            }
-        }
-    });
-
-    let batch_drain = batch_buffer.clone();
-    let state_drain = state.clone();
-    let active_drain = active_processing.clone();
-
-    tokio::spawn(async move {
-        let mut drain_interval = interval(Duration::from_millis(500));
-        loop {
-            drain_interval.tick().await;
-
-            // Take everything from the buffer
-            let tasks: Vec<PathBuf> = {
-                let mut buffer = batch_drain.lock();
-                if buffer.is_empty() {
+            while let Ok(result) = rx.recv() {
+                let Ok(event) = result else { continue };
+                if !matches!(
+                    event.kind,
+                    EventKind::Create(_) | EventKind::Modify(_) | EventKind::Access(_)
+                ) {
                     continue;
                 }
-                let items = buffer.drain().collect();
-                items
+                let mut queue = pending.lock();
+                for path in event.paths {
+                    if is_candidate(&path) {
+                        queue.insert(path);
+                    }
+                }
+            }
+        })
+        .map(|_| ())
+        .unwrap_or_else(|e| error!("falha ao criar thread do notify: {e}"));
+}
+
+fn spawn_scanner(
+    dir: PathBuf,
+    pending: Pending,
+    inflight: Arc<dashmap::DashMap<PathBuf, ()>>,
+    seen: Seen,
+) {
+    tokio::spawn(async move {
+        let mut ticker = interval(SCAN_INTERVAL);
+        loop {
+            ticker.tick().await;
+
+            let Ok(mut entries) = tokio::fs::read_dir(&dir).await else {
+                continue;
+            };
+            let mut found = Vec::new();
+            let mut presentes = HashSet::new();
+
+            while let Ok(Some(entry)) = entries.next_entry().await {
+                let path = entry.path();
+                if !is_candidate(&path) {
+                    continue;
+                }
+                presentes.insert(path.clone());
+
+                if inflight.contains_key(&path) {
+                    continue;
+                }
+                if let (Some(anterior), Ok(meta)) =
+                    (seen.get(&path).map(|v| *v), entry.metadata().await)
+                {
+                    if anterior == stamp_of(&meta) {
+                        continue;
+                    }
+                }
+                found.push(path);
+            }
+
+            seen.retain(|path, _| presentes.contains(path));
+
+            if !found.is_empty() {
+                let mut queue = pending.lock();
+                queue.extend(found);
+            }
+        }
+    });
+}
+
+fn stamp_of(meta: &std::fs::Metadata) -> FileStamp {
+    FileStamp {
+        size: meta.len(),
+        mtime: meta.modified().ok(),
+    }
+}
+
+fn spawn_drainer(
+    state: Arc<EngineState>,
+    pending: Pending,
+    inflight: Arc<dashmap::DashMap<PathBuf, ()>>,
+    seen: Seen,
+) {
+    let gate = Arc::new(Semaphore::new(INGEST_CONCURRENCY));
+
+    tokio::spawn(async move {
+        let mut ticker = interval(DRAIN_INTERVAL);
+        loop {
+            ticker.tick().await;
+
+            let batch: Vec<PathBuf> = {
+                let mut queue = pending.lock();
+                if queue.is_empty() {
+                    continue;
+                }
+                queue.drain().collect()
             };
 
-            info!("Batch Ingestion: Draining {} files for processing...", tasks.len());
+            debug!(arquivos = batch.len(), "lote de ingestão despachado");
 
-            for path in tasks {
-                let state_inner = state_drain.clone();
-                let active_inner = active_drain.clone();
-                let path_inner = path.clone();
+            for path in batch {
+                if inflight.insert(path.clone(), ()).is_some() {
+                    continue;
+                }
 
-                active_inner.insert(path.clone(), Instant::now());
+                let state = state.clone();
+                let gate = gate.clone();
+                let inflight = inflight.clone();
+                let seen = seen.clone();
 
                 tokio::spawn(async move {
-                    if let Err(e) = process_watched_file(path, state_inner).await {
-                        error!("Batch Worker Error [{}]: {:?}", path_inner.display(), e);
+                    let _permit = gate.acquire().await;
+                    if let Err(e) = ingest(&state, &path, &seen).await {
+                        error!(arquivo = %path.display(), erro = %e, "falha na ingestão");
                     }
-                    active_inner.remove(&path_inner);
+                    inflight.remove(&path);
                 });
             }
         }
     });
 }
 
-async fn process_watched_file(path: PathBuf, state: Arc<EngineState>) -> anyhow::Result<()> {
-    // 1. O SO as vezes dispara o evento Create antes do arquivo terminar de gravar
-    // Vamos esperar o arquivo estabilizar (tempo NÃO contado nas métricas)
-    tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
-
-    // Se o arquivo tiver sumido no meio do sleep (deletado rápido ou movido), aborta.
-    if !path.exists() {
+async fn ingest(state: &Arc<EngineState>, path: &Path, seen: &Seen) -> anyhow::Result<()> {
+    if wait_until_stable(path).await.is_none() {
         return Ok(());
     }
 
-    let file_name = path.file_name().unwrap_or_default().to_string_lossy().to_string();
-    info!("Watcher detectou arquivo: {}", file_name);
+    let Ok(meta) = tokio::fs::metadata(path).await else {
+        return Ok(());
+    };
+    let stamp = stamp_of(&meta);
+    if seen.get(path).map(|v| *v == stamp).unwrap_or(false) {
+        return Ok(());
+    }
+    if stamp.size == 0 {
+        debug!(arquivo = %path.display(), "arquivo vazio ignorado");
+        seen.insert(path.to_path_buf(), stamp);
+        return Ok(());
+    }
 
-    // 2. Tenta ler os bytes do arquivo
-    let data = match fs::read(&path).await {
+    let name = path
+        .file_name()
+        .map(|n| n.to_string_lossy().to_string())
+        .unwrap_or_else(|| "sem-nome".to_string());
+
+    let data = match tokio::fs::read(path).await {
         Ok(d) => d,
         Err(e) => {
-            warn!("Arquivo travado ou ilegível ({}): {}", file_name, e);
+            warn!(arquivo = %name, erro = %e, "arquivo ilegível; será tentado na próxima varredura");
             return Ok(());
         }
     };
 
-    if data.is_empty() {
-        return Ok(());
-    }
+    let mut req = CompressRequest::from_config(&state.config, name.clone());
+    req.persist = true;
 
-    let _total_raw_size = data.len() as u64;
+    let ctx = state.default_context();
+    let result = service::compress(state, &ctx, data, req).await?;
 
-    let hash = blake3::hash(&data);
-    let hash_bytes: [u8; 32] = *hash.as_bytes();
-    let hash_hex = hex::encode(hash_bytes);
+    info!(
+        arquivo = %name,
+        id = result.id,
+        plano = service::codec_label(&result.envelope),
+        economia_pct = format!("{:.1}", result.savings_pct()),
+        dedup = result.deduplicated,
+        "arquivado pela ingestão"
+    );
 
-    // ID único para evitar conflitos de nomes (arquivos com mesmo conteúdo)
-    let unique_id = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-
-    let syn_filename = format!("{}_{}.syntra", hash_hex, unique_id);
-
-    // Cria diretório do vault (ensure_dir retorna o caminho genérico, vamos usar o parent para pegar só o diretório)
-    let vault_dir = state.vault.ensure_dir(&hash_bytes)?;
-
-    // Constrói o caminho completo com o nome único do arquivo
-    let vault_path = vault_dir.parent().unwrap().join(&syn_filename);
-
-    let start_latency = Instant::now();
-    let mime = "application/octet-stream";
-    let analysis = adaptive::analyze(&data, mime);
-    let algo = analysis.algorithm;
-    let lvl = analysis.zstd_level;
-    let dict = state.dictionaries.get_dictionary(mime);
-
-    let total_raw_size = data.len() as u64;
-
-    // Comprime
-    let compressed = state.pool.install(|| {
-        compress::compress(&data, algo, lvl, dict.as_deref())
-    }).map_err(|e| anyhow::anyhow!("Erro de compressão: {}", e))?;
-
-    let processed_size = compressed.len() as u64;
-    let savings_pct = if total_raw_size > 0 {
-        (1.0 - (processed_size as f64 / total_raw_size as f64)) * 100.0
-    } else { 0.0 };
-
-    let duration_ms = start_latency.elapsed().as_secs_f64() * 1000.0;
-
-    // Registra latência nas métricas
-    state.metrics.record_latency(duration_ms);
-
-    let envelope = ProcessedFile {
-        version: 2,
-        original_name: file_name.clone(),
-        original_names: vec![file_name.clone()],
-        original_mime: mime.to_string(),
-        original_size: total_raw_size,
-        processed_size,
-        savings_pct: savings_pct as f32,
-        algorithm: algo as i32,
-        compression_level: lvl,
-        dictionary_id: String::new(),
-        data: compressed,
-        blocks: vec![],
-        file_metrics: Some(FileMetrics {
-            throughput_mbps: 0.0,
-            compression_ratio: if total_raw_size > 0 { processed_size as f64 / total_raw_size as f64 } else { 1.0 },
-            dedup_savings_bytes: 0,
-            processing_time_ms: duration_ms,
-            algorithm_used: format!("{:?}", algo),
-            strategy_reason: "Watcher".to_string(),
-        }),
-        pointer_to: String::new(),
-        file_hash: hash_bytes.to_vec(),
-        ref_count: 1,
-        envelope_checksum: 0,
-        created_at: std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap_or_default()
-            .as_millis() as i64,
-        updated_at: std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap_or_default()
-            .as_millis() as i64,
-    };
-
-    let mut buf = Vec::with_capacity(envelope.encoded_len());
-    if let Err(e) = envelope.encode(&mut buf) {
-        warn!("Falha ao codificar envelope para {}: {}", file_name, e);
-        return Ok(());
-    }
-
-    let checksum = blake3::hash(&buf);
-    let mut envelope_with_checksum = envelope.clone();
-    envelope_with_checksum.envelope_checksum = u64::from_be_bytes(checksum.as_bytes()[0..8].try_into().unwrap_or([0u8; 8]));
-
-    let mut buf_final = Vec::with_capacity(envelope_with_checksum.encoded_len());
-    if let Err(e) = envelope_with_checksum.encode(&mut buf_final) {
-        warn!("Falha ao codificar envelope com checksum: {}", e);
-        return Ok(());
-    }
-
-    // Cria ou sobrescreve o arquivo no vault
-    // Isso permite enviar o mesmo arquivo múltiplas vezes
-    match fs::File::create(&vault_path).await {
-        Ok(mut file) => {
-            use tokio::io::AsyncWriteExt;
-            if let Err(e) = file.write_all(&buf_final).await {
-                warn!("Falha ao escrever no vault: {}", e);
-                return Ok(());
+    if state.config.watch_delete_source {
+        match tokio::fs::remove_file(path).await {
+            Ok(()) => {
+                seen.remove(path);
+            }
+            Err(e) => {
+                warn!(arquivo = %name, erro = %e, "essência gravada, mas o original não pôde ser removido");
+                seen.insert(path.to_path_buf(), stamp);
             }
         }
-        Err(e) => {
-            warn!("Falha ao criar arquivo no vault: {}", e);
-            let _ = fs::remove_file(&path).await;
-            return Ok(());
-        }
-    }
-
-    state.metrics.bytes_in.fetch_add(total_raw_size, std::sync::atomic::Ordering::Relaxed);
-    state.metrics.bytes_out.fetch_add(processed_size, std::sync::atomic::Ordering::Relaxed);
-    state.metrics.files_processed.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-
-    let _ = state.vault.store_hash(&hash_bytes, &syn_filename);
-
-    // ID no banco sem extensão .syntra
-    let db_id = syn_filename.trim_end_matches(".syntra");
-    let _ = state.db.log_file(
-        &db_id,
-        &file_name,
-        mime,
-        total_raw_size,
-        processed_size,
-        savings_pct,
-        &format!("{:?}", algo),
-        duration_ms,
-        &vault_path.to_string_lossy()
-    ).await;
-
-    info!("Arquivado: {} -> {} ({:.1}% economia)", file_name, syn_filename, savings_pct);
-
-    if let Err(e) = fs::remove_file(&path).await {
-        warn!("Falha ao deletar original: {}", e);
+    } else {
+        seen.insert(path.to_path_buf(), stamp);
     }
 
     Ok(())
+}
+
+async fn wait_until_stable(path: &Path) -> Option<u64> {
+    let deadline = tokio::time::Instant::now() + STABILITY_TIMEOUT;
+    let mut last: Option<u64> = None;
+    let mut stable = 0u8;
+
+    loop {
+        let size = tokio::fs::metadata(path).await.ok()?.len();
+
+        if Some(size) == last {
+            stable += 1;
+            if stable >= STABILITY_SAMPLES {
+                return Some(size);
+            }
+        } else {
+            stable = 1;
+            last = Some(size);
+        }
+
+        if tokio::time::Instant::now() >= deadline {
+            warn!(
+                arquivo = %path.display(),
+                "tamanho não estabilizou em {}s; adiado",
+                STABILITY_TIMEOUT.as_secs()
+            );
+            return None;
+        }
+        tokio::time::sleep(STABILITY_STEP).await;
+    }
+}
+
+fn is_candidate(path: &Path) -> bool {
+    if !path.is_file() {
+        return false;
+    }
+    let Some(name) = path.file_name().and_then(|n| n.to_str()) else {
+        return false;
+    };
+    if name.starts_with('.') || name.starts_with('~') {
+        return false;
+    }
+    let lower = name.to_ascii_lowercase();
+    !(lower.ends_with(".tmp")
+        || lower.ends_with(".part")
+        || lower.ends_with(".crdownload")
+        || lower.ends_with(".swp")
+        || lower.ends_with(".syntra"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn filtra_arquivos_que_nao_devem_ser_ingeridos() {
+        let dir = std::env::temp_dir().join(format!("syntra-watch-test-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+
+        let criar = |nome: &str| {
+            let p = dir.join(nome);
+            std::fs::write(&p, b"x").unwrap();
+            p
+        };
+
+        assert!(is_candidate(&criar("relatorio.csv")));
+        assert!(is_candidate(&criar("dados.json")));
+
+        assert!(!is_candidate(&criar(".oculto")));
+        assert!(!is_candidate(&criar("~temporario")));
+        assert!(!is_candidate(&criar("parcial.tmp")));
+        assert!(!is_candidate(&criar("download.part")));
+        assert!(!is_candidate(&criar("chrome.crdownload")));
+        assert!(!is_candidate(&criar("vim.swp")));
+        assert!(!is_candidate(&criar("abc.syntra")));
+        let sub = dir.join("subdir");
+        std::fs::create_dir_all(&sub).unwrap();
+        assert!(!is_candidate(&sub));
+        assert!(!is_candidate(&dir.join("nao-existe.txt")));
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[tokio::test]
+    async fn espera_o_arquivo_estabilizar() {
+        let dir = std::env::temp_dir().join(format!("syntra-stable-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("crescendo.bin");
+        std::fs::write(&path, vec![0u8; 100]).unwrap();
+
+        let p2 = path.clone();
+        tokio::spawn(async move {
+            for i in 1..=3 {
+                tokio::time::sleep(Duration::from_millis(120)).await;
+                let _ = std::fs::write(&p2, vec![0u8; 100 + i * 100]);
+            }
+        });
+
+        let size = wait_until_stable(&path).await.expect("deveria estabilizar");
+        assert_eq!(size, 400, "deveria ler o tamanho final, não o parcial");
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn identidade_do_arquivo_detecta_alteracao() {
+        let dir = std::env::temp_dir().join(format!("syntra-stamp-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("a.txt");
+
+        std::fs::write(&path, b"conteudo original").unwrap();
+        let antes = stamp_of(&std::fs::metadata(&path).unwrap());
+
+        assert_eq!(antes, stamp_of(&std::fs::metadata(&path).unwrap()));
+
+        std::fs::write(&path, b"conteudo original mais longo").unwrap();
+        assert_ne!(antes, stamp_of(&std::fs::metadata(&path).unwrap()));
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[tokio::test]
+    async fn arquivo_inexistente_nao_estabiliza() {
+        assert!(wait_until_stable(Path::new("/tmp/syntra-nao-existe-jamais")).await.is_none());
+    }
 }

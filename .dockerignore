@@ -1,0 +1,14 @@
+target/
+essence_vault/
+metadata_index.sled/
+dictionaries/
+watch_in/
+.git/
+.gitignore
+*.syntra
+*.dict
+*.db
+*.sqlite*
+Dockerfile*
+docker-compose*.yml
+README.md

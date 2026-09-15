@@ -1,0 +1,17 @@
+/target/
+/essence_vault/
+/metadata_index.sled/
+/dictionaries/
+/watch_in/
+*.syntra
+*.syntra.tmp
+*.dict
+*.dict.tmp
+*.db
+*.sqlite
+*.sqlite3
+node_modules/
+.DS_Store
+.idea/
+.vscode/
+*.swp

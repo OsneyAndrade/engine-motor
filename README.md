@@ -1,647 +1,533 @@
 # Syntra Engine
 
-> **Motor de Geração de Essência de Alta Performance — Escrito em Rust**
+**Compressão sem perdas como API.** O motor recebe bytes, escolhe a estratégia
+de compressão **medindo** candidatos reais sobre o próprio dado, e devolve um
+container `.syntra` auto-suficiente que reconstrói o original bit a bit.
 
-O Syntra Engine é uma infraestrutura de **destilação de dados adaptativa** que reduz o espaço de armazenamento em até 80% enquanto mantém integridade total e reconstrução bit-perfect dos dados originais. Projetado para rodar dentro de datacenters on-premise e como API para integração com storages em cloud (Amazon S3, Google Cloud Storage, Azure Blob).
+```
+POST /api/v1/compress      bytes  ──▶  essência .syntra
+POST /api/v1/decompress    .syntra ──▶  bytes originais
+POST /api/v1/analyze       bytes  ──▶  comparativo de planos, sem gravar
+```
 
 ---
 
-## 📋 Índice
+## Índice
 
-- [Visão Geral](#visão-geral)
-- [Arquitetura](#arquitetura)
-- [Componentes](#componentes)
-- [Como Funciona](#como-funciona)
-- [Instalação](#instalação)
+- [Garantias](#garantias)
+- [Como o plano é escolhido](#como-o-plano-é-escolhido)
+- [Resultados medidos](#resultados-medidos)
+- [Início rápido](#início-rápido)
+- [Referência da API](#referência-da-api)
+- [Modos de esforço](#modos-de-esforço)
 - [Configuração](#configuração)
-- [Docker](#docker)
-- [API Endpoints](#api-endpoints)
-- [Dashboard](#dashboard)
+- [Armazenamento e operação](#armazenamento-e-operação)
+- [Cobertura de algoritmos](#cobertura-de-algoritmos)
 - [Desenvolvimento](#desenvolvimento)
-- [Performance](#performance)
+- [Arquitetura do código](#arquitetura-do-código)
 
 ---
 
-## 📖 Visão Geral
+## Garantias
 
-### O que é o Syntra Engine?
-
-O **Syntra Engine** é um motor que processa arquivos e cria uma **essência** — uma versão otimizada que ocupa muito menos espaço, mas pode ser reconstruída exatamente como o original a qualquer momento.
-
-Ele opera em dois modelos:
-
-| Modo de Deploy | Descrição |
-|----------------|-----------|
-| **Datacenter On-Premise** | Rodar dentro do servidor do cliente, processando arquivos locais e via Watch Directory |
-| **API Cloud** | Exposto como endpoint HTTP para integração com pipelines que armazenam em S3, GCS, Azure Blob, etc. |
-
-### Características Principais
-
-| Característica | Descrição |
-|----------------|-----------|
-| **Geração de Essência Adaptativa** | Seleciona automaticamente o melhor algoritmo (Zstd, LZ4) baseado na entropia dos dados |
-| **Modelos de Contexto (Dicionários)** | Treina modelos otimizados por MIME-type para eficiência crescente |
-| **Vault com Sharding** | Armazena essências em estrutura de 2 níveis de hash para alta performance |
-| **Monitoramento** | Métricas em tempo real via Prometheus e dashboard web embutido |
-| **Auto-Ingestão** | Monitora diretório e processa novos arquivos automaticamente |
-| **Multi-Banco** | Suporta SQLite (dev) ou PostgreSQL (produção) para metadados |
-| **Cluster-Aware** | Sincroniza Modelos de Contexto via Redis para aprendizado distribuído |
-
-### Por que usar o Syntra?
-
-- **Economia de 40–80%** no espaço de armazenamento
-- **Processamento paralelo** via Rayon thread pool
-- **Zero perdas** — reconstrução bit-perfect com verificação BLAKE3
-- **Baixo overhead** — geração de essência em streaming sem carregar tudo em memória
-- **Auto-aprendizado** — quanto mais arquivos do mesmo tipo, maior a eficiência
+| Garantia | Como é sustentada |
+|---|---|
+| **Reconstrução bit a bit** | O BLAKE3 do original fica no envelope e é conferido em **toda** descompressão. Divergência devolve `422`, não dado adulterado. |
+| **Verificação antes de gravar** | Com `SYNTRA_VERIFY_ON_WRITE=true` (default), o motor descomprime a essência e compara com o original *antes* de persistir. Se não bater, nada é gravado e o cliente recebe erro. |
+| **A essência nunca é maior** | Todo conjunto de candidatos inclui um piso `stored`. Se nenhum codec reduzir, grava-se sem compressão. O *payload* nunca excede o original; o container adiciona ~300–400 bytes de metadados (nome, hash, plano, timestamps). |
+| **Auto-suficiência** | O envelope guarda a receita completa de reconstrução: pilha de transforms, codec, nível e id do dicionário. Reconstruir não depende de estado do processo. |
+| **Dicionário nunca invalida o passado** | Dicionários treinados são endereçados por conteúdo (`<classe>.<digest>`). Retreinar gera um id novo; essências antigas continuam resolvendo o dicionário original. |
+| **Deduplicação global** | O vault é endereçado pelo hash do conteúdo. Enviar o mesmo arquivo N vezes grava um objeto e N referências. |
 
 ---
 
-## 🏗️ Arquitetura
+## Como o plano é escolhido
+
+A pergunta "qual algoritmo usar?" não é respondida por heurística fixa — é
+**medida**.
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                      Syntra Engine Architecture                      │
-└─────────────────────────────────────────────────────────────────────┘
+                     ┌──────────────────────────────────────────┐
+   bytes ───────────▶ │ 1. CLASSIFICA                            │
+                     │    MIME, entropia, razão de imprimíveis, │
+                     │    periodicidade (stride), layout tabular│
+                     └────────────────┬─────────────────────────┘
+                                      ▼
+                     ┌──────────────────────────────────────────┐
+                     │ 2. GERA CANDIDATOS                       │
+                     │    transform* + codec + nível + dict     │
+                     │    (1, 4 ou 16 planos, conforme esforço) │
+                     └────────────────┬─────────────────────────┘
+                                      ▼
+                     ┌──────────────────────────────────────────┐
+                     │ 3. MEDE em paralelo (Rayon)              │
+                     │    arquivo inteiro, ou amostra se grande │
+                     └────────────────┬─────────────────────────┘
+                                      ▼  menor saída vence
+                     ┌──────────────────────────────────────────┐
+                     │ 4. PISO `stored` + VERIFICA round-trip   │
+                     └────────────────┬─────────────────────────┘
+                                      ▼
+                     ┌──────────────────────────────────────────┐
+                     │ 5. SELA o envelope e grava no vault      │
+                     └──────────────────────────────────────────┘
+```
 
-┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│   Clientes HTTP  │────▶│   HTTP API       │────▶│    Watcher       │
-│  (Apps, S3, GCS) │ POST│   (Axum 0.7)     │     │  (notify + poll) │
-└──────────────────┘     └────────┬─────────┘     └────────┬─────────┘
-                                   │                         │
-                                   ▼                         ▼
-                          ┌──────────────────────────────────┐
-                          │          Request Router           │
-                          │  /process  /reconstruct  /api/*  │
-                          └──────────────────────────────────┘
-                                           │
-                          ┌────────────────┼────────────────┐
-                          ▼                ▼                ▼
-                ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
-                │  Adaptive   │  │  Compress   │  │    Vault    │
-                │  Analyzer   │  │   Module    │  │   Manager   │
-                │  (entropy)  │  │ (Zstd/LZ4)  │  │  (Sled)     │
-                └──────┬──────┘  └──────┬──────┘  └──────┬──────┘
-                       │                │                  │
-                       └────────────────┼──────────────────┘
-                                        ▼
-                          ┌─────────────────────────────┐
-                          │         Storage Layer        │
-                          │   essence_vault/             │
-                          │     ├── ab/cd/hash.syntra    │
-                          │     └── ef/12/hash.syntra    │
-                          └─────────────────────────────┘
-                                        │
-                          ┌─────────────┼─────────────┐
-                          ▼             ▼             ▼
-                ┌─────────────┐ ┌────────────┐ ┌───────────┐
-                │  Monitor DB │ │  Metrics   │ │ Dashboard │
-                │(SQLite/PG)  │ │(Prometheus)│ │ (HTML/JS) │
-                └─────────────┘ └────────────┘ └───────────┘
+**Transforms** reescrevem os bytes para uma forma onde a redundância fica
+adjacente, sem perder informação. É onde estão os ganhos que um codec genérico
+sozinho não alcança:
+
+| Transform | O que faz | Ganha em |
+|---|---|---|
+| `csv_columnar` | Transpõe texto tabular para layout coluna a coluna | CSV, TSV, NDJSON de campos uniformes |
+| `delta` | Substitui cada elemento pela diferença do anterior | Timestamps, IDs sequenciais, contadores, PCM |
+| `byte_split` | Separa os planos de bytes dos elementos (estilo Parquet) | Arrays de `f32`/`f64`, inteiros de faixa estreita |
+| `rle` | Run-length encoding (PackBits) | Bitmaps, máscaras, regiões constantes |
+
+Depois vem o **codec** de entropia/dicionário:
+
+| Codec | Família | Níveis | Dicionário |
+|---|---|---|---|
+| `stored` | passthrough | — | — |
+| `lz4` | LZ77 | — | — |
+| `deflate` | LZ77 + Huffman | 0–9 | — |
+| `zstd` | LZ77 + FSE | -7–22 | sim |
+| `bzip2` | BWT + MTF + Huffman | 1–9 | — |
+| `brotli` | LZ77 + Huffman + contexto | 0–11 | estático embutido |
+| `xz` | LZMA2 | 0–9 | — |
+
+`GET /api/v1/codecs` devolve esse catálogo em runtime — dá para montar chamadas
+sem hardcodar nome nem faixa de nível.
+
+---
+
+## Resultados medidos
+
+Medição real, mesmo binário, mesmo hardware. A coluna **ANTES** reproduz a
+política da versão anterior do motor (LZ4 ou `zstd -5`, escolhidos por dois
+limiares de entropia) forçando codec/nível pela própria API — comparação de
+política contra política.
+
+| Arquivo | Original | ANTES | AGORA (`max`) | Essência menor em | Plano vencedor |
+|---|---:|---:|---:|---:|---|
+| `vendas.csv` (400 mil linhas) | 29,3 MB | 55,4% | **83,6%** | −63,3% | `csv_columnar+xz:6` |
+| `eventos.ndjson` (120 mil logs) | 20,1 MB | 67,8% | **88,7%** | −64,7% | `csv_columnar+bzip2:9` |
+| `dump.sql` (150 mil INSERTs) | 16,5 MB | 77,6% | **91,9%** | −63,9% | `bzip2:9` |
+| `serie.i64` (900 mil timestamps) | 7,2 MB | 37,4% | **88,0%** | −80,8% | `delta:8>byte_split:8+zstd:19` |
+| `telemetria.f32` (1,5 M sensores) | 6,0 MB | −0,0% | **54,4%** | −54,4% | `byte_split:4+xz:6` |
+| `aleatorio.bin` (incompressível) | 6,0 MB | −0,0% | 0,0% | 0,0% | `stored` |
+| **Total** | **85,0 MB** | **53,3%** | **78,8%** | **−54,6%** | |
+
+Todas as reconstruções conferidas por SHA-256 contra o original: idênticas.
+
+Dois casos merecem destaque:
+
+- **`telemetria.f32`**: a política anterior escolhia LZ4 e *expandia* o arquivo.
+  Um array de `f32` não tem redundância que o LZ77 enxergue — ela está na
+  correlação entre bytes na mesma posição de elementos vizinhos, que só aparece
+  depois do `byte_split`.
+- **`serie.i64`**: timestamps crescentes viram valores quase constantes após
+  `delta:8`, e o `byte_split` agrupa os bytes altos (todos iguais). De 37,4%
+  para 88,0%.
+
+---
+
+## Início rápido
+
+### Docker
+
+```bash
+# desenvolvimento (Postgres + engine, esforço max, API aberta)
+docker compose up --build
+
+# produção
+export SYNTRA_API_KEYS="$(openssl rand -hex 32)"
+export POSTGRES_PASSWORD="$(openssl rand -hex 24)"
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+Dashboard: <http://localhost:3002/> · Contrato: <http://localhost:3002/api/v1/openapi.json>
+
+### Local
+
+Não é preciso instalar `protoc`: o binário vem vendorizado pelo build script.
+
+```bash
+SYNTRA_DB_URL=sqlite:syntra.db cargo run --release
+```
+
+### Primeiro ciclo
+
+```bash
+# comprime e guarda o container
+curl -sS -X POST 'http://localhost:3002/api/v1/compress?filename=vendas.csv&effort=max' \
+     --data-binary @vendas.csv -D headers.txt -o vendas.syntra
+
+grep -i x-syntra headers.txt
+#   x-syntra-id: 9f2c...            ← hash BLAKE3, é o id do objeto
+#   x-syntra-savings-pct: 83.61
+#   x-syntra-plan: csv_columnar+xz:6
+#   x-syntra-verified: true
+
+# reconstrói e confirma que é idêntico
+curl -sS -X POST http://localhost:3002/api/v1/decompress \
+     --data-binary @vendas.syntra -o reconstruido.csv
+cmp vendas.csv reconstruido.csv && echo "idêntico"
 ```
 
 ---
 
-## 🧩 Componentes
+## Referência da API
 
-### 1. Módulo de Análise Adaptativa ([`adaptive.rs`](src/adaptive.rs))
+Contrato completo em `GET /api/v1/openapi.json` (OpenAPI 3.0.3) — importável no
+Postman/Insomnia e utilizável com `openapi-generator`.
 
-Analisa os dados de entrada e decide automaticamente qual algoritmo usar.
+### Compressão
 
-**Como funciona:**
-- Calcula a **Entropia Shannon** dos primeiros 1MB dos dados
-- Detecta o tipo de arquivo via assinatura (MIME type)
-- Decide a estratégia ótima:
+| Método | Rota | O que faz |
+|---|---|---|
+| `POST` | `/api/v1/compress` | Bytes → essência. Devolve o container ou o relatório JSON. |
+| `POST` | `/api/v1/decompress` | Essência → bytes originais, com hash conferido. |
+| `POST` | `/api/v1/analyze` | Mede todos os candidatos e devolve o comparativo. Não grava. |
+| `POST` | `/api/v1/inspect` | Lê metadados e valida o checksum de uma essência. Não reconstrói. |
 
-| Entropia | Tipo | Tamanho | Algoritmo |
-|----------|------|---------|-----------|
-| ≥ 7.8 | qualquer | qualquer | **Passthrough** (não processa) |
-| < 4.5 | qualquer | qualquer | **LZ4** (ultra rápido) |
-| < 4.8 | binário/outros | qualquer | **ZstdBalanced** (-5) |
-| texto estruturado | JSON/XML/CSV | > 50MB | **LZ4** |
-| texto estruturado | JSON/XML/CSV | ≤ 50MB | **ZstdBalanced** (-5) |
-| 4.5–7.8 | outros | qualquer | **LZ4** |
-| fallback | qualquer | qualquer | **ZstdFast** (-7) |
+### Objetos arquivados
 
-### 2. Módulo de Geração de Essência ([`compress.rs`](src/compress.rs))
+| Método | Rota | O que faz |
+|---|---|---|
+| `GET` | `/api/v1/objects` | Lista processamentos (`?type=name\|mime\|id&search=&limit=`). |
+| `GET` | `/api/v1/objects/:id` | Metadados: plano, economia, referências. |
+| `GET` | `/api/v1/objects/:id/content` | Original reconstruído. |
+| `GET` | `/api/v1/objects/:id/essence` | Container `.syntra` cru (para replicar sem descomprimir). |
+| `DELETE` | `/api/v1/objects/:id` | Solta uma referência; `?purge=true` remove já. |
 
-Implementa os algoritmos de geração de essência:
+`:id` é o hash BLAKE3 do original: 64 dígitos hexadecimais. Qualquer outra coisa
+devolve `400 invalid_object_id`.
 
-| Algoritmo | Velocidade | Razão Típica | Uso Ideal |
-|-----------|------------|--------------|-----------|
-| **ZstdFast** | Muito rápida | 2–3x | Arquivos variados (fallback) |
-| **ZstdBalanced** | Rápida | 3–6x | Texto estruturado (JSON, XML, CSV) |
-| **LZ4** | Ultra rápida (>500 MB/s) | 2–2.5x | Dados repetitivos, arquivos grandes |
-| **Passthrough** | Instantânea | 1x | Dados já comprimidos/criptografados |
+### Descoberta e operação
 
-### 3. Módulo de Vault ([`vault.rs`](src/vault.rs))
+| Método | Rota | O que faz |
+|---|---|---|
+| `GET` | `/api/v1/codecs` | Codecs, transforms, modos de esforço e classes de conteúdo. |
+| `GET` | `/api/v1/dictionaries` | Dicionários treinados e em uso. |
+| `GET` | `/api/v1/stats` | `process` (esta instância) e `lifetime` (acumulado em banco). |
+| `GET` | `/health` | Liveness. Não toca banco nem disco. |
+| `GET` | `/ready` | Readiness: confere banco e vault. |
+| `GET` | `/metrics` | Prometheus. |
 
-Gerencia o armazenamento de arquivos processados.
+`/health`, `/ready`, `/metrics` e `/api/v1/openapi.json` ficam abertos mesmo com
+autenticação ativa.
 
-**Estrutura de diretórios (Sharding):**
+### Parâmetros de compressão
+
+Aceitos em query string **ou** header. Precedência: query > header > default.
+
+| Query | Header | Valores | Default |
+|---|---|---|---|
+| `filename` | `x-filename` | texto | `sem-nome` |
+| `mime` | `x-mime` | MIME | detectado |
+| `effort` | `x-effort` | `fast` `balanced` `max` | `SYNTRA_DEFAULT_EFFORT` |
+| `codec` | `x-codec` | nome do codec | medição automática |
+| `level` | `x-level` | inteiro | default do codec |
+| `verify` | `x-verify` | bool | `SYNTRA_VERIFY_ON_WRITE` |
+| `dictionary` | `x-dictionary` | bool | automático |
+| `persist` | — | bool | `true` |
+| `dedup` | — | bool | `true` |
+| `response` | `x-response-format` | `binary` `json` | `binary` |
+
+`Accept: application/json` equivale a `response=json`.
+
+Nível fora da faixa do codec devolve `400 invalid_level` — sem clamp silencioso.
+
+### Corpo de erro
+
+```json
+{
+  "error": {
+    "code": "dictionary_unavailable",
+    "message": "dicionário 'application_json.7f3a1c…' necessário para reconstruir não está disponível neste nó",
+    "hint": "Restaure o diretório SYNTRA_DICT_PATH ou aponte SYNTRA_REDIS_URL para o cluster que o contém."
+  }
+}
+```
+
+`code` é estável e pode ser tratado programaticamente. Os valores estão
+enumerados no OpenAPI.
+
+| Status | Quando |
+|---|---|
+| `400` | Parâmetro inválido, id malformado, corpo vazio, envelope indecifrável |
+| `401` | API key ausente ou inválida |
+| `404` | Objeto inexistente |
+| `409` | Dicionário necessário indisponível neste nó |
+| `422` | Essência corrompida, infiel ao original ou irreconstruível |
+| `503` | Motor encerrando (requisições não são rejeitadas por fila: elas aguardam o permit de CPU) |
+
+### Autenticação
+
+Ativa quando `SYNTRA_API_KEYS` está definido (lista separada por vírgula):
+
+```bash
+curl -H 'x-api-key: <chave>' ...
+curl -H 'Authorization: Bearer <chave>' ...
+```
+
+A comparação é em tempo constante. Sem a variável, a API sobe aberta e registra
+um aviso no log.
+
+Atenção ao dashboard embutido: com autenticação ativa, as rotas de dados que ele
+consome (`/stats`, `/api/files`) também passam a exigir chave, e a página fica
+sem dados. Em produção, sirva o dashboard atrás de um proxy que injete o header,
+ou trate-o como ferramenta de desenvolvimento e monitore por `/metrics`.
+
+### Correlação
+
+`x-request-id` é propagado se enviado, ou gerado, e volta na resposta.
+
+---
+
+## Modos de esforço
+
+`effort` controla quantos planos o motor mede:
+
+| Modo | Candidatos | Perfil |
+|---|---|---|
+| `fast` | 1 | Plano heurístico único. Latência mínima. |
+| `balanced` | até 4 | Default. Bom ganho com custo previsível. |
+| `max` | até 16 | Varredura ampla de transforms × codecs. Densidade máxima. |
+
+Medido sobre o mesmo corpus de 85,0 MB da seção anterior (tempo inclui a
+verificação de round-trip, que está ligada por padrão):
+
+| Modo | Essência total | Economia | Tempo |
+|---|---:|---:|---:|
+| Política anterior | 39,7 MB | 53,3% | — |
+| `fast` | 24,7 MB | **70,9%** | 0,5 s |
+| `balanced` | 20,3 MB | **76,1%** | 11,3 s |
+| `max` | 18,0 MB | **78,8%** | 130,4 s |
+
+O detalhe que importa: `fast` gasta meio segundo e ainda assim comprime muito
+mais que a política anterior. Ela não era um ponto de trade-off — era pior nas
+duas dimensões, porque escolhia LZ4 e níveis negativos de Zstd, que ficam fora
+da curva útil de densidade/velocidade.
+
+Para arquivos acima de `SYNTRA_PROBE_THRESHOLD_MB` (48 MB por padrão), a
+medição roda sobre uma amostra e só o plano vencedor é aplicado ao arquivo
+inteiro — o custo de CPU fica limitado sem abrir mão de decidir com dado real.
+A resposta JSON marca isso em `sampled_decision`.
+
+Use `POST /api/v1/analyze` para ver o trade-off antes de escolher:
+
+```bash
+curl -sS -X POST 'http://localhost:3002/api/v1/analyze?filename=vendas.csv&effort=max' \
+     --data-binary @vendas.csv | jq '.candidates[:4]'
+```
+
+---
+
+## Configuração
+
+| Variável | Default | Descrição |
+|---|---|---|
+| `SYNTRA_BIND_ADDR` | `0.0.0.0:3002` | Endereço de escuta |
+| `SYNTRA_MAX_BODY_MB` | `4096` | Corpo máximo aceito |
+| `SYNTRA_API_KEYS` | — | Chaves aceitas (vazio = **API aberta**) |
+| `SYNTRA_CORS_ORIGINS` | — | Origens permitidas (vazio = liberado) |
+| `SYNTRA_VAULT_PATH` | `essence_vault` | Raiz das essências |
+| `SYNTRA_SLED_INDEX` | `metadata_index.sled` | Índice de referências |
+| `SYNTRA_DICT_PATH` | `dictionaries` | Dicionários treinados |
+| `SYNTRA_DB_URL` | `postgres://…` | `postgres://…` ou `sqlite:arquivo.db` |
+| `SYNTRA_DEFAULT_EFFORT` | `balanced` | `fast` · `balanced` · `max` |
+| `SYNTRA_VERIFY_ON_WRITE` | `true` | Confere round-trip antes de gravar |
+| `SYNTRA_DICTIONARIES` | `true` | Habilita treino e uso de dicionários |
+| `SYNTRA_REDIS_URL` | — | Distribui dicionários entre nós |
+| `SYNTRA_PROBE_THRESHOLD_MB` | `48` | Acima disto, mede por amostra |
+| `SYNTRA_PROBE_SAMPLE_MB` | `8` | Tamanho da amostra de medição |
+| `SYNTRA_KEEP_OUTPUT_MB` | `16` | Até onde reaproveitar a saída do vencedor |
+| `SYNTRA_WATCH_ENABLED` | `true` | Ingestão por diretório |
+| `SYNTRA_WATCH_DIR` | `watch_in` | Diretório observado |
+| `SYNTRA_WATCH_DELETE_SOURCE` | `false` | Remove o original após arquivar |
+| `SYNTRA_COMPRESS_MULTIPLIER` | `4` | Permits de I/O por permit de CPU |
+| `RAYON_NUM_THREADS` | CPUs | Threads de compressão |
+| `RUST_LOG` | `engine=info` | Filtro de log |
+
+Valor inválido gera aviso e cai no default — um typo não impede o serviço de
+subir.
+
+---
+
+## Armazenamento e operação
+
+### Layout
+
 ```
 essence_vault/
-├── ab/                               # Primeiros 2 bytes do hash BLAKE3
-│   └── cd/                           # Próximos 2 bytes do hash
-│       └── abcd...1234_1707839.syntra # {hash}_{timestamp_nanos}.syntra
-├── 12/
-│   └── 34/
-│       └── 1234...5678_1707840.syntra
-└── ...
+  9f/2c/9f2c4a…e1.syntra        # uma essência por conteúdo único
+metadata_index.sled/            # hash → {referências, tamanhos, nomes vistos}
+dictionaries/
+  text_csv.7f3a1c2b8d4e5f60.dict
+  application_json.a1b2c3d4e5f60718.dict
 ```
 
-**Formato do nome do arquivo:** `{hash_blake3}_{timestamp_nanos}.syntra`
-- O timestamp garante que arquivos com o mesmo conteúdo tenham nomes únicos
-- Excluir um arquivo não afeta outros com o mesmo hash
-- Sharding em 2 níveis melhora performance em infra com milhões de arquivos
+O caminho é derivado do hash; **nenhuma string vinda do cliente entra no
+caminho de arquivo**. O identificador recebido pela API é decodificado para 32
+bytes antes de virar caminho.
 
-### 4. Módulo de Dicionários ([`dictionary.rs`](src/dictionary.rs))
+### O que precisa de backup
 
-Treina Modelos de Contexto (dicionários Zstd) para maior eficiência por tipo de dado.
+Três diretórios, juntos:
 
-**Após 10+ arquivos do mesmo MIME-type:**
-- Coleta amostras de todos os arquivos processados
-- Treina um dicionário específico para aquele tipo
-- As próximas essências daquele tipo ganham **20–50% a mais de compressão**
+1. `SYNTRA_VAULT_PATH` — as essências.
+2. `SYNTRA_DICT_PATH` — **indispensável**. Uma essência comprimida com
+   dicionário só reconstrói com aquele dicionário. Sem ele, a descompressão
+   devolve `409 dictionary_unavailable`. Em cluster, aponte `SYNTRA_REDIS_URL`
+   para que os dicionários sejam replicados.
+3. `SYNTRA_SLED_INDEX` — reconstruível a partir do vault no boot, mas o
+   contador de referências é perdido (cada objeto volta com 1).
 
-**Tipos de dicionário suportados:**
-- `application/json` — APIs, exports de banco de dados
-- `text/csv` — planilhas, relatórios
-- `text/plain` — logs de sistema, telemetria
-- `image/jpeg` — fotos com padrão similar
+O banco de auditoria não é crítico: o vault é auto-suficiente.
 
-**Cluster Mode:** Dicionários são sincronizados via Redis para que todos os nós aprendam juntos.
+### Ingestão por diretório
 
-### 5. Monitor DB ([`db_monitor.rs`](src/db_monitor.rs))
+Arquivos colocados em `SYNTRA_WATCH_DIR` são arquivados automaticamente pela
+mesma camada de serviço da API. O motor espera o tamanho estabilizar antes de
+ler (não arquiva cópia em andamento) e só remove o original se
+`SYNTRA_WATCH_DELETE_SOURCE=true` **e** o arquivamento tiver confirmado sucesso.
 
-Rastreia todos os arquivos processados para auditoria e métricas de ROI.
+### Encerramento
 
-**Schema (SQLite/PostgreSQL):**
-```sql
-CREATE TABLE processed_files (
-    id TEXT PRIMARY KEY,           -- Identificador único (hash + timestamp)
-    original_name TEXT NOT NULL,   -- Nome original do arquivo
-    raw_size INTEGER NOT NULL,     -- Tamanho antes da destilação
-    compressed_size INTEGER NOT NULL, -- Tamanho da essência
-    savings_pct REAL NOT NULL,     -- % economizado
-    algorithm TEXT NOT NULL,       -- Algoritmo utilizado
-    duration_ms REAL NOT NULL,     -- Tempo de processamento
-    timestamp TIMESTAMP DEFAULT NOW()
-);
+O binário trata `SIGTERM`/`SIGINT`, drena as conexões em curso e sincroniza o
+índice antes de sair. Em produção, dê `stop_grace_period` folgado.
+
+### Métricas
+
+```
+syntra_bytes_in_total / syntra_essence_bytes_total / syntra_distillation_ratio
+syntra_items_total / syntra_reconstructions_total
+syntra_verify_failures_total        # deve ser sempre 0 — alerte se subir
+syntra_dedup_hits_total / syntra_dedup_bytes_saved_total
+syntra_codec_usage_total{codec="…"}
+syntra_processing_latency_ms_bucket{le="…"}
+syntra_system_cpu_usage / syntra_system_memory_used_bytes
 ```
 
-**Operações principais:**
-- `register_file()` — Registra arquivo processado
-- `list_files()` — Lista com paginação e filtro
-- `get_stats()` — Agrega métricas (COUNT, SUM, AVG, economia total)
-- `delete_file()` — Remove por ID único
-- `get_file_by_hash_and_timestamp()` — Busca para download correto
-
-### 6. Módulo de Métricas ([`metrics.rs`](src/metrics.rs))
-
-Coleta métricas em tempo real usando contadores atômicos (lock-free).
-
-**Métricas exportadas (formato Prometheus):**
-```prometheus
-syntra_bytes_in_total           # Bytes de entrada recebidos
-syntra_essence_bytes_total      # Bytes de saída (essências geradas)
-syntra_essence_ratio            # Razão global de destilação
-syntra_items_total              # Total de arquivos processados
-syntra_processing_latency_ms    # Histograma de latência por arquivo
-syntra_model_usage{model="..."}  # Uso por algoritmo (ZstdFast, LZ4, etc.)
-```
-
-### 7. Módulo de Watcher ([`watcher.rs`](src/watcher.rs))
-
-Monitora diretório para ingestão automática de arquivos.
-
-**Três mecanismos de detecção:**
-1. **Notify** — Eventos nativos do sistema de arquivos (inotify no Linux)
-2. **Polling** — Verificação periódica a cada 2 segundos
-3. **Batch Drain** — Processamento em lote a cada 500ms
-
-**Fluxo:**
-1. Detecta novo arquivo em `watch_in/`
-2. Aguarda arquivo estar completamente escrito
-3. Lê, processa e salva essência no vault
-4. Remove arquivo original de `watch_in/`
-5. Registra no banco de monitoramento
-
-### 8. HTTP Handlers ([`handlers.rs`](src/handlers.rs))
-
-Implementa todos os endpoints da API REST, incluindo upload, download, listagem, deleção e métricas.
+`syntra_verify_failures_total > 0` significa que uma essência não reproduziu o
+original na verificação de gravação — bug de codec ou memória com defeito. O
+motor recusa gravar nesse caso, mas é um sinal para investigar imediatamente.
 
 ---
 
-## 🔄 Como Funciona
+## Cobertura de algoritmos
 
-### Geração de Essência (Flow)
+O motor cobre as famílias que se aplicam a **arquivo entra, arquivo sai, sem
+perdas**:
 
-```
-1. Upload (POST /process)
-   │
-   ├─► Lê bytes do arquivo via streaming
-   ├─► Detecta MIME type (infer)
-   ├─► Calcula hash BLAKE3
-   │
-2. Análise Adaptativa
-   │
-   ├─► Calcula entropia Shannon (primeiros 1MB)
-   ├─► Seleciona algoritmo ideal
-   ├─► Verifica se há Modelo de Contexto treinado
-   │
-3. Destilação
-   │
-   ├─► Aplica algoritmo selecionado
-   ├─► (opcional) Usa dicionário para ganho extra
-   │
-4. Armazenamento
-   │
-   ├─► Salva no vault (sharded por hash)
-   ├─► Registra no banco (nome, tamanho, algoritmo, saving%)
-   ├─► Atualiza métricas atômicas
-   │
-5. Resposta
-   │
-   └─► Retorna essência (.syntra) ao cliente
-```
+| Família | Implementado |
+|---|---|
+| Entropy coding | Huffman, FSE, range coding (internos aos codecs) |
+| Dictionary / Lempel-Ziv | LZ4, DEFLATE, Zstd, Brotli, LZMA2 |
+| BWT | Bzip2 |
+| Predictive coding | `delta` (largura 1/2/4/8) |
+| Columnar | `csv_columnar`, `byte_split` (Byte Stream Split do Parquet) |
+| Run/pattern | `rle` (PackBits) |
+| Dicionário treinado | Zstd dictionary, treinado por classe de conteúdo |
+| Deduplicação | Global, endereçada por conteúdo (BLAKE3) |
 
-### Reconstrução (Flow)
+**Deliberadamente fora de escopo**, com o motivo:
 
-```
-1. Upload da essência (POST /reconstruct)
-   │
-   ├─► Deserializa metadados (Protobuf)
-   ├─► Identifica algoritmo usado
-   │
-2. Destilação Inversa
-   │
-   ├─► Aplica algoritmo inverso (Zstd/LZ4 decompress)
-   ├─► (se aplicável) Usa Modelo de Contexto
-   │
-3. Verificação
-   │
-   ├─► Recalcula hash BLAKE3 do dado reconstruído
-   ├─► Compara com hash original armazenado
-   │
-4. Resposta
-   │
-   └─► Retorna arquivo original exatamente como era
-```
+- **Codecs perceptuais** (JPEG, AV1, HEVC, MP3, Opus) e **quantização** são
+  *lossy*. O contrato do motor é reconstrução bit a bit; um modo com perdas
+  seria um contrato diferente, com endpoint e garantias próprias. Conteúdo que
+  já usa esses codecs é detectado como `media` e gravado `stored` em vez de
+  recomprimido em vão.
+- **Recompressão de container** (Zopfli em PNG, recompressão de JPEG, reempacotar
+  ZIP/XLSX) exige parsear cada formato. É a próxima fronteira útil de densidade,
+  mas é trabalho por formato, não algoritmo genérico.
+- **Compressão de modelos e de vetores** (quantização INT8/INT4, GPTQ, PQ/OPQ,
+  pruning, distillation) opera sobre tensores com semântica conhecida e tolera
+  perda controlada. Não é a mesma operação que "reduzir um arquivo e reconstruí-lo".
+- **Chunking com deduplicação em nível de bloco** (CDC/Rabin) está modelado no
+  protobuf (`Block`) mas não ativado: rende em coleções de arquivos com grandes
+  trechos comuns, um caso que o dedup por arquivo inteiro já cobre parcialmente.
 
 ---
 
-## 🚀 Instalação
-
-### Pré-requisitos
-
-- **Rust** 1.75+ (para desenvolvimento local)
-- **Docker** e **Docker Compose** (para produção — recomendado)
-- **PostgreSQL** 14+ ou **SQLite** 3+
-- **Redis** (opcional — para Cluster Mode)
-
-### Desenvolvimento Local
+## Desenvolvimento
 
 ```bash
-# Clone o repositório
-git clone <repo-url>
-cd syntra-rust/engine
-
-# Configure o banco
-export SYNTRA_DB_URL="sqlite://monitoring.db"
-# OU PostgreSQL
-export SYNTRA_DB_URL="postgres://user:pass@localhost:5432/syntra"
-
-# Build e run
+cargo test              # roundtrip, classificação, integridade, API ponta a ponta
 cargo build --release
-cargo run --release
+cargo clippy --all-targets
 ```
 
-O servidor estará disponível em `http://localhost:3002`
+Os testes não exigem serviços externos: o banco roda em `sqlite::memory:` e os
+testes de API sobem o router completo em processo.
+
+Cobertura relevante:
+
+- **Roundtrip exaustivo** — todo codec e todo transform, em todas as larguras,
+  incluindo entrada vazia, de 1 byte e de tamanho não múltiplo do elemento.
+- **Bijetividade dos transforms** — `invert(apply(x)) == x`, com validação de
+  tamanho em cada estágio.
+- **Piso `stored`** — dado aleatório não gera essência maior que o original.
+- **Integridade** — bit flip no payload é detectado antes de descomprimir; hash
+  divergente vira erro de fidelidade.
+- **Dicionários** — treino, persistência, resolução por id após restart, recusa
+  de dicionário corrompido, e retreino que não invalida o anterior.
+- **API ponta a ponta** — ciclo comprimir/reconstruir, dedup, autenticação,
+  rejeição de id malicioso, forma dos erros, rotas legadas.
+
+Para medir com dados próprios, use `POST /api/v1/analyze` — ele devolve o
+tamanho e o tempo de cada candidato sem gravar nada.
 
 ---
 
-## ⚙️ Configuração
+## Arquitetura do código
 
-Todas as configurações são feitas via **variáveis de ambiente**:
+| Arquivo | Responsabilidade |
+|---|---|
+| `src/codec.rs` | Registro de codecs, faixas de nível, encode/decode |
+| `src/transform.rs` | Transformações reversíveis (delta, byte-split, RLE, colunar) |
+| `src/content.rs` | Classificação: MIME, entropia, stride, layout tabular |
+| `src/planner.rs` | Geração e medição de candidatos; seleção do vencedor |
+| `src/container.rs` | Envelope `.syntra`: selar, ler, verificar fidelidade |
+| `src/dict_store.rs` | Dicionários treinados, persistidos, endereçados por conteúdo |
+| `src/vault.rs` | Armazenamento endereçado por conteúdo e contagem de referências |
+| `src/service.rs` | Orquestração compartilhada por HTTP e ingestão |
+| `src/api/` | Router, middlewares, DTOs, erros, OpenAPI, rotas legadas |
+| `src/watcher.rs` | Ingestão automática por diretório |
+| `src/metrics.rs` | Contadores Prometheus e JSON |
+| `src/db_monitor.rs` | Auditoria em SQLite/Postgres |
+| `proto/engine.proto` | Formato do envelope |
 
-| Variável | Padrão | Descrição |
-|----------|--------|-----------|
-| `SYNTRA_VAULT_PATH` | `essence_vault` | Diretório para armazenar essências |
-| `SYNTRA_SLED_INDEX` | `metadata_index.sled` | Caminho do índice Sled |
-| `SYNTRA_DB_URL` | `postgres://...` | URL do banco de monitoramento |
-| `SYNTRA_WATCH_DIR` | `watch_in` | Diretório monitorado para auto-ingestão |
-| `SYNTRA_BIND_ADDR` | `0.0.0.0:3002` | Endereço do servidor HTTP |
-| `SYNTRA_MAX_BODY_MB` | `4096` | Tamanho máximo de upload (MB) |
-| `SYNTRA_COMPRESS_MULTIPLIER` | `4` | Multiplicador I/O vs CPU para semáforo |
-| `RAYON_NUM_THREADS` | `(auto)` | Threads do Rayon (vazio = todos os cores) |
-| `RUST_LOG` | `engine=debug` | Nível de log |
+Dependências: apenas o que é usado. Codecs (`zstd`, `brotli`, `xz2`, `bzip2`,
+`flate2`, `lz4_flex`), HTTP (`axum`, `tower-http`), persistência (`sled`,
+`sqlx`), paralelismo (`rayon`, `dashmap`) e o essencial de suporte. O build não
+exige `protoc` no sistema nem pacotes `apt` na imagem.
 
-### Exemplo de configuração para produção
+Compressão é CPU-bound e I/O de vault é bloqueante: ambos rodam em
+`spawn_blocking` sobre o pool do Rayon, nunca nas threads do runtime async. O
+semáforo de CPU é adquirido apenas em volta do trabalho de CPU, não durante a
+leitura do corpo HTTP.
 
-```bash
-# PostgreSQL
-export SYNTRA_DB_URL="postgres://syntra:senha@db.example.com:5432/production"
-
-# Caminhos de armazenamento
-export SYNTRA_VAULT_PATH="/data/essence_vault"
-export SYNTRA_WATCH_DIR="/data/inbox"
-
-# Performance
-export RAYON_NUM_THREADS="16"
-export SYNTRA_COMPRESS_MULTIPLIER="4"
-
-# Servidor
-export SYNTRA_BIND_ADDR="0.0.0.0:3002"
-export SYNTRA_MAX_BODY_MB="10240"  # 10GB max upload
-```
+O código-fonte não leva comentários, por convenção do projeto. O "porquê" das
+decisões — política de compressão, garantias de integridade, trade-offs
+operacionais — mora neste README. Ao alterar comportamento, atualize a seção
+correspondente aqui.
 
 ---
 
-## 🐳 Docker
+## Compatibilidade
 
-### Docker Compose (Recomendado para Produção)
+### Rotas antigas
 
-```yaml
-# docker-compose.prod.yml
-services:
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: syntra
-      POSTGRES_PASSWORD: syntra123
-      POSTGRES_DB: syntra_monitoring
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+`/process`, `/compress`, `/reconstruct`, `/decompress`, `/stats`, `/api/files`,
+`/api/files/:id`, `/api/sim/process` e `/api/sim/download/:id` continuam
+respondendo no **mesmo formato**, mas por dentro passam pela camada de serviço
+atual — herdando deduplicação, verificação, dicionários persistidos e seleção
+por medição. Novas integrações devem usar `/api/v1`.
 
-  syntra:
-    build: .
-    ports:
-      - "3002:3002"
-    environment:
-      SYNTRA_DB_URL: postgres://syntra:syntra123@postgres:5432/syntra_monitoring
-      SYNTRA_VAULT_PATH: /data/essence_vault
-      SYNTRA_WATCH_DIR: /data/watch_in
-    volumes:
-      - syntra_vault:/data/essence_vault
-      - syntra_inbox:/data/watch_in
-    depends_on:
-      - postgres
-```
+### Envelopes antigos
 
-### Comandos Docker
-
-```bash
-# Produção
-docker-compose -f docker-compose.prod.yml up -d
-
-# Desenvolvimento
-docker-compose up --build
-
-# Logs
-docker-compose logs -f syntra
-
-# Parar
-docker-compose down
-
-# Parar e remover volumes
-docker-compose down -v
-```
-
-### Multi-Stage Dockerfile
-
-```dockerfile
-# Stage 1: Builder (Rust compilação)
-FROM rust:1.88-slim-bookworm AS builder
-# Compila dependências em cache separadamente
-# Build final com --release (LTO fat, opt-level 3)
-
-# Stage 2: Runtime (mínimo)
-FROM debian:bookworm-slim
-# Apenas o binário compilado + static/
-# Executa como usuário não-root (syntra)
-```
-
-### Auto-Ingestão via Watch Directory
-
-```bash
-# Copie os arquivos para processar
-cp /meus/arquivos/*.json /data/watch_in/
-
-# O Watcher irá:
-# 1. Detectar os novos arquivos
-# 2. Processar e gerar essências
-# 3. Salvar no vault
-# 4. Deletar os originais
-```
-
----
-
-## 🌐 API Endpoints
-
-### Health & Status
-
-#### `GET /health`
-```json
-{ "status": "healthy", "version": "0.3.0" }
-```
-
-#### `GET /stats`
-```json
-{
-  "files_processed": 1234,
-  "total_bytes_in": 5368709120,
-  "total_bytes_out": 1875648762,
-  "savings_pct": 65.1,
-  "avg_duration_ms": 234.5,
-  "zstd_count": 856,
-  "lz4_count": 312,
-  "passthrough_count": 66
-}
-```
-
-#### `GET /metrics`
-Exporta métricas em formato Prometheus (`text/plain`).
-
----
-
-### Processamento
-
-#### `POST /process`
-Processa um arquivo e retorna a essência `.syntra`.
-
-**Headers:**
-- `x-filename: documento.pdf` (opcional — para preservar nome original)
-- `Content-Type: application/octet-stream`
-
-**Response:** Binário `.syntra`
-
-```bash
-curl -X POST http://localhost:3002/process \
-  -H "x-filename: relatorio.json" \
-  -H "Content-Type: application/octet-stream" \
-  --data-binary @relatorio.json \
-  -o relatorio.syntra
-```
-
-#### `POST /reconstruct`
-Reconstrói o arquivo original a partir da essência.
-
-```bash
-curl -X POST http://localhost:3002/reconstruct \
-  -H "Content-Type: application/octet-stream" \
-  --data-binary @relatorio.syntra \
-  -o relatorio_reconstruido.json
-```
-
----
-
-### Gerenciamento de Arquivos
-
-#### `GET /api/files`
-Lista todos os arquivos processados (paginado).
-
-**Query Params:** `page`, `limit`, `filter`
-
-```json
-{
-  "files": [
-    {
-      "name": "abc123...456_1707839234567890123.syntra",
-      "original_name": "relatorio.json",
-      "size": 12345,
-      "created_at": "2024-01-15T10:30:00Z",
-      "processing_time_ms": 234.5,
-      "algorithm": "ZstdBalanced"
-    }
-  ],
-  "total": 1234,
-  "page": 1,
-  "limit": 50
-}
-```
-
-#### `GET /api/files/:filename`
-Download de uma essência específica.
-
-```bash
-curl -O http://localhost:3002/api/files/abc123...456_1707839234567890123.syntra
-```
-
-#### `DELETE /api/files/:filename`
-Remove uma essência do vault e do banco.
-
-```json
-{
-  "success": true,
-  "message": "Arquivo deletado com sucesso",
-  "id": "abc123...456_1707839234567890123.syntra"
-}
-```
-
----
-
-## 📊 Dashboard
-
-Disponível em `/dashboard`:
-
-- **Cards de Métricas** — Arquivos processados, economia acumulada, uptime
-- **Gráficos** — Distribuição de algoritmos por uso
-- **Tabela de Arquivos** — Lista paginada com busca, download e deleção
-- **Simulador** — Upload de teste com resultado ao vivo
-
----
-
-## 🛠️ Desenvolvimento
-
-### Estrutura do Projeto
-
-```
-engine/
-├── src/
-│   ├── main.rs           # Entry point, setup do servidor HTTP
-│   ├── config.rs         # Configurações (env vars)
-│   ├── adaptive.rs       # Análise de entropia e seleção de estratégia
-│   ├── compress.rs       # Algoritmos de geração de essência
-│   ├── vault.rs          # Gerenciamento de armazenamento sharded
-│   ├── dictionary.rs     # Treinamento de Modelos de Contexto
-│   ├── db_monitor.rs     # Operações de banco (SQLite/PostgreSQL)
-│   ├── metrics.rs        # Métricas Prometheus (atômicos lock-free)
-│   ├── watcher.rs        # File watcher (notify + polling)
-│   └── handlers.rs       # HTTP handlers (Axum routes)
-├── proto/                # Protocol Buffers definitions
-├── static/
-│   └── dashboard.html    # Dashboard UI (HTML + JS vanilla)
-├── Cargo.toml            # Dependências e perfis de build
-├── Dockerfile            # Multi-stage build
-└── docker-compose.yml    # Orquestração de serviços
-```
-
-### Build & Test
-
-```bash
-# Hot-reload para desenvolvimento
-cargo install cargo-watch
-cargo watch -x run
-
-# Testes
-cargo test
-
-# Benchmark
-cargo bench
-
-# Release otimizado (LTO fat, opt-level 3)
-cargo build --release
-```
-
-### Logs
-
-```bash
-RUST_LOG=debug cargo run      # Verboso
-RUST_LOG=info cargo run       # Produção
-RUST_LOG=engine::vault=debug  # Módulo específico
-```
-
----
-
-## 📈 Performance
-
-### Benchmarks Típicos
-
-| Tipo de Arquivo | Tamanho | Tempo | Razão | Algoritmo |
-|-----------------|---------|-------|-------|-----------|
-| Log text | 100 MB | 0.8s | 5.2x | ZstdBalanced |
-| JSON | 10 MB | 0.15s | 4.1x | ZstdBalanced |
-| JPEG | 5 MB | 0.02s | 1.0x | Passthrough |
-| PDF | 50 MB | 1.2s | 2.3x | LZ4 |
-| XML | 25 MB | 0.4s | 6.8x | ZstdBalanced |
-
-### Otimizações de Build (Perfil Release)
-
-```toml
-[profile.release]
-opt-level     = 3        # Máxima otimização de código
-lto           = "fat"    # Link-time optimization completa
-codegen-units = 1        # Melhor otimização entre módulos
-strip         = true     # Remove símbolos de debug do binário
-panic         = "abort"  # Sem unwinding (menor e mais rápido)
-```
-
-### Otimizações de Runtime
-
-- **Streaming**: Processa chunks sem carregar arquivo completo em memória
-- **Paralelismo Rayon**: Todos os cores do CPU em uso para CPU-bound
-- **Async Tokio**: I/O não-bloqueante para milhares de conexões simultâneas
-- **mimalloc**: Alocador de memória otimizado para multi-core
-- **Atômicos**: Métricas completamente lock-free
-- **Sharding**: Vault distribuído em diretórios evita hotspot
-
----
-
-## 📄 Licença
-
-Este projeto é propriedade privada. Todos os direitos reservados.
-
----
-
-*Syntra Engine — Engineered for Extreme Scale*
+Essências gravadas com `version <= 2` (enum `Algorithm` legado, sem transforms)
+continuam sendo lidas e reconstruídas. Envelopes novos são `version 3`.
