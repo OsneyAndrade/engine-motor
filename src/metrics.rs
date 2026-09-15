@@ -1,24 +1,3 @@
-//! # Módulo de Métricas e Monitoramento
-//!
-//! Este módulo coleta e exporta métricas sobre o funcionamento do motor Syntra.
-//! As métricas são essenciais para monitorar a saúde do sistema e calcular o ROI
-//! (Return on Investment) da destilação de dados.
-//!
-//! # Formatos de Exportação
-//!
-//! - **Prometheus**: Formato de texto usado pelo sistema de monitoramento Prometheus
-//! - **JSON**: Formato legível para humanos, usado pelo dashboard web
-//!
-//! # O que é Prometheus?
-//!
-//! Prometheus é um sistema de monitoramento de código aberto que coleta métricas
-//! de serviços em intervalos regulares. Ele usa um formato de texto simples onde
-//! cada linha representa uma métrica.
-//!
-//! # O que são Histogramas?
-//!
-//! Histogramas mostram a distribuição de valores. Por exemplo, um histograma de
-//! latência mostra quantas requisições foram rápidas, médias ou lentas.
 
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
@@ -27,37 +6,8 @@ use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
 use crate::proto::Algorithm;
 
-/// Buckets de latência em milissegundos para o histograma Prometheus.
-///
-/// # O que são Buckets?
-///
-/// Buckets são intervalos usados para contar valores em um histograma.
-/// Por exemplo, se temos buckets [1, 5, 10], contamos quantas operações
-/// levaram <= 1ms, <= 5ms, <= 10ms, etc.
-///
-/// # Por que estes valores?
-///
-/// Estes valores cobrem uma faixa útil de 1ms a 5 segundos, que é onde
-/// a maioria das operações de compressão deve cair.
 const LATENCY_BUCKETS: [f64; 10] = [1.0, 5.0, 10.0, 50.0, 100.0, 250.0, 500.0, 1000.0, 2500.0, 5000.0];
 
-/// Coletor de métricas do motor Syntra.
-///
-/// Esta estrutura contém contadores atômicos para rastrear várias estatísticas
-/// sobre o funcionamento do sistema.
-///
-/// # Por que AtomicU64?
-///
-/// `AtomicU64` permite que múltiplas threads atualizem os contadores
-/// simultaneamente sem usar locks, através de operações atômicas (como
-/// fetch_add). Isso é muito mais rápido que usar Mutex para contadores.
-///
-/// # Campos Principais
-///
-/// - `bytes_in/bytes_out`: Contadores de volume de dados
-/// - `latency_*`: Estatísticas de tempo de processamento
-/// - `dedup_*`: Estatísticas de deduplicação
-/// - `*_count`: Contadores por algoritmo usado
 pub struct EngineMetrics {
     /// Total de bytes recebidos para processamento (entrada)
     pub bytes_in: AtomicU64,
@@ -122,16 +72,6 @@ pub struct EngineMetrics {
 }
 
 impl EngineMetrics {
-    /// Cria um novo coletor de métricas com todos os contadores zerados.
-    ///
-    /// # O que faz
-    ///
-    /// Inicializa todos os contadores atômicos com zero e configura
-    /// o monitor de sistema para acompanhar CPU e memória.
-    ///
-    /// # Retorna
-    ///
-    /// Uma nova instância de EngineMetrics pronta para uso
     pub fn new() -> Self {
         // Cria os contadores para cada bucket do histograma
         let mut buckets = Vec::with_capacity(LATENCY_BUCKETS.len());
@@ -169,21 +109,6 @@ impl EngineMetrics {
         }
     }
 
-    /// Inicializa métricas a partir de dados persistentes do banco de dados.
-    ///
-    /// # O que faz
-    ///
-    /// Carrega estatísticas do banco para não perder dados após restart.
-    /// Isso permite que o dashboard mostre valores corretos mesmo após
-    /// reiniciar o servidor.
-    ///
-    /// IMPORTANTE: Este método só deve ser chamado UMA VEZ na inicialização.
-    /// Se chamado durante operação normal, pode sobrescrever valores em memória.
-    ///
-    /// # Parâmetros
-    ///
-    /// * `db_stats` - Estatísticas do banco de dados (bytes_in, bytes_out, etc.)
-    /// * `total_duration_ms` - Soma total de tempo de processamento em ms
     pub fn load_from_db(&self, db_stats: &serde_json::Value, total_duration_ms: f64) {
         use std::sync::atomic::Ordering;
 
@@ -222,38 +147,12 @@ impl EngineMetrics {
         }
     }
 
-    /// Registra o uso atual de CPU reportado pelo Load Balancer.
-    ///
-    /// # O que faz
-    ///
-    /// Atualiza o valor `last_cpu_usage` com o uso de CPU atual.
-    /// Este valor é usado pelo dashboard para mostrar o status do sistema.
-    ///
-    /// # Parâmetros
-    ///
-    /// * `usage` - Porcentagem de uso de CPU (0.0 a 100.0)
     pub fn record_cpu_usage(&self, usage: f32) {
-        // Tenta obter acesso exclusivo ao Mutex
-        //
-        // lock() bloqueia até conseguir acesso ao Mutex.
-        // Se outra thread estiver usando, esta thread espera.
-        // Ok(mut last) obtém acesso e retorna guard mutável.
         if let Ok(mut last) = self.last_cpu_usage.lock() {
             *last = usage;
         }
     }
 
-    /// Registra qual algoritmo foi usado para processar um arquivo.
-    ///
-    /// # O que faz
-    ///
-    /// Incrementa o contador correspondente ao algoritmo usado.
-    /// Estas estatísticas ajudam a entender quais estratégias são
-    /// mais comuns no workload atual.
-    ///
-    /// # Parâmetros
-    ///
-    /// * `algo` - O algoritmo que foi usado
     pub fn record_strategy(&self, algo: Algorithm) {
         match algo {
             Algorithm::ZstdFast => {
@@ -274,23 +173,6 @@ impl EngineMetrics {
         }
     }
 
-    /// Registra o tempo de processamento de uma operação.
-    ///
-    /// # O que faz
-    ///
-    /// 1. Adiciona o tempo ao somatório total
-    /// 2. Atualiza os buckets do histograma
-    ///
-    /// # Como funciona o histograma
-    ///
-    /// O histograma Prometheus é cumulativo. Se uma operação levou 15ms:
-    /// - Ela conta no bucket <= 50ms
-    /// - Ela conta no bucket <= 100ms
-    /// - Ela conta em todos os buckets >= 50ms
-    ///
-    /// # Parâmetros
-    ///
-    /// * `ms` - Tempo de processamento em milissegundos
     pub fn record_latency(&self, ms: f64) {
         // Adiciona o tempo ao somatório total
         let prev = self.latency_sum_ms.fetch_add(ms as u64, Ordering::Relaxed);
@@ -303,10 +185,6 @@ impl EngineMetrics {
             prev + (ms as u64)
         );
 
-        // Atualiza todos os buckets do histograma
-        //
-        // Em Prometheus, histogramas são cumulativos: cada bucket
-        // contém a soma de todos os buckets anteriores.
         for (i, &bucket) in LATENCY_BUCKETS.iter().enumerate() {
             if ms <= bucket {
                 // Se o tempo é menor ou igual ao bucket, incrementa o contador
@@ -317,32 +195,6 @@ impl EngineMetrics {
         // O contador total é mantido separadamente em `files_processed`.
     }
 
-    /// Exporta métricas em formato Prometheus (text/plain).
-    ///
-    /// # O que é Prometheus?
-    ///
-    /// Prometheus é um sistema de monitoramento que coleta métricas
-    /// de serviços em intervalos regulares. Este método retorna as métricas
-    /// no formato que Prometheus espera.
-    ///
-    /// # Formato
-    ///
-    /// Cada métrica é representada por 3 linhas:
-    /// ```text
-    /// # HELP nome_da_metrica Descrição da métrica
-    /// # TYPE nome_da_metrica tipo (counter/gauge/histogram)
-    /// nome_da_metrica valor
-    /// ```
-    ///
-    /// # Tipos de Métricas
-    ///
-    /// - **Counter**: Só aumenta (ex: bytes processados)
-    /// - **Gauge**: Pode aumentar ou diminuir (ex: uso de CPU)
-    /// - **Histogram**: Distribuição de valores (ex: latência)
-    ///
-    /// # Retorna
-    ///
-    /// String formatada pronta para ser consumida pelo Prometheus
     pub fn to_prometheus(&self) -> String {
         // Calcula métricas básicas
         let uptime = self.start_time.elapsed().as_secs();
@@ -436,34 +288,7 @@ impl EngineMetrics {
         prom
     }
 
-    /// Exporta métricas em formato JSON para o dashboard.
-    ///
-    /// # Diferença do formato Prometheus
-    ///
-    /// - Prometheus é para sistemas de monitoramento automático
-    /// - JSON é para visualização humana (dashboard web)
-    ///
-    /// # Estrutura do JSON
-    ///
-    /// ```json
-    /// {
-    ///   "engine": "...",
-    ///   "uptime_seconds": 123,
-    ///   "roi": { ... },
-    ///   "deduplication": { ... },
-    ///   "system": { ... },
-    ///   ...
-    /// }
-    /// ```
-    ///
-    /// # Parâmetros
-    ///
-    /// * `dict_count` - Número de dicionários treinados ativos
-    /// * `dict_hits` - Número de vezes que dicionários foram usados
-    ///
-    /// # Retorna
-    ///
-    /// Um `serde_json::Value` contendo todas as métricas formatadas
+
     pub fn to_json(
         &self,
         dict_count: usize,
@@ -498,10 +323,6 @@ impl EngineMetrics {
             (0.0, 0)
         };
 
-        // Constrói o JSON com todas as métricas
-        //
-        // serde_json::json! é uma macro que permite criar JSON
-        // de forma conveniente usando sintaxe Rust.
         serde_json::json!({
             "engine": "Syntra Engine",
             "uptime_seconds": uptime,

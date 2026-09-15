@@ -1,13 +1,3 @@
-//! # Build Script do Engine
-//!
-//! Este arquivo é executado pelo Cargo durante o processo de compilação,
-//! antes de compilar o código Rust principal. Build scripts são usados
-//! para gerar código ou realizar outras tarefas de build.
-//!
-//! # O que este build script faz?
-//!
-//! 1. Compila arquivos Protocol Buffers (.proto) em código Rust
-//! 2. Tenta localizar o compilador protoc automaticamente
 
 fn main() {
     // Diz ao Cargo para reexecutar este script se o arquivo .proto mudar

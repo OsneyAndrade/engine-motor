@@ -14,8 +14,6 @@ use crate::adaptive;
 use crate::compress;
 use crate::proto::{FileMetrics, ProcessedFile};
 
-/// Inicia o monitoramento de diretório para ingestão direta (Datacenter Mode)
-/// Usa modo híbrido: notify events + polling + BATCH DRAINING para escala extrema
 pub fn start_directory_watcher(state: Arc<EngineState>, watch_dir: impl AsRef<Path>) {
     let watch_dir = watch_dir.as_ref().to_path_buf();
     let _ = std::fs::create_dir_all(&watch_dir);
@@ -26,9 +24,6 @@ pub fn start_directory_watcher(state: Arc<EngineState>, watch_dir: impl AsRef<Pa
     // Rastreador de processamento ativo (debounce temporal)
     let active_processing = Arc::new(dashmap::DashMap::<PathBuf, Instant>::new());
 
-    // =========================================================================
-    // MECANISMO 1: Notify (filesystem events) - Coleta no Buffer
-    // =========================================================================
     let buffer_for_notify = batch_buffer.clone();
     let active_for_notify = active_processing.clone();
     let watch_dir_for_notify = watch_dir.clone();
@@ -82,9 +77,6 @@ pub fn start_directory_watcher(state: Arc<EngineState>, watch_dir: impl AsRef<Pa
         }
     });
 
-    // =========================================================================
-    // MECANISMO 2: Polling - Coleta no Buffer
-    // =========================================================================
     let watch_dir_clone = watch_dir.clone();
     let buffer_for_polling = batch_buffer.clone();
     let active_for_poll = active_processing.clone();
@@ -136,9 +128,6 @@ pub fn start_directory_watcher(state: Arc<EngineState>, watch_dir: impl AsRef<Pa
         }
     });
 
-    // =========================================================================
-    // MECANISMO 3: Batch Drain Worker (O MOTOR DE ESCALA)
-    // =========================================================================
     let batch_drain = batch_buffer.clone();
     let state_drain = state.clone();
     let active_drain = active_processing.clone();

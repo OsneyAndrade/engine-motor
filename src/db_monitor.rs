@@ -1,110 +1,37 @@
-//! # Módulo de Monitoramento de Banco de Dados
-//!
-//! Este módulo gerencia a conexão com o banco de dados usado para
-//! registrar informações sobre arquivos processados (auditoria).
-//!
-//! # Bancos de Dados Suportados
-//!
-//! - **SQLite**: Banco embutido, ideal para desenvolvimento e pequenas instalações
-//! - **PostgreSQL**: Banco de dados completo, ideal para produção e datacenters
-//!
-//! # Funcionalidades
-//!
-//! - Registro de arquivos processados
-//! - Snapshots do sistema (CPU, RAM, throughput)
-//! - Listagem de arquivos com filtros
-//! - Exclusão de registros
-//!
-//! # Tabelas
-//!
-//! ## processed_files
-//! Armazena informações sobre cada arquivo processado:
-//! - `id`: Hash BLAKE3 do arquivo (hexadecimal)
-//! - `original_name`: Nome original do arquivo
-//! - `mime`: Tipo MIME detectado
-//! - `raw_size`: Tamanho original em bytes
-//! - `essence_size`: Tamanho da essência em bytes
-//! - `savings_pct`: Porcentagem de economia
-//! - `algorithm`: Algoritmo usado
-//! - `duration_ms`: Tempo de processamento
-//! - `vault_path`: Caminho para o arquivo no vault
-//!
-//! ## system_snapshots
-//! Armazena snapshots periódicos do sistema:
-//! - `total_in`: Total de bytes recebidos
-//! - `essence_out`: Total de bytes de essência
-//! - `files_count`: Número de arquivos processados
-//! - `cpu_pct`: Uso de CPU
-//! - `ram_bytes`: Memória RAM usada
-
 use anyhow::Result;
 use sqlx::{sqlite::SqlitePool, postgres::PgPool};
 
-/// Tipo de banco de dados suportado.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DbType {
-    /// SQLite (banco embutido em arquivo)
+pub enum DbType {=
     Sqlite,
-
-    /// PostgreSQL (banco de dados cliente-servidor)
     Postgres,
 }
 
-/// Enum que representa a conexão com o banco de dados.
-///
-/// # Por que usar um enum?
-///
-/// Isso permite que o código funcione com diferentes bancos de dados
-/// sem precisar saber qual está sendo usado em tempo de compilação.
 pub enum MonitorDB {
-    /// Conexão com pool de conexões SQLite
     Sqlite(SqlitePool),
-
-    /// Conexão com pool de conexões PostgreSQL
     Postgres(PgPool),
 }
 
 impl MonitorDB {
-    /// Cria uma nova conexão com o banco de dados.
-    ///
-    /// # O que faz
-    ///
-    /// 1. Detecta o tipo de banco pela URL
-    /// 2. Cria o pool de conexões
-    /// 3. Inicializa as tabelas (se não existirem)
-    /// 4. Retorna a conexão pronta para uso
-    ///
-    /// # URLs Suportadas
-    ///
-    /// - SQLite: `sqlite://caminho/arquivo.db`
-    /// - PostgreSQL: `postgres://usuario:senha@host:porta/banco`
-    ///
-    /// # Retorna
-    ///
-    /// Uma nova instância de MonitorDB ou erro se a conexão falhar
+
     pub async fn new(db_url: &str) -> Result<Self> {
         if db_url.starts_with("sqlite://") {
-            // Remove o prefixo sqlite:// para obter o caminho do arquivo
             let path = db_url.trim_start_matches("sqlite://");
 
-            // Cria o arquivo se não existir
             if !std::path::Path::new(path).exists() {
                 tokio::fs::File::create(path).await?;
             }
 
-            // Conecta ao banco SQLite
             let pool = SqlitePool::connect(db_url).await?;
 
-            // Inicializa as tabelas
             init_sqlite(&pool).await?;
 
             Ok(MonitorDB::Sqlite(pool))
 
         } else if db_url.starts_with("postgres://") || db_url.starts_with("postgresql://") {
-            // Conecta ao PostgreSQL
+
             let pool = PgPool::connect(db_url).await?;
 
-            // Inicializa as tabelas
             init_postgres(&pool).await?;
 
             Ok(MonitorDB::Postgres(pool))
@@ -117,7 +44,6 @@ impl MonitorDB {
         }
     }
 
-    /// Retorna o tipo de banco de dados desta conexão.
     pub fn db_type(&self) -> DbType {
         match self {
             MonitorDB::Sqlite(_) => DbType::Sqlite,
@@ -125,29 +51,6 @@ impl MonitorDB {
         }
     }
 
-    /// Registra um arquivo processado no banco de dados.
-    ///
-    /// # O que faz
-    ///
-    /// Insere uma nova linha na tabela `processed_files` com as informações
-    /// sobre o arquivo processado.
-    ///
-    /// # Por que tantos parâmetros?
-    ///
-    /// Cada parâmetro representa uma coluna da tabela. Isso permite
-    /// auditoria completa e análise posterior.
-    ///
-    /// # Parâmetros
-    ///
-    /// * `hash_hex` - Hash BLAKE3 do arquivo em hexadecimal
-    /// * `name` - Nome original do arquivo
-    /// * `mime` - Tipo MIME detectado
-    /// * `raw_size` - Tamanho original em bytes
-    /// * `essence_size` - Tamanho da essência em bytes
-    /// * `savings_pct` - Porcentagem de economia
-    /// * `algo` - Algoritmo usado
-    /// * `duration_ms` - Tempo de processamento em ms
-    /// * `vault_path` - Caminho para o arquivo no vault
     #[allow(clippy::too_many_arguments)]
     pub async fn log_file(
         &self,
@@ -163,7 +66,6 @@ impl MonitorDB {
     ) -> Result<()> {
         match self {
             MonitorDB::Sqlite(pool) => {
-                // SQLite usa ? como placeholder de parâmetro
                 sqlx::query(
                     "INSERT INTO processed_files
                     (id, original_name, mime, raw_size, essence_size, savings_pct, algorithm, duration_ms, vault_path)
@@ -205,20 +107,6 @@ impl MonitorDB {
         }
     }
 
-    /// Registra um snapshot do sistema no banco de dados.
-    ///
-    /// # O que é um Snapshot?
-    ///
-    /// Um snapshot é uma "foto" do estado do sistema em um determinado momento.
-    /// Útil para análise de tendências e gráficos de desempenho.
-    ///
-    /// # Parâmetros
-    ///
-    /// * `total_in` - Total de bytes recebidos até o momento
-    /// * `total_out` - Total de bytes de essência até o momento
-    /// * `files_count` - Número de arquivos processados até o momento
-    /// * `cpu` - Uso de CPU atual (0-100)
-    /// * `ram` - Memória RAM usada em bytes
     pub async fn record_snapshot(
         &self,
         total_in: u64,
@@ -259,34 +147,13 @@ impl MonitorDB {
         }
     }
 
-    /// Lista arquivos processados (usado pelo endpoint /api/files).
-    ///
-    /// # Parâmetros
-    ///
-    /// * `limit` - Número máximo de arquivos a retornar
-    ///
-    /// # Retorna
-    ///
-    /// Um vetor de FileRecord com os arquivos mais recentes
     pub async fn list_files(
         &self,
         limit: i64,
     ) -> Result<Vec<FileRecord>> {
-        // Chama a versão com filtro sem filtros
         self.list_files_with_filter(limit, None, None).await
     }
 
-    /// Lista arquivos processados com filtro opcional por nome ou hash.
-    ///
-    /// # Parâmetros
-    ///
-    /// * `limit` - Número máximo de arquivos a retornar
-    /// * `filter_type` - Tipo de filtro ("name" ou "hash"), ou None
-    /// * `filter_value` - Valor para buscar, ou None
-    ///
-    /// # Retorna
-    ///
-    /// Um vetor de FileRecord filtrado
     pub async fn list_files_with_filter(
         &self,
         limit: i64,
@@ -295,11 +162,8 @@ impl MonitorDB {
     ) -> Result<Vec<FileRecord>> {
         match self {
             MonitorDB::Sqlite(pool) => {
-                // Constrói a query SQL dinamicamente
                 let (query, bind_value) = build_sqlite_query(filter_type, filter_value, limit);
                 let mut sql_query = sqlx::query_as::<_, FileRecord>(&query);
-
-                // Se há filtro, adiciona o valor
                 if let Some(val) = bind_value {
                     sql_query = sql_query.bind(val);
                 }
@@ -308,7 +172,6 @@ impl MonitorDB {
                 Ok(rows)
             }
             MonitorDB::Postgres(pool) => {
-                // Constrói a query SQL dinamicamente
                 let (query, bind_value, limit_value) = build_postgres_query(filter_type, filter_value, limit);
 
                 tracing::warn!("PostgreSQL query: {}", query);
@@ -317,12 +180,10 @@ impl MonitorDB {
                 let mut sql_query = sqlx::query_as::<_, FileRecord>(&query);
 
                 if let Some(val) = bind_value {
-                    // Se há filtro: $1 é o filtro (String), $2 é o LIMIT (i64)
                     tracing::warn!("Binding filter: {}", val);
                     tracing::warn!("Then binding limit: {}", limit_value);
                     sql_query = sql_query.bind(val).bind(limit_value as i64);
                 } else {
-                    // Se não há filtro: $1 é o LIMIT (i64)
                     tracing::warn!("Binding only limit: {}", limit_value);
                     sql_query = sql_query.bind(limit_value as i64);
                 }
@@ -333,21 +194,6 @@ impl MonitorDB {
         }
     }
 
-    /// Busca um arquivo específico pelo hash e timestamp.
-    ///
-    /// # O que faz
-    ///
-    /// Quando há múltiplos arquivos com o mesmo hash (duplicados),
-    /// esta função permite buscar um registro específico usando o timestamp.
-    ///
-    /// # Parâmetros
-    ///
-    /// * `id_hex` - Hash BLAKE3 do arquivo
-    /// * `timestamp` - Timestamp Unix específico do registro
-    ///
-    /// # Retorna
-    ///
-    /// O registro do arquivo ou None se não encontrado
     pub async fn get_file_by_hash_and_timestamp(&self, id_hex: &str, created_at: &str) -> Result<Option<FileRecord>> {
         match self {
             MonitorDB::Sqlite(pool) => {
@@ -395,11 +241,6 @@ impl MonitorDB {
         }
     }
 
-    /// Remove um arquivo do banco de dados.
-    ///
-    /// # Parâmetros
-    ///
-    /// * `id_hex` - Hash BLAKE3 do arquivo a remover (em hexadecimal)
     pub async fn delete_file(&self, id_hex: &str) -> Result<()> {
         match self {
             MonitorDB::Sqlite(pool) => {
@@ -419,16 +260,6 @@ impl MonitorDB {
         }
     }
 
-    /// Retorna estatísticas agregadas do banco de dados para o dashboard.
-    ///
-    /// # O que faz
-    ///
-    /// Calcula estatísticas somando todos os registros da tabela `processed_files`.
-    /// Isso permite que o dashboard mostre dados persistentes mesmo após reiniciar o servidor.
-    ///
-    /// # Retorna
-    ///
-    /// Um JSON com as estatísticas: total de arquivos, bytes, economia, etc.
     pub async fn get_stats(&self) -> Result<serde_json::Value> {
         match self {
             MonitorDB::Sqlite(pool) => {
@@ -570,10 +401,6 @@ impl MonitorDB {
     }
 }
 
-/// Representação de um registro de arquivo processado.
-///
-/// Esta estrutura é mapeada diretamente das linhas do banco de dados
-/// através da trait `sqlx::FromRow`.
 #[derive(sqlx::FromRow)]
 pub struct FileRecord {
     /// Hash BLAKE3 do arquivo (hexadecimal)
@@ -601,12 +428,6 @@ pub struct FileRecord {
     pub created_at: String,
 }
 
-/// Constrói query SQLite com filtro opcional.
-///
-/// # Por que funções separadas?
-///
-/// SQLite e PostgreSQL têm sintaxes diferentes para placeholders
-/// (? vs $1, $2). Esta função constrói a query corretamente para SQLite.
 fn build_sqlite_query(filter_type: Option<&str>, filter_value: Option<&str>, limit: i64) -> (String, Option<String>) {
     // Query base que seleciona as colunas
     let base_select = "SELECT
@@ -656,10 +477,6 @@ fn build_sqlite_query(filter_type: Option<&str>, filter_value: Option<&str>, lim
     (query, bind_value)
 }
 
-/// Constrói query PostgreSQL com filtro opcional.
-///
-/// Similar à função SQLite, mas usa sintaxe PostgreSQL.
-/// Retorna (query, filter_value, limit)
 fn build_postgres_query(filter_type: Option<&str>, filter_value: Option<&str>, limit: i64) -> (String, Option<String>, i64) {
     let base_select = "SELECT
         id,
@@ -716,13 +533,6 @@ fn build_postgres_query(filter_type: Option<&str>, filter_value: Option<&str>, l
     (query, bind_value, limit)
 }
 
-/// Inicializa as tabelas do banco SQLite.
-///
-/// # O que faz
-///
-/// 1. Verifica se existe uma tabela antiga e migra se necessário
-/// 2. Cria as tabelas se não existirem
-/// 3. Cria índices para performance
 async fn init_sqlite(pool: &SqlitePool) -> Result<()> {
     // ... (código de inicialização mantido igual)
     sqlx::query(
@@ -772,9 +582,6 @@ async fn init_sqlite(pool: &SqlitePool) -> Result<()> {
     Ok(())
 }
 
-/// Inicializa as tabelas do banco PostgreSQL.
-///
-/// Similar à versão SQLite, mas usa sintaxe PostgreSQL.
 async fn init_postgres(pool: &PgPool) -> Result<()> {
     sqlx::query(
         "CREATE TABLE IF NOT EXISTS processed_files (

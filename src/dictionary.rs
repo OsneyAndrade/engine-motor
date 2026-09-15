@@ -1,74 +1,17 @@
-//! # Módulo de Gerenciamento de Dicionários Zstd
-//!
-//! Este módulo implementa o auto-treinamento de dicionários Zstd para
-//! melhorar a compressão de dados repetitivos ou estruturados.
-//!
-//! # O que é um Dicionário Zstd?
-//!
-//! Um dicionário Zstd é uma amostra de dados "típicos" que é usada para
-//! treinar o compressor. Quando o compressor conhece os padrões comuns
-//! dos dados, ele pode comprimi-los muito mais eficientemente.
-//!
-//! # Como Funciona
-//!
-//! 1. **Coleta de Amostras**: Cada arquivo processado fornece uma amostra
-//! 2. **Acúmulo**: Quando temos 10+ amostras de um tipo, iniciamos o treinamento
-//! 3. **Treinamento**: O Zstd analisa as amostras e cria um dicionário
-//! 4. **Uso**: Próximos arquivos do mesmo tipo usam o dicionário
-//! 5. **Compartilhamento**: Dicionários podem ser compartilhados via Redis
-//!
-//! # Vantagens
-//!
-//! - **Melhor Compressão**: Dicionários podem melhorar a compressão em 20-50%
-//! - **Automático**: Não precisa configurar manualmente
-//! - **Específico por Tipo**: Cada MIME type tem seu próprio dicionário
-
 use dashmap::DashMap;
 use parking_lot::RwLock;
 use redis::Commands;
 use std::sync::atomic::{AtomicU64, Ordering, AtomicBool};
 use tracing::{info, debug, error};
 
-/// Número mínimo de amostras antes de treinar um dicionário.
-///
-/// # Por que 10?
-///
-/// - Menos de 10: Amostras insuficientes para criar um dicionário útil
-/// - Mais de 10: Melhor dicionário, mas demora mais para treinar
 const MIN_SAMPLES: usize = 10;
 
-/// Tamanho máximo de um dicionário treinado.
-///
-/// # Por que 112KB?
-///
-/// - Zstd recomenda dicionários de até 112KB para bom balance
-/// - Dicionários maiores melhoram pouco a compressão
-/// - Dicionários maiores tornam a compressão mais lenta
 const DICT_MAX_SIZE: usize = 112 * 1024; // 112KB
 
-/// Gerenciador de dicionários Zstd auto-treinados.
-///
-/// Esta estrutura gerencia a coleta de amostras, treinamento de dicionários
-/// e compartilhamento via Redis para ambientes distribuídos.
-///
-/// # Campos
-///
-/// - `dictionaries`: Dicionários já treinados (cache local)
-/// - `samples`: Buffer de amostras aguardando treinamento
-/// - `hits`: Contador de vezes que um dicionário foi usado
-/// - `redis`: Cliente Redis opcional para compartilhamento
-/// - `redis_online`: Flag indicando se Redis está acessível
+
 pub struct DictionaryManager {
-    /// Dicionários treinados localmente: categoria → bytes do dicionário
     dictionaries: DashMap<String, Vec<u8>>,
-
-    /// Buffer de amostras para treinamento futuro
-    ///
-    /// Cada categoria (ex: "application/json") tem seu próprio buffer
-    /// de amostras. Quando há amostras suficientes, o dicionário é treinado.
     samples: DashMap<String, RwLock<Vec<Vec<u8>>>>,
-
-    /// Contagem de usos de dicionário
     hits: AtomicU64,
 
     /// Cliente Redis opcional para Clustering
@@ -82,15 +25,7 @@ pub struct DictionaryManager {
 }
 
 impl DictionaryManager {
-    /// Cria um novo gerenciador de dicionários.
-    ///
-    /// # Parâmetros
-    ///
-    /// * `redis` - Cliente Redis opcional para compartilhamento de dicionários
-    ///
-    /// # Retorna
-    ///
-    /// Uma nova instância de DictionaryManager
+
     pub fn new(redis: Option<redis::Client>) -> Self {
         Self {
             dictionaries: DashMap::new(),
@@ -101,22 +36,6 @@ impl DictionaryManager {
         }
     }
 
-    /// Adiciona uma amostra de dados para treinamento futuro.
-    ///
-    /// # O que faz
-    ///
-    /// 1. Adiciona os dados ao buffer de amostras da categoria
-    /// 2. Se já temos amostras suficientes, inicia o treinamento
-    ///
-    /// # Por que limitar a 64KB?
-    ///
-    /// - Amostras maiores não melhoram muito o dicionário
-    /// - Amostras menores são mais rápidas de processar
-    ///
-    /// # Parâmetros
-    ///
-    /// * `category` - Categoria MIME dos dados (ex: "application/json")
-    /// * `data` - Amostra de dados a ser adicionada
     pub fn add_sample(&self, category: &str, data: &[u8]) {
         // Limita a amostra a 64KB
         let sample = if data.len() > 65536 { &data[..65536] } else { data };
@@ -141,25 +60,6 @@ impl DictionaryManager {
         }
     }
 
-    /// Treina um dicionário a partir das amostras coletadas.
-    ///
-    /// # O que faz
-    ///
-    /// 1. Coleta todas as amostras da categoria
-    /// 2. Usa o Zstd para criar um dicionário a partir das amostras
-    /// 3. Salva o dicionário localmente
-    /// 4. (Opcional) Compartilha o dicionário via Redis
-    /// 5. Limpa as amostras usadas
-    ///
-    /// # Por que isso é assíncrono na prática?
-    ///
-    /// O treinamento pode levar alguns segundos, então idealmente seria
-    /// executado em background. Nesta implementação, é síncrono para
-    /// simplificar.
-    ///
-    /// # Parâmetros
-    ///
-    /// * `category` - Categoria para treinar o dicionário
     fn train(&self, category: &str) {
         // Obtém as amostras da categoria
         let samples_data = match self.samples.get(category) {
@@ -219,27 +119,6 @@ impl DictionaryManager {
         }
     }
 
-    /// Obtém um dicionário treinado para uma categoria específica.
-    ///
-    /// # Estratégia de Busca
-    ///
-    /// 1. Tenta o cache local primeiro (mais rápido)
-    /// 2. Se não encontrar, tenta o Redis (compartilhamento global)
-    /// 3. Se Redis estiver offline, usa Circuit Breaker para não tentar sempre
-    ///
-    /// # O que é Circuit Breaker?
-    ///
-    /// Se Redis falhar múltiplas vezes, paramos de tentar conectar
-    /// por um tempo. Isso evita lentid causada por tentativas de conexão
-    /// que vão falhar de qualquer forma.
-    ///
-    /// # Parâmetros
-    ///
-    /// * `category` - Categoria MIME do arquivo
-    ///
-    /// # Retorna
-    ///
-    /// `Some(dict)` se encontrar, `None` se não existir dicionário
     pub fn get_dictionary(&self, category: &str) -> Option<Vec<u8>> {
         // 1. Tenta cache local (mais rápido)
         if let Some(dict) = self.dictionaries.get(category) {
@@ -304,12 +183,6 @@ impl DictionaryManager {
         None
     }
 
-    /// Tenta reconectar ao Redis (pode ser chamado periodicamente).
-    ///
-    /// # Quando usar
-    ///
-    /// Esta função pode ser chamada por um timer periódico para tentar
-    /// reconectar ao Redis sem bloquear operações normais.
     pub fn try_reconnect_redis(&self) {
         if let Some(client) = &self.redis {
             // Só tenta se o Circuit Breaker estiver aberto (Redis offline)

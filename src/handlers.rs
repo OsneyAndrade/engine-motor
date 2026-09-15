@@ -1,42 +1,3 @@
-//! # Módulo de Manipuladores de Requisições HTTP
-//!
-//! Este módulo contém os handlers que processam as requisições HTTP recebidas
-//! pelo servidor Axum. Cada handler é responsável por uma funcionalidade
-//! específica da API do Syntra Engine.
-//!
-//! # Arquitetura dos Handlers
-//!
-//! Os handlers são funções assíncronas que recebem:
-//! - O estado compartilhado do motor (EngineState)
-//! - Dados da requisição (corpo, headers, parâmetros)
-//!
-//! E retornam:
-//! - Uma resposta HTTP ou um erro
-//!
-//! # Principais Endpoints
-//!
-//! ## Processamento
-//! - `POST /process` - Processa um arquivo e gera a essência comprimida
-//! - `POST /reconstruct` - Reconstrói o arquivo original a partir da essência
-//!
-//! ## Consulta e Gerenciamento
-//! - `GET /stats` - Retorna estatísticas em JSON
-//! - `GET /metrics` - Retorna métricas em formato Prometheus
-//! - `GET /health` - Health check simples
-//! - `GET /api/files` - Lista arquivos processados
-//! - `GET /api/files/:filename` - Baixa um arquivo processado
-//! - `DELETE /api/files/:filename` - Deleta um arquivo processado
-//!
-//! ## Simulação
-//! - `POST /api/sim/process` - Processa e retorna JSON simplificado
-//! - `GET /api/sim/download/:id` - Download de arquivo processado (simulação)
-//!
-//! # Otimizações v2.1
-//!
-//! - **Zero-copy pipeline**: Blocos duplicados não são copiados desnecessariamente
-//! - **Streaming**: Processa arquivos grandes em chunks de 64KB
-//! - **Rayon ThreadPool**: Isolamento de carga para operações CPU-bound
-
 use axum::{
     extract::{State, Path as AxumPath},
     http::{header, HeaderName, StatusCode},
@@ -54,9 +15,6 @@ use tracing::{info, error};
 use crate::proto::{Algorithm, FileMetrics, ProcessedFile};
 use crate::{adaptive, compress, EngineState};
 
-// ---------------------------------------------------------------------------
-// DETECÇÃO DE TIPO (Otimizada com PHF)
-// ---------------------------------------------------------------------------
 
 static MIME_EXTENSIONS: phf::Map<&'static str, &'static str> = phf::phf_map! {
     "json" => "application/json",
