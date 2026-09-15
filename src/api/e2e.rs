@@ -439,10 +439,26 @@ async fn descoberta_de_capacidades_e_contrato() {
         "/api/v1/analyze",
         "/api/v1/objects/{id}",
         "/api/v1/objects/{id}/content",
+        "/api/v1/usage",
+        "/api/v1/admin/tenants",
+        "/api/v1/admin/tenants/{id}/keys",
+        "/api/v1/admin/keys/{key_id}",
+        "/api/v1/admin/usage",
         "/metrics",
     ] {
         assert!(doc["paths"][rota].is_object(), "rota {rota} ausente do OpenAPI");
     }
+    for schema in ["Quote", "UsageResponse", "PriceConfig", "Tenant", "ApiKey", "IssuedKey"] {
+        assert!(
+            doc["components"]["schemas"][schema].is_object(),
+            "schema {schema} ausente do OpenAPI"
+        );
+    }
+    let codigos = doc["components"]["schemas"]["Error"]["properties"]["error"]["properties"]
+        ["code"]["enum"]
+        .as_array()
+        .unwrap();
+    assert!(codigos.iter().any(|c| c == "forbidden"));
     limpar(&raiz);
 }
 
@@ -714,5 +730,564 @@ async fn array_numerico_usa_transform_de_pre_processamento() {
     let (_, _, volta) =
         enviar_completo(&state, get(&format!("/api/v1/objects/{id}/content"))).await;
     assert_eq!(volta, dados);
+    limpar(&raiz);
+}
+
+async fn cria_tenant(
+    state: &Arc<EngineState>,
+    id: &str,
+    plano: crate::tenancy::PlanKind,
+    escopos: Vec<crate::tenancy::Scope>,
+) -> String {
+    use crate::tenancy::{PriceConfig, Tenant, TenancyStore};
+
+    let tenant = Tenant {
+        id: id.to_string(),
+        name: format!("Tenant {id}"),
+        plan: plano,
+        price: PriceConfig::default(),
+        active: true,
+        created_at_ms: 1,
+    };
+    TenancyStore::upsert_tenant(&state.db, &tenant).await.unwrap();
+
+    let issued = crate::tenancy::generate_key(id, "e2e", escopos.into_iter().collect(), 1);
+    TenancyStore::store_key(&state.db, &issued).await.unwrap();
+    state.mark_auth_required();
+    issued.secret
+}
+
+fn post_com_chave(uri: &str, chave: &str, corpo: Vec<u8>) -> Request<Body> {
+    Request::builder()
+        .method("POST")
+        .uri(uri)
+        .header("x-api-key", chave)
+        .body(Body::from(corpo))
+        .unwrap()
+}
+
+fn get_com_chave(uri: &str, chave: &str) -> Request<Body> {
+    Request::builder()
+        .method("GET")
+        .uri(uri)
+        .header("x-api-key", chave)
+        .body(Body::empty())
+        .unwrap()
+}
+
+fn delete_com_chave(uri: &str, chave: &str) -> Request<Body> {
+    Request::builder()
+        .method("DELETE")
+        .uri(uri)
+        .header("x-api-key", chave)
+        .body(Body::empty())
+        .unwrap()
+}
+
+#[tokio::test]
+async fn tenant_nao_alcanca_objeto_de_outro_tenant() {
+    use crate::tenancy::{PlanKind, Scope};
+
+    let (state, raiz) = motor("isolamento", vec![]).await;
+    let escopos = vec![Scope::Compress, Scope::Read, Scope::Delete];
+    let chave_a = cria_tenant(&state, "empresa-a", PlanKind::SavingsShare, escopos.clone()).await;
+    let chave_b = cria_tenant(&state, "empresa-b", PlanKind::SavingsShare, escopos).await;
+
+    let dados = csv(1500);
+    let (status, corpo) = enviar(
+        &state,
+        post_com_chave(
+            "/api/v1/compress?filename=confidencial.csv&response=json",
+            &chave_a,
+            dados.clone(),
+        ),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    let id = json(&corpo)["id"].as_str().unwrap().to_string();
+
+    for rota in [
+        format!("/api/v1/objects/{id}"),
+        format!("/api/v1/objects/{id}/content"),
+        format!("/api/v1/objects/{id}/essence"),
+    ] {
+        let (status, corpo) = enviar(&state, get_com_chave(&rota, &chave_b)).await;
+        assert_eq!(
+            status,
+            StatusCode::NOT_FOUND,
+            "tenant B alcançou {rota}: {}",
+            String::from_utf8_lossy(&corpo)
+        );
+        assert_eq!(json(&corpo)["error"]["code"], "not_found");
+    }
+
+    let (status, corpo) = enviar(
+        &state,
+        delete_com_chave(&format!("/api/v1/objects/{id}"), &chave_b),
+    )
+    .await;
+    assert_eq!(status, StatusCode::NOT_FOUND, "tenant B conseguiu deletar");
+    assert_eq!(json(&corpo)["error"]["code"], "not_found");
+
+    let (status, _) = enviar(
+        &state,
+        get_com_chave(&format!("/api/v1/objects/{id}/content"), &chave_a),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK, "tenant A perdeu acesso ao próprio objeto");
+
+    let (_, lista_b) = enviar(&state, get_com_chave("/api/v1/objects", &chave_b)).await;
+    assert_eq!(json(&lista_b)["count"], 0, "listagem de B expôs objeto de A");
+
+    let (_, lista_a) = enviar(&state, get_com_chave("/api/v1/objects", &chave_a)).await;
+    assert_eq!(json(&lista_a)["count"], 1);
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn dedup_entre_tenants_nao_vira_oraculo() {
+    use crate::tenancy::{PlanKind, Scope};
+
+    let (state, raiz) = motor("oraculo", vec![]).await;
+    let escopos = vec![Scope::Compress, Scope::Read];
+    let chave_a = cria_tenant(&state, "empresa-a", PlanKind::SavingsShare, escopos.clone()).await;
+    let chave_b = cria_tenant(&state, "empresa-b", PlanKind::SavingsShare, escopos).await;
+
+    let dados = csv(1200);
+
+    let (_, corpo_a) = enviar(
+        &state,
+        post_com_chave("/api/v1/compress?filename=a.csv&response=json", &chave_a, dados.clone()),
+    )
+    .await;
+    assert_eq!(json(&corpo_a)["deduplicated"], false);
+
+    let (_, corpo_b) = enviar(
+        &state,
+        post_com_chave("/api/v1/compress?filename=b.csv&response=json", &chave_b, dados.clone()),
+    )
+    .await;
+    let b = json(&corpo_b);
+    assert_eq!(
+        b["deduplicated"], false,
+        "B não pode descobrir que outro tenant já tinha este conteúdo"
+    );
+    assert_eq!(b["references"], 1);
+
+    let (_, corpo_b2) = enviar(
+        &state,
+        post_com_chave("/api/v1/compress?filename=b2.csv&response=json", &chave_b, dados),
+    )
+    .await;
+    assert_eq!(
+        json(&corpo_b2)["deduplicated"], true,
+        "dedup dentro do próprio tenant deve ser reportada"
+    );
+
+    assert_eq!(state.vault.len(), 1, "o blob deve ser único no disco");
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn blob_sai_do_disco_so_na_ultima_referencia_global() {
+    use crate::tenancy::{PlanKind, Scope};
+
+    let (state, raiz) = motor("refglobal", vec![]).await;
+    let escopos = vec![Scope::Compress, Scope::Read, Scope::Delete];
+    let chave_a = cria_tenant(&state, "empresa-a", PlanKind::SavingsShare, escopos.clone()).await;
+    let chave_b = cria_tenant(&state, "empresa-b", PlanKind::SavingsShare, escopos).await;
+
+    let dados = csv(900);
+    let (_, corpo) = enviar(
+        &state,
+        post_com_chave("/api/v1/compress?filename=x.csv&response=json", &chave_a, dados.clone()),
+    )
+    .await;
+    let id = json(&corpo)["id"].as_str().unwrap().to_string();
+    enviar(
+        &state,
+        post_com_chave("/api/v1/compress?filename=y.csv&response=json", &chave_b, dados),
+    )
+    .await;
+
+    let (_, corpo) = enviar(
+        &state,
+        delete_com_chave(&format!("/api/v1/objects/{id}"), &chave_a),
+    )
+    .await;
+    assert_eq!(json(&corpo)["removed"], false, "B ainda referencia o conteúdo");
+    assert!(state.vault.contains(&crate::vault::VaultManager::parse_id(&id).unwrap()));
+
+    let (status, _) = enviar(
+        &state,
+        get_com_chave(&format!("/api/v1/objects/{id}/content"), &chave_b),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK, "B perdeu acesso quando A deletou");
+
+    let (_, corpo) = enviar(
+        &state,
+        delete_com_chave(&format!("/api/v1/objects/{id}"), &chave_b),
+    )
+    .await;
+    assert_eq!(json(&corpo)["removed"], true, "última referência não removeu o blob");
+    assert!(!state.vault.contains(&crate::vault::VaultManager::parse_id(&id).unwrap()));
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn escopos_sao_exigidos_por_rota() {
+    use crate::tenancy::{PlanKind, Scope};
+
+    let (state, raiz) = motor("escopos", vec![]).await;
+    let leitura = cria_tenant(&state, "somente-leitura", PlanKind::SavingsShare, vec![Scope::Read]).await;
+    let escrita = cria_tenant(&state, "somente-escrita", PlanKind::SavingsShare, vec![Scope::Compress]).await;
+
+    let (status, corpo) = enviar(
+        &state,
+        post_com_chave("/api/v1/compress?filename=x.csv", &leitura, csv(200)),
+    )
+    .await;
+    assert_eq!(status, StatusCode::FORBIDDEN);
+    let erro = json(&corpo);
+    assert_eq!(erro["error"]["code"], "forbidden");
+    assert!(erro["error"]["hint"].is_string());
+
+    let (status, corpo) = enviar(
+        &state,
+        post_com_chave("/api/v1/compress?filename=x.csv&response=json", &escrita, csv(200)),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    let id = json(&corpo)["id"].as_str().unwrap().to_string();
+
+    let (status, _) = enviar(
+        &state,
+        get_com_chave(&format!("/api/v1/objects/{id}"), &escrita),
+    )
+    .await;
+    assert_eq!(status, StatusCode::FORBIDDEN, "escopo compress não deve permitir leitura");
+
+    let (status, _) = enviar(
+        &state,
+        delete_com_chave(&format!("/api/v1/objects/{id}"), &escrita),
+    )
+    .await;
+    assert_eq!(status, StatusCode::FORBIDDEN);
+
+    let (status, _) = enviar(&state, get_com_chave("/api/v1/admin/tenants", &escrita)).await;
+    assert_eq!(status, StatusCode::FORBIDDEN, "rota admin exige escopo admin");
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn requisicao_idempotente_nao_reprocessa_nem_cobra_duas_vezes() {
+    use crate::tenancy::{PlanKind, Scope};
+
+    let (state, raiz) = motor("idempotencia", vec![]).await;
+    let chave = cria_tenant(
+        &state,
+        "empresa",
+        PlanKind::IngestedGb,
+        vec![Scope::Compress, Scope::Read],
+    )
+    .await;
+
+    let dados = csv(2000);
+    let montar = |corpo: Vec<u8>| {
+        Request::builder()
+            .method("POST")
+            .uri("/api/v1/compress?filename=nf.csv&response=json")
+            .header("x-api-key", chave.clone())
+            .header("idempotency-key", "pedido-4417")
+            .body(Body::from(corpo))
+            .unwrap()
+    };
+
+    let (status, primeiro) = enviar(&state, montar(dados.clone())).await;
+    assert_eq!(status, StatusCode::OK);
+    let p = json(&primeiro);
+    assert_eq!(p["replayed"], false);
+
+    let (status, segundo) = enviar(&state, montar(dados.clone())).await;
+    assert_eq!(status, StatusCode::OK);
+    let s = json(&segundo);
+    assert_eq!(s["replayed"], true, "segunda chamada deveria ser replay");
+    assert_eq!(s["id"], p["id"]);
+
+    let (_, uso) = enviar(&state, get_com_chave("/api/v1/usage", &chave)).await;
+    let u = json(&uso);
+    let compress: Vec<_> = u["totals"]["by_operation"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|b| b["operation"] == "compress")
+        .collect();
+    assert_eq!(compress.len(), 1);
+    assert_eq!(
+        compress[0]["events"], 1,
+        "a mesma chave de idempotência gerou dois eventos de cobrança"
+    );
+    assert_eq!(compress[0]["bytes_in"].as_i64().unwrap(), dados.len() as i64);
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn medicao_de_uso_alimenta_as_duas_formulas_de_cobranca() {
+    use crate::tenancy::{PlanKind, Scope};
+
+    let (state, raiz) = motor("cobranca", vec![]).await;
+    let escopos = vec![Scope::Compress, Scope::Read];
+    let economia = cria_tenant(&state, "por-economia", PlanKind::SavingsShare, escopos.clone()).await;
+    let ingestao = cria_tenant(&state, "por-ingestao", PlanKind::IngestedGb, escopos).await;
+
+    for (chave, esforco) in [(&economia, "max"), (&ingestao, "max")] {
+        let (status, _) = enviar(
+            &state,
+            post_com_chave(
+                &format!("/api/v1/compress?filename=v.csv&effort={esforco}"),
+                chave,
+                csv(5000),
+            ),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK);
+    }
+
+    let (status, corpo) = enviar(&state, get_com_chave("/api/v1/usage?events=5", &economia)).await;
+    assert_eq!(status, StatusCode::OK);
+    let u = json(&corpo);
+    assert_eq!(u["tenant_id"], "por-economia");
+    assert_eq!(u["quote"]["plan"], "savings_share");
+    assert!(u["quote"]["formula"].as_str().unwrap().contains("%"));
+    assert!(u["totals"]["bytes_saved"].as_i64().unwrap() > 0);
+    assert!(u["totals"]["savings_pct"].as_f64().unwrap() > 50.0);
+    assert!(
+        u["quote"]["amount_micro_cents"].as_i64().unwrap() > 0,
+        "volume pequeno não pode zerar o valor exato"
+    );
+    assert_eq!(u["quote"]["lines"].as_array().unwrap().len(), 1);
+    assert_eq!(u["recent"].as_array().unwrap().len(), 1);
+
+    let (_, corpo) = enviar(&state, get_com_chave("/api/v1/usage", &ingestao)).await;
+    let u = json(&corpo);
+    assert_eq!(u["quote"]["plan"], "ingested_gb");
+    let linhas = u["quote"]["lines"].as_array().unwrap();
+    assert_eq!(linhas.len(), 1);
+    assert!(linhas[0]["label"].as_str().unwrap().contains("max"));
+
+    let (_, corpo) = enviar(&state, get_com_chave("/api/v1/usage", &economia)).await;
+    assert_eq!(json(&corpo)["totals"]["by_operation"].as_array().unwrap().len(), 1);
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn leitura_entra_no_ledger_sem_entrar_na_fatura() {
+    use crate::tenancy::{PlanKind, Scope};
+
+    let (state, raiz) = motor("egress", vec![]).await;
+    let chave = cria_tenant(
+        &state,
+        "empresa",
+        PlanKind::SavingsShare,
+        vec![Scope::Compress, Scope::Read],
+    )
+    .await;
+
+    let (_, corpo) = enviar(
+        &state,
+        post_com_chave("/api/v1/compress?filename=v.csv&response=json", &chave, csv(1000)),
+    )
+    .await;
+    let id = json(&corpo)["id"].as_str().unwrap().to_string();
+    let fatura_antes = {
+        let (_, u) = enviar(&state, get_com_chave("/api/v1/usage", &chave)).await;
+        json(&u)["quote"]["amount_micro_cents"].as_i64().unwrap()
+    };
+
+    for _ in 0..3 {
+        let (status, _) = enviar(
+            &state,
+            get_com_chave(&format!("/api/v1/objects/{id}/content"), &chave),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK);
+    }
+
+    let (_, corpo) = enviar(&state, get_com_chave("/api/v1/usage", &chave)).await;
+    let u = json(&corpo);
+    let leituras: Vec<_> = u["totals"]["by_operation"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|b| b["operation"] == "read")
+        .collect();
+    assert_eq!(leituras.len(), 1);
+    assert_eq!(leituras[0]["events"], 3, "as leituras precisam estar no ledger");
+    assert!(leituras[0]["bytes_out"].as_i64().unwrap() > 0);
+    assert_eq!(
+        u["quote"]["amount_micro_cents"].as_i64().unwrap(),
+        fatura_antes,
+        "leitura não deve alterar a fatura nestes planos"
+    );
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn chave_revogada_para_de_funcionar_na_hora() {
+    use crate::tenancy::{PlanKind, Scope, TenancyStore};
+
+    let (state, raiz) = motor("revogacao", vec![]).await;
+    let chave = cria_tenant(
+        &state,
+        "empresa",
+        PlanKind::SavingsShare,
+        vec![Scope::Compress, Scope::Read],
+    )
+    .await;
+
+    let (status, _) = enviar(
+        &state,
+        post_com_chave("/api/v1/compress?filename=x.csv&persist=false", &chave, csv(300)),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+
+    let (key_id, _) = crate::tenancy::split_presented_key(&chave).unwrap();
+    assert!(TenancyStore::revoke_key(&state.db, &key_id, 99).await.unwrap());
+
+    let (status, corpo) = enviar(
+        &state,
+        post_com_chave("/api/v1/compress?filename=x.csv&persist=false", &chave, csv(300)),
+    )
+    .await;
+    assert_eq!(status, StatusCode::UNAUTHORIZED);
+    assert_eq!(json(&corpo)["error"]["code"], "unauthorized");
+
+    assert!(
+        !TenancyStore::revoke_key(&state.db, &key_id, 100).await.unwrap(),
+        "revogar duas vezes deve ser idempotente"
+    );
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn admin_emite_tenant_e_chave_e_o_segredo_aparece_uma_vez() {
+    use crate::tenancy::{PlanKind, Scope};
+
+    let (state, raiz) = motor("admin", vec![]).await;
+    let admin = cria_tenant(&state, "operador", PlanKind::SavingsShare, vec![Scope::Admin]).await;
+
+    let req = Request::builder()
+        .method("POST")
+        .uri("/api/v1/admin/tenants")
+        .header("x-api-key", admin.clone())
+        .header("content-type", "application/json")
+        .body(Body::from(
+            serde_json::to_vec(&serde_json::json!({
+                "id": "cliente-novo",
+                "name": "Cliente Novo",
+                "plan": "ingested_gb"
+            }))
+            .unwrap(),
+        ))
+        .unwrap();
+    let (status, corpo) = enviar(&state, req).await;
+    assert_eq!(status, StatusCode::OK, "{}", String::from_utf8_lossy(&corpo));
+    assert_eq!(json(&corpo)["plan"], "ingested_gb");
+
+    let req = Request::builder()
+        .method("POST")
+        .uri("/api/v1/admin/tenants/cliente-novo/keys")
+        .header("x-api-key", admin.clone())
+        .header("content-type", "application/json")
+        .body(Body::from(
+            serde_json::to_vec(&serde_json::json!({
+                "name": "producao",
+                "scopes": ["compress", "read"],
+                "expires_in_days": 90
+            }))
+            .unwrap(),
+        ))
+        .unwrap();
+    let (status, corpo) = enviar(&state, req).await;
+    assert_eq!(status, StatusCode::OK);
+    let emitida = json(&corpo);
+    let segredo = emitida["key"].as_str().unwrap().to_string();
+    assert!(segredo.starts_with("syn_"));
+    assert!(emitida["warning"].as_str().unwrap().contains("apenas"));
+    assert!(emitida["expires_at_ms"].as_i64().unwrap() > 0);
+
+    let (status, corpo) = enviar(
+        &state,
+        post_com_chave("/api/v1/compress?filename=x.csv&response=json", &segredo, csv(400)),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(json(&corpo)["id"].as_str().unwrap().len(), 64);
+
+    let (_, corpo) = enviar(
+        &state,
+        get_com_chave("/api/v1/admin/tenants/cliente-novo/keys", &admin),
+    )
+    .await;
+    let chaves = json(&corpo);
+    assert_eq!(chaves.as_array().unwrap().len(), 1);
+    let listagem = String::from_utf8_lossy(&corpo);
+    assert!(
+        !listagem.contains(&segredo),
+        "a listagem de chaves não pode devolver o segredo"
+    );
+
+    let (_, corpo) = enviar(
+        &state,
+        get_com_chave("/api/v1/admin/usage?tenant_id=cliente-novo", &admin),
+    )
+    .await;
+    assert_eq!(json(&corpo)["tenant_id"], "cliente-novo");
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn escopo_invalido_na_emissao_e_recusado() {
+    use crate::tenancy::{PlanKind, Scope};
+
+    let (state, raiz) = motor("escopoinvalido", vec![]).await;
+    let admin = cria_tenant(&state, "operador", PlanKind::SavingsShare, vec![Scope::Admin]).await;
+
+    let req = Request::builder()
+        .method("POST")
+        .uri("/api/v1/admin/tenants/operador/keys")
+        .header("x-api-key", admin.clone())
+        .header("content-type", "application/json")
+        .body(Body::from(
+            serde_json::to_vec(&serde_json::json!({ "scopes": ["superusuario"] })).unwrap(),
+        ))
+        .unwrap();
+    let (status, corpo) = enviar(&state, req).await;
+    assert_eq!(status, StatusCode::BAD_REQUEST);
+    assert_eq!(json(&corpo)["error"]["code"], "invalid_scope");
+
+    let req = Request::builder()
+        .method("POST")
+        .uri("/api/v1/admin/tenants")
+        .header("x-api-key", admin)
+        .header("content-type", "application/json")
+        .body(Body::from(
+            serde_json::to_vec(&serde_json::json!({ "name": "x", "plan": "gratuito" })).unwrap(),
+        ))
+        .unwrap();
+    let (status, corpo) = enviar(&state, req).await;
+    assert_eq!(status, StatusCode::BAD_REQUEST);
+    assert_eq!(json(&corpo)["error"]["code"], "invalid_plan");
+
     limpar(&raiz);
 }

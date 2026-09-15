@@ -6,6 +6,7 @@ use crate::tenancy::{PlanKind, PriceConfig};
 use crate::{sql_exec, sql_fetch_all, sql_fetch_optional};
 
 const BYTES_PER_GIB: f64 = 1024.0 * 1024.0 * 1024.0;
+const MICRO: f64 = 1_000_000.0;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Operation {
@@ -66,7 +67,6 @@ pub struct UsageEvent {
 #[derive(Debug, Clone, sqlx::FromRow)]
 pub struct StoredEvent {
     pub id: String,
-    pub tenant_id: String,
     pub operation: String,
     pub object_hash: Option<String>,
     pub bytes_in: i64,
@@ -77,11 +77,6 @@ pub struct StoredEvent {
     pub cpu_ms: f64,
     pub dedup_scope: String,
     pub occurred_at_ms: i64,
-}
-
-pub enum RecordOutcome {
-    Recorded(String),
-    Replayed(StoredEvent),
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -138,7 +133,7 @@ pub struct QuoteLine {
     pub label: String,
     pub quantity_gib: f64,
     pub unit_cents_per_gib: f64,
-    pub amount_cents: i64,
+    pub amount_micro_cents: i64,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -146,6 +141,7 @@ pub struct Quote {
     pub plan: String,
     pub formula: String,
     pub currency: String,
+    pub amount_micro_cents: i64,
     pub amount_cents: i64,
     pub lines: Vec<QuoteLine>,
 }
@@ -161,7 +157,7 @@ pub fn quote(plan: PlanKind, price: &PriceConfig, totals: &UsageTotals) -> Quote
                 label: "armazenamento economizado".to_string(),
                 quantity_gib: round4(gib),
                 unit_cents_per_gib: round4(unit),
-                amount_cents: (gib * unit).round() as i64,
+                amount_micro_cents: micro_cents(gib, unit),
             });
         }
         PlanKind::IngestedGb => {
@@ -172,7 +168,7 @@ pub fn quote(plan: PlanKind, price: &PriceConfig, totals: &UsageTotals) -> Quote
                     label: format!("ingestão (esforço {})", bucket.effort),
                     quantity_gib: round4(gib),
                     unit_cents_per_gib: round4(unit),
-                    amount_cents: (gib * unit).round() as i64,
+                    amount_micro_cents: micro_cents(gib, unit),
                 });
             }
         }
@@ -189,12 +185,24 @@ pub fn quote(plan: PlanKind, price: &PriceConfig, totals: &UsageTotals) -> Quote
         ),
     };
 
+    let total_micro: i64 = lines.iter().map(|l| l.amount_micro_cents).sum();
+
     Quote {
         plan: plan.as_str().to_string(),
         formula,
         currency: price.currency.as_str().to_string(),
-        amount_cents: lines.iter().map(|l| l.amount_cents).sum(),
+        amount_micro_cents: total_micro,
+        amount_cents: (total_micro as f64 / MICRO).round() as i64,
         lines,
+    }
+}
+
+fn micro_cents(quantity_gib: f64, unit_cents_per_gib: f64) -> i64 {
+    let v = quantity_gib * unit_cents_per_gib * MICRO;
+    if v.is_finite() {
+        v.round() as i64
+    } else {
+        0
     }
 }
 
@@ -245,7 +253,7 @@ pub async fn init_schema(db: &MonitorDB) -> Result<()> {
 }
 
 const EVENT_COLUMNS: &str =
-    "id, tenant_id, operation, object_hash, bytes_in, bytes_out, bytes_saved, \
+    "id, operation, object_hash, bytes_in, bytes_out, bytes_saved, \
      effort, codec, cpu_ms, dedup_scope, occurred_at_ms";
 
 pub async fn find_by_idempotency(
@@ -262,10 +270,10 @@ pub async fn find_by_idempotency(
     Ok(sql_fetch_optional!(db, StoredEvent, sql, tenant_id.to_string(), key.to_string())?)
 }
 
-pub async fn record(db: &MonitorDB, event: &UsageEvent) -> Result<RecordOutcome> {
+pub async fn record(db: &MonitorDB, event: &UsageEvent) -> Result<bool> {
     if let Some(key) = &event.idempotency_key {
-        if let Some(existing) = find_by_idempotency(db, &event.tenant_id, key).await? {
-            return Ok(RecordOutcome::Replayed(existing));
+        if find_by_idempotency(db, &event.tenant_id, key).await?.is_some() {
+            return Ok(false);
         }
     }
 
@@ -300,11 +308,11 @@ pub async fn record(db: &MonitorDB, event: &UsageEvent) -> Result<RecordOutcome>
     );
 
     match inserted {
-        Ok(_) => Ok(RecordOutcome::Recorded(id)),
+        Ok(_) => Ok(true),
         Err(e) => {
             if let Some(key) = &event.idempotency_key {
-                if let Some(existing) = find_by_idempotency(db, &event.tenant_id, key).await? {
-                    return Ok(RecordOutcome::Replayed(existing));
+                if find_by_idempotency(db, &event.tenant_id, key).await?.is_some() {
+                    return Ok(false);
                 }
             }
             Err(anyhow!("gravando evento de uso: {e}"))
@@ -489,6 +497,7 @@ mod tests {
         let t = totals_fake(10 * gib, 8 * gib, vec![("max", 10 * gib)]);
         let q = quote(PlanKind::SavingsShare, &price, &t);
 
+        assert_eq!(q.amount_micro_cents, (8.0f64 * 12.0 * 0.30 * MICRO).round() as i64);
         assert_eq!(q.amount_cents, (8.0f64 * 12.0 * 0.30).round() as i64);
         assert_eq!(q.lines.len(), 1);
         assert_eq!(q.lines[0].quantity_gib, 8.0);
@@ -508,6 +517,7 @@ mod tests {
         let q = quote(PlanKind::IngestedGb, &price, &t);
 
         assert_eq!(q.amount_cents, 100 + 3200);
+        assert_eq!(q.amount_micro_cents, (100 + 3200) * 1_000_000);
         assert_eq!(q.lines.len(), 2);
         assert_eq!(q.currency, "USD");
     }
@@ -548,8 +558,61 @@ mod tests {
             by_effort: vec![],
         };
         let price = PriceConfig::default();
-        assert_eq!(quote(PlanKind::SavingsShare, &price, &t).amount_cents, 0);
-        assert_eq!(quote(PlanKind::IngestedGb, &price, &t).amount_cents, 0);
+        assert_eq!(quote(PlanKind::SavingsShare, &price, &t).amount_micro_cents, 0);
+        assert_eq!(quote(PlanKind::IngestedGb, &price, &t).amount_micro_cents, 0);
+    }
+
+    #[test]
+    fn valor_sub_centavo_nao_e_perdido() {
+        let mib = 1024 * 1024;
+        let price = PriceConfig {
+            share_pct: 30.0,
+            reference_gb_month_cents: 12.0,
+            per_gb_cents: default_cents(),
+            currency: Currency::Brl,
+        };
+
+        let t = totals_fake(50 * mib, 40 * mib, vec![("max", 50 * mib)]);
+        let q = quote(PlanKind::SavingsShare, &price, &t);
+
+        assert_eq!(
+            q.amount_cents, 0,
+            "o valor exibido em centavos arredonda para zero neste volume"
+        );
+        assert!(
+            q.amount_micro_cents > 0,
+            "mas o valor exato precisa sobreviver para acumular no fechamento"
+        );
+        assert_eq!(q.amount_micro_cents, q.lines[0].amount_micro_cents);
+
+        let esperado = (40.0 / 1024.0) * 12.0 * 0.30 * MICRO;
+        assert!((q.amount_micro_cents as f64 - esperado).abs() < 2.0);
+    }
+
+    #[test]
+    fn somatorio_de_muitas_linhas_pequenas_nao_zera() {
+        let mib = 1024 * 1024;
+        let price = PriceConfig {
+            share_pct: 0.0,
+            reference_gb_month_cents: 0.0,
+            per_gb_cents: PerEffortCents { fast: 150.0, balanced: 400.0, max: 1600.0 },
+            currency: Currency::Brl,
+        };
+
+        let t = totals_fake(
+            3 * mib,
+            0,
+            vec![("fast", mib), ("balanced", mib), ("max", mib)],
+        );
+        let q = quote(PlanKind::IngestedGb, &price, &t);
+
+        assert_eq!(q.lines.len(), 3);
+        assert!(q.lines.iter().all(|l| l.amount_micro_cents > 0));
+        assert_eq!(
+            q.amount_micro_cents,
+            q.lines.iter().map(|l| l.amount_micro_cents).sum::<i64>()
+        );
+        assert!(q.amount_micro_cents > 0);
     }
 
     #[test]

@@ -15,6 +15,8 @@ POST /api/v1/analyze       bytes  ──▶  comparativo de planos, sem gravar
 ## Índice
 
 - [Garantias](#garantias)
+- [Tenants, chaves e escopos](#tenants-chaves-e-escopos)
+- [Medição de consumo e cobrança](#medição-de-consumo-e-cobrança)
 - [Como o plano é escolhido](#como-o-plano-é-escolhido)
 - [Resultados medidos](#resultados-medidos)
 - [Início rápido](#início-rápido)
@@ -37,7 +39,9 @@ POST /api/v1/analyze       bytes  ──▶  comparativo de planos, sem gravar
 | **A essência nunca é maior** | Todo conjunto de candidatos inclui um piso `stored`. Se nenhum codec reduzir, grava-se sem compressão. O *payload* nunca excede o original; o container adiciona ~300–400 bytes de metadados (nome, hash, plano, timestamps). |
 | **Auto-suficiência** | O envelope guarda a receita completa de reconstrução: pilha de transforms, codec, nível e id do dicionário. Reconstruir não depende de estado do processo. |
 | **Dicionário nunca invalida o passado** | Dicionários treinados são endereçados por conteúdo (`<classe>.<digest>`). Retreinar gera um id novo; essências antigas continuam resolvendo o dicionário original. |
-| **Deduplicação global** | O vault é endereçado pelo hash do conteúdo. Enviar o mesmo arquivo N vezes grava um objeto e N referências. |
+| **Deduplicação global** | O vault é endereçado pelo hash do conteúdo. Um blob por conteúdo único, compartilhado entre tenants; cada tenant vê apenas o que lhe pertence. |
+| **Isolamento entre tenants** | O acesso passa por um *grant* `(tenant, objeto)`. Conhecer o id de um objeto de outro tenant devolve `404`. |
+| **Cobrança sem confiar no cliente** | Todo valor faturável sai dos contadores que executam o trabalho. Nada vindo do corpo da requisição entra no cálculo. |
 
 ---
 
@@ -265,24 +269,185 @@ enumerados no OpenAPI.
 
 ### Autenticação
 
-Ativa quando `SYNTRA_API_KEYS` está definido (lista separada por vírgula):
-
 ```bash
-curl -H 'x-api-key: <chave>' ...
-curl -H 'Authorization: Bearer <chave>' ...
+curl -H 'x-api-key: syn_a1b2c3d4e5f6_<segredo>' ...
+curl -H 'Authorization: Bearer syn_a1b2c3d4e5f6_<segredo>' ...
 ```
 
-A comparação é em tempo constante. Sem a variável, a API sobe aberta e registra
-um aviso no log.
+A chave determina o **tenant** e os **escopos**. Ver
+[Tenants, chaves e escopos](#tenants-chaves-e-escopos).
+
+A API exige credencial quando existe qualquer chave emitida **ou**
+`SYNTRA_API_KEYS` está definido. Sem nenhum dos dois, a API sobe aberta
+operando no tenant `default` e registra um aviso no log.
 
 Atenção ao dashboard embutido: com autenticação ativa, as rotas de dados que ele
 consome (`/stats`, `/api/files`) também passam a exigir chave, e a página fica
 sem dados. Em produção, sirva o dashboard atrás de um proxy que injete o header,
 ou trate-o como ferramenta de desenvolvimento e monitore por `/metrics`.
 
+### Idempotência
+
+Envie `Idempotency-Key: <seu-id>` no `POST /api/v1/compress`. Repetir a mesma
+chave no mesmo tenant devolve o resultado anterior com `replayed: true`, sem
+reprocessar e **sem gerar novo evento de cobrança** — é o que torna seguro o
+retry automático de um cliente HTTP.
+
 ### Correlação
 
 `x-request-id` é propagado se enviado, ou gerado, e volta na resposta.
+
+---
+
+## Tenants, chaves e escopos
+
+O modelo tem quatro peças. A separação importa: o blob é global (é dele que vem
+a economia de storage), mas a **autorização é por tenant**.
+
+```
+tenant
+  ├── api_key     (n)   escopos, expiração, revogação; só o hash é guardado
+  ├── grant       (n)   (tenant × objeto) → referências        ← fronteira de acesso
+  └── usage_event (n)   append-only, um por requisição         ← base da fatura
+objeto (conteúdo único, global)
+  └── essência          blob endereçado por conteúdo
+```
+
+### Por que grant e não posse no objeto
+
+Como o id do objeto é o hash do conteúdo, dois tenants que enviam os mesmos
+bytes chegam ao mesmo id. Sem uma fronteira explícita isso vazaria de duas
+formas: um tenant leria o objeto do outro sabendo o id, e o campo
+`deduplicated` viraria um oráculo revelando que *alguém* já armazenou aquele
+arquivo.
+
+O grant fecha as duas. E a assinatura das funções de acesso exige o
+`tenant_id`, então a checagem não é algo que o autor de um handler precise
+lembrar de fazer — sem ele o código não compila.
+
+Consequência visível na API: `deduplicated: true` só aparece quando o **próprio
+tenant** já tinha aquele conteúdo. Reaproveitamento entre tenants acontece no
+disco e é registrado internamente (`dedup_cross_tenant` no consumo), mas nunca
+é revelado ao cliente.
+
+### Escopos
+
+| Escopo | Libera |
+|---|---|
+| `compress` | `POST /api/v1/compress`, `/process`, `/api/sim/process` |
+| `read` | `decompress`, `analyze`, `inspect`, `GET /objects*`, `/usage`, `/stats`, `/codecs` |
+| `delete` | `DELETE /api/v1/objects/:id` |
+| `admin` | `/api/v1/admin/*` (implica todos os outros) |
+
+O escopo é exigido por **grupo de rotas**, não dentro do handler. Chave válida
+sem o escopo recebe `403 forbidden`.
+
+### Ciclo de vida
+
+```bash
+# 1. bootstrap: SYNTRA_API_KEYS opera no tenant `default` com todos os escopos
+export ADMIN="$SYNTRA_API_KEYS"
+
+# 2. cria o tenant do cliente
+curl -sS -X POST http://localhost:3002/api/v1/admin/tenants \
+  -H "x-api-key: $ADMIN" -H 'content-type: application/json' \
+  -d '{"id":"acme","name":"ACME S.A.","plan":"savings_share",
+       "price":{"share_pct":30,"reference_gb_month_cents":12}}'
+
+# 3. emite a chave — o segredo aparece SÓ nesta resposta
+curl -sS -X POST http://localhost:3002/api/v1/admin/tenants/acme/keys \
+  -H "x-api-key: $ADMIN" -H 'content-type: application/json' \
+  -d '{"name":"producao","scopes":["compress","read"],"expires_in_days":365}'
+# → {"key":"syn_9f2c4a1b8d3e_7c…","warning":"A chave é exibida apenas nesta resposta…"}
+
+# 4. revoga (efeito imediato, conferido a cada requisição)
+curl -sS -X DELETE http://localhost:3002/api/v1/admin/keys/9f2c4a1b8d3e \
+  -H "x-api-key: $ADMIN"
+```
+
+O servidor guarda apenas o BLAKE3 do segredo. Não há rota que o devolva, e
+`GET .../keys` lista somente metadados.
+
+---
+
+## Medição de consumo e cobrança
+
+Cada requisição que persiste grava **uma** linha em `usage_events` — tabela
+append-only. Remover um objeto não apaga o histórico de consumo.
+
+| Dimensão | O que registra |
+|---|---|
+| `bytes_in` | bytes ingeridos |
+| `bytes_out` | tamanho da essência (compressão) ou bytes servidos (leitura) |
+| `bytes_saved` | `original − essência` — a **métrica de valor** |
+| `effort` | tier de esforço, porque `max` custa ~260× a CPU do `fast` |
+| `cpu_ms` | custo real de processamento |
+| `dedup_scope` | `none`, `tenant` ou `global` |
+| `operation` | `compress`, `decompress`, `read`, `analyze`, `delete` |
+
+Todas as dimensões são gravadas sempre, independentemente do plano. Trocar de
+plano recalcula faturas antigas sem reprocessar nada.
+
+### As duas fórmulas
+
+O plano do tenant escolhe qual se aplica:
+
+**`savings_share`** — percentual da economia entregue.
+
+```
+valor = (bytes_saved em GiB) × reference_gb_month_cents × share_pct / 100
+```
+
+Autofinanciado: o cliente só paga porque a fatura de storage caiu. É o modelo
+mais forte para a vertical de custo de nuvem, porque remove a objeção de compra.
+
+**`ingested_gb`** — por volume, com tier de esforço.
+
+```
+valor = Σ por tier: (bytes_in do tier em GiB) × per_gb_cents[tier]
+```
+
+Previsível para quem prefere orçamento fixo. Exige o tier porque o esforço `max`
+consome ordens de magnitude mais CPU.
+
+Leitura e reconstrução entram no ledger mas **não** entram na fatura destes dois
+planos — ficam disponíveis para um plano com egress no futuro.
+
+### Precisão do valor
+
+O valor sai em `amount_micro_cents` (10⁻⁶ centavo) e não em centavos. Não é
+detalhe: um arquivo de 40 MiB economizado rende 0,139 centavo, que arredondado
+por linha vira **zero**. Num produto medido, centenas dessas requisições por dia
+somariam receita real e apareceriam como nada. Acumule e feche a competência
+sobre `amount_micro_cents`; `amount_cents` existe só para exibição.
+
+### Consultando
+
+```bash
+curl -sS 'http://localhost:3002/api/v1/usage?days=30&events=20' \
+  -H "x-api-key: $CHAVE" | jq '{totals: .totals, quote: .quote}'
+```
+
+```json
+{
+  "totals": {
+    "events": 1284, "bytes_in": 91234567890, "bytes_saved": 71234567890,
+    "savings_pct": 78.08, "dedup_same_tenant": 141, "dedup_cross_tenant": 12,
+    "by_effort": [{ "effort": "max", "events": 1284, "bytes_in": 91234567890 }]
+  },
+  "quote": {
+    "plan": "savings_share",
+    "formula": "30% de 12 centavos por GiB-mês de armazenamento evitado",
+    "currency": "BRL",
+    "amount_micro_cents": 238824000,
+    "amount_cents": 239,
+    "lines": [{ "label": "armazenamento economizado", "quantity_gib": 66.34,
+                "unit_cents_per_gib": 3.6, "amount_micro_cents": 238824000 }]
+  }
+}
+```
+
+`GET /api/v1/admin/usage?tenant_id=acme` dá a mesma visão para qualquer tenant.
 
 ---
 
@@ -331,7 +496,7 @@ curl -sS -X POST 'http://localhost:3002/api/v1/analyze?filename=vendas.csv&effor
 |---|---|---|
 | `SYNTRA_BIND_ADDR` | `0.0.0.0:3002` | Endereço de escuta |
 | `SYNTRA_MAX_BODY_MB` | `4096` | Corpo máximo aceito |
-| `SYNTRA_API_KEYS` | — | Chaves aceitas (vazio = **API aberta**) |
+| `SYNTRA_API_KEYS` | — | Chaves estáticas de bootstrap; operam no tenant `default` com todos os escopos |
 | `SYNTRA_CORS_ORIGINS` | — | Origens permitidas (vazio = liberado) |
 | `SYNTRA_VAULT_PATH` | `essence_vault` | Raiz das essências |
 | `SYNTRA_SLED_INDEX` | `metadata_index.sled` | Índice de referências |
@@ -382,10 +547,12 @@ Três diretórios, juntos:
    dicionário só reconstrói com aquele dicionário. Sem ele, a descompressão
    devolve `409 dictionary_unavailable`. Em cluster, aponte `SYNTRA_REDIS_URL`
    para que os dicionários sejam replicados.
-3. `SYNTRA_SLED_INDEX` — reconstruível a partir do vault no boot, mas o
-   contador de referências é perdido (cada objeto volta com 1).
-
-O banco de auditoria não é crítico: o vault é auto-suficiente.
+3. `SYNTRA_SLED_INDEX` — reconstruível a partir do vault no boot.
+4. **O banco** — aqui isto mudou de status. Ele deixou de ser só auditoria:
+   `tenants`, `api_keys`, `object_grants` e `usage_events` vivem nele. Perder o
+   banco significa perder quem pode acessar o quê e o histórico de consumo que
+   sustenta a fatura. As essências continuam íntegras e reconstruíveis, mas o
+   produto para de funcionar. Trate o banco como dado crítico.
 
 ### Ingestão por diretório
 
@@ -476,6 +643,13 @@ Cobertura relevante:
   de dicionário corrompido, e retreino que não invalida o anterior.
 - **API ponta a ponta** — ciclo comprimir/reconstruir, dedup, autenticação,
   rejeição de id malicioso, forma dos erros, rotas legadas.
+- **Isolamento entre tenants** — um tenant não lê, lista nem remove objeto de
+  outro mesmo conhecendo o id; o blob só sai do disco na última referência
+  global; `deduplicated` não vaza a existência de conteúdo alheio.
+- **Escopos e chaves** — escopo exigido por rota, revogação com efeito imediato,
+  segredo nunca recuperável, expiração respeitada.
+- **Cobrança** — as duas fórmulas sobre o mesmo ledger, idempotência que não
+  cobra duas vezes, leitura registrada sem entrar na fatura.
 
 Para medir com dados próprios, use `POST /api/v1/analyze` — ele devolve o
 tamanho e o tempo de cada candidato sem gravar nada.
@@ -493,7 +667,10 @@ tamanho e o tempo de cada candidato sem gravar nada.
 | `src/container.rs` | Envelope `.syntra`: selar, ler, verificar fidelidade |
 | `src/dict_store.rs` | Dicionários treinados, persistidos, endereçados por conteúdo |
 | `src/vault.rs` | Armazenamento endereçado por conteúdo e contagem de referências |
+| `src/tenancy.rs` | Tenants, chaves, escopos, grants e configuração de preço |
+| `src/usage.rs` | Ledger append-only de consumo e as duas fórmulas de cobrança |
 | `src/service.rs` | Orquestração compartilhada por HTTP e ingestão |
+| `src/sql.rs` | Macros que servem SQLite e Postgres sem duplicar cada query |
 | `src/api/` | Router, middlewares, DTOs, erros, OpenAPI, rotas legadas |
 | `src/watcher.rs` | Ingestão automática por diretório |
 | `src/metrics.rs` | Contadores Prometheus e JSON |

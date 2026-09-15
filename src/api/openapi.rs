@@ -30,14 +30,16 @@ pub async fn document() -> Json<serde_json::Value> {
         { "name": "compressão", "description": "Gerar e desfazer essências" },
         { "name": "objetos", "description": "Essências arquivadas no vault" },
         { "name": "descoberta", "description": "Capacidades do motor" },
-        { "name": "operação", "description": "Saúde e métricas" }
+        { "name": "operação", "description": "Saúde e métricas" },
+        { "name": "consumo", "description": "Medição de uso e cobrança" },
+        { "name": "administração", "description": "Tenants e chaves de API" }
       ],
       "security": [{ "ApiKeyHeader": [] }, { "BearerToken": [] }],
       "components": {
         "securitySchemes": {
           "ApiKeyHeader": {
             "type": "apiKey", "in": "header", "name": "x-api-key",
-            "description": "Ativo quando SYNTRA_API_KEYS está configurado."
+            "description": "Chave no formato syn_<id>_<segredo>, emitida em POST /api/v1/admin/tenants/{id}/keys. A chave determina o tenant e os escopos; o servidor guarda apenas o hash. Chaves estáticas de SYNTRA_API_KEYS também são aceitas e operam no tenant 'default' com todos os escopos."
           },
           "BearerToken": {
             "type": "http", "scheme": "bearer",
@@ -95,6 +97,36 @@ pub async fn document() -> Json<serde_json::Value> {
             "schema": { "type": "string", "enum": ["binary", "json"] },
             "description": "binary devolve o container; json devolve o relatório. Accept: application/json equivale a json."
           },
+          "idempotencyKey": {
+            "name": "Idempotency-Key", "in": "header", "required": false,
+            "schema": { "type": "string", "maxLength": 200 },
+            "description": "Repetir a mesma chave para o mesmo tenant devolve o resultado anterior sem reprocessar e sem gerar novo evento de cobrança."
+          },
+          "tenantId": {
+            "name": "id", "in": "path", "required": true,
+            "schema": { "type": "string", "pattern": "^[A-Za-z0-9._-]{1,64}$" },
+            "description": "Identificador do tenant."
+          },
+          "usageFrom": {
+            "name": "from_ms", "in": "query", "required": false,
+            "schema": { "type": "integer", "format": "int64" },
+            "description": "Início da janela em epoch millis. Default: to_ms menos `days`."
+          },
+          "usageTo": {
+            "name": "to_ms", "in": "query", "required": false,
+            "schema": { "type": "integer", "format": "int64" },
+            "description": "Fim da janela em epoch millis. Default: agora."
+          },
+          "usageDays": {
+            "name": "days", "in": "query", "required": false,
+            "schema": { "type": "integer", "default": 30, "maximum": 366 },
+            "description": "Janela em dias quando from_ms não é informado."
+          },
+          "usageEvents": {
+            "name": "events", "in": "query", "required": false,
+            "schema": { "type": "integer" },
+            "description": "Quantos eventos recentes incluir na resposta."
+          },
           "objectId": {
             "name": "id", "in": "path", "required": true,
             "schema": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
@@ -116,7 +148,10 @@ pub async fn document() -> Json<serde_json::Value> {
                     "enum": [
                       "invalid_object_id", "invalid_effort", "invalid_level",
                       "unsupported_codec", "empty_body", "not_found",
-                      "unauthorized", "envelope_invalid", "envelope_malformed",
+                      "unauthorized", "forbidden", "invalid_tenant_id",
+                      "invalid_scope", "invalid_plan", "invalid_name",
+                      "invalid_expiry", "missing_tenant",
+                      "envelope_invalid", "envelope_malformed",
                       "envelope_corrupted", "dictionary_unavailable",
                       "dictionary_mismatch", "restore_failed",
                       "fidelity_mismatch", "io_error", "internal_error",
@@ -160,7 +195,9 @@ pub async fn document() -> Json<serde_json::Value> {
               "reason": { "type": "string", "description": "Por que este plano venceu." },
               "candidates_tried": { "type": "integer" },
               "verified": { "type": "boolean", "description": "Round-trip conferido antes de gravar." },
-              "deduplicated": { "type": "boolean", "description": "Conteúdo já existia; nada foi recomprimido." },
+              "deduplicated": { "type": "boolean", "description": "O próprio tenant já tinha este conteúdo. Deduplicação entre tenants não é reportada." },
+              "sampled_decision": { "type": "boolean", "description": "Plano escolhido medindo amostra, não o arquivo inteiro." },
+              "replayed": { "type": "boolean", "description": "Resposta de uma requisição idempotente anterior." },
               "persisted": { "type": "boolean" },
               "references": { "type": "integer", "nullable": true },
               "timings": {
@@ -235,6 +272,108 @@ pub async fn document() -> Json<serde_json::Value> {
               "updated_at_ms": { "type": "integer", "format": "int64" }
             }
           },
+          "Quote": {
+            "type": "object",
+            "description": "Valor calculado para a janela, segundo o plano do tenant.",
+            "properties": {
+              "plan": { "type": "string", "enum": ["savings_share", "ingested_gb"] },
+              "formula": { "type": "string", "description": "A fórmula aplicada, em texto." },
+              "currency": { "type": "string" },
+              "amount_micro_cents": { "type": "integer", "format": "int64", "description": "Valor exato em 10^-6 centavos. Use este campo para acumular e fechar competência: arredondar para centavo por linha zera volumes pequenos." },
+              "amount_cents": { "type": "integer", "format": "int64", "description": "Total arredondado, para exibição." },
+              "lines": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": { "type": "string" },
+                    "quantity_gib": { "type": "number" },
+                    "unit_cents_per_gib": { "type": "number" },
+                    "amount_micro_cents": { "type": "integer", "format": "int64" }
+                  }
+                }
+              }
+            }
+          },
+          "UsageResponse": {
+            "type": "object",
+            "properties": {
+              "tenant_id": { "type": "string" },
+              "from_ms": { "type": "integer", "format": "int64" },
+              "to_ms": { "type": "integer", "format": "int64" },
+              "totals": {
+                "type": "object",
+                "properties": {
+                  "events": { "type": "integer" },
+                  "bytes_in": { "type": "integer", "format": "int64" },
+                  "bytes_out": { "type": "integer", "format": "int64" },
+                  "bytes_saved": { "type": "integer", "format": "int64" },
+                  "savings_pct": { "type": "number" },
+                  "cpu_ms": { "type": "number" },
+                  "dedup_same_tenant": { "type": "integer" },
+                  "dedup_cross_tenant": { "type": "integer" },
+                  "by_operation": { "type": "array", "items": { "type": "object" } },
+                  "by_effort": { "type": "array", "items": { "type": "object" } }
+                }
+              },
+              "quote": { "$ref": "#/components/schemas/Quote" },
+              "recent": { "type": "array", "items": { "type": "object" } }
+            }
+          },
+          "PriceConfig": {
+            "type": "object",
+            "description": "Parâmetros das duas fórmulas. O plano do tenant decide qual é aplicada.",
+            "properties": {
+              "share_pct": { "type": "number", "default": 30, "description": "Percentual da economia cobrado (savings_share)." },
+              "reference_gb_month_cents": { "type": "number", "default": 12, "description": "Custo de referência de GiB-mês do storage que o cliente evita." },
+              "per_gb_cents": {
+                "type": "object",
+                "description": "Centavos por GiB ingerido, por tier de esforço (ingested_gb).",
+                "properties": {
+                  "fast": { "type": "number", "default": 150 },
+                  "balanced": { "type": "number", "default": 400 },
+                  "max": { "type": "number", "default": 1600 }
+                }
+              },
+              "currency": { "type": "string", "enum": ["BRL", "USD"], "default": "BRL" }
+            }
+          },
+          "Tenant": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "plan": { "type": "string", "enum": ["savings_share", "ingested_gb"] },
+              "price": { "$ref": "#/components/schemas/PriceConfig" },
+              "active": { "type": "boolean" },
+              "created_at_ms": { "type": "integer", "format": "int64" }
+            }
+          },
+          "ApiKey": {
+            "type": "object",
+            "properties": {
+              "key_id": { "type": "string" },
+              "tenant_id": { "type": "string" },
+              "name": { "type": "string" },
+              "scopes": { "type": "array", "items": { "type": "string", "enum": ["compress", "read", "delete", "admin"] } },
+              "expires_at_ms": { "type": "integer", "format": "int64", "nullable": true },
+              "revoked_at_ms": { "type": "integer", "format": "int64", "nullable": true },
+              "last_used_at_ms": { "type": "integer", "format": "int64", "nullable": true },
+              "created_at_ms": { "type": "integer", "format": "int64" }
+            }
+          },
+          "IssuedKey": {
+            "allOf": [
+              { "$ref": "#/components/schemas/ApiKey" },
+              {
+                "type": "object",
+                "properties": {
+                  "key": { "type": "string", "description": "O segredo completo. Aparece SÓ nesta resposta: o servidor guarda apenas o hash." },
+                  "warning": { "type": "string" }
+                }
+              }
+            ]
+          },
           "DeleteResponse": {
             "type": "object",
             "properties": {
@@ -260,6 +399,10 @@ pub async fn document() -> Json<serde_json::Value> {
           "Unprocessable": {
             "description": "Essência corrompida, infiel ao original ou irreconstruível.",
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+          },
+          "Forbidden": {
+            "description": "A chave é válida mas não tem o escopo exigido pela rota.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           }
         }
       },
@@ -282,7 +425,8 @@ pub async fn document() -> Json<serde_json::Value> {
               { "$ref": "#/components/parameters/persist" },
               { "$ref": "#/components/parameters/dictionary" },
               { "$ref": "#/components/parameters/dedup" },
-              { "$ref": "#/components/parameters/response" }
+              { "$ref": "#/components/parameters/response" },
+              { "$ref": "#/components/parameters/idempotencyKey" }
             ],
             "requestBody": {
               "required": true,
@@ -308,8 +452,9 @@ pub async fn document() -> Json<serde_json::Value> {
               },
               "400": { "$ref": "#/components/responses/BadRequest" },
               "401": { "$ref": "#/components/responses/Unauthorized" },
+              "403": { "$ref": "#/components/responses/Forbidden" },
               "422": { "$ref": "#/components/responses/Unprocessable" },
-              "503": { "description": "Motor saturado; tente novamente com backoff." }
+              "503": { "description": "Motor encerrando." }
             }
           }
         },
@@ -386,13 +531,13 @@ pub async fn document() -> Json<serde_json::Value> {
         "/api/v1/objects": {
           "get": {
             "tags": ["objetos"],
-            "summary": "Lista processamentos",
+            "summary": "Lista os objetos do tenant",
+            "description": "Só retorna objetos aos quais o tenant tem grant.",
             "parameters": [
-              { "name": "type", "in": "query", "schema": { "type": "string", "enum": ["name", "hash", "id", "mime"] } },
-              { "name": "search", "in": "query", "schema": { "type": "string" } },
+              { "name": "search", "in": "query", "schema": { "type": "string" }, "description": "Filtra por nome do original." },
               { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 100, "maximum": 1000 } }
             ],
-            "responses": { "200": { "description": "Itens encontrados." } }
+            "responses": { "200": { "description": "Objetos do tenant." } }
           }
         },
         "/api/v1/objects/{id}": {
@@ -409,7 +554,7 @@ pub async fn document() -> Json<serde_json::Value> {
           "delete": {
             "tags": ["objetos"],
             "summary": "Solta uma referência ao objeto",
-            "description": "A essência sai do disco quando a última referência é liberada. `purge=true` remove imediatamente.",
+            "description": "Solta a referência do tenant. A essência só sai do disco quando nenhum tenant mais a referencia. `purge=true` descarta todas as referências deste tenant de uma vez.",
             "parameters": [
               { "$ref": "#/components/parameters/objectId" },
               { "name": "purge", "in": "query", "schema": { "type": "boolean", "default": false } }
@@ -440,6 +585,132 @@ pub async fn document() -> Json<serde_json::Value> {
             "parameters": [{ "$ref": "#/components/parameters/objectId" }],
             "responses": {
               "200": { "description": "Container.", "content": { "application/x-syntra-essence": { "schema": { "type": "string", "format": "binary" } } } },
+              "404": { "$ref": "#/components/responses/NotFound" }
+            }
+          }
+        },
+        "/api/v1/usage": {
+          "get": {
+            "tags": ["consumo"],
+            "summary": "Consumo e valor calculado do próprio tenant",
+            "description": "Agrega o ledger append-only na janela pedida e aplica a fórmula do plano do tenant. Todas as dimensões ficam registradas (bytes_in, bytes_out, bytes_saved, CPU, deduplicação), então trocar de plano não exige reprocessar histórico.",
+            "parameters": [
+              { "$ref": "#/components/parameters/usageFrom" },
+              { "$ref": "#/components/parameters/usageTo" },
+              { "$ref": "#/components/parameters/usageDays" },
+              { "$ref": "#/components/parameters/usageEvents" }
+            ],
+            "responses": {
+              "200": { "description": "Totais e cotação.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UsageResponse" } } } },
+              "401": { "$ref": "#/components/responses/Unauthorized" },
+              "403": { "$ref": "#/components/responses/Forbidden" }
+            }
+          }
+        },
+        "/api/v1/admin/tenants": {
+          "get": {
+            "tags": ["administração"],
+            "summary": "Lista tenants",
+            "responses": {
+              "200": { "description": "Tenants.", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Tenant" } } } } },
+              "403": { "$ref": "#/components/responses/Forbidden" }
+            }
+          },
+          "post": {
+            "tags": ["administração"],
+            "summary": "Cria ou atualiza um tenant",
+            "requestBody": {
+              "required": true,
+              "content": { "application/json": { "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "id": { "type": "string", "description": "Omitido gera um UUID." },
+                  "name": { "type": "string" },
+                  "plan": { "type": "string", "enum": ["savings_share", "ingested_gb"] },
+                  "price": { "$ref": "#/components/schemas/PriceConfig" },
+                  "active": { "type": "boolean" }
+                }
+              } } }
+            },
+            "responses": {
+              "200": { "description": "Tenant.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Tenant" } } } },
+              "400": { "$ref": "#/components/responses/BadRequest" },
+              "403": { "$ref": "#/components/responses/Forbidden" }
+            }
+          }
+        },
+        "/api/v1/admin/tenants/{id}": {
+          "get": {
+            "tags": ["administração"],
+            "summary": "Detalhe do tenant",
+            "parameters": [{ "$ref": "#/components/parameters/tenantId" }],
+            "responses": {
+              "200": { "description": "Tenant.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Tenant" } } } },
+              "404": { "$ref": "#/components/responses/NotFound" }
+            }
+          }
+        },
+        "/api/v1/admin/tenants/{id}/keys": {
+          "get": {
+            "tags": ["administração"],
+            "summary": "Lista chaves do tenant",
+            "description": "Nunca devolve o segredo — apenas metadados.",
+            "parameters": [{ "$ref": "#/components/parameters/tenantId" }],
+            "responses": {
+              "200": { "description": "Chaves.", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/ApiKey" } } } } },
+              "404": { "$ref": "#/components/responses/NotFound" }
+            }
+          },
+          "post": {
+            "tags": ["administração"],
+            "summary": "Emite uma chave de API",
+            "description": "O segredo aparece SÓ nesta resposta. O servidor guarda apenas o BLAKE3 e não há como recuperá-lo.",
+            "parameters": [{ "$ref": "#/components/parameters/tenantId" }],
+            "requestBody": {
+              "required": false,
+              "content": { "application/json": { "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "scopes": { "type": "array", "items": { "type": "string", "enum": ["compress", "read", "delete", "admin"] }, "default": ["compress", "read"] },
+                  "expires_in_days": { "type": "integer", "minimum": 1, "maximum": 3650 }
+                }
+              } } }
+            },
+            "responses": {
+              "200": { "description": "Chave emitida.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/IssuedKey" } } } },
+              "400": { "$ref": "#/components/responses/BadRequest" },
+              "404": { "$ref": "#/components/responses/NotFound" }
+            }
+          }
+        },
+        "/api/v1/admin/keys/{key_id}": {
+          "delete": {
+            "tags": ["administração"],
+            "summary": "Revoga uma chave",
+            "description": "Efeito imediato: a revogação é conferida a cada requisição.",
+            "parameters": [{ "name": "key_id", "in": "path", "required": true, "schema": { "type": "string" } }],
+            "responses": {
+              "200": { "description": "Revogada." },
+              "404": { "$ref": "#/components/responses/NotFound" }
+            }
+          }
+        },
+        "/api/v1/admin/usage": {
+          "get": {
+            "tags": ["administração"],
+            "summary": "Consumo de qualquer tenant",
+            "parameters": [
+              { "name": "tenant_id", "in": "query", "required": true, "schema": { "type": "string" } },
+              { "$ref": "#/components/parameters/usageFrom" },
+              { "$ref": "#/components/parameters/usageTo" },
+              { "$ref": "#/components/parameters/usageDays" },
+              { "$ref": "#/components/parameters/usageEvents" }
+            ],
+            "responses": {
+              "200": { "description": "Totais e cotação.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UsageResponse" } } } },
+              "400": { "$ref": "#/components/responses/BadRequest" },
               "404": { "$ref": "#/components/responses/NotFound" }
             }
           }

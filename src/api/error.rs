@@ -35,7 +35,7 @@ impl ApiError {
             status,
             code,
             message: message.into(),
-            hint: None,
+            hint: hint_for(code),
             request_id: None,
         }
     }
@@ -68,16 +68,7 @@ impl ApiError {
 
 impl From<EngineError> for ApiError {
     fn from(e: EngineError) -> Self {
-        let status = e.status();
-        let code = e.code();
-        let hint = hint_for(code);
-        ApiError {
-            status,
-            code,
-            message: e.to_string(),
-            hint,
-            request_id: None,
-        }
+        ApiError::new(e.status(), e.code(), e.to_string())
     }
 }
 
@@ -130,3 +121,29 @@ impl IntoResponse for ApiError {
 }
 
 pub type ApiResult<T> = Result<T, ApiError>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn codigos_com_dica_a_trazem_em_qualquer_construtor() {
+        assert!(ApiError::forbidden("x").hint.is_some());
+        assert!(ApiError::bad_request("unsupported_codec", "x").hint.is_some());
+        assert!(ApiError::new(StatusCode::CONFLICT, "dictionary_unavailable", "x").hint.is_some());
+        let convertido: ApiError = EngineError::not_found("x").into();
+        assert!(convertido.hint.is_none());
+    }
+
+    #[test]
+    fn with_hint_sobrepoe_a_dica_padrao() {
+        let e = ApiError::forbidden("x").with_hint("dica especifica");
+        assert_eq!(e.hint.as_deref(), Some("dica especifica"));
+    }
+
+    #[test]
+    fn codigo_sem_dica_fica_sem_dica() {
+        assert!(ApiError::bad_request("empty_body", "x").hint.is_none());
+        assert!(ApiError::internal("x").hint.is_none());
+    }
+}

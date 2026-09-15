@@ -262,7 +262,6 @@ pub struct CompressResponse {
     pub persisted: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub references: Option<i64>,
-    /// Requisição idempotente atendida com o resultado anterior.
     pub replayed: bool,
     pub timings: Timings,
     #[serde(skip_serializing_if = "Option::is_none")]
