@@ -29,6 +29,7 @@ async fn motor(nome: &str, api_keys: Vec<String>) -> (Arc<EngineState>, std::pat
         watch_dir: raiz.join("watch").to_string_lossy().to_string(),
         bind_addr: "127.0.0.1:0".to_string(),
         max_body_size_mb: 64,
+        max_decompressed_mb: 64,
         cors_origins: vec![],
         api_keys,
         compress_multiplier: 2,

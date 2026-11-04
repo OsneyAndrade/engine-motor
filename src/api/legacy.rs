@@ -9,7 +9,7 @@ use axum::routing::{delete, get, post};
 use axum::{Extension, Json, Router};
 use serde::Serialize;
 
-use crate::service::{self, EngineState};
+use crate::service::{self, EngineState, OpMeasure};
 use crate::tenancy::{Scope, TenantContext};
 use crate::usage::Operation;
 use crate::vault::VaultManager;
@@ -212,12 +212,17 @@ async fn download_file(
     let envelope = service::load_object(&state, ctx.tenant_id(), &hash).await?;
     let name = envelope.original_name.clone();
     let mime = envelope.original_mime.clone();
+    let stored = envelope.data.len() as u64;
     let restored = service::reconstruct(&state, envelope).await?;
     service::record_read(
         &state,
         &ctx,
         &hex::encode(hash),
-        restored.data.len() as u64,
+        OpMeasure {
+            bytes_in: stored,
+            bytes_out: restored.data.len() as u64,
+            cpu_ms: restored.duration_ms,
+        },
         Operation::Read,
         None,
     )

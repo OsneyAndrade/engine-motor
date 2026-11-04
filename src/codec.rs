@@ -194,7 +194,34 @@ pub fn encode(data: &[u8], codec: Codec, level: i32, dict: Option<&[u8]>) -> io:
     }
 }
 
-const MAX_DECOMPRESSED: u64 = 64 * 1024 * 1024 * 1024;
+pub const MAX_DECOMPRESSED: u64 = 64 * 1024 * 1024 * 1024;
+pub const XZ_MEMLIMIT: u64 = 256 * 1024 * 1024;
+const READ_CHUNK: usize = 128 * 1024;
+const CAPACITY_PER_INPUT_BYTE: usize = 64;
+const CAPACITY_FLOOR: usize = 1024 * 1024;
+
+#[derive(Debug)]
+pub struct DecompressedTooLarge {
+    pub limit: u64,
+}
+
+impl std::fmt::Display for DecompressedTooLarge {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "a saída descomprimida excede o teto de {} bytes", self.limit)
+    }
+}
+
+impl std::error::Error for DecompressedTooLarge {}
+
+pub fn too_large(limit: u64) -> io::Error {
+    io::Error::new(io::ErrorKind::InvalidData, DecompressedTooLarge { limit })
+}
+
+pub fn too_large_limit(e: &io::Error) -> Option<u64> {
+    e.get_ref()
+        .and_then(|inner| inner.downcast_ref::<DecompressedTooLarge>())
+        .map(|t| t.limit)
+}
 
 pub fn decode(
     data: &[u8],
@@ -202,27 +229,53 @@ pub fn decode(
     dict: Option<&[u8]>,
     expected_len: Option<u64>,
 ) -> io::Result<Vec<u8>> {
-    let cap = expected_len
-        .filter(|n| *n <= MAX_DECOMPRESSED)
-        .unwrap_or(0) as usize;
+    decode_limited(data, codec, dict, expected_len, MAX_DECOMPRESSED)
+}
+
+pub fn decode_limited(
+    data: &[u8],
+    codec: Codec,
+    dict: Option<&[u8]>,
+    expected_len: Option<u64>,
+    max_out: u64,
+) -> io::Result<Vec<u8>> {
+    let limit = max_out.min(MAX_DECOMPRESSED);
+    let cap = initial_capacity(expected_len, limit, data.len());
 
     match codec {
-        Codec::Stored => Ok(data.to_vec()),
+        Codec::Stored => {
+            if data.len() as u64 > limit {
+                return Err(too_large(limit));
+            }
+            Ok(data.to_vec())
+        }
 
-        Codec::Lz4 => lz4_flex::decompress_size_prepended(data).map_err(io::Error::other),
+        Codec::Lz4 => {
+            let (declared, body) =
+                lz4_flex::block::uncompressed_size(data).map_err(io::Error::other)?;
+            if declared as u64 > limit {
+                return Err(too_large(limit));
+            }
+            lz4_flex::block::decompress(body, declared).map_err(io::Error::other)
+        }
 
         Codec::Zstd => {
+            if let Ok(Some(declared)) = zstd::zstd_safe::get_frame_content_size(data) {
+                if declared > limit {
+                    return Err(too_large(limit));
+                }
+            }
             let mut out = Vec::with_capacity(cap);
             match dict {
                 Some(d) if !d.is_empty() => {
                     let mut decoder = zstd::Decoder::with_dictionary(Cursor::new(data), d)?;
                     decoder.window_log_max(31)?;
-                    read_limited(&mut decoder, &mut out)?;
+                    read_capped(&mut decoder, &mut out, limit)?;
                 }
                 _ => {
                     let mut decoder = zstd::Decoder::new(Cursor::new(data))?;
                     decoder.window_log_max(31)?;
-                    read_limited(&mut decoder, &mut out)?;
+                    read_capped(&mut decoder, &mut out, limit)?;
                 }
             }
             Ok(out)
@@ -231,28 +284,39 @@ pub fn decode(
         Codec::Brotli => {
             let mut out = Vec::with_capacity(cap);
             let mut input = Cursor::new(data);
-            brotli::BrotliDecompress(&mut input, &mut out)?;
+            let mut sink = CappedSink {
+                out: &mut out,
+                limit: usize::try_from(limit).unwrap_or(usize::MAX),
+                exceeded: false,
+            };
+            let result = brotli::BrotliDecompress(&mut input, &mut sink);
+            if sink.exceeded {
+                return Err(too_large(limit));
+            }
+            result?;
             Ok(out)
         }
 
         Codec::Xz => {
             let mut out = Vec::with_capacity(cap);
-            let mut decoder = xz2::read::XzDecoder::new(Cursor::new(data));
-            read_limited(&mut decoder, &mut out)?;
+            let stream = xz2::stream::Stream::new_stream_decoder(XZ_MEMLIMIT, 0)
+                .map_err(io::Error::other)?;
+            let mut decoder = xz2::read::XzDecoder::new_stream(Cursor::new(data), stream);
+            read_capped(&mut decoder, &mut out, limit)?;
             Ok(out)
         }
 
         Codec::Bzip2 => {
             let mut out = Vec::with_capacity(cap);
             let mut decoder = bzip2::read::BzDecoder::new(Cursor::new(data));
-            read_limited(&mut decoder, &mut out)?;
+            read_capped(&mut decoder, &mut out, limit)?;
             Ok(out)
         }
 
         Codec::Deflate => {
             let mut out = Vec::with_capacity(cap);
             let mut decoder = flate2::read::DeflateDecoder::new(Cursor::new(data));
-            read_limited(&mut decoder, &mut out)?;
+            read_capped(&mut decoder, &mut out, limit)?;
             Ok(out)
         }
 
@@ -263,16 +327,61 @@ pub fn decode(
     }
 }
 
-fn read_limited<R: Read>(reader: &mut R, out: &mut Vec<u8>) -> io::Result<()> {
-    let mut limited = reader.take(MAX_DECOMPRESSED + 1);
-    limited.read_to_end(out)?;
-    if out.len() as u64 > MAX_DECOMPRESSED {
-        return Err(io::Error::new(
-            io::ErrorKind::InvalidData,
-            "payload excede o limite de descompressão",
-        ));
+fn initial_capacity(expected_len: Option<u64>, limit: u64, payload_len: usize) -> usize {
+    let plausible = payload_len
+        .saturating_mul(CAPACITY_PER_INPUT_BYTE)
+        .saturating_add(CAPACITY_FLOOR);
+    let wanted = expected_len.unwrap_or(0).min(limit);
+    usize::try_from(wanted).unwrap_or(usize::MAX).min(plausible)
+}
+
+fn grow_within(out: &mut Vec<u8>, extra: usize, limit: usize) {
+    if out.capacity() - out.len() >= extra {
+        return;
     }
-    Ok(())
+    let needed = out.len() + extra;
+    let target = out.capacity().saturating_mul(2).max(needed).min(limit.max(needed));
+    out.reserve_exact(target - out.len());
+}
+
+struct CappedSink<'a> {
+    out: &'a mut Vec<u8>,
+    limit: usize,
+    exceeded: bool,
+}
+
+impl Write for CappedSink<'_> {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        if self.out.len().saturating_add(buf.len()) > self.limit {
+            self.exceeded = true;
+            return Err(io::Error::other("teto de descompressão excedido"));
+        }
+        grow_within(self.out, buf.len(), self.limit);
+        self.out.extend_from_slice(buf);
+        Ok(buf.len())
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+}
+
+fn read_capped<R: Read>(reader: &mut R, out: &mut Vec<u8>, limit: u64) -> io::Result<()> {
+    let limit_bytes = usize::try_from(limit).unwrap_or(usize::MAX);
+    let mut chunk = vec![0u8; READ_CHUNK];
+    loop {
+        let n = match reader.read(&mut chunk) {
+            Ok(0) => return Ok(()),
+            Ok(n) => n,
+            Err(e) if e.kind() == io::ErrorKind::Interrupted => continue,
+            Err(e) => return Err(e),
+        };
+        if out.len().saturating_add(n) > limit_bytes {
+            return Err(too_large(limit));
+        }
+        grow_within(out, n, limit_bytes);
+        out.extend_from_slice(&chunk[..n]);
+    }
 }
 
 use crate::proto::Algorithm;

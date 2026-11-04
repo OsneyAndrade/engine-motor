@@ -7,7 +7,7 @@ use axum::response::{IntoResponse, Response};
 use axum::{Extension, Json};
 
 use crate::container;
-use crate::service::{self, EngineState};
+use crate::service::{self, EngineState, OpMeasure};
 use crate::tenancy::TenantContext;
 use crate::usage::Operation;
 
@@ -80,6 +80,7 @@ pub async fn decompress(
         ));
     }
 
+    let received = body.len() as u64;
     let (envelope, restored) = service::reconstruct_bytes(&state, body.into()).await?;
     let meta = DecompressMeta::build(&envelope, &restored);
 
@@ -87,7 +88,11 @@ pub async fn decompress(
         &state,
         &ctx,
         &hex::encode(&envelope.file_hash),
-        restored.data.len() as u64,
+        OpMeasure {
+            bytes_in: received,
+            bytes_out: restored.data.len() as u64,
+            cpu_ms: restored.duration_ms,
+        },
         Operation::Decompress,
         super::dto::request_id(&headers),
     )
@@ -151,18 +156,25 @@ pub async fn analyze(
     )
     .await?;
 
+    let elapsed_ms = report.elapsed_ms;
+    let response = AnalyzeResponse::build(report, filename);
+    let returned = serde_json::to_vec(&response).map(|v| v.len() as u64).unwrap_or(0);
+
     service::record_read(
         &state,
         &ctx,
         "",
-        0,
+        OpMeasure {
+            bytes_in: bytes_len,
+            bytes_out: returned,
+            cpu_ms: elapsed_ms,
+        },
         Operation::Analyze,
         super::dto::request_id(&headers),
     )
     .await;
-    let _ = bytes_len;
 
-    Ok(Json(AnalyzeResponse::build(report, filename)))
+    Ok(Json(response))
 }
 
 pub async fn inspect(

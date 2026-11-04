@@ -554,9 +554,10 @@ pub async fn reconstruct(
 
     let dicts = state.dictionaries.clone();
     let pool = state.pool.clone();
+    let max_out = state.config.max_decompressed_bytes();
 
     let restored = tokio::task::spawn_blocking(move || {
-        pool.install(|| container::restore(&envelope, dicts.as_ref()))
+        pool.install(|| container::restore_with_limit(&envelope, dicts.as_ref(), max_out))
     })
     .await
     .map_err(|e| EngineError::internal(format!("tarefa de reconstrução abortada: {e}")))??;
@@ -624,11 +625,18 @@ pub async fn load_container(
         .map_err(|_| EngineError::not_found(format!("objeto {id} não encontrado no vault")))
 }
 
+#[derive(Debug, Clone, Copy, Default)]
+pub struct OpMeasure {
+    pub bytes_in: u64,
+    pub bytes_out: u64,
+    pub cpu_ms: f64,
+}
+
 pub async fn record_read(
     state: &Arc<EngineState>,
     ctx: &TenantContext,
     hash_hex: &str,
-    bytes_out: u64,
+    measure: OpMeasure,
     operation: Operation,
     request_id: Option<String>,
 ) {
@@ -638,12 +646,12 @@ pub async fn record_read(
         idempotency_key: None,
         operation,
         object_hash: Some(hash_hex.to_string()),
-        bytes_in: 0,
-        bytes_out: bytes_out as i64,
+        bytes_in: measure.bytes_in as i64,
+        bytes_out: measure.bytes_out as i64,
         bytes_saved: 0,
         effort: String::new(),
         codec: String::new(),
-        cpu_ms: 0.0,
+        cpu_ms: measure.cpu_ms,
         dedup_scope: DedupScope::None,
         request_id,
         occurred_at_ms: container::now_millis(),
@@ -659,6 +667,7 @@ pub struct AnalysisReport {
     pub probe_size: usize,
     pub measurements: Vec<Measurement>,
     pub dictionary_id: Option<String>,
+    pub elapsed_ms: f64,
 }
 
 pub async fn analyze(
@@ -680,6 +689,7 @@ pub async fn analyze(
 
     tokio::task::spawn_blocking(move || {
         pool.install(|| {
+            let started = std::time::Instant::now();
             let profile = content::classify(&data, &filename, mime_hint.as_deref());
             let dict = st.dictionaries.active_for(&profile.dictionary_key);
             let measurements = planner::measure_all(
@@ -696,6 +706,7 @@ pub async fn analyze(
                 probe_size,
                 measurements,
                 dictionary_id: dict.map(|d| d.id.clone()),
+                elapsed_ms: started.elapsed().as_secs_f64() * 1000.0,
             }
         })
     })
@@ -740,7 +751,7 @@ pub async fn delete_object(
         }
     }
 
-    record_read(state, ctx, &hash_hex, 0, Operation::Delete, None).await;
+    record_read(state, ctx, &hash_hex, OpMeasure::default(), Operation::Delete, None).await;
 
     Ok(DeleteOutcome {
         id: hash_hex,

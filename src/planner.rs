@@ -314,9 +314,56 @@ pub fn restore(
     dict: Option<&[u8]>,
     expected_len: Option<u64>,
 ) -> io::Result<Vec<u8>> {
-    let staged_len = steps.last().map(|s| s.input_len).or(expected_len);
-    let staged = codec::decode(payload, codec_id, dict, staged_len)?;
-    transform::invert_chain(&staged, steps)
+    restore_limited(
+        payload,
+        codec_id,
+        steps,
+        dict,
+        expected_len,
+        codec::MAX_DECOMPRESSED,
+    )
+}
+
+fn stage_slack(n: u64) -> u64 {
+    n.saturating_add(n / 8).saturating_add(4096)
+}
+
+pub fn restore_limited(
+    payload: &[u8],
+    codec_id: Codec,
+    steps: &[TransformStep],
+    dict: Option<&[u8]>,
+    expected_len: Option<u64>,
+    max_out: u64,
+) -> io::Result<Vec<u8>> {
+    if steps.len() > transform::MAX_CHAIN {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!(
+                "cadeia de {} transforms excede o máximo de {}",
+                steps.len(),
+                transform::MAX_CHAIN
+            ),
+        ));
+    }
+
+    let final_cap = expected_len.map_or(max_out, |n| n.min(max_out));
+    let stage_cap = stage_slack(final_cap);
+    let codec_cap = if steps.is_empty() { final_cap } else { stage_cap };
+
+    let hint = steps
+        .last()
+        .map(|s| s.input_len)
+        .filter(|n| *n != 0)
+        .or(expected_len);
+    let staged = codec::decode_limited(payload, codec_id, dict, hint, codec_cap)?;
+
+    transform::invert_chain_limited(
+        &staged,
+        steps,
+        usize::try_from(stage_cap).unwrap_or(usize::MAX),
+        usize::try_from(final_cap).unwrap_or(usize::MAX),
+    )
 }
 
 pub fn compress_best(

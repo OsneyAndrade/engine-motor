@@ -19,6 +19,7 @@ pub enum ContainerError {
     MissingDictionary { id: String },
     DictionaryMismatch { id: String },
     Restore(String),
+    DecompressedTooLarge { limit: u64 },
     FidelityMismatch { esperado: String, obtido: String },
 }
 
@@ -41,6 +42,11 @@ impl fmt::Display for ContainerError {
                 "dicionário '{id}' encontrado não corresponde ao usado na compressão"
             ),
             ContainerError::Restore(m) => write!(f, "falha na reconstrução: {m}"),
+            ContainerError::DecompressedTooLarge { limit } => write!(
+                f,
+                "a reconstrução excede o teto de descompressão de {limit} bytes \
+                 (o menor entre o tamanho declarado no envelope e SYNTRA_MAX_DECOMPRESSED_MB)"
+            ),
             ContainerError::FidelityMismatch { esperado, obtido } => write!(
                 f,
                 "reconstrução não é bit-a-bit idêntica ao original \
@@ -61,6 +67,7 @@ impl ContainerError {
             ContainerError::MissingDictionary { .. } => "dictionary_unavailable",
             ContainerError::DictionaryMismatch { .. } => "dictionary_mismatch",
             ContainerError::Restore(_) => "restore_failed",
+            ContainerError::DecompressedTooLarge { .. } => "decompressed_too_large",
             ContainerError::FidelityMismatch { .. } => "fidelity_mismatch",
         }
     }
@@ -236,6 +243,21 @@ pub fn restore(
     envelope: &ProcessedFile,
     dicts: &dyn DictionaryResolver,
 ) -> Result<Restored, ContainerError> {
+    restore_with_limit(envelope, dicts, codec::MAX_DECOMPRESSED)
+}
+
+fn restore_error(e: std::io::Error) -> ContainerError {
+    match codec::too_large_limit(&e) {
+        Some(limit) => ContainerError::DecompressedTooLarge { limit },
+        None => ContainerError::Restore(e.to_string()),
+    }
+}
+
+pub fn restore_with_limit(
+    envelope: &ProcessedFile,
+    dicts: &dyn DictionaryResolver,
+    max_out: u64,
+) -> Result<Restored, ContainerError> {
     let start = std::time::Instant::now();
 
     let dict_id = envelope
@@ -260,7 +282,7 @@ pub fn restore(
     };
     let dict_slice = dict_bytes.as_ref().map(|d| d.bytes.as_slice());
 
-    let (codec_id, transforms) = if envelope.version >= 3 {
+    let (codec_id, transforms): (Codec, &[crate::proto::TransformStep]) = if envelope.version >= 3 {
         let c = Codec::try_from(envelope.codec).map_err(|_| {
             ContainerError::Malformed(format!("codec desconhecido: {}", envelope.codec))
         })?;
@@ -269,23 +291,25 @@ pub fn restore(
                 "envelope v3 sem codec definido".to_string(),
             ));
         }
-        (c, envelope.transforms.clone())
+        (c, envelope.transforms.as_slice())
     } else {
         let legacy = Algorithm::try_from(envelope.algorithm).map_err(|_| {
             ContainerError::Malformed(format!("algoritmo legado desconhecido: {}", envelope.algorithm))
         })?;
         let (c, _) = codec::from_legacy(legacy, envelope.compression_level);
-        (c, Vec::new())
+        (c, &[])
     };
 
-    let data = planner::restore(
+    let declared = (envelope.original_size != 0).then_some(envelope.original_size);
+    let data = planner::restore_limited(
         &envelope.data,
         codec_id,
-        &transforms,
+        transforms,
         dict_slice,
-        Some(envelope.original_size),
+        declared,
+        max_out,
     )
-    .map_err(|e| ContainerError::Restore(e.to_string()))?;
+    .map_err(restore_error)?;
 
     let mut fidelity_checked = false;
     if envelope.file_hash.len() == 32 {

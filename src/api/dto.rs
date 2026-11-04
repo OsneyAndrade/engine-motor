@@ -516,6 +516,7 @@ mod tests {
             watch_dir: "watch".into(),
             bind_addr: "127.0.0.1:0".into(),
             max_body_size_mb: 16,
+            max_decompressed_mb: 16,
             cors_origins: vec![],
             api_keys: vec![],
             compress_multiplier: 4,

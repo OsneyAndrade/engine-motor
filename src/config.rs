@@ -14,6 +14,7 @@ pub struct Config {
 
     pub bind_addr: String,
     pub max_body_size_mb: usize,
+    pub max_decompressed_mb: usize,
     pub cors_origins: Vec<String>,
     pub api_keys: Vec<String>,
 
@@ -31,6 +32,7 @@ pub struct Config {
 
 impl Config {
     pub fn from_env() -> Self {
+        let max_body_size_mb = env_usize("SYNTRA_MAX_BODY_MB", 4096);
         let cfg = Config {
             vault_path: env_string("SYNTRA_VAULT_PATH", "essence_vault"),
             sled_index_path: env_string("SYNTRA_SLED_INDEX", "metadata_index.sled"),
@@ -42,7 +44,8 @@ impl Config {
             watch_dir: env_string("SYNTRA_WATCH_DIR", "watch_in"),
 
             bind_addr: env_string("SYNTRA_BIND_ADDR", "0.0.0.0:3002"),
-            max_body_size_mb: env_usize("SYNTRA_MAX_BODY_MB", 4096),
+            max_body_size_mb,
+            max_decompressed_mb: env_usize("SYNTRA_MAX_DECOMPRESSED_MB", max_body_size_mb),
             cors_origins: env_list("SYNTRA_CORS_ORIGINS"),
             api_keys: env_list("SYNTRA_API_KEYS"),
 
@@ -72,6 +75,10 @@ impl Config {
             warn!("SYNTRA_CORS_ORIGINS não definido: CORS liberado para qualquer origem.");
         }
         cfg
+    }
+
+    pub fn max_decompressed_bytes(&self) -> u64 {
+        (self.max_decompressed_mb as u64).saturating_mul(1024 * 1024)
     }
 
     pub fn auth_enabled(&self) -> bool {

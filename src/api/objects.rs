@@ -6,7 +6,7 @@ use axum::response::{IntoResponse, Response};
 use axum::{Extension, Json};
 use serde::Serialize;
 
-use crate::service::{self, EngineState};
+use crate::service::{self, EngineState, OpMeasure};
 use crate::tenancy::TenantContext;
 use crate::usage::Operation;
 use crate::vault::VaultManager;
@@ -47,13 +47,18 @@ pub async fn get_content(
     let envelope = service::load_object(&state, ctx.tenant_id(), &hash).await?;
     let name = envelope.original_name.clone();
     let mime = envelope.original_mime.clone();
+    let stored = envelope.data.len() as u64;
     let restored = service::reconstruct(&state, envelope).await?;
 
     service::record_read(
         &state,
         &ctx,
         &hex::encode(hash),
-        restored.data.len() as u64,
+        OpMeasure {
+            bytes_in: stored,
+            bytes_out: restored.data.len() as u64,
+            cpu_ms: restored.duration_ms,
+        },
         Operation::Read,
         None,
     )
@@ -92,9 +97,15 @@ pub async fn get_essence(
     Path(id): Path<String>,
 ) -> ApiResult<Response> {
     let hash = parse_id(&id)?;
+    let started = std::time::Instant::now();
     let bytes = service::load_container(&state, ctx.tenant_id(), &hash).await?;
     let hex_id = hex::encode(hash);
-    service::record_read(&state, &ctx, &hex_id, bytes.len() as u64, Operation::Read, None).await;
+    let measure = OpMeasure {
+        bytes_in: bytes.len() as u64,
+        bytes_out: bytes.len() as u64,
+        cpu_ms: started.elapsed().as_secs_f64() * 1000.0,
+    };
+    service::record_read(&state, &ctx, &hex_id, measure, Operation::Read, None).await;
 
     let mut headers = HeaderMap::new();
     insert(

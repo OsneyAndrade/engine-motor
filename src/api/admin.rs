@@ -49,6 +49,7 @@ pub async fn stats(State(state): State<Arc<EngineState>>) -> Json<serde_json::Va
             "dictionaries_enabled": state.config.dictionaries_enabled,
             "auth_enabled": state.config.auth_enabled(),
             "max_body_mb": state.config.max_body_size_mb,
+            "max_decompressed_mb": state.config.max_decompressed_mb,
             "compress_permits": state.max_compress_permits,
             "available_permits": state.sem_compress.available_permits(),
         },

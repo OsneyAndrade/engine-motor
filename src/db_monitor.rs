@@ -44,6 +44,7 @@ impl MonitorDB {
             let db = MonitorDB::Sqlite(pool);
             crate::tenancy::init_schema(&db).await?;
             crate::usage::init_schema(&db).await?;
+            crate::watch_registry::init_schema(&db).await?;
             Ok(db)
         } else if db_url.starts_with("postgres://") || db_url.starts_with("postgresql://") {
             let pool = PgPool::connect(db_url)
@@ -53,6 +54,7 @@ impl MonitorDB {
             let db = MonitorDB::Postgres(pool);
             crate::tenancy::init_schema(&db).await?;
             crate::usage::init_schema(&db).await?;
+            crate::watch_registry::init_schema(&db).await?;
             Ok(db)
         } else {
             anyhow::bail!("URL de banco não suportada: {db_url}. Use sqlite: ou postgres://")

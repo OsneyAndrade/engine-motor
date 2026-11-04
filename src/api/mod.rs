@@ -13,9 +13,9 @@ pub mod openapi;
 use std::sync::Arc;
 
 use axum::extract::{DefaultBodyLimit, Request, State};
-use axum::http::{header, HeaderValue, Method};
+use axum::http::{header, HeaderValue, Method, StatusCode};
 use axum::middleware::{self, Next};
-use axum::response::Response;
+use axum::response::{IntoResponse, Response};
 use axum::routing::{delete, get, get_service, post};
 use axum::Router;
 use tower_http::cors::{AllowOrigin, CorsLayer};
@@ -89,9 +89,43 @@ pub fn router(state: Arc<EngineState>) -> Router {
         .layer(DefaultBodyLimit::max(
             state.config.max_body_size_mb.saturating_mul(1024 * 1024),
         ))
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
+            payload_too_large_as_json,
+        ))
         .layer(cors_layer(&state.config.cors_origins))
         .layer(middleware::from_fn(request_id))
         .with_state(state)
+}
+
+async fn payload_too_large_as_json(
+    State(state): State<Arc<EngineState>>,
+    req: Request,
+    next: Next,
+) -> Response {
+    let response = next.run(req).await;
+    if response.status() != StatusCode::PAYLOAD_TOO_LARGE {
+        return response;
+    }
+    let already_json = response
+        .headers()
+        .get(header::CONTENT_TYPE)
+        .and_then(|v| v.to_str().ok())
+        .map(|v| v.starts_with("application/json"))
+        .unwrap_or(false);
+    if already_json {
+        return response;
+    }
+
+    ApiError::new(
+        StatusCode::PAYLOAD_TOO_LARGE,
+        "payload_too_large",
+        format!(
+            "o corpo da requisição passou do limite de {} MB (SYNTRA_MAX_BODY_MB)",
+            state.config.max_body_size_mb
+        ),
+    )
+    .into_response()
 }
 
 fn cors_layer(origins: &[String]) -> CorsLayer {

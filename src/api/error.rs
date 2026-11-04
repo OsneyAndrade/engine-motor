@@ -86,6 +86,12 @@ fn hint_for(code: &str) -> Option<String> {
         "dictionary_mismatch" => {
             "O dicionário com este id tem conteúdo diferente do usado na compressão. Verifique se o diretório de dicionários foi sobrescrito."
         }
+        "decompressed_too_large" => {
+            "A reconstrução passaria do teto: o menor entre o tamanho declarado no envelope e SYNTRA_MAX_DECOMPRESSED_MB. Um envelope forjado ou adulterado pode declarar menos do que contém. Se o envelope for legítimo e grande, aumente SYNTRA_MAX_DECOMPRESSED_MB."
+        }
+        "payload_too_large" => {
+            "O corpo passou do limite SYNTRA_MAX_BODY_MB. Aumente a variável no servidor ou envie um arquivo menor."
+        }
         "fidelity_mismatch" => {
             "A reconstrução não bate com o hash do original — indício de corrupção de dados. Não use este resultado."
         }

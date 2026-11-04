@@ -54,15 +54,51 @@ pub fn apply(data: &[u8], s: &TransformStep) -> io::Result<Vec<u8>> {
     }
 }
 
+pub const MAX_CHAIN: usize = 8;
+
+fn default_cap() -> usize {
+    usize::try_from(crate::codec::MAX_DECOMPRESSED).unwrap_or(usize::MAX)
+}
+
+fn check_len(len: usize, limit: usize) -> io::Result<()> {
+    if len > limit {
+        Err(crate::codec::too_large(limit as u64))
+    } else {
+        Ok(())
+    }
+}
+
 pub fn invert(data: &[u8], s: &TransformStep) -> io::Result<Vec<u8>> {
+    invert_limited(data, s, default_cap())
+}
+
+pub fn invert_limited(data: &[u8], s: &TransformStep, max_out: usize) -> io::Result<Vec<u8>> {
     let t = Transform::try_from(s.transform)
         .map_err(|_| invalid(format!("transform desconhecido no envelope: {}", s.transform)))?;
-    let out = match t {
-        Transform::Unspecified => data.to_vec(),
-        Transform::Delta => delta_invert(data, width_of(s)?),
-        Transform::ByteSplit => byte_split_invert(data, width_of(s)?),
-        Transform::Rle => rle_invert(data)?,
-        Transform::CsvColumnar => csv_invert(data)?,
+
+    let declared = usize::try_from(s.input_len).unwrap_or(usize::MAX);
+    let limit = if s.input_len != 0 { max_out.min(declared) } else { max_out };
+
+    let produced = match t {
+        Transform::Unspecified => check_len(data.len(), limit).map(|_| data.to_vec()),
+        Transform::Delta => width_of(s)
+            .and_then(|w| check_len(data.len(), limit).map(|_| delta_invert(data, w))),
+        Transform::ByteSplit => width_of(s)
+            .and_then(|w| check_len(data.len(), limit).map(|_| byte_split_invert(data, w))),
+        Transform::Rle => rle_invert_limited(data, limit),
+        Transform::CsvColumnar => csv_invert(data, limit),
+    };
+
+    let out = match produced {
+        Ok(out) => out,
+        Err(e) if s.input_len != 0 && declared < max_out && crate::codec::too_large_limit(&e).is_some() => {
+            return Err(invalid(format!(
+                "inversão de {} excede o tamanho declarado ({})",
+                transform_name(t),
+                s.input_len
+            )));
+        }
+        Err(e) => return Err(e),
     };
 
     if s.input_len != 0 && out.len() as u64 != s.input_len {
@@ -86,11 +122,34 @@ pub fn apply_chain(data: &[u8], steps: &mut [TransformStep]) -> io::Result<Vec<u
 }
 
 pub fn invert_chain(data: &[u8], steps: &[TransformStep]) -> io::Result<Vec<u8>> {
-    let mut current = data.to_vec();
-    for s in steps.iter().rev() {
-        current = invert(&current, s)?;
+    invert_chain_limited(data, steps, default_cap(), default_cap())
+}
+
+pub fn invert_chain_limited(
+    data: &[u8],
+    steps: &[TransformStep],
+    stage_cap: usize,
+    final_cap: usize,
+) -> io::Result<Vec<u8>> {
+    if steps.len() > MAX_CHAIN {
+        return Err(invalid(format!(
+            "cadeia de {} transforms excede o máximo de {MAX_CHAIN}",
+            steps.len()
+        )));
     }
-    Ok(current)
+    if steps.is_empty() {
+        check_len(data.len(), final_cap)?;
+        return Ok(data.to_vec());
+    }
+
+    let mut current: Option<Vec<u8>> = None;
+    for (i, s) in steps.iter().enumerate().rev() {
+        let cap = if i == 0 { final_cap } else { stage_cap };
+        let input: &[u8] = current.as_deref().unwrap_or(data);
+        let out = invert_limited(input, s, cap)?;
+        current = Some(out);
+    }
+    Ok(current.unwrap_or_default())
 }
 
 fn width_of(s: &TransformStep) -> io::Result<usize> {
@@ -214,8 +273,13 @@ fn rle_apply(data: &[u8]) -> Vec<u8> {
     out
 }
 
+#[cfg(test)]
 fn rle_invert(data: &[u8]) -> io::Result<Vec<u8>> {
-    let mut out = Vec::with_capacity(data.len() * 2);
+    rle_invert_limited(data, default_cap())
+}
+
+fn rle_invert_limited(data: &[u8], limit: usize) -> io::Result<Vec<u8>> {
+    let mut out = Vec::with_capacity(data.len().saturating_mul(2).min(limit));
     let mut i = 0usize;
 
     while i < data.len() {
@@ -227,6 +291,7 @@ fn rle_invert(data: &[u8]) -> io::Result<Vec<u8>> {
             if i + n > data.len() {
                 return Err(invalid("RLE truncado em bloco literal".to_string()));
             }
+            check_len(out.len().saturating_add(n), limit)?;
             out.extend_from_slice(&data[i..i + n]);
             i += n;
         } else if ctrl > 128 {
@@ -236,7 +301,8 @@ fn rle_invert(data: &[u8]) -> io::Result<Vec<u8>> {
             }
             let b = data[i];
             i += 1;
-            out.extend(std::iter::repeat(b).take(n));
+            check_len(out.len().saturating_add(n), limit)?;
+            out.resize(out.len() + n, b);
         } else {
             return Err(invalid("byte de controle RLE reservado (128)".to_string()));
         }
@@ -349,44 +415,63 @@ fn csv_apply(data: &[u8]) -> Option<Vec<u8>> {
     Some(out)
 }
 
-fn csv_invert(data: &[u8]) -> io::Result<Vec<u8>> {
-    let mut p = 0usize;
+fn csv_invert(data: &[u8], limit: usize) -> io::Result<Vec<u8>> {
     if data.len() < 5 || data[0] != CSV_MAGIC {
         return Err(invalid("cabeçalho colunar inválido".to_string()));
     }
-    p += 1;
-    let delim = data[p];
-    p += 1;
-    let trailing = data[p] != 0;
-    p += 1;
+    let delim = data[1];
+    let trailing = data[2] != 0;
+    let mut p = 3usize;
 
-    let rows = get_varint(data, &mut p)? as usize;
-    let cols = get_varint(data, &mut p)? as usize;
+    let rows = usize::try_from(get_varint(data, &mut p)?)
+        .map_err(|_| invalid("dimensões colunares absurdas".to_string()))?;
+    let cols = usize::try_from(get_varint(data, &mut p)?)
+        .map_err(|_| invalid("dimensões colunares absurdas".to_string()))?;
+    if rows == 0 || cols == 0 {
+        return Err(invalid("dimensões colunares inválidas".to_string()));
+    }
     let total = rows
         .checked_mul(cols)
         .ok_or_else(|| invalid("dimensões colunares absurdas".to_string()))?;
-    if total > data.len().saturating_mul(4) + 1024 {
+    if total > MAX_FIELDS || total > data.len() - p {
         return Err(invalid("dimensões colunares inconsistentes".to_string()));
     }
 
     let mut lens = Vec::with_capacity(total);
+    let mut payload = 0usize;
     for _ in 0..total {
-        lens.push(get_varint(data, &mut p)? as usize);
+        let len = usize::try_from(get_varint(data, &mut p)?)
+            .map_err(|_| invalid("campo colunar absurdo".to_string()))?;
+        payload = payload
+            .checked_add(len)
+            .ok_or_else(|| invalid("payload colunar absurdo".to_string()))?;
+        lens.push(len);
     }
+    let end = p
+        .checked_add(payload)
+        .filter(|end| *end <= data.len())
+        .ok_or_else(|| invalid("payload colunar truncado".to_string()))?;
+
+    let out_len = payload
+        .checked_add(total - 1)
+        .and_then(|n| n.checked_add(trailing as usize))
+        .ok_or_else(|| invalid("saída colunar absurda".to_string()))?;
+    check_len(out_len, limit)?;
 
     let mut fields: Vec<&[u8]> = vec![&[][..]; total];
+    let mut q = p;
     for c in 0..cols {
         for r in 0..rows {
             let len = lens[c * rows + r];
-            if p + len > data.len() {
-                return Err(invalid("payload colunar truncado".to_string()));
-            }
-            fields[r * cols + c] = &data[p..p + len];
-            p += len;
+            fields[r * cols + c] = data
+                .get(q..q + len)
+                .ok_or_else(|| invalid("payload colunar truncado".to_string()))?;
+            q += len;
         }
     }
+    debug_assert_eq!(q, end);
 
-    let mut out = Vec::with_capacity(p);
+    let mut out = Vec::with_capacity(out_len);
     for r in 0..rows {
         if r > 0 {
             out.push(b'\n');

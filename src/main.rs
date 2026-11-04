@@ -1,7 +1,14 @@
 #![recursion_limit = "1024"]
 
+#[cfg(not(test))]
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
+#[cfg(test)]
+mod memtrack;
+#[cfg(test)]
+#[global_allocator]
+static GLOBAL: memtrack::Counting = memtrack::Counting;
 
 use std::sync::Arc;
 use std::time::Duration;
@@ -26,16 +33,21 @@ mod content;
 mod db_monitor;
 mod dict_store;
 #[cfg(test)]
+mod bombas_tests;
+#[cfg(test)]
 mod golden;
 mod metrics;
 mod planner;
 #[allow(dead_code)]
 mod probe;
+#[cfg(test)]
+mod robustez_tests;
 mod service;
 mod tenancy;
 mod transform;
 mod usage;
 mod vault;
+mod watch_registry;
 mod watcher;
 
 use config::Config;
@@ -276,6 +288,7 @@ fn print_banner(state: &Arc<EngineState>) {
     info!(" esforço padrão .... {}", c.default_effort.as_str());
     info!(" verifica gravação . {}", c.verify_on_write);
     info!(" corpo máximo ...... {} MB", c.max_body_size_mb);
+    info!(" descompressão máx . {} MB", c.max_decompressed_mb);
     info!(" permits de CPU .... {}", state.max_compress_permits);
     info!(" autenticação ...... {}", if c.auth_enabled() { "API key exigida" } else { "ABERTA (defina SYNTRA_API_KEYS)" });
     info!("───────────────────────────────────────────────────────────");

@@ -9,6 +9,7 @@ use tokio::time::interval;
 use tracing::{debug, error, info, warn};
 
 use crate::service::{self, CompressRequest, EngineState};
+use crate::watch_registry::{self, WatchRecord};
 
 const SCAN_INTERVAL: Duration = Duration::from_secs(2);
 const DRAIN_INTERVAL: Duration = Duration::from_millis(500);
@@ -22,10 +23,92 @@ type Pending = Arc<Mutex<HashSet<PathBuf>>>;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct FileStamp {
     size: u64,
-    mtime: Option<std::time::SystemTime>,
+    mtime_ns: Option<i64>,
 }
 
-type Seen = Arc<dashmap::DashMap<PathBuf, FileStamp>>;
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct SeenRecord {
+    stamp: FileStamp,
+    hash: Option<String>,
+}
+
+struct SeenStore {
+    cache: dashmap::DashMap<PathBuf, SeenRecord>,
+    state: Arc<EngineState>,
+}
+
+type Seen = Arc<SeenStore>;
+
+impl SeenStore {
+    async fn load(state: Arc<EngineState>, dir: &Path) -> Seen {
+        let cache = dashmap::DashMap::new();
+        match watch_registry::load_all(&state.db).await {
+            Ok(rows) => {
+                for row in rows {
+                    let path = PathBuf::from(&row.path);
+                    if path.parent() != Some(dir) {
+                        continue;
+                    }
+                    cache.insert(
+                        path,
+                        SeenRecord {
+                            stamp: FileStamp {
+                                size: row.size.max(0) as u64,
+                                mtime_ns: row.mtime_ns,
+                            },
+                            hash: row.object_hash,
+                        },
+                    );
+                }
+                info!(arquivos = cache.len(), "registro de ingestão restaurado do banco");
+            }
+            Err(e) => warn!("registro de ingestão ilegível ({e}); tudo será tratado como novo"),
+        }
+        Arc::new(SeenStore { cache, state })
+    }
+
+    fn get(&self, path: &Path) -> Option<SeenRecord> {
+        self.cache.get(path).map(|r| r.value().clone())
+    }
+
+    async fn put(&self, path: &Path, record: SeenRecord) {
+        self.cache.insert(path.to_path_buf(), record.clone());
+        let Some(text) = path.to_str() else {
+            return;
+        };
+        let row = WatchRecord {
+            path: text.to_string(),
+            size: i64::try_from(record.stamp.size).unwrap_or(i64::MAX),
+            mtime_ns: record.stamp.mtime_ns,
+            object_hash: record.hash,
+            seen_at_ms: crate::container::now_millis(),
+        };
+        if let Err(e) = watch_registry::upsert(&self.state.db, &row).await {
+            warn!(arquivo = %path.display(), erro = %e, "registro de ingestão não persistido");
+        }
+    }
+
+    async fn forget(&self, path: &Path) {
+        self.cache.remove(path);
+        if let Some(text) = path.to_str() {
+            if let Err(e) = watch_registry::remove(&self.state.db, text).await {
+                warn!(arquivo = %path.display(), erro = %e, "registro de ingestão não removido");
+            }
+        }
+    }
+
+    async fn retain_present(&self, presentes: &HashSet<PathBuf>) {
+        let ausentes: Vec<PathBuf> = self
+            .cache
+            .iter()
+            .filter(|e| !presentes.contains(e.key()))
+            .map(|e| e.key().clone())
+            .collect();
+        for path in ausentes {
+            self.forget(&path).await;
+        }
+    }
+}
 
 pub fn start(state: Arc<EngineState>) {
     let dir = PathBuf::from(&state.config.watch_dir);
@@ -36,13 +119,16 @@ pub fn start(state: Arc<EngineState>) {
 
     let pending: Pending = Arc::new(Mutex::new(HashSet::new()));
     let inflight = Arc::new(dashmap::DashMap::<PathBuf, ()>::new());
-    let seen: Seen = Arc::new(dashmap::DashMap::new());
 
     spawn_notify(dir.clone(), pending.clone());
-    spawn_scanner(dir.clone(), pending.clone(), inflight.clone(), seen.clone());
-    spawn_drainer(state, pending, inflight, seen);
 
     info!(diretorio = %dir.display(), "ingestão por diretório ativa");
+
+    tokio::spawn(async move {
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        spawn_scanner(dir, pending.clone(), inflight.clone(), seen.clone());
+        spawn_drainer(state, pending, inflight, seen);
+    });
 }
 
 fn spawn_notify(dir: PathBuf, pending: Pending) {
@@ -118,7 +204,7 @@ fn spawn_scanner(
                     continue;
                 }
                 if let (Some(anterior), Ok(meta)) =
-                    (seen.get(&path).map(|v| *v), entry.metadata().await)
+                    (seen.get(&path).map(|r| r.stamp), entry.metadata().await)
                 {
                     if anterior == stamp_of(&meta) {
                         continue;
@@ -127,7 +213,7 @@ fn spawn_scanner(
                 found.push(path);
             }
 
-            seen.retain(|path, _| presentes.contains(path));
+            seen.retain_present(&presentes).await;
 
             if !found.is_empty() {
                 let mut queue = pending.lock();
@@ -140,7 +226,11 @@ fn spawn_scanner(
 fn stamp_of(meta: &std::fs::Metadata) -> FileStamp {
     FileStamp {
         size: meta.len(),
-        mtime: meta.modified().ok(),
+        mtime_ns: meta
+            .modified()
+            .ok()
+            .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
+            .and_then(|d| i64::try_from(d.as_nanos()).ok()),
     }
 }
 
@@ -198,12 +288,13 @@ async fn ingest(state: &Arc<EngineState>, path: &Path, seen: &Seen) -> anyhow::R
         return Ok(());
     };
     let stamp = stamp_of(&meta);
-    if seen.get(path).map(|v| *v == stamp).unwrap_or(false) {
+    let previous = seen.get(path);
+    if previous.as_ref().map(|r| r.stamp == stamp).unwrap_or(false) {
         return Ok(());
     }
     if stamp.size == 0 {
         debug!(arquivo = %path.display(), "arquivo vazio ignorado");
-        seen.insert(path.to_path_buf(), stamp);
+        seen.put(path, SeenRecord { stamp, hash: None }).await;
         return Ok(());
     }
 
@@ -219,6 +310,15 @@ async fn ingest(state: &Arc<EngineState>, path: &Path, seen: &Seen) -> anyhow::R
             return Ok(());
         }
     };
+
+    if let Some(known) = previous.and_then(|r| r.hash) {
+        let digest = hex::encode(blake3::hash(&data).as_bytes());
+        if digest == known {
+            debug!(arquivo = %name, "conteúdo idêntico ao já arquivado; só a data de modificação mudou");
+            seen.put(path, SeenRecord { stamp, hash: Some(digest) }).await;
+            return Ok(());
+        }
+    }
 
     let mut req = CompressRequest::from_config(&state.config, name.clone());
     req.persist = true;
@@ -238,15 +338,15 @@ async fn ingest(state: &Arc<EngineState>, path: &Path, seen: &Seen) -> anyhow::R
     if state.config.watch_delete_source {
         match tokio::fs::remove_file(path).await {
             Ok(()) => {
-                seen.remove(path);
+                seen.forget(path).await;
             }
             Err(e) => {
                 warn!(arquivo = %name, erro = %e, "essência gravada, mas o original não pôde ser removido");
-                seen.insert(path.to_path_buf(), stamp);
+                seen.put(path, SeenRecord { stamp, hash: Some(result.id) }).await;
             }
         }
     } else {
-        seen.insert(path.to_path_buf(), stamp);
+        seen.put(path, SeenRecord { stamp, hash: Some(result.id) }).await;
     }
 
     Ok(())

@@ -163,8 +163,16 @@ impl DictionaryStore {
         found
     }
 
+    pub fn is_valid_id(id: &str) -> bool {
+        !id.is_empty()
+            && id.len() <= 128
+            && id
+                .bytes()
+                .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'.' | b'_' | b'-'))
+    }
+
     pub fn resolve(&self, id: &str) -> Option<Arc<Dictionary>> {
-        if id.is_empty() {
+        if !Self::is_valid_id(id) {
             return None;
         }
         if let Some(d) = self.by_id.get(id) {
