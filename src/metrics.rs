@@ -10,6 +10,8 @@ const LATENCY_BUCKETS: [f64; 12] = [
     0.5, 1.0, 5.0, 10.0, 50.0, 100.0, 250.0, 500.0, 1000.0, 2500.0, 5000.0, 30000.0,
 ];
 
+pub const WATCH_SKIP_REASONS: [&str; 4] = ["symlink", "diretorio", "nao_regular", "trocado"];
+
 pub struct EngineMetrics {
     pub bytes_in: AtomicU64,
     pub bytes_out: AtomicU64,
@@ -26,6 +28,14 @@ pub struct EngineMetrics {
 
     pub dedup_bytes_saved: AtomicU64,
     pub dedup_hits: AtomicU64,
+
+    pub blocks_total: AtomicU64,
+    pub stored_blocks: AtomicU64,
+    pub block_corrupted: AtomicU64,
+    pub inflight_bytes: AtomicU64,
+    pub inflight_peak_bytes: AtomicU64,
+
+    watch_skipped: Vec<AtomicU64>,
 
     pub start_time: Instant,
     pub system_monitor: Mutex<System>,
@@ -49,6 +59,14 @@ impl EngineMetrics {
             latency_count: AtomicU64::new(0),
             dedup_bytes_saved: AtomicU64::new(0),
             dedup_hits: AtomicU64::new(0),
+            blocks_total: AtomicU64::new(0),
+            stored_blocks: AtomicU64::new(0),
+            block_corrupted: AtomicU64::new(0),
+            inflight_bytes: AtomicU64::new(0),
+            inflight_peak_bytes: AtomicU64::new(0),
+            watch_skipped: (0..WATCH_SKIP_REASONS.len())
+                .map(|_| AtomicU64::new(0))
+                .collect(),
             start_time: Instant::now(),
             system_monitor: Mutex::new(System::new_with_specifics(
                 RefreshKind::nothing()
@@ -93,6 +111,20 @@ impl EngineMetrics {
             .iter()
             .enumerate()
             .map(|(i, info)| (info.name, self.codec_counts[i].load(Ordering::Relaxed)))
+            .collect()
+    }
+
+    pub fn record_watch_skipped(&self, motivo: &str) {
+        if let Some(i) = WATCH_SKIP_REASONS.iter().position(|m| *m == motivo) {
+            self.watch_skipped[i].fetch_add(1, Ordering::Relaxed);
+        }
+    }
+
+    pub fn watch_skipped(&self) -> Vec<(&'static str, u64)> {
+        WATCH_SKIP_REASONS
+            .iter()
+            .enumerate()
+            .map(|(i, m)| (*m, self.watch_skipped[i].load(Ordering::Relaxed)))
             .collect()
     }
 
@@ -146,6 +178,10 @@ impl EngineMetrics {
         metric!("syntra_verify_failures_total", "counter", "Round-trips que não reproduziram o original", self.verify_failures.load(Ordering::Relaxed));
         metric!("syntra_dedup_hits_total", "counter", "Envios atendidos por deduplicação", self.dedup_hits.load(Ordering::Relaxed));
         metric!("syntra_dedup_bytes_saved_total", "counter", "Bytes de escrita evitados por deduplicação", self.dedup_bytes_saved.load(Ordering::Relaxed));
+        metric!("syntra_blocks_total", "counter", "Blocos gravados no formato v4", self.blocks_total.load(Ordering::Relaxed));
+        metric!("syntra_stored_blocks_total", "counter", "Blocos v4 gravados sem compressão (incompressíveis)", self.stored_blocks.load(Ordering::Relaxed));
+        metric!("syntra_block_corrupted_total", "counter", "Blocos v4 com hash de payload divergente na leitura", self.block_corrupted.load(Ordering::Relaxed));
+        metric!("syntra_inflight_bytes", "gauge", "Bytes de blocos v4 em voo (limite: SYNTRA_MAX_INFLIGHT_MB)", self.inflight_bytes.load(Ordering::Relaxed));
         metric!("syntra_uptime_seconds", "gauge", "Tempo ativo do motor", self.start_time.elapsed().as_secs());
         metric!("syntra_system_cpu_usage", "gauge", "Uso de CPU (0-100)", format!("{cpu:.2}"));
         metric!("syntra_system_memory_used_bytes", "gauge", "RAM usada em bytes", ram);
@@ -155,6 +191,16 @@ impl EngineMetrics {
         for (name, count) in self.codec_usage() {
             out.push_str(&format!(
                 "syntra_codec_usage_total{{codec=\"{name}\"}} {count}\n"
+            ));
+        }
+
+        out.push_str(
+            "# HELP syntra_watch_skipped_total Itens do diretório observado que a ingestão recusou por não serem arquivos regulares\n",
+        );
+        out.push_str("# TYPE syntra_watch_skipped_total counter\n");
+        for (motivo, count) in self.watch_skipped() {
+            out.push_str(&format!(
+                "syntra_watch_skipped_total{{motivo=\"{motivo}\"}} {count}\n"
             ));
         }
 
@@ -205,6 +251,13 @@ impl EngineMetrics {
                 "reconstructions": self.reconstructions.load(Ordering::Relaxed),
                 "errors": self.errors.load(Ordering::Relaxed),
                 "verify_failures": self.verify_failures.load(Ordering::Relaxed),
+            },
+            "blocks": {
+                "total": self.blocks_total.load(Ordering::Relaxed),
+                "stored": self.stored_blocks.load(Ordering::Relaxed),
+                "corrupted": self.block_corrupted.load(Ordering::Relaxed),
+                "inflight_bytes": self.inflight_bytes.load(Ordering::Relaxed),
+                "inflight_peak_bytes": self.inflight_peak_bytes.load(Ordering::Relaxed),
             },
             "deduplication": {
                 "hits": self.dedup_hits.load(Ordering::Relaxed),
@@ -295,6 +348,24 @@ mod tests {
         assert_eq!(uso["zstd"], 2);
         assert_eq!(uso["brotli"], 1);
         assert_eq!(uso["xz"], 0);
+    }
+
+    #[test]
+    fn itens_ignorados_pela_ingestao_viram_serie_por_motivo() {
+        let m = EngineMetrics::new();
+        m.record_watch_skipped("symlink");
+        m.record_watch_skipped("symlink");
+        m.record_watch_skipped("nao_regular");
+        m.record_watch_skipped("motivo-inventado");
+
+        let prom = m.to_prometheus();
+        assert!(prom.contains("# TYPE syntra_watch_skipped_total counter"), "{prom}");
+        assert!(prom.contains("syntra_watch_skipped_total{motivo=\"symlink\"} 2"), "{prom}");
+        assert!(prom.contains("syntra_watch_skipped_total{motivo=\"nao_regular\"} 1"), "{prom}");
+        assert!(prom.contains("syntra_watch_skipped_total{motivo=\"diretorio\"} 0"), "{prom}");
+        assert!(prom.contains("syntra_watch_skipped_total{motivo=\"trocado\"} 0"), "{prom}");
+        let total: u64 = m.watch_skipped().iter().map(|(_, n)| n).sum();
+        assert_eq!(total, 3, "motivo desconhecido não pode criar série nem contar");
     }
 
     #[test]

@@ -866,6 +866,22 @@ def t_relatorio_formato(c):
     exige(json.dumps(p, allow_nan=False), "NaN no JSON")
 
 
+def t_aviso_saida_antiga_com_nomes(c):
+    import tempfile
+
+    with tempfile.TemporaryDirectory(dir=c.base) as t:
+        raiz = os.path.join(t, "r")
+        os.makedirs(raiz)
+        with open(os.path.join(raiz, "SEGREDO_arquivo.txt"), "wb") as f:
+            f.write(b"conteudo " * 500)
+        saida = os.path.join(t, "s")
+        r1 = c.rodar("antiga1", raiz=raiz, saida=saida, revelar=True, processos=1)
+        exige(r1["rc"] == 0 and "aviso" not in r1["stderr"], "primeira execucao nao deveria avisar")
+        r2 = c.rodar("antiga2", raiz=raiz, saida=saida, cmd="varrer", processos=1)
+        exige(r2["rc"] == 0 and "aviso" in r2["stderr"] and "perfil.json" in r2["stderr"], "deveria avisar de saida anterior com nomes: %r" % r2["stderr"])
+        exige("SEGREDO" not in r2["stderr"], "o aviso nao pode citar nomes do dataset")
+
+
 def t_classes_poucos_arquivos_baixa_confianca(c):
     r = c.rodar("anon")
     amo = r["perfil"]["compressibilidade"]["por_classe"]
@@ -915,8 +931,13 @@ TESTES = [
     ("nunca_carrega_arquivo_inteiro", t_nunca_carrega_arquivo_inteiro),
     ("subcomandos_separados_igual_a_tudo", t_subcomandos_separados),
     ("relatorio_formato_e_secoes", t_relatorio_formato),
+    ("aviso_de_saida_anterior_com_nomes", t_aviso_saida_antiga_com_nomes),
     ("poucos_arquivos_baixa_confianca", t_classes_poucos_arquivos_baixa_confianca),
 ]
+
+
+def seguro(e):
+    return str(e).encode("utf-8", "backslashreplace").decode("utf-8")
 
 
 def executar(tool, filtro=""):
@@ -938,11 +959,11 @@ def executar(tool, filtro=""):
                 passou += 1
                 print("[ok]    %-58s %5.1fs" % (nome, time.time() - t1), flush=True)
             except AssertionError as e:
-                falhas.append((nome, str(e)))
-                print("[FALHA] %-58s %s" % (nome, e), flush=True)
+                falhas.append((nome, seguro(e)))
+                print("[FALHA] %-58s %s" % (nome, seguro(e)), flush=True)
             except Exception as e:
-                falhas.append((nome, "%s: %s" % (type(e).__name__, e)))
-                print("[ERRO]  %-58s %s: %s" % (nome, type(e).__name__, e), flush=True)
+                falhas.append((nome, "%s: %s" % (type(e).__name__, seguro(e))))
+                print("[ERRO]  %-58s %s: %s" % (nome, type(e).__name__, seguro(e)), flush=True)
     finally:
         ctx.sint.destruir(base)
         shutil.rmtree(base, ignore_errors=True)

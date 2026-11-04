@@ -1,6 +1,6 @@
 # Perfil de dataset
 
-Gerado por `bench/perfil_dataset.py` (versao 1.0) em 2026-11-04 20:16:49. Somente leitura; semente 1. Saida ANONIMIZADA: nenhum nome de arquivo ou diretorio; so extensoes, classes e identificadores hash salgados (sal aleatorio descartado).
+Gerado por `bench/perfil_dataset.py` (versao 1.0) em 2026-11-04 20:29:21. Somente leitura; semente 1. Saida ANONIMIZADA: nenhum nome de arquivo ou diretorio; so extensoes, classes e identificadores hash salgados (sal aleatorio descartado).
 
 ## Resumo executivo
 
@@ -8,10 +8,10 @@ Gerado por `bench/perfil_dataset.py` (versao 1.0) em 2026-11-04 20:16:49. Soment
 2. Fracao incompressivel: 11,5% por classificacao (midia, containers comprimidos, criptografado/aleatorio) e 11,5% [11,5%; 11,5%] por amostra (blocos com economia zstd-3 < 3%).
 3. Dedup de arquivo inteiro: 20,3% dos bytes (57,77 MiB) sao copias exatas, em 36 grupos.
 4. Familias de versoes: 55,3% dos bytes em 52 familias (27,7% sao versoes nao-base); o delta (patch-from) custa 11,1% [7,0%; 14,9%] do zstd-3 isolado em 52 pares medidos.
-5. Compressao do dataset (blocos de 1 MiB, ponderada por bytes): zstd-3 economiza 52,9% [50,2%; 54,7%] (razao 2,12x); zstd-19 56,9%; xz-9e 59,3% [56,6%; 61,3%].
+5. Compressao do dataset (blocos de 1 MiB, ponderada por bytes): zstd-3 economiza 52,9% [50,2%; 54,7%] (razao 2,12x); zstd-19 57,1%; xz-9e 59,5% [57,0%; 61,2%].
 6. Ganho por classe (zstd-3, IC95): texto 70,3% [65,1%; 72,8%]; binario 50,8% [42,6%; 56,3%]; cientifico_numerico 16,3% [10,4%; 21,9%]; xml_html 78,0% [69,3%; 85,5%].
-7. Economia mensal estimada so com compressao (politica por classe): US$ 3.665.227 [US$ 3.486.138; US$ 3.788.281] = armazenamento US$ 3.675.350 + movimento US$ 0,00 - CPU US$ 10.122.
-8. Com dedup e delta: US$ 4.775.620 [US$ 4.643.875; US$ 4.826.543] por mes; recompressao assincrona recomendada em: texto->xz-9e, codigo->xz-9e, csv_tabular->xz-9e, json_ndjson->xz-9e, log->xz-9e, xml_html->xz-9e, binario->xz-9e, banco_de_dados->xz-9e, cientifico_numerico->xz-9e; stored em: imagem_audio_video, criptografado_aleatorio.
+7. Economia mensal estimada so com compressao (politica por classe): US$ 3.678.229 [US$ 3.511.988; US$ 3.782.026] = armazenamento US$ 3.688.351 + movimento US$ 0,00 - CPU US$ 10.122.
+8. Com dedup e delta: US$ 4.781.397 [US$ 4.655.560; US$ 4.830.217] por mes; recompressao assincrona recomendada em: texto->xz-9e, codigo->xz-9e, csv_tabular->xz-9e, json_ndjson->xz-9e, log->xz-9e, xml_html->xz-9e, binario->xz-9e, banco_de_dados->xz-9e, cientifico_numerico->xz-9e; stored em: imagem_audio_video, criptografado_aleatorio.
 9. Parametros (premissas): volume 5,00 PB/mes, fracao retida 0,90, retencao 60 meses, armazenamento US$ 0,0230/GB-mes, nucleo US$ 0,0446/h, 3 leituras/GB, custo de movimento 0,00 (DESCONHECIDO).
 10. Limites: amostra de blocos de 1 MiB e heuristicas de classe e familia; vazoes de outro corpus/CPU; desconhecido: o que o cliente chama de processamento e se o consumo aceita dado comprimido (ver secao de limites).
 
@@ -111,16 +111,16 @@ Maiores grupos de duplicatas (identificador hash salgado)
 
 | Id | Copias | Tamanho | Bytes redundantes | Classe |
 |---|---|---|---|---|
-| 39787470ad8145f4 | 2 | 12,00 MiB | 12,00 MiB | binario |
-| 5284c6e6f3127a29 | 4 | 2,00 MiB | 6,00 MiB | criptografado_aleatorio |
-| 574c32a6b5c7cf57 | 2 | 5,10 MiB | 5,10 MiB | xml_html |
-| dae91855159076e9 | 3 | 2,38 MiB | 4,77 MiB | texto |
-| 2c803abd213f5c5b | 2 | 4,00 MiB | 4,00 MiB | imagem_audio_video |
-| c86232e67ec29dfa | 2 | 3,00 MiB | 3,00 MiB | xml_html |
-| 4e0b187bdec9a169 | 2 | 2,90 MiB | 2,90 MiB | cientifico_numerico |
-| 4658f1259cb3412a | 2 | 2,90 MiB | 2,90 MiB | cientifico_numerico |
-| 03aa430f906f9b57 | 2 | 2,69 MiB | 2,69 MiB | cientifico_numerico |
-| 2ede24e600abf6b5 | 2 | 2,38 MiB | 2,38 MiB | texto |
+| fae2efa5165a7d19 | 2 | 12,00 MiB | 12,00 MiB | binario |
+| 5e8e5653a280006c | 4 | 2,00 MiB | 6,00 MiB | criptografado_aleatorio |
+| f20b7ad731e1e630 | 2 | 5,10 MiB | 5,10 MiB | xml_html |
+| fc48e0fdcced7a3b | 3 | 2,38 MiB | 4,77 MiB | texto |
+| b39bc6e502d9607b | 2 | 4,00 MiB | 4,00 MiB | imagem_audio_video |
+| c7ae191a85899692 | 2 | 3,00 MiB | 3,00 MiB | xml_html |
+| 0e3c7a76dc8dd7b1 | 2 | 2,90 MiB | 2,90 MiB | cientifico_numerico |
+| 02bbc92f731c0b63 | 2 | 2,90 MiB | 2,90 MiB | cientifico_numerico |
+| 3789e116b3d06260 | 2 | 2,69 MiB | 2,69 MiB | cientifico_numerico |
+| 2245f6dd7670434f | 2 | 2,38 MiB | 2,38 MiB | texto |
 
 
 ## 4. Familias de versoes e delta
@@ -149,16 +149,16 @@ Maiores familias
 
 | Id | Membros | Bytes | Classe | patch/z3 medido |
 |---|---|---|---|---|
-| 2152292cbf4df061 | 2 | 41,22 MiB | texto | 18,2% |
-| 6e53080814ace469 | 2 | 19,24 MiB | binario | 18,8% |
-| b662b8a677c19973 | 2 | 11,74 MiB | binario | 0,2% |
-| 00f9180da9b7906e | 2 | 7,72 MiB | texto | 12,9% |
-| ea2b472380e4a9b2 | 2 | 6,00 MiB | xml_html | 12,6% |
-| df4ff5a318fbb0cb | 2 | 5,81 MiB | binario | 4,8% |
-| 19ebb7adea5aaa45 | 2 | 5,80 MiB | binario | 4,8% |
-| c528e3435e87ac2e | 2 | 5,39 MiB | cientifico_numerico | 8,8% |
-| 91187ea039e64601 | 2 | 4,98 MiB | log | 11,0% |
-| 608cad854fbb0d80 | 2 | 4,98 MiB | log | 10,0% |
+| 3af40998d167e602 | 2 | 41,22 MiB | texto | 18,2% |
+| 7fe0f30e635fb8b6 | 2 | 19,24 MiB | binario | 18,8% |
+| 2a1e0c17c9857fd7 | 2 | 11,74 MiB | binario | 0,2% |
+| 4782ba59d02cce1d | 2 | 7,72 MiB | texto | 12,9% |
+| da1f7aa1439ecdd5 | 2 | 6,00 MiB | xml_html | 12,6% |
+| adf47866bce26098 | 2 | 5,81 MiB | binario | 4,8% |
+| 89dceca341b1cd8d | 2 | 5,80 MiB | binario | 4,8% |
+| 6fa8783b0e3b852d | 2 | 5,39 MiB | cientifico_numerico | 8,8% |
+| 1e7b8f1b1fe62cb0 | 2 | 4,98 MiB | log | 11,0% |
+| c824758d2c63f93e | 2 | 4,98 MiB | log | 10,0% |
 
 
 ## 5. Compressibilidade por classe (blocos independentes de 1 MiB)
@@ -167,27 +167,27 @@ Estimador: razao de somas ponderada por bytes; IC95 por bootstrap (bootstrap de 
 
 | Classe | Arquivos | % amostrado | zstd-1 | zstd-3 [IC95] | zstd-9 | zstd-19 | xz-9e [IC95] | bzip2-9 | cru% | Confianca |
 |---|---|---|---|---|---|---|---|---|---|---|
-| texto | 25 | 100,0% | 67,1% (3,04x) | 70,3% (3,37x) [65,1%; 72,8%] | 72,8% (3,68x) | 75,7% (4,12x) | 76,3% (4,21x) [71,1%; 78,6%] | 76,5% (4,25x) | 0,0% | ok |
+| texto | 25 | 100,0% | 67,1% (3,04x) | 70,3% (3,37x) [65,1%; 72,8%] | 72,8% (3,68x) | 75,2% (4,04x) | 75,8% (4,13x) [71,0%; 78,0%] | 76,0% (4,17x) | 0,0% | ok |
 | codigo | 84 | 100,0% | 73,4% (3,76x) | 74,7% (3,95x) [73,8%; 75,4%] | 77,1% (4,37x) | 78,3% (4,61x) | 78,5% (4,65x) [77,5%; 79,3%] | 78,9% (4,74x) | 0,0% | ok |
 | csv_tabular | 14 | 100,0% | 69,3% (3,26x) | 66,5% (2,98x) [66,4%; 66,6%] | 70,5% (3,38x) | 73,8% (3,82x) | 79,7% (4,94x) [79,7%; 79,8%] | 77,2% (4,39x) | 0,0% | ok |
 | json_ndjson | 6 | 100,0% | 85,8% (7,05x) | 85,7% (7,00x) [85,7%; 85,7%] | 87,9% (8,26x) | 89,7% (9,71x) | 90,7% (10,77x) [90,7%; 90,7%] | 91,1% (11,21x) | 0,0% | ok |
 | log | 7 | 100,0% | 78,9% (4,74x) | 78,6% (4,67x) [78,5%; 78,7%] | 81,9% (5,51x) | 83,5% (6,06x) | 84,3% (6,35x) [84,2%; 84,3%] | 86,2% (7,24x) | 0,0% | ok |
 | xml_html | 6 | 100,0% | 75,7% (4,12x) | 78,0% (4,55x) [69,3%; 85,5%] | 80,8% (5,22x) | 82,5% (5,72x) | 82,8% (5,83x) [75,3%; 89,3%] | 84,5% (6,43x) | 0,0% | ok |
-| binario | 23 | 100,0% | 47,1% (1,89x) | 50,8% (2,03x) [42,6%; 56,3%] | 52,4% (2,10x) | 53,4% (2,14x) | 56,4% (2,29x) [48,5%; 62,6%] | 52,0% (2,08x) | 0,0% | ok |
+| binario | 23 | 100,0% | 47,1% (1,89x) | 50,8% (2,03x) [42,6%; 56,3%] | 52,4% (2,10x) | 54,8% (2,21x) | 57,7% (2,37x) [50,7%; 62,9%] | 53,5% (2,15x) | 0,0% | ok |
 | banco_de_dados | 2 | 100,0% | 51,6% (2,07x) | 55,6% (2,25x) [54,8%; 58,4%] | 56,8% (2,31x) | 59,9% (2,50x) | 62,5% (2,66x) [61,9%; 64,7%] | 67,6% (3,09x) | 0,0% | BAIXA |
 | cientifico_numerico | 11 | 100,0% | 12,6% (1,14x) | 16,3% (1,19x) [10,4%; 21,9%] | 18,3% (1,22x) | 21,5% (1,27x) | 32,0% (1,47x) [24,1%; 39,3%] | 25,3% (1,34x) | 0,0% | ok |
 | imagem_audio_video | 3 | 100,0% | 0,0% (1,00x) | 0,0% (1,00x) [0,0%; 0,0%] | 0,0% (1,00x) | 0,0% (1,00x) | 0,0% (1,00x) [0,0%; 0,0%] | 0,0% (1,00x) | 100,0% | BAIXA |
-| container_comprimido | 9 | 100,0% | 0,0% (1,00x) | 0,0% (1,00x) [0,0%; 0,0%] | 0,0% (1,00x) | 0,0% (1,00x) | 0,0% (1,00x) [0,0%; 0,0%] | 0,0% (1,00x) | 81,8% | ok |
+| container_comprimido | 9 | 100,0% | 0,0% (1,00x) | 0,0% (1,00x) [0,0%; 0,0%] | 0,0% (1,00x) | 0,0% (1,00x) | 0,0% (1,00x) [-0,0%; 0,0%] | 0,0% (1,00x) | 81,8% | ok |
 | criptografado_aleatorio | 12 | 100,0% | 0,0% (1,00x) | 0,0% (1,00x) [0,0%; 0,0%] | 0,0% (1,00x) | 0,0% (1,00x) | 0,0% (1,00x) [0,0%; 0,0%] | 0,0% (1,00x) | 100,0% | ok |
 
 
-Dataset inteiro (ponderado por bytes das classes amostradas): zstd-1 50,6% [47,4%; 52,5%] (2,03x); zstd-3 52,9% [50,2%; 54,7%] (2,12x); zstd-9 55,0% [52,2%; 56,8%] (2,22x); zstd-19 56,9% [54,1%; 58,9%] (2,32x); xz-9e 59,3% [56,6%; 61,3%] (2,46x); bzip2-9 57,8% [54,6%; 60,5%] (2,37x).
+Dataset inteiro (ponderado por bytes das classes amostradas): zstd-1 50,6% [47,4%; 52,5%] (2,03x); zstd-3 52,9% [50,2%; 54,7%] (2,12x); zstd-9 55,0% [52,2%; 56,8%] (2,22x); zstd-19 57,1% [54,4%; 58,9%] (2,33x); xz-9e 59,5% [57,0%; 61,2%] (2,47x); bzip2-9 58,0% [54,9%; 60,4%] (2,38x).
 
 
 Transform por bloco em `cientifico_numerico` (melhor entre zstd-3 puro e {delta 1/2/4/8, byte_split 4/8}+zstd-3 por bloco de 1 MiB (oraculo: o planejador real nao conhece o resultado antes de comprimir; limite superior)): melhor por bloco economiza 31,6% (razao 1,46x), ganho de 15,29 pp sobre zstd-3 [14,49; 16,17]; escolha por bloco: d2=9%, b4=36%, b8=55%.
 
 
-Vazao de compressao medida nesta execucao (indicativa, vazao_comp_indicativa_MBps foi medida com ate 5 processos concorrentes, sem fixar CPU, na maquina atual: so indicativa; a estimativa economica usa bench/resultados/medicoes.json (rotulada)): texto zstd-1=527/zstd-3=386/zstd-9=94/zstd-19=6/xz-9e=5/bzip2-9=24; codigo zstd-1=452/zstd-3=389/zstd-9=86/zstd-19=5/xz-9e=7/bzip2-9=24; csv_tabular zstd-1=465/zstd-3=317/zstd-9=73/zstd-19=5/xz-9e=4/bzip2-9=26 MB/s (primeiras classes).
+Vazao de compressao medida nesta execucao (indicativa, vazao_comp_indicativa_MBps foi medida com ate 5 processos concorrentes, sem fixar CPU, na maquina atual: so indicativa; a estimativa economica usa bench/resultados/medicoes.json (rotulada)): texto zstd-1=517/zstd-3=376/zstd-9=91/zstd-19=6/xz-9e=4/bzip2-9=24; codigo zstd-1=434/zstd-3=377/zstd-9=84/zstd-19=5/xz-9e=7/bzip2-9=24; csv_tabular zstd-1=462/zstd-3=313/zstd-9=72/zstd-19=5/xz-9e=5/bzip2-9=26 MB/s (primeiras classes).
 
 
 ## 6. Estimativa economica
@@ -219,32 +219,32 @@ Formula: armazenamento = s_arm x fracao_retida x volume_GB x retencao x preco_GB
 
 | Classe | % bytes | Economia zstd-3 | Dedup | Economia de armazenamento total | Armazenamento/mes | Movimento/mes | CPU/mes | Liquido/mes | IC95 liquido | Politica |
 |---|---|---|---|---|---|---|---|---|---|---|
-| texto | 28,0% | 70,3% | 12,2% | 83,2% | US$ 1.502.097 | US$ 0,00 | US$ 3.135 | US$ 1.498.962 | [US$ 1.447.915; US$ 1.522.751] | zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,9 meses) |
+| texto | 28,0% | 70,3% | 12,2% | 83,2% | US$ 1.497.641 | US$ 0,00 | US$ 3.135 | US$ 1.494.506 | [US$ 1.446.518; US$ 1.518.460] | zstd-3 sincrono + recompressao assincrona para xz-9e (M*=3,1 meses) |
 | codigo | 1,3% | 74,7% | 18,8% | 85,4% | US$ 70.318 | US$ 0,00 | US$ 111 | US$ 70.208 | [US$ 69.728; US$ 70.612] | zstd-3 sincrono + recompressao assincrona para xz-9e (M*=3,2 meses) |
 | csv_tabular | 3,8% | 66,5% | 17,3% | 82,1% | US$ 210.897 | US$ 0,00 | US$ 405 | US$ 210.491 | [US$ 210.383; US$ 210.568] | zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,3 meses) |
 | json_ndjson | 4,2% | 85,7% | 16,7% | 92,3% | US$ 248.203 | US$ 0,00 | US$ 367 | US$ 247.836 | [US$ 240.558; US$ 247.864] | zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,9 meses) |
 | log | 6,1% | 78,6% | 0,0% | 86,8% | US$ 342.439 | US$ 0,00 | US$ 728 | US$ 341.711 | [US$ 318.637; US$ 341.867] | zstd-3 sincrono + recompressao assincrona para xz-9e (M*=3,0 meses) |
 | xml_html | 7,8% | 78,0% | 36,5% | 88,6% | US$ 440.678 | US$ 0,00 | US$ 527 | US$ 440.151 | [US$ 408.124; US$ 455.225] | zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,4 meses) |
-| binario | 25,1% | 50,8% | 18,4% | 75,9% | US$ 1.222.942 | US$ 0,00 | US$ 2.158 | US$ 1.220.784 | [US$ 1.157.459; US$ 1.273.579] | zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,3 meses) |
+| binario | 25,1% | 50,8% | 18,4% | 75,9% | US$ 1.233.175 | US$ 0,00 | US$ 2.158 | US$ 1.231.017 | [US$ 1.173.340; US$ 1.274.105] | zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,8 meses) |
 | banco_de_dados | 1,4% | 55,6% | 0,0% | 75,9% | US$ 71.276 | US$ 0,00 | US$ 147 | US$ 71.129 | [US$ 55.245; US$ 71.761] | zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,3 meses) |
 | cientifico_numerico | 10,8% | 16,3% | 27,5% | 46,0% | US$ 376.254 | US$ 0,00 | US$ 1.105 | US$ 375.149 | [US$ 309.683; US$ 405.360] | zstd-3 sincrono + recompressao assincrona para xz-9e (M*=0,8 meses) |
 | imagem_audio_video | 3,2% | 0,0% | 44,4% | 44,4% | US$ 87.173 | US$ 0,00 | US$ 1,69 | US$ 87.171 | [US$ 87.171; US$ 87.171] | stored (sem compressao; zstd-3 nao paga o CPU nesta classe) |
 | container_comprimido | 1,3% | 0,0% | 46,6% | 46,6% | US$ 37.688 | US$ 0,00 | US$ 1,16 | US$ 37.687 | [US$ 37.686; US$ 37.691] | zstd-3 sincrono (recompressao assincrona nao paga na vida restante) |
 | criptografado_aleatorio | 7,0% | 0,0% | 40,0% | 40,0% | US$ 174.345 | US$ 0,00 | US$ 3,75 | US$ 174.341 | [US$ 174.341; US$ 174.341] | stored (sem compressao; zstd-3 nao paga o CPU nesta classe) |
-| **TOTAL** | 100% |  |  |  | US$ 4.784.309 | US$ 0,00 | US$ 8.689 | US$ 4.775.620 | [US$ 4.643.875; US$ 4.826.543] |  |
+| **TOTAL** | 100% |  |  |  | US$ 4.790.086 | US$ 0,00 | US$ 8.689 | US$ 4.781.397 | [US$ 4.655.560; US$ 4.830.217] |  |
 
 
 Valores em US$ por mes em regime estavel. Armazenamento = economia acumulada nos meses de retencao; liquido = armazenamento + movimento - CPU (compressao, leituras, hash do dedup, delta e recompressao).
 
-Apenas compressao (sem dedup nem delta): liquido US$ 3.665.227 [US$ 3.486.138; US$ 3.788.281].
+Apenas compressao (sem dedup nem delta): liquido US$ 3.678.229 [US$ 3.511.988; US$ 3.782.026].
 
 
 ### Recompressao assincrona (regra de M* de resultados/resumo.md, secao 11)
 
 | Classe | Destino | Delta economia (pp) | Custo de recompressao (US$/GB) | M* (meses) | Vida restante (meses) | Nucleos medios | Paga na vida restante |
 |---|---|---|---|---|---|---|---|
-| texto | zstd-19 | 5,43 | 0,0019 | 2,7 | 59 | 74,0 | sim |
-| texto | xz-9e | 5,97 | 0,0022 | 2,9 | 59 | 86,6 | sim |
+| texto | zstd-19 | 4,96 | 0,0019 | 2,9 | 59 | 74,0 | sim |
+| texto | xz-9e | 5,51 | 0,0022 | 3,1 | 59 | 86,6 | sim |
 | codigo | zstd-19 | 3,63 | 0,0012 | 2,5 | 59 | 2,2 | sim |
 | codigo | xz-9e | 3,81 | 0,0016 | 3,2 | 59 | 2,9 | sim |
 | csv_tabular | zstd-19 | 7,32 | 0,0018 | 2,0 | 59 | 9,5 | sim |
@@ -255,8 +255,8 @@ Apenas compressao (sem dedup nem delta): liquido US$ 3.665.227 [US$ 3.486.138; U
 | log | xz-9e | 5,68 | 0,0024 | 3,0 | 59 | 20,3 | sim |
 | xml_html | zstd-19 | 4,50 | 0,0015 | 2,8 | 59 | 16,2 | sim |
 | xml_html | xz-9e | 4,83 | 0,0014 | 2,4 | 59 | 15,1 | sim |
-| binario | zstd-19 | 2,61 | 0,0010 | 3,4 | 59 | 34,7 | sim |
-| binario | xz-9e | 5,61 | 0,0014 | 2,3 | 59 | 50,3 | sim |
+| binario | zstd-19 | 4,06 | 0,0010 | 2,2 | 59 | 34,7 | sim |
+| binario | xz-9e | 6,97 | 0,0014 | 1,8 | 59 | 50,3 | sim |
 | banco_de_dados | zstd-19 | 4,32 | 0,0016 | 2,9 | 59 | 3,1 | sim |
 | banco_de_dados | xz-9e | 6,84 | 0,0019 | 2,3 | 59 | 3,9 | sim |
 | cientifico_numerico | zstd-19 | 5,26 | 0,0012 | 1,5 | 59 | 18,0 | sim |
@@ -269,37 +269,37 @@ Apenas compressao (sem dedup nem delta): liquido US$ 3.665.227 [US$ 3.486.138; U
 
 | Fracao retida | Cenario de armazenamento | US$/GB-mes | Liquido/mes |
 |---|---|---|---|
-| 0,80 | s3_standard | 0,02300 | US$ 4.244.845 |
-| 0,80 | b2 | 0,00695 | US$ 1.277.199 |
-| 0,80 | glacier_ir | 0,00400 | US$ 731.751 |
-| 0,80 | onprem | 0,00200 | US$ 367.422 |
-| 0,90 | s3_standard | 0,02300 | US$ 4.775.620 |
-| 0,90 | b2 | 0,00695 | US$ 1.437.016 |
-| 0,90 | glacier_ir | 0,00400 | US$ 823.387 |
-| 0,90 | onprem | 0,00200 | US$ 413.401 |
-| 0,95 | s3_standard | 0,02300 | US$ 5.041.007 |
-| 0,95 | b2 | 0,00695 | US$ 1.516.924 |
-| 0,95 | glacier_ir | 0,00400 | US$ 869.205 |
-| 0,95 | onprem | 0,00200 | US$ 436.390 |
+| 0,80 | s3_standard | 0,02300 | US$ 4.249.981 |
+| 0,80 | b2 | 0,00695 | US$ 1.278.751 |
+| 0,80 | glacier_ir | 0,00400 | US$ 732.644 |
+| 0,80 | onprem | 0,00200 | US$ 367.869 |
+| 0,90 | s3_standard | 0,02300 | US$ 4.781.397 |
+| 0,90 | b2 | 0,00695 | US$ 1.438.762 |
+| 0,90 | glacier_ir | 0,00400 | US$ 824.391 |
+| 0,90 | onprem | 0,00200 | US$ 413.903 |
+| 0,95 | s3_standard | 0,02300 | US$ 5.047.105 |
+| 0,95 | b2 | 0,00695 | US$ 1.518.767 |
+| 0,95 | glacier_ir | 0,00400 | US$ 870.265 |
+| 0,95 | onprem | 0,00200 | US$ 436.920 |
 
 
 | Custo de movimento (US$/GB) | Passagens | Movimento/mes | Liquido/mes |
 |---|---|---|---|
-| 0,00 | 1 | US$ 0,00 | US$ 4.775.620 |
-| 0,00 | 3 | US$ 0,00 | US$ 4.775.620 |
-| 0,01 | 1 | US$ 26.465 | US$ 4.802.085 |
-| 0,01 | 3 | US$ 79.396 | US$ 4.855.016 |
-| 0,05 | 1 | US$ 132.327 | US$ 4.907.947 |
-| 0,05 | 3 | US$ 396.980 | US$ 5.172.600 |
-| 0,09 | 1 | US$ 238.188 | US$ 5.013.808 |
-| 0,09 | 3 | US$ 714.564 | US$ 5.490.184 |
+| 0,00 | 1 | US$ 0,00 | US$ 4.781.397 |
+| 0,00 | 3 | US$ 0,00 | US$ 4.781.397 |
+| 0,01 | 1 | US$ 26.465 | US$ 4.807.862 |
+| 0,01 | 3 | US$ 79.396 | US$ 4.860.793 |
+| 0,05 | 1 | US$ 132.327 | US$ 4.913.724 |
+| 0,05 | 3 | US$ 396.980 | US$ 5.178.377 |
+| 0,09 | 1 | US$ 238.188 | US$ 5.019.585 |
+| 0,09 | 3 | US$ 714.564 | US$ 5.495.961 |
 
 
 | Leituras por GB processado | CPU/mes | Liquido/mes |
 |---|---|---|
-| 1 | US$ 7.947 | US$ 4.776.362 |
-| 3 | US$ 8.689 | US$ 4.775.620 |
-| 10 | US$ 11.286 | US$ 4.773.022 |
+| 1 | US$ 7.947 | US$ 4.782.139 |
+| 3 | US$ 8.689 | US$ 4.781.397 |
+| 10 | US$ 11.286 | US$ 4.778.799 |
 
 
 ## 7. O que e medido no dataset, o que e premissa e o que e desconhecido
@@ -369,7 +369,7 @@ Vazoes usadas por classe (proxy)
 | Nomes com bytes invalidos em UTF-8 (processados normalmente) | 2 |
 | Alterados durante a leitura | 0 |
 | Abertura | O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK, tentando O_NOATIME (negado em arquivos de outro dono: reabre sem) |
-| Tempo por fase (s) | {'inventario': 0.001, 'classificacao': 0.042, 'dedup': 0.063, 'familias': 0.001, 'delta': 0.105, 'amostragem': 17.814} |
+| Tempo por fase (s) | {'inventario': 0.001, 'classificacao': 0.046, 'dedup': 0.064, 'familias': 0.001, 'delta': 0.12, 'amostragem': 15.904} |
 
 
 O registro por arquivo esta em `registro_leitura_<etapa>.jsonl` (um objeto por linha: identificador, extensao, classe, tamanho, bytes lidos por fase, status).

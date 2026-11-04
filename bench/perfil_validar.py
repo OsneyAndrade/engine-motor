@@ -380,7 +380,11 @@ def md_validacao(v):
     dd = b["dedup"]
     M.append("**Dedup**: ferramenta %d bytes em %d grupos; oraculo (sha256 de todos os arquivos) %d bytes em %d grupos; iguais: %s. Bytes lidos no hash completo: %d de %d candidatos por tamanho.\n" % (dd["bytes_duplicados_ferramenta"], dd["grupos_ferramenta"], dd["bytes_duplicados_oraculo_sha256"], dd["grupos_oraculo"], "sim" if dd["iguais"] else "NAO", dd["bytes_lidos_hash_completo"], dd["bytes_candidatos_por_tamanho"]))
     fm = b["familias"]
-    M.append("**Familias**: %d de %d pares v1->v2 modificados foram achados (recall %s%%); %d pares extras na ferramenta (razao patch/zstd-3 media %s: %s). %d familias, %s%% dos bytes; pares medidos %d de %d possiveis; falhas de roundtrip %d.\n" % (fm["pares_achados"], fm["pares_esperados"], f2(100 * fm["recall"], 1), fm["pares_extras_na_ferramenta"], f2(fm["razao_patch_z3_dos_extras_media"], 3), "extras sao pares de arquivos sem relacao" if (fm["razao_patch_z3_dos_extras_media"] or 0) > 0.8 else "extras tem alguma semelhanca", fm["familias"], f2(100 * fm["pct_bytes_em_familias"], 1), fm["pares_medidos"], fm["pares_possiveis"], fm["falhas_de_roundtrip"]))
+    if fm["pares_extras_na_ferramenta"]:
+        extras = "%d pares extras na ferramenta (razao patch/zstd-3 media %s: %s)" % (fm["pares_extras_na_ferramenta"], f2(fm["razao_patch_z3_dos_extras_media"], 3), "sem relacao" if (fm["razao_patch_z3_dos_extras_media"] or 0) > 0.8 else "alguma semelhanca")
+    else:
+        extras = "nenhum par extra na ferramenta"
+    M.append("**Familias**: %d de %d pares v1->v2 modificados foram achados (recall %s%%); %s. %d familias, %s%% dos bytes; pares medidos %d de %d possiveis; falhas de roundtrip %d.\n" % (fm["pares_achados"], fm["pares_esperados"], f2(100 * fm["recall"], 1), extras, fm["familias"], f2(100 * fm["pct_bytes_em_familias"], 1), fm["pares_medidos"], fm["pares_possiveis"], fm["falhas_de_roundtrip"]))
     linhas = [[cl, f2(x["razao_ferramenta"], 4), "[%s; %s]" % (f2(x["ic95"][0], 4), f2(x["ic95"][1], 4)), x["pares_medidos"], f2(x["razao_exata_dos_pares_esperados"], 4), x["pares_exatos"]] for cl, x in fm["delta_por_classe_vs_exato"].items()]
     M.append(tabela(["Classe", "patch/zstd-3 (ferramenta)", "IC95", "Pares medidos", "patch/zstd-3 exato dos pares v1->v2 (arquivo inteiro)", "Pares exatos"], linhas))
     v12 = fm["variante_12_pares"]

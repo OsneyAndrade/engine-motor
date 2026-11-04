@@ -4,6 +4,111 @@ use crate::planner::{Effort, Limits};
 
 pub const ESSENCE_EXTENSION: &str = "syntra";
 
+pub const DEFAULT_BLOCK_LOG2: u8 = 20;
+pub const DEFAULT_MAX_INFLIGHT_MB: usize = 128;
+pub const DEFAULT_INFLIGHT_WAIT_MS: u64 = 5000;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ContainerFormat {
+    V3,
+    V4,
+}
+
+impl ContainerFormat {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            ContainerFormat::V3 => "v3",
+            ContainerFormat::V4 => "v4",
+        }
+    }
+
+    pub fn version(self) -> i32 {
+        match self {
+            ContainerFormat::V3 => 3,
+            ContainerFormat::V4 => 4,
+        }
+    }
+
+    pub fn from_name(s: &str) -> Option<Self> {
+        match s.trim().to_ascii_lowercase().as_str() {
+            "v3" | "3" => Some(ContainerFormat::V3),
+            "v4" | "4" => Some(ContainerFormat::V4),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct BlockSettings {
+    pub format: ContainerFormat,
+    pub block_log2: u8,
+    pub max_inflight_mb: usize,
+    pub inflight_wait_ms: u64,
+}
+
+impl Default for BlockSettings {
+    fn default() -> Self {
+        BlockSettings {
+            format: ContainerFormat::V3,
+            block_log2: DEFAULT_BLOCK_LOG2,
+            max_inflight_mb: DEFAULT_MAX_INFLIGHT_MB,
+            inflight_wait_ms: DEFAULT_INFLIGHT_WAIT_MS,
+        }
+    }
+}
+
+impl BlockSettings {
+    pub fn from_env() -> Self {
+        let format = match std::env::var("SYNTRA_CONTAINER_FORMAT") {
+            Ok(v) if !v.trim().is_empty() => ContainerFormat::from_name(&v).unwrap_or_else(|| {
+                warn!("SYNTRA_CONTAINER_FORMAT='{v}' inválido (use v3 ou v4); usando v3");
+                ContainerFormat::V3
+            }),
+            _ => ContainerFormat::V3,
+        };
+
+        let block_log2 = match std::env::var("SYNTRA_BLOCK_SIZE_LOG2") {
+            Ok(v) if !v.trim().is_empty() => match v.trim().parse::<u8>() {
+                Ok(n) if (crate::blockfile::MIN_BLOCK_LOG2..=crate::blockfile::MAX_BLOCK_LOG2)
+                    .contains(&n) =>
+                {
+                    n
+                }
+                _ => {
+                    warn!(
+                        "SYNTRA_BLOCK_SIZE_LOG2='{v}' fora da faixa {}..={}; usando {DEFAULT_BLOCK_LOG2}",
+                        crate::blockfile::MIN_BLOCK_LOG2,
+                        crate::blockfile::MAX_BLOCK_LOG2
+                    );
+                    DEFAULT_BLOCK_LOG2
+                }
+            },
+            _ => DEFAULT_BLOCK_LOG2,
+        };
+
+        BlockSettings {
+            format,
+            block_log2,
+            max_inflight_mb: env_usize("SYNTRA_MAX_INFLIGHT_MB", DEFAULT_MAX_INFLIGHT_MB),
+            inflight_wait_ms: env_usize("SYNTRA_INFLIGHT_WAIT_MS", DEFAULT_INFLIGHT_WAIT_MS as usize)
+                as u64,
+        }
+    }
+
+    pub fn block_size(&self) -> usize {
+        1usize << self.block_log2
+    }
+
+    pub fn inflight_units(&self) -> usize {
+        let bytes = self.max_inflight_mb.saturating_mul(1024 * 1024);
+        (bytes >> self.block_log2).max(1)
+    }
+
+    pub fn retry_after_secs(&self) -> u64 {
+        self.inflight_wait_ms.div_ceil(1000).max(1)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Config {
     pub vault_path: String,

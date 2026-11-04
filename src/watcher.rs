@@ -1,4 +1,7 @@
 use std::collections::HashSet;
+use std::fs::{File, Metadata, OpenOptions};
+use std::io::Read;
+use std::os::unix::fs::{MetadataExt, OpenOptionsExt};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::Duration;
@@ -20,6 +23,131 @@ const INGEST_CONCURRENCY: usize = 4;
 
 type Pending = Arc<Mutex<HashSet<PathBuf>>>;
 
+#[cfg(all(
+    target_os = "linux",
+    any(
+        target_arch = "x86",
+        target_arch = "x86_64",
+        target_arch = "arm",
+        target_arch = "aarch64",
+        target_arch = "riscv64",
+        target_arch = "loongarch64",
+        target_arch = "s390x",
+        target_arch = "powerpc64"
+    )
+))]
+const OPEN_NONBLOCK: i32 = 0o4000;
+#[cfg(not(all(
+    target_os = "linux",
+    any(
+        target_arch = "x86",
+        target_arch = "x86_64",
+        target_arch = "arm",
+        target_arch = "aarch64",
+        target_arch = "riscv64",
+        target_arch = "loongarch64",
+        target_arch = "s390x",
+        target_arch = "powerpc64"
+    )
+)))]
+const OPEN_NONBLOCK: i32 = 0;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Skip {
+    Symlink,
+    Diretorio,
+    NaoRegular,
+    Trocado,
+}
+
+impl Skip {
+    fn label(self) -> &'static str {
+        match self {
+            Skip::Symlink => "symlink",
+            Skip::Diretorio => "diretorio",
+            Skip::NaoRegular => "nao_regular",
+            Skip::Trocado => "trocado",
+        }
+    }
+
+    fn is_state(self) -> bool {
+        self != Skip::Trocado
+    }
+}
+
+enum Entry {
+    Regular(Metadata),
+    Skipped(Skip),
+    Gone,
+}
+
+#[derive(Debug)]
+enum OpenError {
+    Skip(Skip),
+    Io(std::io::Error),
+}
+
+fn skip_of(meta: &Metadata) -> Option<Skip> {
+    let kind = meta.file_type();
+    if kind.is_symlink() {
+        Some(Skip::Symlink)
+    } else if kind.is_file() {
+        None
+    } else if kind.is_dir() {
+        Some(Skip::Diretorio)
+    } else {
+        Some(Skip::NaoRegular)
+    }
+}
+
+fn entry_of(path: &Path) -> Entry {
+    match std::fs::symlink_metadata(path) {
+        Ok(meta) => match skip_of(&meta) {
+            Some(motivo) => Entry::Skipped(motivo),
+            None => Entry::Regular(meta),
+        },
+        Err(_) => Entry::Gone,
+    }
+}
+
+fn open_verified(path: &Path, before: &Metadata) -> Result<(File, Metadata), OpenError> {
+    let file = OpenOptions::new()
+        .read(true)
+        .custom_flags(OPEN_NONBLOCK)
+        .open(path)
+        .map_err(OpenError::Io)?;
+    let after = file.metadata().map_err(OpenError::Io)?;
+    if !after.file_type().is_file() || after.dev() != before.dev() || after.ino() != before.ino() {
+        return Err(OpenError::Skip(Skip::Trocado));
+    }
+    Ok((file, after))
+}
+
+async fn read_open(file: File) -> std::io::Result<Vec<u8>> {
+    tokio::task::spawn_blocking(move || {
+        let mut file = file;
+        let mut data = Vec::new();
+        file.read_to_end(&mut data)?;
+        Ok(data)
+    })
+    .await
+    .map_err(std::io::Error::other)?
+}
+
+fn screen(path: &Path, seen: &SeenStore) -> Option<Metadata> {
+    if !name_allowed(path) {
+        return None;
+    }
+    match entry_of(path) {
+        Entry::Regular(meta) => Some(meta),
+        Entry::Skipped(motivo) => {
+            seen.note_skip(path, motivo);
+            None
+        }
+        Entry::Gone => None,
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct FileStamp {
     size: u64,
@@ -34,6 +162,7 @@ struct SeenRecord {
 
 struct SeenStore {
     cache: dashmap::DashMap<PathBuf, SeenRecord>,
+    skipped: dashmap::DashMap<PathBuf, Skip>,
     state: Arc<EngineState>,
 }
 
@@ -64,11 +193,36 @@ impl SeenStore {
             }
             Err(e) => warn!("registro de ingestão ilegível ({e}); tudo será tratado como novo"),
         }
-        Arc::new(SeenStore { cache, state })
+        Arc::new(SeenStore {
+            cache,
+            skipped: dashmap::DashMap::new(),
+            state,
+        })
     }
 
     fn get(&self, path: &Path) -> Option<SeenRecord> {
         self.cache.get(path).map(|r| r.value().clone())
+    }
+
+    fn note_skip(&self, path: &Path, motivo: Skip) {
+        if motivo.is_state() && self.skipped.insert(path.to_path_buf(), motivo) == Some(motivo) {
+            return;
+        }
+        self.state.metrics.record_watch_skipped(motivo.label());
+        let nome = path
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_default();
+        warn!(
+            arquivo = ?nome,
+            motivo = motivo.label(),
+            "item do diretório observado ignorado: só arquivos regulares são ingeridos"
+        );
+    }
+
+    fn retain_skipped(&self) {
+        self.skipped
+            .retain(|path, motivo| matches!(entry_of(path), Entry::Skipped(agora) if agora == *motivo));
     }
 
     async fn put(&self, path: &Path, record: SeenRecord) {
@@ -120,18 +274,17 @@ pub fn start(state: Arc<EngineState>) {
     let pending: Pending = Arc::new(Mutex::new(HashSet::new()));
     let inflight = Arc::new(dashmap::DashMap::<PathBuf, ()>::new());
 
-    spawn_notify(dir.clone(), pending.clone());
-
     info!(diretorio = %dir.display(), "ingestão por diretório ativa");
 
     tokio::spawn(async move {
         let seen = SeenStore::load(state.clone(), &dir).await;
+        spawn_notify(dir.clone(), pending.clone(), seen.clone());
         spawn_scanner(dir, pending.clone(), inflight.clone(), seen.clone());
         spawn_drainer(state, pending, inflight, seen);
     });
 }
 
-fn spawn_notify(dir: PathBuf, pending: Pending) {
+fn spawn_notify(dir: PathBuf, pending: Pending, seen: Seen) {
     std::thread::Builder::new()
         .name("syntra-notify".into())
         .spawn(move || {
@@ -164,11 +317,13 @@ fn spawn_notify(dir: PathBuf, pending: Pending) {
                 ) {
                     continue;
                 }
-                let mut queue = pending.lock();
-                for path in event.paths {
-                    if is_candidate(&path) {
-                        queue.insert(path);
-                    }
+                let admitted: Vec<PathBuf> = event
+                    .paths
+                    .into_iter()
+                    .filter(|path| screen(path, &seen).is_some())
+                    .collect();
+                if !admitted.is_empty() {
+                    pending.lock().extend(admitted);
                 }
             }
         })
@@ -195,7 +350,14 @@ fn spawn_scanner(
 
             while let Ok(Some(entry)) = entries.next_entry().await {
                 let path = entry.path();
-                if !is_candidate(&path) {
+                if !name_allowed(&path) {
+                    continue;
+                }
+                let Ok(meta) = tokio::fs::symlink_metadata(&path).await else {
+                    continue;
+                };
+                if let Some(motivo) = skip_of(&meta) {
+                    seen.note_skip(&path, motivo);
                     continue;
                 }
                 presentes.insert(path.clone());
@@ -203,17 +365,14 @@ fn spawn_scanner(
                 if inflight.contains_key(&path) {
                     continue;
                 }
-                if let (Some(anterior), Ok(meta)) =
-                    (seen.get(&path).map(|r| r.stamp), entry.metadata().await)
-                {
-                    if anterior == stamp_of(&meta) {
-                        continue;
-                    }
+                if seen.get(&path).map(|r| r.stamp) == Some(stamp_of(&meta)) {
+                    continue;
                 }
                 found.push(path);
             }
 
             seen.retain_present(&presentes).await;
+            seen.retain_skipped();
 
             if !found.is_empty() {
                 let mut queue = pending.lock();
@@ -280,12 +439,31 @@ fn spawn_drainer(
 }
 
 async fn ingest(state: &Arc<EngineState>, path: &Path, seen: &Seen) -> anyhow::Result<()> {
+    if screen(path, seen).is_none() {
+        return Ok(());
+    }
     if wait_until_stable(path).await.is_none() {
         return Ok(());
     }
-
-    let Ok(meta) = tokio::fs::metadata(path).await else {
+    let Some(before) = screen(path, seen) else {
         return Ok(());
+    };
+
+    let name = path
+        .file_name()
+        .map(|n| n.to_string_lossy().to_string())
+        .unwrap_or_else(|| "sem-nome".to_string());
+
+    let (file, meta) = match open_verified(path, &before) {
+        Ok(opened) => opened,
+        Err(OpenError::Skip(motivo)) => {
+            seen.note_skip(path, motivo);
+            return Ok(());
+        }
+        Err(OpenError::Io(e)) => {
+            warn!(arquivo = %name, erro = %e, "arquivo ilegível; será tentado na próxima varredura");
+            return Ok(());
+        }
     };
     let stamp = stamp_of(&meta);
     let previous = seen.get(path);
@@ -298,12 +476,7 @@ async fn ingest(state: &Arc<EngineState>, path: &Path, seen: &Seen) -> anyhow::R
         return Ok(());
     }
 
-    let name = path
-        .file_name()
-        .map(|n| n.to_string_lossy().to_string())
-        .unwrap_or_else(|| "sem-nome".to_string());
-
-    let data = match tokio::fs::read(path).await {
+    let data = match read_open(file).await {
         Ok(d) => d,
         Err(e) => {
             warn!(arquivo = %name, erro = %e, "arquivo ilegível; será tentado na próxima varredura");
@@ -358,7 +531,11 @@ async fn wait_until_stable(path: &Path) -> Option<u64> {
     let mut stable = 0u8;
 
     loop {
-        let size = tokio::fs::metadata(path).await.ok()?.len();
+        let meta = tokio::fs::symlink_metadata(path).await.ok()?;
+        if !meta.file_type().is_file() {
+            return None;
+        }
+        let size = meta.len();
 
         if Some(size) == last {
             stable += 1;
@@ -382,10 +559,12 @@ async fn wait_until_stable(path: &Path) -> Option<u64> {
     }
 }
 
+#[cfg(test)]
 fn is_candidate(path: &Path) -> bool {
-    if !path.is_file() {
-        return false;
-    }
+    name_allowed(path) && matches!(entry_of(path), Entry::Regular(_))
+}
+
+fn name_allowed(path: &Path) -> bool {
     let Some(name) = path.file_name().and_then(|n| n.to_str()) else {
         return false;
     };
@@ -652,5 +831,343 @@ mod tests {
         assert!(recarregado.get(&arquivo).is_none(), "o registro removido não pode voltar");
 
         let _ = std::fs::remove_dir_all(&raiz);
+    }
+
+    fn pular(state: &Arc<EngineState>, motivo: &str) -> u64 {
+        state
+            .metrics
+            .watch_skipped()
+            .into_iter()
+            .find(|(m, _)| *m == motivo)
+            .map(|(_, n)| n)
+            .unwrap_or(0)
+    }
+
+    fn mkfifo(path: &Path) {
+        let status = std::process::Command::new("mkfifo").arg(path).status().unwrap();
+        assert!(status.success(), "mkfifo falhou");
+    }
+
+    async fn esperar_eventos(state: &Arc<EngineState>, alvo: i64, limite: Duration) -> bool {
+        let fim = tokio::time::Instant::now() + limite;
+        while tokio::time::Instant::now() < fim {
+            if eventos(state).await >= alvo {
+                return true;
+            }
+            tokio::time::sleep(Duration::from_millis(200)).await;
+        }
+        false
+    }
+
+    #[tokio::test]
+    async fn link_simbolico_para_arquivo_nunca_e_ingerido_e_o_regular_ao_lado_continua() {
+        let raiz = raiz_de_teste("link-arquivo");
+        let dir = raiz.join("watch");
+        std::fs::create_dir_all(&dir).unwrap();
+        let segredo = csv_de(800);
+        let alvo = raiz.join("segredo.csv");
+        std::fs::write(&alvo, &segredo).unwrap();
+        let link = dir.join("link.csv");
+        std::os::unix::fs::symlink(&alvo, &link).unwrap();
+        let regular = dir.join("regular.csv");
+        let conteudo = csv_de(500);
+        std::fs::write(&regular, &conteudo).unwrap();
+
+        let state = motor_em(&raiz).await;
+        let seen = SeenStore::load(state.clone(), &dir).await;
+
+        ingest(&state, &link, &seen).await.unwrap();
+        assert_eq!(eventos(&state).await, 0, "o link não pode virar evento de compressão");
+        assert_eq!(referencias(&state, &segredo).await, 0, "o alvo do link não pode virar objeto");
+        assert!(seen.get(&link).is_none(), "o link não entra no registro de ingestão");
+        assert_eq!(pular(&state, "symlink"), 1);
+
+        ingest(&state, &regular, &seen).await.unwrap();
+        assert_eq!(eventos(&state).await, 1, "o arquivo regular ao lado segue sendo ingerido");
+        assert_eq!(referencias(&state, &conteudo).await, 1);
+        assert_eq!(referencias(&state, &segredo).await, 0);
+
+        let _ = std::fs::remove_dir_all(&raiz);
+    }
+
+    #[tokio::test]
+    async fn link_para_diretorio_link_quebrado_e_laco_de_links_sao_ignorados() {
+        let raiz = raiz_de_teste("link-outros");
+        let dir = raiz.join("watch");
+        std::fs::create_dir_all(&dir).unwrap();
+        let pasta_fora = raiz.join("pasta-fora");
+        std::fs::create_dir_all(&pasta_fora).unwrap();
+        let dentro = csv_de(400);
+        std::fs::write(pasta_fora.join("dentro.csv"), &dentro).unwrap();
+
+        let link_dir = dir.join("link-dir");
+        std::os::unix::fs::symlink(&pasta_fora, &link_dir).unwrap();
+        let quebrado = dir.join("quebrado.csv");
+        std::os::unix::fs::symlink(raiz.join("nao-existe.csv"), &quebrado).unwrap();
+        let laco_a = dir.join("laco-a.csv");
+        let laco_b = dir.join("laco-b.csv");
+        std::os::unix::fs::symlink("laco-b.csv", &laco_a).unwrap();
+        std::os::unix::fs::symlink("laco-a.csv", &laco_b).unwrap();
+        let subdir = dir.join("subdir");
+        std::fs::create_dir_all(&subdir).unwrap();
+        let no_subdir = csv_de(300);
+        std::fs::write(subdir.join("aninhado.csv"), &no_subdir).unwrap();
+
+        let state = motor_em(&raiz).await;
+        let seen = SeenStore::load(state.clone(), &dir).await;
+
+        for caminho in [&link_dir, &quebrado, &laco_a, &laco_b, &subdir] {
+            ingest(&state, caminho, &seen).await.unwrap();
+        }
+        assert_eq!(eventos(&state).await, 0);
+        assert_eq!(referencias(&state, &dentro).await, 0, "o conteúdo da pasta apontada não pode ser lido");
+        assert_eq!(referencias(&state, &no_subdir).await, 0, "subdiretório não é percorrido");
+        assert_eq!(pular(&state, "symlink"), 4);
+        assert_eq!(pular(&state, "diretorio"), 1);
+
+        let _ = std::fs::remove_dir_all(&raiz);
+    }
+
+    #[tokio::test]
+    async fn fifo_e_dispositivo_sao_ignorados_sem_bloquear() {
+        let raiz = raiz_de_teste("fifo");
+        let dir = raiz.join("watch");
+        std::fs::create_dir_all(&dir).unwrap();
+        let fifo = dir.join("canal.csv");
+        mkfifo(&fifo);
+        let regular = dir.join("regular.csv");
+        let conteudo = csv_de(200);
+        std::fs::write(&regular, &conteudo).unwrap();
+
+        assert!(matches!(entry_of(&fifo), Entry::Skipped(Skip::NaoRegular)));
+        assert!(matches!(entry_of(Path::new("/dev/null")), Entry::Skipped(Skip::NaoRegular)));
+        assert!(matches!(entry_of(&dir), Entry::Skipped(Skip::Diretorio)));
+        assert!(matches!(entry_of(&regular), Entry::Regular(_)));
+        assert!(!is_candidate(&fifo));
+
+        let state = motor_em(&raiz).await;
+        let seen = SeenStore::load(state.clone(), &dir).await;
+
+        tokio::time::timeout(Duration::from_secs(10), ingest(&state, &fifo, &seen))
+            .await
+            .expect("ingest ficou preso no FIFO")
+            .unwrap();
+        assert_eq!(eventos(&state).await, 0);
+        assert_eq!(pular(&state, "nao_regular"), 1);
+
+        ingest(&state, &regular, &seen).await.unwrap();
+        assert_eq!(referencias(&state, &conteudo).await, 1);
+
+        let _ = std::fs::remove_dir_all(&raiz);
+    }
+
+    #[tokio::test]
+    async fn a_varredura_ignora_o_que_nao_e_regular_conta_uma_vez_e_ingere_o_arquivo_regular() {
+        let raiz = raiz_de_teste("varredura");
+        let dir = raiz.join("watch");
+        std::fs::create_dir_all(&dir).unwrap();
+        let segredo = csv_de(700);
+        let alvo = raiz.join("segredo.csv");
+        std::fs::write(&alvo, &segredo).unwrap();
+        let pasta_fora = raiz.join("pasta-fora");
+        std::fs::create_dir_all(&pasta_fora).unwrap();
+        let dentro = csv_de(600);
+        std::fs::write(pasta_fora.join("dentro.csv"), &dentro).unwrap();
+        let aninhado = csv_de(500);
+        std::fs::create_dir_all(dir.join("subdir")).unwrap();
+        std::fs::write(dir.join("subdir").join("aninhado.csv"), &aninhado).unwrap();
+
+        std::os::unix::fs::symlink(&alvo, dir.join("link-arquivo.csv")).unwrap();
+        std::os::unix::fs::symlink(&pasta_fora, dir.join("link-pasta")).unwrap();
+        std::os::unix::fs::symlink(raiz.join("nao-existe.csv"), dir.join("quebrado.csv")).unwrap();
+        std::os::unix::fs::symlink("laco-b.csv", dir.join("laco-a.csv")).unwrap();
+        std::os::unix::fs::symlink("laco-a.csv", dir.join("laco-b.csv")).unwrap();
+        mkfifo(&dir.join("canal.csv"));
+        let regular = csv_de(400);
+        std::fs::write(dir.join("regular.csv"), &regular).unwrap();
+
+        let state = motor_em(&raiz).await;
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        let pending: Pending = Arc::new(Mutex::new(HashSet::new()));
+        let inflight = Arc::new(dashmap::DashMap::<PathBuf, ()>::new());
+        spawn_scanner(dir.clone(), pending.clone(), inflight.clone(), seen.clone());
+        spawn_drainer(state.clone(), pending, inflight, seen.clone());
+
+        assert!(
+            esperar_eventos(&state, 1, Duration::from_secs(20)).await,
+            "o arquivo regular deveria ser ingerido pela varredura"
+        );
+        tokio::time::sleep(SCAN_INTERVAL * 3).await;
+
+        assert_eq!(eventos(&state).await, 1, "só o arquivo regular pode virar evento");
+        assert_eq!(referencias(&state, &regular).await, 1);
+        assert_eq!(referencias(&state, &segredo).await, 0, "alvo de link lido");
+        assert_eq!(referencias(&state, &dentro).await, 0, "pasta apontada por link lida");
+        assert_eq!(referencias(&state, &aninhado).await, 0, "subdiretório percorrido");
+        assert_eq!(pular(&state, "symlink"), 4, "contagem por sighting, sem repetir a cada varredura");
+        assert_eq!(pular(&state, "nao_regular"), 1);
+        assert_eq!(pular(&state, "diretorio"), 1);
+
+        let _ = std::fs::remove_dir_all(&raiz);
+    }
+
+    #[tokio::test]
+    async fn a_notificacao_do_inotify_nao_enfileira_links_nem_especiais() {
+        let raiz = raiz_de_teste("inotify");
+        let dir = raiz.join("watch");
+        std::fs::create_dir_all(&dir).unwrap();
+        let alvo = raiz.join("segredo.csv");
+        std::fs::write(&alvo, csv_de(300)).unwrap();
+
+        let state = motor_em(&raiz).await;
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        let pending: Pending = Arc::new(Mutex::new(HashSet::new()));
+        spawn_notify(dir.clone(), pending.clone(), seen.clone());
+        tokio::time::sleep(Duration::from_millis(500)).await;
+
+        std::os::unix::fs::symlink(&alvo, dir.join("link.csv")).unwrap();
+        mkfifo(&dir.join("canal.csv"));
+        std::fs::create_dir_all(dir.join("subdir")).unwrap();
+        let regular = dir.join("regular.csv");
+        std::fs::write(&regular, csv_de(200)).unwrap();
+
+        let fim = tokio::time::Instant::now() + Duration::from_secs(10);
+        while !pending.lock().contains(&regular) && tokio::time::Instant::now() < fim {
+            tokio::time::sleep(Duration::from_millis(100)).await;
+        }
+        tokio::time::sleep(Duration::from_millis(500)).await;
+
+        let fila = pending.lock().clone();
+        assert!(fila.contains(&regular), "o arquivo regular deveria ser enfileirado: {fila:?}");
+        assert_eq!(fila.len(), 1, "só o arquivo regular pode entrar na fila: {fila:?}");
+        assert_eq!(pular(&state, "symlink"), 1);
+        assert_eq!(pular(&state, "nao_regular"), 1);
+        assert_eq!(pular(&state, "diretorio"), 1);
+
+        let _ = std::fs::remove_dir_all(&raiz);
+    }
+
+    #[tokio::test]
+    async fn arquivo_enfileirado_que_virou_link_antes_da_ingestao_nao_e_lido() {
+        let raiz = raiz_de_teste("troca-fila");
+        let dir = raiz.join("watch");
+        std::fs::create_dir_all(&dir).unwrap();
+        let segredo = csv_de(900);
+        let alvo = raiz.join("segredo.csv");
+        std::fs::write(&alvo, &segredo).unwrap();
+        let caminho = dir.join("dados.csv");
+        std::fs::write(&caminho, csv_de(100)).unwrap();
+
+        let state = motor_em(&raiz).await;
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        assert!(screen(&caminho, &seen).is_some(), "enfileirado como arquivo regular");
+
+        std::fs::remove_file(&caminho).unwrap();
+        std::os::unix::fs::symlink(&alvo, &caminho).unwrap();
+
+        ingest(&state, &caminho, &seen).await.unwrap();
+        assert_eq!(eventos(&state).await, 0);
+        assert_eq!(referencias(&state, &segredo).await, 0);
+        assert_eq!(pular(&state, "symlink"), 1);
+
+        let _ = std::fs::remove_dir_all(&raiz);
+    }
+
+    #[test]
+    fn troca_do_arquivo_regular_entre_verificar_e_abrir_e_detectada_pelo_descritor() {
+        let raiz = raiz_de_teste("troca-abertura");
+        let alvo = raiz.join("alvo.txt");
+        std::fs::write(&alvo, b"conteudo de outro arquivo").unwrap();
+        let caminho = raiz.join("dados.csv");
+
+        let verificar = |caminho: &Path| match entry_of(caminho) {
+            Entry::Regular(meta) => meta,
+            _ => panic!("deveria ser regular"),
+        };
+
+        std::fs::write(&caminho, b"original").unwrap();
+        let antes = verificar(&caminho);
+        let (mut file, meta) = open_verified(&caminho, &antes).expect("arquivo intacto abre");
+        let mut lido = String::new();
+        file.read_to_string(&mut lido).unwrap();
+        assert_eq!(lido, "original");
+        assert_eq!(meta.len(), 8);
+
+        let antes = verificar(&caminho);
+        std::fs::remove_file(&caminho).unwrap();
+        std::os::unix::fs::symlink(&alvo, &caminho).unwrap();
+        match open_verified(&caminho, &antes) {
+            Err(OpenError::Skip(Skip::Trocado)) => {}
+            outro => panic!("troca por link deveria ser recusada: {outro:?}"),
+        }
+
+        std::fs::remove_file(&caminho).unwrap();
+        std::fs::write(&caminho, b"original").unwrap();
+        let antes = verificar(&caminho);
+        std::fs::remove_file(&caminho).unwrap();
+        std::fs::write(&caminho, b"outro arquivo regular").unwrap();
+        match open_verified(&caminho, &antes) {
+            Err(OpenError::Skip(Skip::Trocado)) => {}
+            outro => panic!("troca por outro inode deveria ser recusada: {outro:?}"),
+        }
+
+        std::fs::remove_file(&caminho).unwrap();
+        std::fs::write(&caminho, b"original").unwrap();
+        let antes = verificar(&caminho);
+        std::fs::remove_file(&caminho).unwrap();
+        mkfifo(&caminho);
+        let (tx, rx) = std::sync::mpsc::channel();
+        let p = caminho.clone();
+        std::thread::spawn(move || {
+            let r = open_verified(&p, &antes).map(|_| ());
+            let _ = tx.send(r);
+        });
+        match rx.recv_timeout(Duration::from_secs(5)) {
+            Ok(Err(OpenError::Skip(Skip::Trocado))) => {}
+            Ok(outro) => panic!("troca por FIFO deveria ser recusada: {outro:?}"),
+            Err(_) => panic!("open_verified bloqueou ao abrir um FIFO"),
+        }
+
+        let _ = std::fs::remove_dir_all(&raiz);
+    }
+
+    #[tokio::test]
+    async fn o_mesmo_item_so_conta_uma_vez_e_volta_a_contar_se_sumir_e_reaparecer() {
+        let raiz = raiz_de_teste("dedupe");
+        let dir = raiz.join("watch");
+        std::fs::create_dir_all(&dir).unwrap();
+        let link = dir.join("link.csv");
+        std::os::unix::fs::symlink(raiz.join("qualquer"), &link).unwrap();
+
+        let state = motor_em(&raiz).await;
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        seen.note_skip(&link, Skip::Symlink);
+        seen.note_skip(&link, Skip::Symlink);
+        seen.retain_skipped();
+        seen.note_skip(&link, Skip::Symlink);
+        assert_eq!(pular(&state, "symlink"), 1);
+
+        std::fs::remove_file(&link).unwrap();
+        seen.retain_skipped();
+        std::os::unix::fs::symlink(raiz.join("qualquer"), &link).unwrap();
+        seen.note_skip(&link, Skip::Symlink);
+        assert_eq!(pular(&state, "symlink"), 2);
+
+        seen.note_skip(&link, Skip::Trocado);
+        seen.note_skip(&link, Skip::Trocado);
+        assert_eq!(pular(&state, "trocado"), 2, "troca é evento, não estado: conta sempre");
+
+        let _ = std::fs::remove_dir_all(&raiz);
+    }
+
+    #[test]
+    fn os_rotulos_do_motivo_existem_na_metrica() {
+        for motivo in [Skip::Symlink, Skip::Diretorio, Skip::NaoRegular, Skip::Trocado] {
+            assert!(
+                crate::metrics::WATCH_SKIP_REASONS.contains(&motivo.label()),
+                "{} não está em WATCH_SKIP_REASONS",
+                motivo.label()
+            );
+        }
     }
 }

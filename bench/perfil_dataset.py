@@ -2922,10 +2922,33 @@ def abrir_saida(caminho, nome, binario=False):
     return os.fdopen(fd, "wb" if binario else "w", encoding=None if binario else "utf-8")
 
 
-def preparar_saida(caminho):
+def saidas_antigas_com_nomes(caminho):
+    achados = []
+    for nome in sorted(os.listdir(caminho)):
+        p = os.path.join(caminho, nome)
+        try:
+            if nome.startswith("registro_leitura_") and nome.endswith(".jsonl"):
+                with open(p) as f:
+                    primeira = f.readline()
+                if '"caminho"' in primeira:
+                    achados.append(nome)
+            elif nome in ("varredura.json", "amostra.json", "perfil.json"):
+                with open(p) as f:
+                    if json.load(f).get("meta", {}).get("anonimizado") is False:
+                        achados.append(nome)
+        except (OSError, ValueError):
+            continue
+    return achados
+
+
+def preparar_saida(caminho, anonimizado=True):
     os.makedirs(caminho, mode=0o700, exist_ok=True)
     if os.path.islink(caminho) or not os.path.isdir(caminho):
         raise ErroUso("--saida precisa ser um diretorio (nao um link simbolico)")
+    if anonimizado:
+        velhos = saidas_antigas_com_nomes(caminho)
+        if velhos:
+            print("aviso: --saida ja contem arquivos de uma execucao anterior com nomes (%s); apague-os ou use outra --saida" % ", ".join(velhos), file=sys.stderr)
 
 
 def escrever_json(saida, nome, obj):
@@ -3043,7 +3066,7 @@ def cmd_varrer(a):
     opc = opc_de_args(a)
     est = Estado(opc)
     try:
-        preparar_saida(a.saida)
+        preparar_saida(a.saida, not opc.revelar_nomes)
         est.abrir()
         var = etapa_varrer(est)
         escrever_json(a.saida, "varredura.json", var)
@@ -3059,7 +3082,7 @@ def cmd_amostrar(a):
     opc = opc_de_args(a)
     est = Estado(opc)
     try:
-        preparar_saida(a.saida)
+        preparar_saida(a.saida, not opc.revelar_nomes)
         est.abrir()
         amo = etapa_amostrar(est)
         escrever_json(a.saida, "amostra.json", amo)
@@ -3124,7 +3147,7 @@ def cmd_tudo(a):
     params, avisos = carregar_params(a.config)
     est = Estado(opc)
     try:
-        preparar_saida(a.saida)
+        preparar_saida(a.saida, not opc.revelar_nomes)
         var, amo, eco, perfil = pipeline_tudo(est, params, avisos, a.saida)
     finally:
         est.fechar()

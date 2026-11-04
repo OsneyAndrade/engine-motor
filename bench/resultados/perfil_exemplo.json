@@ -3,7 +3,7 @@
   "ferramenta": "perfil_dataset.py",
   "versao": "1.0",
   "etapa": "varrer",
-  "data": "2026-11-04 20:16:49",
+  "data": "2026-11-04 20:29:21",
   "semente": 1,
   "anonimizado": true,
   "raiz": "(oculta na saida anonimizada)",
@@ -30,10 +30,10 @@
   "Fracao incompressivel: 11,5% por classificacao (midia, containers comprimidos, criptografado/aleatorio) e 11,5% [11,5%; 11,5%] por amostra (blocos com economia zstd-3 < 3%).",
   "Dedup de arquivo inteiro: 20,3% dos bytes (57,77 MiB) sao copias exatas, em 36 grupos.",
   "Familias de versoes: 55,3% dos bytes em 52 familias (27,7% sao versoes nao-base); o delta (patch-from) custa 11,1% [7,0%; 14,9%] do zstd-3 isolado em 52 pares medidos.",
-  "Compressao do dataset (blocos de 1 MiB, ponderada por bytes): zstd-3 economiza 52,9% [50,2%; 54,7%] (razao 2,12x); zstd-19 56,9%; xz-9e 59,3% [56,6%; 61,3%].",
+  "Compressao do dataset (blocos de 1 MiB, ponderada por bytes): zstd-3 economiza 52,9% [50,2%; 54,7%] (razao 2,12x); zstd-19 57,1%; xz-9e 59,5% [57,0%; 61,2%].",
   "Ganho por classe (zstd-3, IC95): texto 70,3% [65,1%; 72,8%]; binario 50,8% [42,6%; 56,3%]; cientifico_numerico 16,3% [10,4%; 21,9%]; xml_html 78,0% [69,3%; 85,5%].",
-  "Economia mensal estimada so com compressao (politica por classe): US$ 3.665.227 [US$ 3.486.138; US$ 3.788.281] = armazenamento US$ 3.675.350 + movimento US$ 0,00 - CPU US$ 10.122.",
-  "Com dedup e delta: US$ 4.775.620 [US$ 4.643.875; US$ 4.826.543] por mes; recompressao assincrona recomendada em: texto->xz-9e, codigo->xz-9e, csv_tabular->xz-9e, json_ndjson->xz-9e, log->xz-9e, xml_html->xz-9e, binario->xz-9e, banco_de_dados->xz-9e, cientifico_numerico->xz-9e; stored em: imagem_audio_video, criptografado_aleatorio.",
+  "Economia mensal estimada so com compressao (politica por classe): US$ 3.678.229 [US$ 3.511.988; US$ 3.782.026] = armazenamento US$ 3.688.351 + movimento US$ 0,00 - CPU US$ 10.122.",
+  "Com dedup e delta: US$ 4.781.397 [US$ 4.655.560; US$ 4.830.217] por mes; recompressao assincrona recomendada em: texto->xz-9e, codigo->xz-9e, csv_tabular->xz-9e, json_ndjson->xz-9e, log->xz-9e, xml_html->xz-9e, binario->xz-9e, banco_de_dados->xz-9e, cientifico_numerico->xz-9e; stored em: imagem_audio_video, criptografado_aleatorio.",
   "Parametros (premissas): volume 5,00 PB/mes, fracao retida 0,90, retencao 60 meses, armazenamento US$ 0,0230/GB-mes, nucleo US$ 0,0446/h, 3 leituras/GB, custo de movimento 0,00 (DESCONHECIDO).",
   "Limites: amostra de blocos de 1 MiB e heuristicas de classe e familia; vazoes de outro corpus/CPU; desconhecido: o que o cliente chama de processamento e se o consumo aceita dado comprimido (ver secao de limites)."
  ],
@@ -437,70 +437,70 @@
   },
   "maiores_grupos": [
    {
-    "id": "39787470ad8145f4",
+    "id": "fae2efa5165a7d19",
     "copias": 2,
     "tamanho": 12582912,
     "bytes_redundantes": 12582912,
     "classe": "binario"
    },
    {
-    "id": "5284c6e6f3127a29",
+    "id": "5e8e5653a280006c",
     "copias": 4,
     "tamanho": 2097152,
     "bytes_redundantes": 6291456,
     "classe": "criptografado_aleatorio"
    },
    {
-    "id": "574c32a6b5c7cf57",
+    "id": "f20b7ad731e1e630",
     "copias": 2,
     "tamanho": 5345280,
     "bytes_redundantes": 5345280,
     "classe": "xml_html"
    },
    {
-    "id": "dae91855159076e9",
+    "id": "fc48e0fdcced7a3b",
     "copias": 3,
     "tamanho": 2500000,
     "bytes_redundantes": 5000000,
     "classe": "texto"
    },
    {
-    "id": "2c803abd213f5c5b",
+    "id": "b39bc6e502d9607b",
     "copias": 2,
     "tamanho": 4194328,
     "bytes_redundantes": 4194328,
     "classe": "imagem_audio_video"
    },
    {
-    "id": "c86232e67ec29dfa",
+    "id": "c7ae191a85899692",
     "copias": 2,
     "tamanho": 3145728,
     "bytes_redundantes": 3145728,
     "classe": "xml_html"
    },
    {
-    "id": "4e0b187bdec9a169",
+    "id": "0e3c7a76dc8dd7b1",
     "copias": 2,
     "tamanho": 3040000,
     "bytes_redundantes": 3040000,
     "classe": "cientifico_numerico"
    },
    {
-    "id": "4658f1259cb3412a",
+    "id": "02bbc92f731c0b63",
     "copias": 2,
     "tamanho": 3040000,
     "bytes_redundantes": 3040000,
     "classe": "cientifico_numerico"
    },
    {
-    "id": "03aa430f906f9b57",
+    "id": "3789e116b3d06260",
     "copias": 2,
     "tamanho": 2824746,
     "bytes_redundantes": 2824746,
     "classe": "cientifico_numerico"
    },
    {
-    "id": "2ede24e600abf6b5",
+    "id": "2245f6dd7670434f",
     "copias": 2,
     "tamanho": 2500000,
     "bytes_redundantes": 2500000,
@@ -785,70 +785,70 @@
   },
   "maiores_familias": [
    {
-    "id": "2152292cbf4df061",
+    "id": "3af40998d167e602",
     "membros": 2,
     "bytes": 43217104,
     "classe": "texto",
     "razao_patch_sobre_z3_medida": 0.18161898231718168
    },
    {
-    "id": "6e53080814ace469",
+    "id": "7fe0f30e635fb8b6",
     "membros": 2,
     "bytes": 20176453,
     "classe": "binario",
     "razao_patch_sobre_z3_medida": 0.1881459932575901
    },
    {
-    "id": "b662b8a677c19973",
+    "id": "2a1e0c17c9857fd7",
     "membros": 2,
     "bytes": 12307079,
     "classe": "binario",
     "razao_patch_sobre_z3_medida": 0.0021230846120030983
    },
    {
-    "id": "00f9180da9b7906e",
+    "id": "4782ba59d02cce1d",
     "membros": 2,
     "bytes": 8099214,
     "classe": "texto",
     "razao_patch_sobre_z3_medida": 0.12942254069126516
    },
    {
-    "id": "ea2b472380e4a9b2",
+    "id": "da1f7aa1439ecdd5",
     "membros": 2,
     "bytes": 6295318,
     "classe": "xml_html",
     "razao_patch_sobre_z3_medida": 0.12588723649127406
    },
    {
-    "id": "df4ff5a318fbb0cb",
+    "id": "adf47866bce26098",
     "membros": 2,
     "bytes": 6087015,
     "classe": "binario",
     "razao_patch_sobre_z3_medida": 0.04766854817522482
    },
    {
-    "id": "19ebb7adea5aaa45",
+    "id": "89dceca341b1cd8d",
     "membros": 2,
     "bytes": 6086462,
     "classe": "binario",
     "razao_patch_sobre_z3_medida": 0.047950880186373106
    },
    {
-    "id": "c528e3435e87ac2e",
+    "id": "6fa8783b0e3b852d",
     "membros": 2,
     "bytes": 5654395,
     "classe": "cientifico_numerico",
     "razao_patch_sobre_z3_medida": 0.08823411306457289
    },
    {
-    "id": "91187ea039e64601",
+    "id": "1e7b8f1b1fe62cb0",
     "membros": 2,
     "bytes": 5218179,
     "classe": "log",
     "razao_patch_sobre_z3_medida": 0.10958441165746201
    },
    {
-    "id": "608cad854fbb0d80",
+    "id": "c824758d2c63f93e",
     "membros": 2,
     "bytes": 5217970,
     "classe": "log",
@@ -861,7 +861,7 @@
    "ferramenta": "perfil_dataset.py",
    "versao": "1.0",
    "etapa": "amostrar",
-   "data": "2026-11-04 20:17:06",
+   "data": "2026-11-04 20:29:36",
    "semente": 1,
    "anonimizado": true,
    "raiz": "(oculta na saida anonimizada)",
@@ -886,7 +886,7 @@
   "metodo": {
    "unidade": "bloco independente de 1 MiB, comprimido sozinho",
    "estratificacao": "probabilidade de inclusao igual para todos os blocos da classe (pi = orcamento / bytes da classe), com arredondamento aleatorio por arquivo e escolha aleatoria dos blocos dentro de cada arquivo (determinista pela semente); censo quando a classe cabe no orcamento",
-   "estimador": "razao de somas (bytes comprimidos / bytes originais) sobre os blocos sorteados: pondera por bytes",
+   "estimador": "razao de somas (bytes comprimidos / bytes originais) sobre os blocos sorteados: pondera por bytes; para os codecs lentos, que rodam num subconjunto aleatorio dos blocos, razao (codec / zstd-3) nesse subconjunto vezes a razao zstd-3 de todos os blocos amostrados (zstd-3 e a variavel auxiliar: reduz a variancia)",
    "ic95": "bootstrap de Poisson por arquivo (por bloco quando ha menos de 5 arquivos amostrados), 1000 reamostras, mesmos pesos para todos os codecs da classe",
    "armazenamento_cru": "bloco que nao comprime e armazenado cru (min(comprimido, original)); contado em blocos_armazenados_sem_compressao_pct",
    "codecs_rapidos": {
@@ -935,10 +935,11 @@
        0.6036169182037121,
        0.7034492202401168
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 83546205,
       "blocos": 95,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 527.3928317442505
+      "vazao_comp_indicativa_MBps": 516.685180976622
      },
      "zstd-3": {
       "razao": 3.3655036520696675,
@@ -951,10 +952,11 @@
        0.6513289590273033,
        0.7280753763677081
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 83546205,
       "blocos": 95,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 385.5653387865896
+      "vazao_comp_indicativa_MBps": 376.09747967683535
      },
      "zstd-9": {
       "razao": 3.6811660084328306,
@@ -967,58 +969,62 @@
        0.6798634608030778,
        0.7523703909973718
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 83546205,
       "blocos": 95,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 94.47087541610159
+      "vazao_comp_indicativa_MBps": 90.93713046347725
      },
      "zstd-19": {
-      "razao": 4.117971864829391,
-      "economia": 0.7571620125575019,
+      "razao": 4.0395123151209775,
+      "economia": 0.7524453641948975,
       "ic95_razao": [
-       3.4299235573010374,
-       4.540073796265191
+       3.4017946428756383,
+       4.431787567835257
       ],
       "ic95_economia": [
-       0.7084483128286139,
-       0.7797392630880512
+       0.706037516963496,
+       0.7743574156717854
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 30025080,
       "blocos": 36,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 6.122932524436587
+      "vazao_comp_indicativa_MBps": 5.80366431335872
      },
      "xz-9e": {
-      "razao": 4.2119441861717855,
-      "economia": 0.7625799498286099,
+      "razao": 4.1316941856639025,
+      "economia": 0.7579685341984441,
       "ic95_razao": [
-       3.462949162069952,
-       4.676880915842285
+       3.446498996180057,
+       4.553727658798387
       ],
       "ic95_economia": [
-       0.711228795688627,
-       0.7861822830227216
+       0.7098504885368153,
+       0.7803996912138846
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 30025080,
       "blocos": 36,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 4.553807958058926
+      "vazao_comp_indicativa_MBps": 4.4566793387050225
      },
      "bzip2-9": {
-      "razao": 4.247550397174965,
-      "economia": 0.764570185991178,
+      "razao": 4.166621992983465,
+      "economia": 0.7599974267682582,
       "ic95_razao": [
-       3.815437048961406,
-       4.610065037300621
+       3.7839218861177413,
+       4.402985219084521
       ],
       "ic95_economia": [
-       0.7379068276667784,
-       0.7830833205369396
+       0.735723931387498,
+       0.7728813633837448
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 30025080,
       "blocos": 36,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 24.246001411591475
+      "vazao_comp_indicativa_MBps": 24.032214245329925
      }
     },
     "incompressivel_por_amostra": {
@@ -1054,10 +1060,11 @@
        0.7247073994114294,
        0.7413616396956336
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 3863936,
       "blocos": 84,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 451.68387117934833
+      "vazao_comp_indicativa_MBps": 433.5523459242479
      },
      "zstd-3": {
       "razao": 3.948388072482324,
@@ -1070,10 +1077,11 @@
        0.7378145179795881,
        0.754252615703648
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 3863936,
       "blocos": 84,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 389.0226539959629
+      "vazao_comp_indicativa_MBps": 376.5665314003777
      },
      "zstd-9": {
       "razao": 4.374318341082481,
@@ -1086,58 +1094,62 @@
        0.7619419545135593,
        0.7790688677607289
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 3863936,
       "blocos": 84,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 86.35467201776254
+      "vazao_comp_indicativa_MBps": 83.96367615947453
      },
      "zstd-19": {
       "razao": 4.6088342223536936,
       "economia": 0.7830253917249147,
       "ic95_razao": [
        4.404944872012948,
-       4.784089527792397
+       4.784089527792398
       ],
       "ic95_economia": [
        0.7729824029459362,
        0.7909738113823621
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 3863936,
       "blocos": 84,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 4.809795724512985
+      "vazao_comp_indicativa_MBps": 4.659374780315743
      },
      "xz-9e": {
       "razao": 4.64658883741961,
       "economia": 0.7847883608838242,
       "ic95_razao": [
        4.434773884296449,
-       4.833872098732455
+       4.833872098732454
       ],
       "ic95_economia": [
        0.7745093603213901,
        0.7931265081957337
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 3863936,
       "blocos": 84,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 6.922247689348481
+      "vazao_comp_indicativa_MBps": 6.738560390977769
      },
      "bzip2-9": {
-      "razao": 4.741817039407803,
+      "razao": 4.7418170394078025,
       "economia": 0.7891103786398118,
       "ic95_razao": [
-       4.509529549253601,
+       4.5095295492536005,
        4.935294347243163
       ],
       "ic95_economia": [
        0.7782473783400496,
        0.7973778401771322
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 3863936,
       "blocos": 84,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 24.366364856748344
+      "vazao_comp_indicativa_MBps": 23.70633451229661
      }
     },
     "incompressivel_por_amostra": {
@@ -1173,10 +1185,11 @@
        0.6920401921869697,
        0.694899552881102
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 11396132,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 464.65620243969596
+      "vazao_comp_indicativa_MBps": 461.88136742033635
      },
      "zstd-3": {
       "razao": 2.9846448140956574,
@@ -1189,10 +1202,11 @@
        0.664252390514222,
        0.6657115172398287
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 11396132,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 317.40391338219536
+      "vazao_comp_indicativa_MBps": 313.4054665468291
      },
      "zstd-9": {
       "razao": 3.384671677878979,
@@ -1205,10 +1219,11 @@
        0.7036862319439612,
        0.7054287946608729
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 11396132,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 72.83110820164117
+      "vazao_comp_indicativa_MBps": 71.89214158833059
      },
      "zstd-19": {
       "razao": 3.8194579623179785,
@@ -1221,42 +1236,45 @@
        0.7372122529682328,
        0.7391451912408407
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 11396132,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 5.28100655553044
+      "vazao_comp_indicativa_MBps": 5.3142936614647445
      },
      "xz-9e": {
-      "razao": 4.936750030756861,
+      "razao": 4.936750030756862,
       "economia": 0.7974375867180198,
       "ic95_razao": [
-       4.922483639378233,
+       4.922483639378232,
        4.94631372233862
       ],
       "ic95_economia": [
        0.7968505183033352,
        0.7978292408983716
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 11396132,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 4.406891401636353
+      "vazao_comp_indicativa_MBps": 4.536835466783342
      },
      "bzip2-9": {
       "razao": 4.389656462130407,
       "economia": 0.7721917401448141,
       "ic95_razao": [
        4.344575951564066,
-       4.432262432616357
+       4.432262432616356
       ],
       "ic95_economia": [
        0.7698279392169457,
        0.7743815906203682
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 11396132,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 26.43040146715999
+      "vazao_comp_indicativa_MBps": 26.204058156758443
      }
     },
     "incompressivel_por_amostra": {
@@ -1292,10 +1310,11 @@
        0.8575418931600206,
        0.8586182633309998
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 12575502,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 841.4455933276304
+      "vazao_comp_indicativa_MBps": 820.4116534044616
      },
      "zstd-3": {
       "razao": 7.0018212360240595,
@@ -1308,10 +1327,11 @@
        0.8568482827456622,
        0.8574555807193263
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 12575502,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 744.8205646619731
+      "vazao_comp_indicativa_MBps": 740.3100229959321
      },
      "zstd-9": {
       "razao": 8.259158433561254,
@@ -1324,26 +1344,28 @@
        0.8786296276097314,
        0.8791557322828367
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 12575502,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 127.24585534699028
+      "vazao_comp_indicativa_MBps": 127.21355907345048
      },
      "zstd-19": {
-      "razao": 9.710092533680902,
+      "razao": 9.7100925336809,
       "economia": 0.8970143696848046,
       "ic95_razao": [
        9.670305324105374,
-       9.744148850053874
+       9.744148850053872
       ],
       "ic95_economia": [
        0.8965906487453629,
        0.8973743099178466
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 12575502,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 4.964688415968054
+      "vazao_comp_indicativa_MBps": 4.894547736007721
      },
      "xz-9e": {
       "razao": 10.766991903887776,
@@ -1356,10 +1378,11 @@
        0.9068923705572551,
        0.9073217556573123
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 12575502,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 4.206711006832307
+      "vazao_comp_indicativa_MBps": 4.200394141435616
      },
      "bzip2-9": {
       "razao": 11.214249152388206,
@@ -1372,10 +1395,11 @@
        0.910632745433512,
        0.9109848649873221
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 12575502,
       "blocos": 14,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 17.889403693848774
+      "vazao_comp_indicativa_MBps": 17.62904647111024
      }
     },
     "incompressivel_por_amostra": {
@@ -1411,10 +1435,11 @@
        0.788057134347844,
        0.7900310235703408
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 18259094,
       "blocos": 21,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 727.0294285560728
+      "vazao_comp_indicativa_MBps": 707.8255195511538
      },
      "zstd-3": {
       "razao": 4.666103776128347,
@@ -1427,10 +1452,11 @@
        0.7847339621952991,
        0.7865887917443785
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 18259094,
       "blocos": 21,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 536.8627646757972
+      "vazao_comp_indicativa_MBps": 525.5880379912581
      },
      "zstd-9": {
       "razao": 5.514499988825486,
@@ -1443,10 +1469,11 @@
        0.8184982405654478,
        0.8187883538984803
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 18259094,
       "blocos": 21,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 120.52393018688224
+      "vazao_comp_indicativa_MBps": 118.20256227148434
      },
      "zstd-19": {
       "razao": 6.061083885779082,
@@ -1459,10 +1486,11 @@
        0.834835200912048,
        0.8351366247934903
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 18259094,
       "blocos": 21,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 5.398887226208949
+      "vazao_comp_indicativa_MBps": 5.276649394972431
      },
      "xz-9e": {
       "razao": 6.349867223461037,
@@ -1475,10 +1503,11 @@
        0.8423780909718585,
        0.8426290840638113
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 18259094,
       "blocos": 21,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 4.8115256575318215
+      "vazao_comp_indicativa_MBps": 4.751432747954482
      },
      "bzip2-9": {
       "razao": 7.235823462509361,
@@ -1491,10 +1520,11 @@
        0.8614657972997986,
        0.8621065728667082
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 18259094,
       "blocos": 21,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 19.281362248807227
+      "vazao_comp_indicativa_MBps": 18.79192124365489
      }
     },
     "incompressivel_por_amostra": {
@@ -1530,10 +1560,11 @@
        0.6575021242713261,
        0.8424612724390839
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 23277334,
       "blocos": 25,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 589.5699164689104
+      "vazao_comp_indicativa_MBps": 593.717499457797
      },
      "zstd-3": {
       "razao": 4.5486837204521535,
@@ -1546,10 +1577,11 @@
        0.6932177761236205,
        0.8547760560182865
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 23277334,
       "blocos": 25,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 446.99592877543233
+      "vazao_comp_indicativa_MBps": 445.4011588649282
      },
      "zstd-9": {
       "razao": 5.219605991215348,
@@ -1562,26 +1594,28 @@
        0.7277600280811372,
        0.8775035799545053
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 23277334,
       "blocos": 25,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 105.42818410539957
+      "vazao_comp_indicativa_MBps": 105.78004655326993
      },
      "zstd-19": {
-      "razao": 5.7199114295101126,
+      "razao": 5.719911429510113,
       "economia": 0.8251721180784707,
       "ic95_razao": [
-       3.9992342778999403,
-       9.040040491907009
+       3.9992342778999412,
+       9.040040491907007
       ],
       "ic95_economia": [
        0.7499521332055807,
        0.8893810264572113
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 23277334,
       "blocos": 25,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 5.096488758690522
+      "vazao_comp_indicativa_MBps": 5.305751545483754
      },
      "xz-9e": {
       "razao": 5.828974624028143,
@@ -1591,16 +1625,17 @@
        9.363296832397703
       ],
       "ic95_economia": [
-       0.7528181864651872,
+       0.7528181864651873,
        0.8932000108615669
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 23277334,
       "blocos": 25,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 4.936269736213708
+      "vazao_comp_indicativa_MBps": 5.140833762639985
      },
      "bzip2-9": {
-      "razao": 6.431410872760629,
+      "razao": 6.43141087276063,
       "economia": 0.8445131216487249,
       "ic95_razao": [
        4.50505996980857,
@@ -1610,10 +1645,11 @@
        0.7780273721766922,
        0.9005408542508193
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 23277334,
       "blocos": 25,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 19.172235262964115
+      "vazao_comp_indicativa_MBps": 19.607233999381197
      }
     },
     "incompressivel_por_amostra": {
@@ -1649,10 +1685,11 @@
        0.38229771435964244,
        0.5298135765964366
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 74895248,
       "blocos": 83,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 598.6098550100363
+      "vazao_comp_indicativa_MBps": 626.7104716770805
      },
      "zstd-3": {
       "razao": 2.0307534142072767,
@@ -1665,10 +1702,11 @@
        0.4257646461814678,
        0.5628998827129105
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 74895248,
       "blocos": 83,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 391.01931712735825
+      "vazao_comp_indicativa_MBps": 414.36270030081835
      },
      "zstd-9": {
       "razao": 2.101879895845664,
@@ -1681,58 +1719,62 @@
        0.4390315708660135,
        0.5792177521344779
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 74895248,
       "blocos": 83,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 101.83306926196707
+      "vazao_comp_indicativa_MBps": 108.57791131770338
      },
      "zstd-19": {
-      "razao": 2.1442691586264098,
-      "economia": 0.5336406364951932,
+      "razao": 2.2134555004360044,
+      "economia": 0.5482177076507655,
       "ic95_razao": [
-       1.7915024151842596,
-       2.4912546929776167
+       1.8853767107609374,
+       2.5092998053485025
       ],
       "ic95_economia": [
-       0.44180929284588877,
-       0.5985958389486175
+       0.4696020194306949,
+       0.6014824542414072
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 38665618,
       "blocos": 41,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 7.25929053499614
+      "vazao_comp_indicativa_MBps": 8.120524069231228
      },
      "xz-9e": {
-      "razao": 2.2918478263446675,
-      "economia": 0.5636708561078734,
+      "razao": 2.3657958969267363,
+      "economia": 0.5773092677609932,
       "ic95_razao": [
-       1.9409754161781094,
-       2.676217203056331
+       2.0298132408850784,
+       2.694204636543069
       ],
       "ic95_economia": [
-       0.4847951232844274,
-       0.626338251298151
+       0.5073438384095077,
+       0.6288329451904222
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 38665618,
       "blocos": 41,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 5.732037509737526
+      "vazao_comp_indicativa_MBps": 6.242089170376862
      },
      "bzip2-9": {
-      "razao": 2.0827085756343204,
-      "economia": 0.5198560126466878,
+      "razao": 2.1499086222441015,
+      "economia": 0.5348639520519771,
       "ic95_razao": [
-       1.7065673280886897,
-       2.5556212715826194
+       1.777892326475436,
+       2.5465235113051987
       ],
       "ic95_economia": [
-       0.41402839282059056,
-       0.6087057142936011
+       0.43753624158869087,
+       0.6073077685870418
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 38665618,
       "blocos": 41,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 21.75525550377753
+      "vazao_comp_indicativa_MBps": 22.786165329483627
      }
     },
     "incompressivel_por_amostra": {
@@ -1768,10 +1810,11 @@
        0.5068702722895422,
        0.5490132132661035
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 4308992,
       "blocos": 5,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 426.27138471684225
+      "vazao_comp_indicativa_MBps": 450.73614273009395
      },
      "zstd-3": {
       "razao": 2.253110123902986,
@@ -1784,10 +1827,11 @@
        0.5481255533207008,
        0.5840544524016203
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 4308992,
       "blocos": 5,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 297.44959793508315
+      "vazao_comp_indicativa_MBps": 308.64692917248715
      },
      "zstd-9": {
       "razao": 2.312869756581949,
@@ -1800,10 +1844,11 @@
        0.559556964851516,
        0.5944831753954476
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 4308992,
       "blocos": 5,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 75.07633791659866
+      "vazao_comp_indicativa_MBps": 76.58828744132748
      },
      "zstd-19": {
       "razao": 2.495952251864003,
@@ -1816,14 +1861,15 @@
        0.5925817489624023,
        0.6226414809992284
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 4308992,
       "blocos": 5,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 6.9394142835201285
+      "vazao_comp_indicativa_MBps": 7.080644261013486
      },
      "xz-9e": {
-      "razao": 2.6635874738833185,
-      "economia": 0.6245664879396388,
+      "razao": 2.663587473883319,
+      "economia": 0.6245664879396389,
       "ic95_razao": [
        2.6234469369067335,
        2.8353530346796108
@@ -1832,10 +1878,11 @@
        0.6188220977783203,
        0.6473102334104939
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 4308992,
       "blocos": 5,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 5.227946250276574
+      "vazao_comp_indicativa_MBps": 5.305555296954428
      },
      "bzip2-9": {
       "razao": 3.0907752846545486,
@@ -1848,10 +1895,11 @@
        0.6735849551130716,
        0.688926807650917
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 4308992,
       "blocos": 5,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 24.589180034292347
+      "vazao_comp_indicativa_MBps": 25.62168938720613
      }
     },
     "incompressivel_por_amostra": {
@@ -1887,10 +1935,11 @@
        0.08668881622149949,
        0.16313172676403265
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 32368633,
       "blocos": 33,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 1108.3483867077962
+      "vazao_comp_indicativa_MBps": 1149.6739841893148
      },
      "zstd-3": {
       "razao": 1.194571912040513,
@@ -1903,10 +1952,11 @@
        0.10366756428056689,
        0.2189569329429104
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 32368633,
       "blocos": 33,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 410.6985566847337
+      "vazao_comp_indicativa_MBps": 426.8275968227315
      },
      "zstd-9": {
       "razao": 1.2237484753064387,
@@ -1919,10 +1969,11 @@
        0.10251803203065768,
        0.25785461593840653
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 32368633,
       "blocos": 33,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 146.71652610124056
+      "vazao_comp_indicativa_MBps": 169.26142437631242
      },
      "zstd-19": {
       "razao": 1.2746585369657135,
@@ -1935,42 +1986,45 @@
        0.1294186247574176,
        0.29356201338204024
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 32368633,
       "blocos": 33,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 7.742362667506029
+      "vazao_comp_indicativa_MBps": 10.54539084999034
      },
      "xz-9e": {
       "razao": 1.4695999704342317,
       "economia": 0.3195427190267812,
       "ic95_razao": [
        1.3172948760579744,
-       1.6462968168414396
+       1.64629681684144
       ],
       "ic95_economia": [
        0.24086852672461934,
-       0.3925761200713581
+       0.3925761200713582
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 32368633,
       "blocos": 33,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 5.333839032290492
+      "vazao_comp_indicativa_MBps": 7.323078972628864
      },
      "bzip2-9": {
       "razao": 1.3388209109743694,
       "economia": 0.25307411035863026,
       "ic95_razao": [
        1.1181126554747849,
-       1.6418100027398685
+       1.6418100027398688
       ],
       "ic95_economia": [
        0.10563573795221082,
-       0.3909161240757516
+       0.3909161240757517
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 32368633,
       "blocos": 33,
       "blocos_armazenados_sem_compressao_pct": 0.0,
-      "vazao_comp_indicativa_MBps": 19.466974904587058
+      "vazao_comp_indicativa_MBps": 20.142552781535574
      }
     },
     "incompressivel_por_amostra": {
@@ -2034,10 +2088,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 9437243,
       "blocos": 12,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 3895.8380370051755
+      "vazao_comp_indicativa_MBps": 4922.619786152009
      },
      "zstd-3": {
       "razao": 1.0,
@@ -2050,10 +2105,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 9437243,
       "blocos": 12,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 3933.3006562675228
+      "vazao_comp_indicativa_MBps": 4890.738824135664
      },
      "zstd-9": {
       "razao": 1.0,
@@ -2066,10 +2122,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 9437243,
       "blocos": 12,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 953.3026081250039
+      "vazao_comp_indicativa_MBps": 1247.3326839514045
      },
      "zstd-19": {
       "razao": 1.0,
@@ -2082,10 +2139,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 9437243,
       "blocos": 12,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 11.361519014068723
+      "vazao_comp_indicativa_MBps": 26.39946759323023
      },
      "xz-9e": {
       "razao": 1.0,
@@ -2098,10 +2156,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 9437243,
       "blocos": 12,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 4.592388807371668
+      "vazao_comp_indicativa_MBps": 8.585769534488486
      },
      "bzip2-9": {
       "razao": 1.0,
@@ -2114,10 +2173,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 9437243,
       "blocos": 12,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 16.826537898993656
+      "vazao_comp_indicativa_MBps": 17.363966654203182
      }
     },
     "incompressivel_por_amostra": {
@@ -2153,10 +2213,11 @@
        0.0,
        0.00010809771647313227
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 3895042,
       "blocos": 11,
       "blocos_armazenados_sem_compressao_pct": 0.8181818181818182,
-      "vazao_comp_indicativa_MBps": 3406.183184985193
+      "vazao_comp_indicativa_MBps": 4366.869108245123
      },
      "zstd-3": {
       "razao": 1.0000246473250207,
@@ -2169,10 +2230,11 @@
        0.0,
        0.00011039766788734084
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 3895042,
       "blocos": 11,
       "blocos_armazenados_sem_compressao_pct": 0.8181818181818182,
-      "vazao_comp_indicativa_MBps": 3399.485415521753
+      "vazao_comp_indicativa_MBps": 4015.0974304361107
      },
      "zstd-9": {
       "razao": 1.0000241338266904,
@@ -2185,58 +2247,62 @@
        0.0,
        0.00010809771647313227
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 3895042,
       "blocos": 11,
       "blocos_armazenados_sem_compressao_pct": 0.8181818181818182,
-      "vazao_comp_indicativa_MBps": 844.0030490036904
+      "vazao_comp_indicativa_MBps": 1123.2787271643851
      },
      "zstd-19": {
       "razao": 1.0000282418280986,
-      "economia": 2.824103052034843e-05,
+      "economia": 2.824103052023741e-05,
       "ic95_razao": [
        1.0,
-       1.0001265133313861
+       1.000126513331386
       ],
       "ic95_economia": [
        0.0,
-       0.00012649732778768907
+       0.00012649732778757805
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 3895042,
       "blocos": 11,
       "blocos_armazenados_sem_compressao_pct": 0.8181818181818182,
-      "vazao_comp_indicativa_MBps": 12.195917871461251
+      "vazao_comp_indicativa_MBps": 30.155413830296787
      },
      "xz-9e": {
       "razao": 1.0,
       "economia": 0.0,
       "ic95_razao": [
-       1.0,
-       1.0
+       0.9999999999999998,
+       1.0000000000000002
       ],
       "ic95_economia": [
-       0.0,
-       0.0
+       -2.220446049250313e-16,
+       1.1102230246251565e-16
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 3895042,
       "blocos": 11,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 5.5932812845457
+      "vazao_comp_indicativa_MBps": 9.540044511218811
      },
      "bzip2-9": {
       "razao": 1.0,
       "economia": 0.0,
       "ic95_razao": [
-       1.0,
-       1.0
+       0.9999999999999998,
+       1.0000000000000002
       ],
       "ic95_economia": [
-       0.0,
-       0.0
+       -2.220446049250313e-16,
+       1.1102230246251565e-16
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 3895042,
       "blocos": 11,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 17.22959381874627
+      "vazao_comp_indicativa_MBps": 17.721849628761696
      }
     },
     "incompressivel_por_amostra": {
@@ -2272,10 +2338,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 20971520,
       "blocos": 20,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 3872.633031258365
+      "vazao_comp_indicativa_MBps": 4784.306603818395
      },
      "zstd-3": {
       "razao": 1.0,
@@ -2288,10 +2355,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 20971520,
       "blocos": 20,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 3671.980233670864
+      "vazao_comp_indicativa_MBps": 4742.935472769926
      },
      "zstd-9": {
       "razao": 1.0,
@@ -2304,10 +2372,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao de somas",
       "bytes_amostrados": 20971520,
       "blocos": 20,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 970.0576877337027
+      "vazao_comp_indicativa_MBps": 1202.4244670977064
      },
      "zstd-19": {
       "razao": 1.0,
@@ -2320,10 +2389,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 20971520,
       "blocos": 20,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 11.886017448181805
+      "vazao_comp_indicativa_MBps": 23.648532614957713
      },
      "xz-9e": {
       "razao": 1.0,
@@ -2336,10 +2406,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 20971520,
       "blocos": 20,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 4.719120893703564
+      "vazao_comp_indicativa_MBps": 8.712325208052766
      },
      "bzip2-9": {
       "razao": 1.0,
@@ -2352,10 +2423,11 @@
        0.0,
        0.0
       ],
+      "estimador": "razao do codec sobre zstd-3 nos blocos sorteados para o codec x razao zstd-3 de todos os blocos amostrados",
       "bytes_amostrados": 20971520,
       "blocos": 20,
       "blocos_armazenados_sem_compressao_pct": 1.0,
-      "vazao_comp_indicativa_MBps": 16.9731242950775
+      "vazao_comp_indicativa_MBps": 17.35844526472709
      }
     },
     "incompressivel_por_amostra": {
@@ -2407,39 +2479,39 @@
     ]
    },
    "zstd-19": {
-    "razao": 2.3191237399056313,
-    "economia": 0.568802654729975,
+    "razao": 2.3317506961050753,
+    "economia": 0.5711376856580824,
     "ic95_razao": [
-     2.177377892237936,
-     2.4318183226262855
+     2.1940674594741463,
+     2.431221892502413
     ],
     "ic95_economia": [
-     0.5407319953211303,
-     0.5887850705393024
+     0.5442254996846494,
+     0.5886841908244262
     ]
    },
    "xz-9e": {
-    "razao": 2.4564191827429527,
-    "economia": 0.5929033582601512,
+    "razao": 2.4693341485784717,
+    "economia": 0.5950325311073543,
     "ic95_razao": [
-     2.303585361439902,
-     2.582736023390962
+     2.328074857689035,
+     2.5756366483165114
     ],
     "ic95_economia": [
-     0.5658940985043723,
-     0.6128137018482184
+     0.5704605473929432,
+     0.6117464780392761
     ]
    },
    "bzip2-9": {
-    "razao": 2.3680083733958828,
-    "economia": 0.5777041959670384,
+    "razao": 2.3820155554717664,
+    "economia": 0.5801874602779634,
     "ic95_razao": [
-     2.20385922321525,
-     2.5289611947085398
+     2.218832288674299,
+     2.5280814007651187
     ],
     "ic95_economia": [
-     0.5462505093491943,
-     0.6045807258362266
+     0.5493124896801115,
+     0.6044431165478485
     ]
    },
    "incompressivel_por_amostra": {
@@ -2558,52 +2630,52 @@
       0.6513289590273033,
       0.7280753763677081
      ],
-     "zstd-19": 0.7571620125575019,
-     "xz-9e": 0.7625799498286099
+     "zstd-19": 0.7524453641948975,
+     "xz-9e": 0.7579685341984441
     },
     "dedup_bytes_pct": 0.12177788326830644,
     "familias_bytes_nao_base_pct_dos_unicos": 0.4236683209052484,
     "delta_razao_patch_sobre_z3": 0.1606775772514006,
     "delta_origem": "medido nesta classe (6 pares)",
     "economia_armazenamento_total_fracao": 0.8318434987822693,
-    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,9 meses)",
+    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=3,1 meses)",
     "politica_sincrona": "zstd-3",
     "politica_assincrona": "xz-9e",
     "avaliacao_assincrona": [
      {
       "destino": "zstd-19",
-      "delta_economia_pp": 5.429435986160747,
+      "delta_economia_pp": 4.957771149900303,
       "custo_recompressao_usd_por_gb": 0.0018876891756469754,
-      "ganho_armazenamento_usd_por_gb_mes": 0.0007067182098464766,
-      "m_estrela_meses": 2.6709642840951613,
+      "ganho_armazenamento_usd_por_gb_mes": 0.000645324332180517,
+      "m_estrela_meses": 2.9250600613763957,
       "vida_restante_meses": 59,
-      "valor_liquido_por_gb_retido_usd": 0.03981023319133122,
+      "valor_liquido_por_gb_retido_usd": 0.03618799440903961,
       "nucleos_medios_recompressao": 73.96550361778509,
       "paga_na_vida_restante": true
      },
      {
       "destino": "xz-9e",
-      "delta_economia_pp": 5.971229713271542,
+      "delta_economia_pp": 5.5100881502549655,
       "custo_recompressao_usd_por_gb": 0.002210849094129128,
-      "ganho_armazenamento_usd_por_gb_mes": 0.0007772403587226704,
-      "m_estrela_meses": 2.8560383117171155,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0007172162345352649,
+      "m_estrela_meses": 3.096113713227424,
       "vida_restante_meses": 59,
-      "valor_liquido_por_gb_retido_usd": 0.04346084095935443,
+      "valor_liquido_por_gb_retido_usd": 0.039919417632297505,
       "nucleos_medios_recompressao": 86.62790928709904,
       "paga_na_vida_restante": true
      }
     ],
-    "armazenamento_usd_mes": 1502097.42915795,
+    "armazenamento_usd_mes": 1497641.4419861573,
     "movimento_usd_mes": 0.0,
     "cpu_usd_mes": 3135.083019580637,
-    "liquido_usd_mes": 1498962.3461383693,
+    "liquido_usd_mes": 1494506.3589665766,
     "ic95_liquido_usd_mes": [
-     1447914.8262800854,
-     1522751.2089617385
+     1446518.2549745059,
+     1518460.4187934478
     ],
     "ic95_armazenamento_usd_mes": [
-     1451049.909299666,
-     1525886.2919813192
+     1449653.3379940866,
+     1521595.5018130285
     ],
     "detalhe_cpu": {
      "cpu_compressao_e_leitura_usd_mes": 85.13327174115479,
@@ -2611,8 +2683,8 @@
      "cpu_delta_usd_mes": 19.829280218395194,
      "cpu_recompressao_assincrona_usd_mes": 3015.189156408161
     },
-    "compressao_apenas_liquido_usd_mes": 1318915.6789894646,
-    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,8 meses)",
+    "compressao_apenas_liquido_usd_mes": 1311041.9547009375,
+    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,0 meses)",
     "baixa_confianca": false,
     "vazoes_usadas": {
      "zstd-3": {
@@ -3068,52 +3140,52 @@
       0.4257646461814678,
       0.5628998827129105
      ],
-     "zstd-19": 0.5336406364951932,
-     "xz-9e": 0.5636708561078734
+     "zstd-19": 0.5482177076507655,
+     "xz-9e": 0.5773092677609932
     },
     "dedup_bytes_pct": 0.18449501629262247,
     "familias_bytes_nao_base_pct_dos_unicos": 0.4357171570102274,
     "delta_razao_patch_sobre_z3": 0.08447261675046291,
     "delta_origem": "medido nesta classe (8 pares)",
     "economia_armazenamento_total_fracao": 0.7586161465870166,
-    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,3 meses)",
+    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,8 meses)",
     "politica_sincrona": "zstd-3",
     "politica_assincrona": "xz-9e",
     "avaliacao_assincrona": [
      {
       "destino": "zstd-19",
-      "delta_economia_pp": 2.6068714175101593,
+      "delta_economia_pp": 4.064578533067387,
       "custo_recompressao_usd_por_gb": 0.0009875947161012441,
-      "ganho_armazenamento_usd_por_gb_mes": 0.0002939089792510869,
-      "m_estrela_meses": 3.361336046182442,
+      "ganho_armazenamento_usd_por_gb_mes": 0.00045825663656272764,
+      "m_estrela_meses": 2.1555775250856968,
       "vida_restante_meses": 59,
-      "valor_liquido_por_gb_retido_usd": 0.01634720533049035,
+      "valor_liquido_por_gb_retido_usd": 0.026043717111877154,
       "nucleos_medios_recompressao": 34.6900580580009,
       "paga_na_vida_restante": true
      },
      {
       "destino": "xz-9e",
-      "delta_economia_pp": 5.609893378778175,
+      "delta_economia_pp": 6.97373454409016,
       "custo_recompressao_usd_por_gb": 0.0014313949533219558,
-      "ganho_armazenamento_usd_por_gb_mes": 0.000632481535371968,
-      "m_estrela_meses": 2.287487918996974,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0007862463747365072,
+      "m_estrela_meses": 1.8362645228918737,
       "vida_restante_meses": 59,
-      "valor_liquido_por_gb_retido_usd": 0.03548783926192423,
+      "valor_liquido_por_gb_retido_usd": 0.04455996478443205,
       "nucleos_medios_recompressao": 50.278898038958005,
       "paga_na_vida_restante": true
      }
     ],
-    "armazenamento_usd_mes": 1222941.5709376966,
+    "armazenamento_usd_mes": 1233174.5638818732,
     "movimento_usd_mes": 0.0,
     "cpu_usd_mes": 2157.687432266925,
-    "liquido_usd_mes": 1220783.8835054298,
+    "liquido_usd_mes": 1231016.8764496064,
     "ic95_liquido_usd_mes": [
-     1157458.9950076481,
-     1273578.9663146161
+     1173339.9851359702,
+     1274104.6450805163
     ],
     "ic95_armazenamento_usd_mes": [
-     1159616.682439915,
-     1275736.653746883
+     1175497.672568237,
+     1276262.3325127831
     ],
     "detalhe_cpu": {
      "cpu_compressao_e_leitura_usd_mes": 68.32962963925058,
@@ -3121,8 +3193,8 @@
      "cpu_delta_usd_mes": 13.417626570553995,
      "cpu_recompressao_assincrona_usd_mes": 2062.5549569887344
     },
-    "compressao_apenas_liquido_usd_mes": 873449.8048554711,
-    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,4 meses)",
+    "compressao_apenas_liquido_usd_mes": 894325.3231354437,
+    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,1 meses)",
     "baixa_confianca": false,
     "vazoes_usadas": {
      "zstd-3": {
@@ -3154,7 +3226,7 @@
       0.5840544524016203
      ],
      "zstd-19": 0.5993513100047528,
-     "xz-9e": 0.6245664879396388
+     "xz-9e": 0.6245664879396389
     },
     "dedup_bytes_pct": 0.0,
     "familias_bytes_nao_base_pct_dos_unicos": 0.5190114068441065,
@@ -3178,12 +3250,12 @@
      },
      {
       "destino": "xz-9e",
-      "delta_economia_pp": 6.839743494534211,
+      "delta_economia_pp": 6.839743494534223,
       "custo_recompressao_usd_por_gb": 0.001915547878013717,
-      "ganho_armazenamento_usd_por_gb_mes": 0.0008527220573396923,
-      "m_estrela_meses": 2.2583240401153986,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0008527220573396937,
+      "m_estrela_meses": 2.258324040115395,
       "vida_restante_meses": 59,
-      "valor_liquido_por_gb_retido_usd": 0.04812922992855571,
+      "valor_liquido_por_gb_retido_usd": 0.04812922992855579,
       "nucleos_medios_recompressao": 3.871156286280378,
       "paga_na_vida_restante": true
      }
@@ -3206,7 +3278,7 @@
      "cpu_delta_usd_mes": 1.0237866526562238,
      "cpu_recompressao_assincrona_usd_mes": 141.5613430768285
     },
-    "compressao_apenas_liquido_usd_mes": 55686.50613001361,
+    "compressao_apenas_liquido_usd_mes": 55686.50613001362,
     "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,2 meses)",
     "baixa_confianca": true,
     "vazoes_usadas": {
@@ -3279,11 +3351,11 @@
     "liquido_usd_mes": 375148.51268992247,
     "ic95_liquido_usd_mes": [
      309682.8926128622,
-     405359.9540526237
+     405359.95405262377
     ],
     "ic95_armazenamento_usd_mes": [
      310788.179466187,
-     406465.2409059485
+     406465.24090594857
     ],
     "detalhe_cpu": {
      "cpu_compressao_e_leitura_usd_mes": 33.52930193496726,
@@ -3385,7 +3457,7 @@
       0.0,
       0.00011039766788734084
      ],
-     "zstd-19": 2.824103052034843e-05,
+     "zstd-19": 2.824103052023741e-05,
      "xz-9e": 0.0
     },
     "dedup_bytes_pct": 0.4655459427651871,
@@ -3399,12 +3471,12 @@
     "avaliacao_assincrona": [
      {
       "destino": "zstd-19",
-      "delta_economia_pp": 0.00035943129753635006,
+      "delta_economia_pp": 0.00035943129752524783,
       "custo_recompressao_usd_por_gb": 0.0001547107845763177,
-      "ganho_armazenamento_usd_por_gb_mes": 4.4182888511059364e-08,
-      "m_estrela_meses": 2844.4966813418228,
+      "ganho_armazenamento_usd_por_gb_mes": 4.418288850969463e-08,
+      "m_estrela_meses": 2844.4966814131967,
       "vida_restante_meses": 59,
-      "valor_liquido_por_gb_retido_usd": -0.00015150180340580817,
+      "valor_liquido_por_gb_retido_usd": -0.00015150180340588868,
       "nucleos_medios_recompressao": 0.2826212021570988,
       "paga_na_vida_restante": false
      },
@@ -3526,10 +3598,10 @@
   "total": {
    "politica_recomendada_com_dedup_e_delta": {
     "armazenamento_usd_mes": {
-     "estimativa": 4784309.069998643,
+     "estimativa": 4790086.075771027,
      "ic95": [
-      4652564.631945868,
-      4835231.7878929265
+      4664249.266998538,
+      4838905.709484249
      ]
     },
     "movimento_usd_mes": {
@@ -3547,19 +3619,19 @@
      ]
     },
     "liquido_usd_mes": {
-     "estimativa": 4775619.910551704,
+     "estimativa": 4781396.916324087,
      "ic95": [
-      4643875.472498929,
-      4826542.628445987
+      4655560.107551598,
+      4830216.5500373095
      ]
     }
    },
    "compressao_apenas_politica_por_classe": {
     "armazenamento_usd_mes": {
-     "estimativa": 3675349.539266641,
+     "estimativa": 3688351.333258086,
      "ic95": [
-      3496260.5063966406,
-      3798403.372358266
+      3522109.8463646667,
+      3792147.804842153
      ]
     },
     "movimento_usd_mes": {
@@ -3577,10 +3649,10 @@
      ]
     },
     "liquido_usd_mes": {
-     "estimativa": 3665227.240787184,
+     "estimativa": 3678229.034778629,
      "ic95": [
-      3486138.2079171836,
-      3788281.073878809
+      3511987.547885209,
+      3782025.5063626957
      ]
     }
    },
@@ -3594,8 +3666,8 @@
      "cenario_armazenamento": "s3_standard",
      "preco_gb_mes": 0.023,
      "preco_nucleo_hora": 0.0446,
-     "liquido": 4244845.456012657,
-     "armazenamento": 4252719.173332128,
+     "liquido": 4249980.572254775,
+     "armazenamento": 4257854.289574247,
      "movimento": 0.0,
      "cpu": 7873.71731947163
     },
@@ -3604,8 +3676,8 @@
      "cenario_armazenamento": "b2",
      "preco_gb_mes": 0.00695,
      "preco_nucleo_hora": 0.0446,
-     "liquido": 1277199.1075383727,
-     "armazenamento": 1285038.9609692567,
+     "liquido": 1278750.805707187,
+     "armazenamento": 1286590.659138071,
      "movimento": 0.0,
      "cpu": 7839.853430884105
     },
@@ -3614,8 +3686,8 @@
      "cenario_armazenamento": "glacier_ir",
      "preco_gb_mes": 0.004,
      "preco_nucleo_hora": 0.0446,
-     "liquido": 731750.9154722854,
-     "armazenamento": 739590.7689031694,
+     "liquido": 732643.979166567,
+     "armazenamento": 740483.8325974509,
      "movimento": 0.0,
      "cpu": 7839.853430884105
     },
@@ -3624,8 +3696,8 @@
      "cenario_armazenamento": "onprem",
      "preco_gb_mes": 0.002,
      "preco_nucleo_hora": 0.0135,
-     "liquido": 367422.3346462723,
-     "armazenamento": 369795.3844515847,
+     "liquido": 367868.86649341305,
+     "armazenamento": 370241.91629872547,
      "movimento": 0.0,
      "cpu": 2373.049805312453
     },
@@ -3634,8 +3706,8 @@
      "cenario_armazenamento": "s3_standard",
      "preco_gb_mes": 0.023,
      "preco_nucleo_hora": 0.0446,
-     "liquido": 4775619.910551704,
-     "armazenamento": 4784309.069998643,
+     "liquido": 4781396.916324087,
+     "armazenamento": 4790086.075771027,
      "movimento": 0.0,
      "cpu": 8689.159446939824
     },
@@ -3644,8 +3716,8 @@
      "cenario_armazenamento": "b2",
      "preco_gb_mes": 0.00695,
      "preco_nucleo_hora": 0.0446,
-     "liquido": 1437016.0164116463,
-     "armazenamento": 1445668.831090414,
+     "liquido": 1438761.6768515622,
+     "armazenamento": 1447414.49153033,
      "movimento": 0.0,
      "cpu": 8652.814678767618
     },
@@ -3654,8 +3726,8 @@
      "cenario_armazenamento": "glacier_ir",
      "preco_gb_mes": 0.004,
      "preco_nucleo_hora": 0.0446,
-     "liquido": 823386.8003372981,
-     "armazenamento": 832039.6150160657,
+     "liquido": 824391.4969933649,
+     "armazenamento": 833044.3116721323,
      "movimento": 0.0,
      "cpu": 8652.814678767618
     },
@@ -3664,8 +3736,8 @@
      "cenario_armazenamento": "onprem",
      "preco_gb_mes": 0.002,
      "preco_nucleo_hora": 0.0135,
-     "liquido": 413400.6819886749,
-     "armazenamento": 416019.8075080328,
+     "liquido": 413903.0303167083,
+     "armazenamento": 416522.1558360662,
      "movimento": 0.0,
      "cpu": 2619.125519357911
     },
@@ -3674,8 +3746,8 @@
      "cenario_armazenamento": "s3_standard",
      "preco_gb_mes": 0.023,
      "preco_nucleo_hora": 0.0446,
-     "liquido": 5041007.137821227,
-     "armazenamento": 5050104.018331902,
+     "liquido": 5047105.088358743,
+     "armazenamento": 5056201.968869418,
      "movimento": 0.0,
      "cpu": 9096.88051067392
     },
@@ -3684,8 +3756,8 @@
      "cenario_armazenamento": "b2",
      "preco_gb_mes": 0.00695,
      "preco_nucleo_hora": 0.0446,
-     "liquido": 1516924.4708482833,
-     "armazenamento": 1525983.7661509926,
+     "liquido": 1518767.11242375,
+     "armazenamento": 1527826.4077264594,
      "movimento": 0.0,
      "cpu": 9059.295302709372
     },
@@ -3694,8 +3766,8 @@
      "cenario_armazenamento": "glacier_ir",
      "preco_gb_mes": 0.004,
      "preco_nucleo_hora": 0.0446,
-     "liquido": 869204.7427698042,
-     "armazenamento": 878264.0380725135,
+     "liquido": 870265.2559067635,
+     "armazenamento": 879324.5512094729,
      "movimento": 0.0,
      "cpu": 9059.295302709372
     },
@@ -3704,8 +3776,8 @@
      "cenario_armazenamento": "onprem",
      "preco_gb_mes": 0.002,
      "preco_nucleo_hora": 0.0135,
-     "liquido": 436389.85565987614,
-     "armazenamento": 439132.01903625677,
+     "liquido": 436920.11222835584,
+     "armazenamento": 439662.27560473647,
      "movimento": 0.0,
      "cpu": 2742.163376380639
     }
@@ -3714,64 +3786,64 @@
     {
      "custo_movimento_usd_por_gb": 0.0,
      "passagens": 1,
-     "liquido": 4775619.910551704,
-     "armazenamento": 4784309.069998643,
+     "liquido": 4781396.916324087,
+     "armazenamento": 4790086.075771027,
      "movimento": 0.0,
      "cpu": 8689.159446939824
     },
     {
      "custo_movimento_usd_por_gb": 0.0,
      "passagens": 3,
-     "liquido": 4775619.910551704,
-     "armazenamento": 4784309.069998643,
+     "liquido": 4781396.916324087,
+     "armazenamento": 4790086.075771027,
      "movimento": 0.0,
      "cpu": 8689.159446939824
     },
     {
      "custo_movimento_usd_por_gb": 0.01,
      "passagens": 1,
-     "liquido": 4802085.234266537,
-     "armazenamento": 4784309.069998643,
+     "liquido": 4807862.240038921,
+     "armazenamento": 4790086.075771027,
      "movimento": 26465.323714832994,
      "cpu": 8689.159446939824
     },
     {
      "custo_movimento_usd_por_gb": 0.01,
      "passagens": 3,
-     "liquido": 4855015.881696203,
-     "armazenamento": 4784309.069998643,
+     "liquido": 4860792.887468587,
+     "armazenamento": 4790086.075771027,
      "movimento": 79395.97114449895,
      "cpu": 8689.159446939824
     },
     {
      "custo_movimento_usd_por_gb": 0.05,
      "passagens": 1,
-     "liquido": 4907946.529125868,
-     "armazenamento": 4784309.069998643,
+     "liquido": 4913723.534898252,
+     "armazenamento": 4790086.075771027,
      "movimento": 132326.61857416492,
      "cpu": 8689.159446939824
     },
     {
      "custo_movimento_usd_por_gb": 0.05,
      "passagens": 3,
-     "liquido": 5172599.766274199,
-     "armazenamento": 4784309.069998643,
+     "liquido": 5178376.772046583,
+     "armazenamento": 4790086.075771027,
      "movimento": 396979.85572249483,
      "cpu": 8689.159446939824
     },
     {
      "custo_movimento_usd_por_gb": 0.09,
      "passagens": 1,
-     "liquido": 5013807.8239852,
-     "armazenamento": 4784309.069998643,
+     "liquido": 5019584.829757585,
+     "armazenamento": 4790086.075771027,
      "movimento": 238187.91343349684,
      "cpu": 8689.159446939824
     },
     {
      "custo_movimento_usd_por_gb": 0.09,
      "passagens": 3,
-     "liquido": 5490183.650852195,
-     "armazenamento": 4784309.069998643,
+     "liquido": 5495960.656624579,
+     "armazenamento": 4790086.075771027,
      "movimento": 714563.7403004906,
      "cpu": 8689.159446939824
     }
@@ -3779,22 +3851,22 @@
    "leituras": [
     {
      "leituras_por_gb": 1,
-     "liquido": 4776362.199403242,
-     "armazenamento": 4784309.069998643,
+     "liquido": 4782139.205175626,
+     "armazenamento": 4790086.075771027,
      "movimento": 0.0,
      "cpu": 7946.87059540119
     },
     {
      "leituras_por_gb": 3,
-     "liquido": 4775619.910551704,
-     "armazenamento": 4784309.069998643,
+     "liquido": 4781396.916324087,
+     "armazenamento": 4790086.075771027,
      "movimento": 0.0,
      "cpu": 8689.159446939824
     },
     {
      "leituras_por_gb": 10,
-     "liquido": 4773022.009221995,
-     "armazenamento": 4784308.003647942,
+     "liquido": 4778799.014994379,
+     "armazenamento": 4790085.009420326,
      "movimento": 0.0,
      "cpu": 11285.994425946728
     }
@@ -3864,11 +3936,11 @@
   "abertura": "O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK, tentando O_NOATIME (negado em arquivos de outro dono: reabre sem)",
   "tempo_por_fase_s": {
    "inventario": 0.001,
-   "classificacao": 0.042,
-   "dedup": 0.063,
+   "classificacao": 0.046,
+   "dedup": 0.064,
    "familias": 0.001,
-   "delta": 0.105,
-   "amostragem": 17.814
+   "delta": 0.12,
+   "amostragem": 15.904
   }
  },
  "limites_e_o_que_nao_sabemos": [

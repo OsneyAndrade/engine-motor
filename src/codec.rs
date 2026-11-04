@@ -279,16 +279,18 @@ pub fn decode_limited(
                     return Err(too_large(limit));
                 }
             }
+            let window_log = zstd_window_log_max(limit);
+            check_zstd_windows(data, window_log)?;
             let mut out = Vec::with_capacity(cap);
             match dict {
                 Some(d) if !d.is_empty() => {
                     let mut decoder = zstd::Decoder::with_dictionary(Cursor::new(data), d)?;
-                    decoder.window_log_max(31)?;
+                    decoder.window_log_max(window_log)?;
                     read_capped(&mut decoder, &mut out, limit)?;
                 }
                 _ => {
                     let mut decoder = zstd::Decoder::new(Cursor::new(data))?;
-                    decoder.window_log_max(31)?;
+                    decoder.window_log_max(window_log)?;
                     read_capped(&mut decoder, &mut out, limit)?;
                 }
             }
@@ -347,6 +349,98 @@ fn initial_capacity(expected_len: Option<u64>, limit: u64, payload_len: usize) -
         .saturating_add(CAPACITY_FLOOR);
     let wanted = expected_len.unwrap_or(0).min(limit);
     usize::try_from(wanted).unwrap_or(usize::MAX).min(plausible)
+}
+
+pub const ZSTD_WINDOW_LOG_FLOOR: u32 = 17;
+pub const ZSTD_WINDOW_LOG_CEILING: u32 = 31;
+const ZSTD_MAGIC: [u8; 4] = [0x28, 0xB5, 0x2F, 0xFD];
+
+#[derive(Debug)]
+pub struct ZstdWindowTooLarge {
+    pub window: u64,
+    pub max: u64,
+}
+
+impl std::fmt::Display for ZstdWindowTooLarge {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "a janela do quadro zstd ({} bytes) excede o máximo de {} bytes permitido para este envelope",
+            self.window, self.max
+        )
+    }
+}
+
+impl std::error::Error for ZstdWindowTooLarge {}
+
+#[cfg(test)]
+pub fn zstd_window_too_large(e: &io::Error) -> Option<(u64, u64)> {
+    e.get_ref()
+        .and_then(|inner| inner.downcast_ref::<ZstdWindowTooLarge>())
+        .map(|w| (w.window, w.max))
+}
+
+pub fn zstd_window_log_max(limit: u64) -> u32 {
+    let bits = if limit <= 1 {
+        0
+    } else {
+        u64::BITS - (limit - 1).leading_zeros()
+    };
+    bits.clamp(ZSTD_WINDOW_LOG_FLOOR, ZSTD_WINDOW_LOG_CEILING)
+}
+
+pub fn zstd_frame_window(frame: &[u8]) -> Option<u64> {
+    if frame.len() < 6 || frame[..4] != ZSTD_MAGIC {
+        return None;
+    }
+    let descriptor = frame[4];
+    if descriptor & 0x20 == 0 {
+        let byte = frame[5];
+        let base = 1u64 << (10 + u32::from(byte >> 3));
+        return Some(base + (base / 8) * u64::from(byte & 7));
+    }
+    let dict_len = match descriptor & 3 {
+        0 => 0,
+        1 => 1,
+        2 => 2,
+        _ => 4,
+    };
+    let size_len = match descriptor >> 6 {
+        0 => 1,
+        1 => 2,
+        2 => 4,
+        _ => 8,
+    };
+    let start = 5 + dict_len;
+    let raw = frame.get(start..start + size_len)?;
+    let mut size = 0u64;
+    for (i, byte) in raw.iter().enumerate() {
+        size |= u64::from(*byte) << (8 * i);
+    }
+    if size_len == 2 {
+        size += 256;
+    }
+    Some(size)
+}
+
+fn check_zstd_windows(data: &[u8], window_log: u32) -> io::Result<()> {
+    let max = 1u64 << window_log;
+    let mut rest = data;
+    while !rest.is_empty() {
+        if let Some(window) = zstd_frame_window(rest) {
+            if window > max {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    ZstdWindowTooLarge { window, max },
+                ));
+            }
+        }
+        match zstd::zstd_safe::find_frame_compressed_size(rest) {
+            Ok(len) if len > 0 && len <= rest.len() => rest = &rest[len..],
+            _ => break,
+        }
+    }
+    Ok(())
 }
 
 fn grow_within(out: &mut Vec<u8>, extra: usize, limit: usize) {
