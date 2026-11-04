@@ -1,0 +1,287 @@
+{
+ "inventario": {
+  "data": "2026-11-04 11:16:17",
+  "lscpu": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           39 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  32\nOn-line CPU(s) list:                     0-31\nVendor ID:                               GenuineIntel\nModel name:                              Intel(R) Core(TM) i9-14900HX\nCPU family:                              6\nModel:                                   183\nThread(s) per core:                      2\nCore(s) per socket:                      24\nSocket(s):                               1\nStepping:                                1\nCPU(s) scaling MHz:                      33%\nCPU max MHz:                             5800.0000\nCPU min MHz:                             800.0000\nBogoMIPS:                                4838.40\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb intel_pt sha_ni xsaveopt xsavec xgetbv1 xsaves split_lock_detect user_shstk avx_vnni dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req hfi vnmi umip pku ospke waitpkg gfni vaes vpclmulqdq rdpid movdiri movdir64b fsrm md_clear serialize arch_lbr ibt flush_l1d arch_capabilities\nVirtualization:                          VT-x\nL1d cache:                               896 KiB (24 instances)\nL1i cache:                               1.3 MiB (24 instances)\nL2 cache:                                32 MiB (12 instances)\nL3 cache:                                36 MiB (1 instance)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-31\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Mitigation; Clear Register File\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; PBRSB-eIBRS SW sequence; BHI BHI_DIS_S\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Mitigation; IBPB before exit to userspace\n",
+  "kernel": "7.0.0-42-generic",
+  "caches_por_tipo": {
+   "P_cpu0": [
+    {
+     "nivel": "1",
+     "tipo": "Data",
+     "tamanho": "48K",
+     "compartilhado_com": "0-1",
+     "vias": "12",
+     "linha_B": "64"
+    },
+    {
+     "nivel": "1",
+     "tipo": "Instruction",
+     "tamanho": "32K",
+     "compartilhado_com": "0-1",
+     "vias": "8",
+     "linha_B": "64"
+    },
+    {
+     "nivel": "2",
+     "tipo": "Unified",
+     "tamanho": "2048K",
+     "compartilhado_com": "0-1",
+     "vias": "16",
+     "linha_B": "64"
+    },
+    {
+     "nivel": "3",
+     "tipo": "Unified",
+     "tamanho": "36864K",
+     "compartilhado_com": "0-31",
+     "vias": "12",
+     "linha_B": "64"
+    }
+   ],
+   "E_cpu16": [
+    {
+     "nivel": "1",
+     "tipo": "Data",
+     "tamanho": "32K",
+     "compartilhado_com": "16",
+     "vias": "8",
+     "linha_B": "64"
+    },
+    {
+     "nivel": "1",
+     "tipo": "Instruction",
+     "tamanho": "64K",
+     "compartilhado_com": "16",
+     "vias": "8",
+     "linha_B": "64"
+    },
+    {
+     "nivel": "2",
+     "tipo": "Unified",
+     "tamanho": "4096K",
+     "compartilhado_com": "16-19",
+     "vias": "16",
+     "linha_B": "64"
+    },
+    {
+     "nivel": "3",
+     "tipo": "Unified",
+     "tamanho": "36864K",
+     "compartilhado_com": "0-31",
+     "vias": "12",
+     "linha_B": "64"
+    }
+   ]
+  },
+  "frequencias_por_tipo": {
+   "P": {
+    "cpuinfo_min_freq": [
+     "800000"
+    ],
+    "cpuinfo_max_freq": [
+     "5600000",
+     "5800000"
+    ],
+    "scaling_min_freq": [
+     "800000"
+    ],
+    "scaling_max_freq": [
+     "5600000",
+     "5800000"
+    ],
+    "base_frequency": [
+     "2200000"
+    ],
+    "scaling_governor": [
+     "powersave"
+    ],
+    "energy_performance_preference": [
+     "balance_performance"
+    ],
+    "scaling_driver": [
+     "intel_pstate"
+    ]
+   },
+   "E": {
+    "cpuinfo_min_freq": [
+     "800000"
+    ],
+    "cpuinfo_max_freq": [
+     "4100000"
+    ],
+    "scaling_min_freq": [
+     "800000"
+    ],
+    "scaling_max_freq": [
+     "4100000"
+    ],
+    "base_frequency": [
+     "1600000"
+    ],
+    "scaling_governor": [
+     "powersave"
+    ],
+    "energy_performance_preference": [
+     "balance_performance"
+    ],
+    "scaling_driver": [
+     "intel_pstate"
+    ]
+   }
+  },
+  "intel_pstate": {
+   "no_turbo": "0",
+   "status": "active",
+   "hwp_dynamic_boost": "0",
+   "min_perf_pct": "15",
+   "max_perf_pct": "100",
+   "turbo_pct": null,
+   "num_pstates": null
+  },
+  "rapl": {
+   "intel-rapl-mmio:0": {
+    "nome": "package-0",
+    "habilitado": "1",
+    "energy_uj_legivel": false,
+    "constraint_0": {
+     "nome": "long_term",
+     "limite_W": 200.0,
+     "janela_us": 55967744.0,
+     "max_W": 55.0
+    },
+    "constraint_1": {
+     "nome": "short_term",
+     "limite_W": 200.0,
+     "janela_us": 2440.0,
+     "max_W": 0.0
+    },
+    "constraint_2": {
+     "nome": "peak_power",
+     "limite_W": 0.0,
+     "janela_us": null,
+     "max_W": 0.0
+    }
+   },
+   "intel-rapl:0": {
+    "nome": "package-0",
+    "habilitado": "1",
+    "energy_uj_legivel": false,
+    "constraint_0": {
+     "nome": "long_term",
+     "limite_W": 200.0,
+     "janela_us": 55967744.0,
+     "max_W": 55.0
+    },
+    "constraint_1": {
+     "nome": "short_term",
+     "limite_W": 200.0,
+     "janela_us": 2440.0,
+     "max_W": 0.0
+    },
+    "constraint_2": {
+     "nome": "peak_power",
+     "limite_W": 0.0,
+     "janela_us": null,
+     "max_W": 0.0
+    }
+   },
+   "intel-rapl:0:0": {
+    "nome": "core",
+    "habilitado": "0",
+    "energy_uj_legivel": false,
+    "constraint_0": {
+     "nome": "long_term",
+     "limite_W": 0.0,
+     "janela_us": 976.0,
+     "max_W": 0.0
+    }
+   },
+   "intel-rapl:0:1": {
+    "nome": "uncore",
+    "habilitado": "0",
+    "energy_uj_legivel": false,
+    "constraint_0": {
+     "nome": "long_term",
+     "limite_W": 0.0,
+     "janela_us": 976.0,
+     "max_W": 0.0
+    }
+   }
+  },
+  "ac_online": "1",
+  "bateria": {
+   "status": "Full",
+   "capacidade": "100"
+  },
+  "powerprofilesctl": "balanced",
+  "memoria_MiB": {
+   "MemTotal": 31280.7265625,
+   "MemAvailable": 13095.98828125,
+   "MemFree": 8326.4375,
+   "Cached": 6530.06640625,
+   "SwapTotal": 8191.99609375,
+   "SwapFree": 7918.05859375,
+   "Shmem": 3017.2265625
+  },
+  "uptime_s": 8278.32,
+  "loadavg": "2.89 6.17 4.80 4/4029 127090",
+  "disco": {
+   "dispositivo": "nvme0n1",
+   "modelo": "KINGSTON SNV3S1000G",
+   "scheduler": "[none] mq-deadline",
+   "nr_requests": "255",
+   "df_home": "Filesystem        1B-blocks         Used    Available Use% Mounted on\n/dev/nvme0n1p2 982240026624 624701431808 307568078848  68% /\n",
+   "df_tmp": "Filesystem       1B-blocks      Used   Available Use% Mounted on\ntmpfs          16400109568 834789376 15565320192   6% /tmp\n"
+  },
+  "versoes": {
+   "python": "3.14.4",
+   "libzstd_python": "1.5.7",
+   "zstd_cli": "*** Zstandard CLI (64-bit) v1.5.7, by Yann Collet ***",
+   "gcc": "gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0"
+  },
+  "instantaneo_ocioso_3s": {
+   "temp_C": {
+    "thermal_zone0:acpitz": 65.0,
+    "thermal_zone1:acpitz": 65.0,
+    "thermal_zone2:TCPU_PCI": 57.0,
+    "thermal_zone3:iwlwifi_1": 42.0,
+    "thermal_zone4:x86_pkg_temp": 57.0
+   },
+   "temp_pkg_C": 57.0,
+   "temp_core_max_C": 57.0,
+   "temp_nvme_C": 40.85,
+   "freq_P_todos_MHz": 1075.4771875,
+   "freq_E_todos_MHz": 1031.317375,
+   "bg_cores_proc": 1.2204814849666574,
+   "bg_top": [
+    [
+     "code",
+     0.5903415878371332
+    ],
+    [
+     "claude",
+     0.26200553617490746
+    ],
+    [
+     "chrome",
+     0.2122576495594187
+    ]
+   ],
+   "loadavg1": 2.89,
+   "mem_disponivel_MiB": 12909.5546875,
+   "swap_usado_MiB": 273.93359375,
+   "throttle": {
+    "core_count": 142544,
+    "core_total_ms": 505563,
+    "pkg_count": 45702.0,
+    "pkg_total_ms": 213671.0
+   }
+  },
+  "energia_rapl": "RAPL ilegivel (energy_uj: permissao negada); limites de potencia (constraint_*_power_limit_uw) sim",
+  "conferencia_dados": {
+   "arquivos_conferidos": 18,
+   "divergentes": [],
+   "ok": true
+  }
+ }
+}

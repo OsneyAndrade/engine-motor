@@ -11,8 +11,9 @@ Data: 2026-11-03 · Repositório: `engine-motor` (Syntra Engine v0.3.0) · Requi
 5. **Break-even:** com preços de 2026, a troca do clássico pelo neural tem margem **negativa em 4 de 6 cenários**; os 2 positivos exigem ≥1,9 PB em S3 Standard (≥92 PB on-prem) e leitura quase nula. Processar gasta **14–71x** mais energia do que o armazenamento economizado (Seções 4 e 6).
 6. **5 PB/mês = 1,93 GB/s médios (7,7 GB/s no pico ×4).** `zstd -1` e `zstd -3` cumprem com 26 a 48 núcleos no pico (3,3 a 5,3 em média, ~US$107–171/mês), **medidos**; neural exige **482 a 7.716 GPUs** só para a média. O gargalo escondido é o **índice de dedup** (19,5 TB por mês de dados a 8 KiB/bloco) (Seção 9).
 7. **Benchmark medido (Seção 10, i9-14900HX, dados públicos Silesia/Canterbury, 0 violações de bit-exatidão):** só `zstd -1` e `zstd -3` cumprem 5 PB/mês com ≤64 núcleos no pico (26 e 48 núcleos); a eficiência de escala cai para 0,42 a 32 threads; blocos de 1 MiB custam 0,3–1,3% de razão e 64 KiB 4,5–10%; a recompressão de zstd-3 para zstd-19 se paga em 3,7 meses (S3) a 21,5 meses (Glacier IR). A preço de nuvem a CPU custa 0,1–6% do valor guardado: o limite é vazão, não custo. **Rodada 2 (Seção 10.8):** o gate F1 do dedup por bloco (CDC) **reprova em árvores de arquivos** (ganho extra de −15% a 0% sobre dedup de arquivo inteiro + zstd-3) e só passa em fluxos únicos, onde `zstd --long` e o delta entre versões o superam; em núcleos homogêneos a eficiência de escala é 0,72–0,91 até 16 núcleos.
-8. **Onde a evidência é forte:** dedup por bloco + compressão clássica; recompressão específica de formato (Lepton: −22,7% em 203 PiB reais); conteúdo gerado pelo mesmo modelo que o reconstrói (LatentStore: −78,7% vs PNG). **Onde a rede neural cabe sem tocar o bit-exato:** no plano de controle (escolher transform/codec/nível por bloco) (Seção 8).
-9. **Recomendação:** aposentar "NN substitui o codec" como tese genérica; construir o diferencial em torno de **planejamento econômico medido + dedup de arquivo inteiro com referência/delta entre versões + recompressão em camadas + integridade provada**, com uma camada fria neural opcional atrás de gates eliminatórios (Seções 8 e 10).
+8. **Onde a evidência é forte:** dedup por bloco + compressão clássica; recompressão específica de formato (Lepton: −22,7% em 203 PiB reais); conteúdo gerado pelo mesmo modelo que o reconstrói (LatentStore: −78,7% vs PNG). **Onde a rede neural caberia sem tocar o bit-exato:** no plano de controle (escolher transform/codec/nível por bloco). **Medido em 2026-11-04 (T1.2, Seção 10.9): o teto de ganho é de 1,1–1,6% dos bytes e o critério de parada não foi atendido; não vale implementar agora.** O valor está concentrado em dados numéricos/científicos, onde `zstd-3` fixo perde 11–13% para o melhor transform por bloco.
+9. **Recomendação (a retirada da rede neural do caminho de dados foi confirmada pelo Osney em 2026-11-04):** aposentar "NN substitui o codec" como tese genérica; construir o diferencial em torno de **planejamento econômico medido + dedup de arquivo inteiro com referência/delta entre versões + recompressão em camadas + integridade provada**, com uma camada fria neural opcional atrás de gates eliminatórios (Seções 8 e 10).
+10. **Mercado (varredura de 2026-11-04, Seção 10.5):** não achei produto com as quatro peças juntas, mas três existem separadas: **Meta OpenZL** (plano treinado por formato, decoder universal, BSD), **SCOPe e a patente US11990923** (escolha de codec/tier por custo em US$) e **cobrança por economia** em FinOps e, em lakehouse, na Granica. A hipótese de diferencial passa de forte para parcial; **OpenZL vira baseline obrigatório e possível componente**, e a patente exige análise jurídica antes de comercializar.
 
 ### Nota de método e limites
 
@@ -21,7 +22,7 @@ Data: 2026-11-03 · Repositório: `engine-motor` (Syntra Engine v0.3.0) · Requi
 - Referências de 2026 estão fora do meu conhecimento prévio; **confira antes de citar externamente** (Bibliografia, no início).
 - Contas "(deriv.)" e premissas "(inf.)" são minhas e **não revisadas por terceiros**. Parâmetros sem fonte (custo de pesquisa, durações de treino, preço on-prem tudo-incluído) estão marcados como tal; mudam a escala D\*, **não o sinal** da margem.
 - Preços e custos são de **2026-11-03** e voláteis (NAND/DRAM subiram ~3,6x em 2026).
-- Não pesquisei concorrentes comerciais de storage (Dell, NetApp, Pure, VAST etc.); a afirmação de diferencial na Seção 10 é hipótese a validar em F0.
+- A varredura de concorrentes (Seção 10.5) foi feita em 2026-11-04 por um subagente; ficaram sem verificação o preço atual da Granica, os termos primários de NetApp, Hitachi e IBM, Veeam, Rubrik, HPE, Qumulo, Cloudflare e Snowflake. A análise de patente **não é parecer jurídico**.
 
 ---
 
@@ -651,7 +652,7 @@ Taxa típica = **razão comprimido ÷ original** ou razão de compressão confor
 | 1 | **Texto/código em arquivo frio de escala PB** onde o armazenamento é caro (nuvem, flash) e n ≈ 0 | único com ΔS demonstrado (6–11 p.p.); break-even teórico em ~1,9 PB (nuvem, otimista) | decoder de referência pinado/determinístico; modelo pequeno (≤1 GB); vazão ≥ 4 MB/s; **gates G2–G4** |
 | 2 | **Conteúdo gerado pelo mesmo modelo que o reconstrói** (imagens de IA generativa) | LatentStore: −78,7% vs PNG em 2 bi de requisições reais; decode 33–67 ms | só esse tipo; exige rótulo (modelo, versão, precisão) e servir pixels fora da plataforma (47% bit-exato entre GPUs) |
 | 3 | **Recompressão específica de formato** (JPEG→Lepton-like, ZIP/XLSX, PNG) | −22,7% em 203 PiB reais (Dropbox); lossless, determinístico (aritmética inteira), sem GPU | trabalho por formato; **não é neural** — é o que o README do Syntra já aponta como "próxima fronteira" |
-| 4 | **Neural no *plano de controle*** (escolher transform/codec/nível por bloco) | custo de µs–ms por bloco, **não toca o bit-exato** (o plano fica registrado no envelope) | dados de treino já existem: o planner do Syntra mede todos os candidatos |
+| 4 | **Neural no *plano de controle*** (escolher transform/codec/nível por bloco) | custo de µs–ms por bloco, **não toca o bit-exato** (o plano fica registrado no envelope) | **Medido (T1.2, Seção 10.9): não vale agora.** `zstd-3` fixo já está a 1,1–1,6% do oráculo; o melhor classificador (CART/logística) fica a 0,4–0,8% mas não cumpre ganho ≥1% sobre o *probe* nem custo ≤2% do zstd-3 (custo medido em numpy; estimado em código nativo: 1,4% a 1 MiB). Reabrir só com medição nativa |
 | 5 | Lossy sob **contrato próprio** (imagem/vídeo/áudio com tolerância declarada) | ganhos de 8–28% (JPEG AI, DCVC) | outro endpoint, outra garantia; **nunca** em auditoria/forense (miscompression) |
 
 **Quais premissas precisam mudar?**
@@ -688,7 +689,7 @@ Corpora públicos sugeridos (disponibilidade e licença **não verificadas** aqu
 
 1. **Aposentar a ideia de "NN substitui o codec"** como tese de produto genérica. A matemática (V1, V2) e a medição (V4) a derrubam para dado genérico em escala de PB.
 2. **Investir primeiro onde a evidência é forte e o risco é baixo:** dedup de arquivo inteiro com referência/delta entre versões (o CDC só para fluxos únicos, com chunks ≥1 MiB, após validar em dados reais), blocos independentes e processamento em fluxo, dicionários treinados, recompressão por formato, recompressão em camadas assíncronas, *scrubbing* e redundância.
-3. **Usar redes neurais onde o custo é µs e não afeta a exatidão:** seleção de plano (plano de controle), previsão de compressibilidade, classificação de conteúdo.
+3. **Usar redes neurais só onde o custo é µs, a exatidão não é afetada e o ganho medido justifica.** O teste do classificador de plano por bloco (T1.2) mostrou teto de 1,1–1,6% dos bytes e **não justifica** um modelo aprendido agora; regras simples (probe de incompressibilidade + seleção de transform só para blocos numéricos) capturam o que há de valor. Reabrir com features nativas medidas.
 4. **Manter uma opção neural barata e isolada:** camada fria de texto/código, atrás dos gates F2–F4, com decoder de referência pinado. Só vira produto se o piloto provar margem positiva.
 5. **Separar o eixo "tokens de IA"** do eixo "armazenamento": hoje compartilham o nome do produto, não o mecanismo.
 
@@ -697,9 +698,16 @@ Corpora públicos sugeridos (disponibilidade e licença **não verificadas** aqu
 
 ## 9. Requisito de 5 PB/mês: viabilidade matemática
 
-### 9.1 O que o requisito significa (interpretação a confirmar)
+### 9.1 O que o requisito significa (confirmado pelo Osney em 2026-11-04)
 
-Interpreto "5 PB/mês" como **5×10¹⁵ bytes que atravessam o motor por mês** (ingestão, replicação ou tráfego). Se em vez disso forem 5 PB de dado **novo retido**, o armazenamento cresce 60 PB/ano bruto (≈24 PB/ano físicos a 60% de economia, antes de ×1,2–1,5 de erasure). As fórmulas valem para os dois casos.
+Cenário-alvo: **uma empresa cliente tem 5 PB de processamento de dados por mês e armazena "um pouco menos que isso"**; a aplicação deve reduzir o **custo do processamento e do armazenamento**. Traduzo assim (a fração retida é **premissa minha**, a ser trocada pelo número real do cliente):
+
+- **Vazão processada:** 5×10¹⁵ B/mês (30 dias) atravessam o motor: ρ = 1,929 GB/s médios.
+- **Retenção:** ~90% do processado (parâmetro `ret`; sensibilidade em 0,80–0,95) vira dado armazenado, ou seja, ~4,5 PB novos por mês (≈54 PB/ano bruto).
+- **Dois fluxos no motor:** compressão (entrada/retenção) e descompressão (leitura para processar). O volume lido não foi informado; uso 1–3 leituras por GB processado como sensibilidade.
+- **"Custo do processamento"** é ambíguo e depende do pipeline do cliente (o que ele chama de processar, onde a compressão fica, se o consumo aceita dado comprimido). Modelo na Seção 9.7; o que perguntar ao cliente está no plano.
+
+As fórmulas valem para a vazão e para a retenção; a retenção entra só nos termos de armazenamento.
 
 | Pico sobre a média (k) | Vazão | Equivalente |
 |---|---:|---|
@@ -779,6 +787,37 @@ Um pipeline P é **viável** para o requisito se, e somente se, cumprir **simult
 
 **Resultado:** compressão clássica em linha de vazão + *dedup* hierárquico + recompressão em camadas satisfaz V1–V6. Compressão neural genérica **falha V1, V2 (no cenário realista), V4 e V6**; só V3 e V5 são independentes do tipo de modelo.
 
+
+### 9.7 Modelo do cliente: processamento + armazenamento
+
+Premissas (**todas minhas, a trocar por dados do cliente**): zstd-3 no mix real do benchmark (economia s = 61,1%; compressão 378 MB/s e descompressão 1.611 MB/s por núcleo), eficiência de escala 1,0 (otimista), vCPU de nuvem US$0,0446/h (Vantage) ou on-prem US$0,0135/núcleo·h (inferência), retenção de 60 meses, `ret` = fração retida do processado. Cálculo em [docs/anexos/modelo_cliente.py](anexos/modelo_cliente.py).
+
+**Armazenamento** (economia em regime estável = `s × ret × 5 PB × 60 meses × preço`):
+
+| `ret` | S3 Standard (US$0,023) | B2 (US$0,00695) | on-prem (US$0,002, inferido) |
+|---:|---:|---:|---:|
+| 0,80 | US$3,37 mi/mês | US$1,02 mi/mês | US$293 mil/mês |
+| **0,90** | **US$3,79 mi/mês** | US$1,15 mi/mês | US$330 mil/mês |
+| 0,95 | US$4,01 mi/mês | US$1,21 mi/mês | US$348 mil/mês |
+
+**Movimento de dados** (economia = `s × 5 PB × custo por GB movido × passagens`; o custo de movimento do cliente é **desconhecido**, os valores abaixo são sensibilidade; a referência verificada é o egress do S3, US$0,09/GB nos primeiros 10 TB e US$0,05/GB acima de 150 TB; tráfego dentro da mesma região pode custar 0):
+
+| Custo por GB movido | 1 passagem | 3 passagens |
+|---:|---:|---:|
+| US$0 (mesma região) | US$0 | US$0 |
+| US$0,01 | US$30,6 mil/mês | US$91,7 mil/mês |
+| US$0,05 | US$152,8 mil/mês | US$458 mil/mês |
+| US$0,09 | US$275 mil/mês | US$825 mil/mês |
+
+**CPU da compressão e da descompressão** (nuvem, η = 1,0): US$202/mês com 1 leitura por GB processado, US$279 com 3, US$548 com 10 (compressão de 5 PB = US$164/mês).
+
+**Razão entre economia de armazenamento (`ret` = 0,90, 3 leituras) e CPU:** S3 Standard **~13.600x**; B2 ~4.100x; on-prem ~3.900x.
+
+**Leitura (inferência minha):**
+
+1. No cenário-alvo, **a economia de armazenamento domina**; o custo de CPU da solução clássica é de 0,01–0,3% dela. A decisão que importa é a **razão de compressão** que o motor entrega por classe de dado, e não o custo de computar.
+2. **Processamento:** o ganho depende de o consumo aceitar dado comprimido e de o gargalo ser movimento de bytes. Se o pipeline do cliente precisar de dado **descomprimido** em cada passagem, a descompressão entra como CPU (barata, ~US$38 por passagem de 5 PB nesta conta) e o ganho de movimento só existe se o transporte entre compressão e consumo for comprimido. **Isso exige conhecer o pipeline do cliente.**
+3. O que **não** está no modelo: custo de CPU do cliente que escala com bytes (varreduras, shuffles), latência adicional, formatos columnares que já comprimem (Parquet/ORC) — nesse caso o ganho extra sobre o dado do cliente é bem menor — e custo de migração.
 
 ---
 
@@ -893,23 +932,36 @@ Princípio: **cada componente precisa ser sustentado por uma condição de viabi
 | # | Componente | O que faz | Sustentação | Gate / medição pendente |
 |---|---|---|---|---|
 | A | **Caminho síncrono em linha de vazão** | blocos independentes de 1 MiB (64 KiB sob demanda), zstd-1/-3 por classe, *probe* de incompressibilidade → `stored`; paralelismo por bloco; processamento em fluxo (sem `Bytes` inteiro em RAM) | V1: 26–48 núcleos de pico (medido); bit-exato por construção | rodar em servidor-alvo, medir η real e I/O de disco/rede |
-| B | **Planejador por bloco com modelo leve** | classificador barato (entropia de amostra de 4 KiB, histograma, MIME, stride, tentativa rápida de lz4) escolhe transform/codec/nível/dicionário em µs; **treinado com os rótulos do planner "mede todos" que o Syntra já tem**; o plano fica no envelope, então o decoder continua determinístico | rede neural **no plano de controle**, sem tocar o bit-exato (Seção 8, nicho 4); o benchmark mostra que o ótimo muda por classe | acurácia da escolha vs oráculo e ganho vs nível fixo (benchmark v2, item 3) |
+| B | **Planejador por bloco, simples** | *probe* de incompressibilidade (→ `stored`) + `zstd-3` (ou `zstd-1` se a vazão exigir) + **seleção de transform (delta/byte_split) por amostra apenas em blocos numéricos** detectados pela entropia dos deltas; o plano fica no envelope, então o decoder continua determinístico. **Sem modelo aprendido por ora** | **medido (T1.2, 10.9):** `zstd-3` fixo está a 1,1–1,6% do oráculo; o ganho está em `científico` (11–13%) e `dna` (3,4–3,6% em 64–256 KiB); um classificador aprendido não passou o critério de parada | **T1.2 executado**; reabrir só se features nativas medirem ≤2% do zstd-3 e o IC do ganho ficar >1% |
 | C | **Recompressão assíncrona guiada por M\*** | repassa blocos já ingeridos para zstd-19/xz-9e/bzip2-9 quando `meses_restantes ≥ M*(classe, preço, camada)`, priorizando por ganho/custo marginal; usa N médio espalhado pelo mês | M\* = 3,7 meses (S3) a 21,5 (Glacier IR); ~18x de retorno sobre o CPU em S3 (Seção 9.2) | medir em carga real e com leitura concorrente |
 | D | **Dedup e referência entre versões** | arquivo inteiro (já existe) + **delta/janela longa** contra a versão anterior (`zstd --patch-from` / `--long`) para famílias de arquivos e fluxos de backup; **CDC só para fluxos únicos sem estrutura de arquivo, com chunks ≥1 MiB**; índice Bloom + localidade só se o CDC entrar (Zhu et al., 2008) | **medido (10.8):** CDC reprova em árvores; delta por caminho é 29% menor que arquivo inteiro + zstd-3 no Par B; `--long=31` sem índice supera o melhor CDC; índice de CDC 8–64 KiB não cabe em 1 TB de RAM com retenção >1 mês | **F1 executado**; falta VM/banco/backups reais e a memória de `--long=31` |
 | E | **Integridade fim a fim** | BLAKE3 (já existe) + *scrubbing* + erasure coding + *verify* em **nó diferente** + `digest` do dicionário/modelo no envelope (precedente RFC 9842) | V5; R5, R6, R3 da Seção 5; UBER de 10⁻¹⁵ ⇒ ~40 erros por leitura do volume mensal | **F4**: injeção de falhas |
 | F | **Planejamento econômico exposto na API** | `/analyze` devolve valor líquido por GB com os preços e a retenção do **tenant**, e a camada recomendada; combina com o ledger e a cobrança por economia (`savings_share`) que o Syntra já tem | é o que o benchmark calcula; transforma "razão" em decisão de negócio | validar com 1 cliente-piloto |
 | G | **Camada fria neural (opcional, isolada)** | texto/código sem leitura, decoder de referência pinado | Seção 8, nicho 1; só com os gates F2–F4 | **F2/F3 eliminatórios** |
 
-### 10.5 O que seria "diferente do mercado" (hipótese a validar)
+### 10.5 Diferencial: o que a varredura de concorrentes mostrou (2026-11-04)
 
-Não pesquisei concorrentes comerciais de armazenamento (Dell/Data Domain, NetApp, Pure, VAST etc.); as peças isoladas existem (compressão e dedup transparentes em ZFS/Ceph/Data Domain, compressão adaptativa, recompressão de camadas fria). A **hipótese de diferenciação** é a composição de:
+Varredura feita por um subagente com busca na web (o relatório completo foi lido por mim; **não reabri cada fonte**). Rótulos: [V] = página ou PDF lido pelo pesquisador; [NV] = só trecho de busca ou fonte secundária. Patentes são citadas como fato bibliográfico, **não como parecer jurídico**.
 
-1. decisão **econômica** (valor líquido em US$ por tenant, camada e preço), e não apenas "melhor razão" ou "mais rápido";
-2. plano por bloco escolhido por **modelo leve treinado em medições reais**, com bit-exato por construção;
-3. **integridade e determinismo verificáveis** (hash fim a fim, digest do que é necessário para reconstruir, verificação em outro nó);
-4. **cobrança atrelada à economia entregue** (já implementada no Syntra) e API/on-premise.
+**Resultado geral:** não foi encontrado produto que faça as quatro peças juntas, mas **três das quatro existem separadas, com fonte, e uma delas está patenteada**.
 
-O que **falsificaria** a hipótese: se produtos existentes já fazem (1)+(2) com garantia de bit-exato; nesse caso o diferencial se reduz a (3)+(4). **Tarefa F0:** varredura de concorrentes antes de afirmar diferencial em material comercial.
+| Peça da hipótese | Quem já faz (fonte) | Veredito |
+|---|---|---|
+| **(1) Decisão econômica em US$** | **SCOPe** (Adobe Research, ICDE'23): ILP que escolhe tier e codec por partição minimizando custo de armazenamento, leitura e computação, com preços de tiers do Azure e preditor MLP; alega 50–83% de economia de custo em data lakes de TB a PB ([arXiv:2305.14818](https://arxiv.org/abs/2305.14818), V). **Patente US11990923** (Elasticsearch B.V., prioridade 2020-03-04, concedida 2024-05-21, ativa): modelo de custo financeiro (CPU, armazenamento, rede) escolhe algoritmo e parâmetros; a reivindicação 1 foi lida resumida ([Google Patents](https://patents.google.com/patent/US11990923), V). Arrays vendem só **razão garantida** (Dell 6:1 no PowerStore Gen3, NetApp 4:1 em SAN, Hitachi 4:1) | **Cai como ineditismo conceitual.** Sobra execução. Há **risco de patente** |
+| **(2) Plano por bloco aprendido, bit-exato** | **Meta OpenZL** (BSD, anunciado em 2025-10-06): grafo de codecs reversíveis, *trainer* offline, "ML Selector" que escolhe o grafo por entrada, grafo resolvido gravado no frame, **decoder universal sem decisão em runtime**, kernels determinísticos, checksums opcionais por chunk. Em Silesia/`sao`: zstd-3 razão 1,31 a 220 MB/s; xz-9 1,64; **OpenZL 2,06 a 340 MB/s de compressão e 1.200 MB/s de descompressão**; no Meta: Scribe ~15% melhor que zstd, checkpoints PyTorch −17%, embeddings −30%; em texto (enwik) cai para zstd ([arXiv:2510.03203](https://arxiv.org/abs/2510.03203), [engineering.fb.com](https://engineering.fb.com/2025/10/06/developer-tools/openzl-open-source-format-aware-compression-framework), [GitHub](https://github.com/facebook/openzl), V). Escolha por amostragem: **BtrBlocks** (TUM, SIGMOD'23), Vortex, DuckDB ([BtrBlocks](https://www.cs.cit.tum.de/fileadmin/w00cfj/dis/papers/btrblocks.pdf), V). Seleção neural: CodecDB (SIGMOD'21, ~90% de acerto, NV). Comercial: **Granica Crunch** ("ML-powered adaptive compression" em Parquet/Iceberg/Delta, 20–50% além do ZSTD, on-prem air-gapped; [docs](https://docs.granica.ai/crunch/how-it-works), V) | **Cai como diferencial técnico.** Construir isso do zero não é diferencial |
+| **(3) Integridade e determinismo verificáveis** | OpenZL (versão do formato e checksums por chunk), Vortex (semente fixa), ZFS/Ceph/restic (hash por bloco; ZFS com dedup `verify` byte a byte), Lepton (round-trip) | **Existe, é requisito mínimo.** Não foi achado "digest de dicionário/modelo no formato" nem "verificação em outro nó" como recurso empacotado |
+| **(4) Cobrança por % da economia** | FinOps de nuvem: ProsperOps ("Savings Share"), nOps, Usage.ai, Zesty (V/NV). Compressão de lakehouse: Granica (espelho antigo do site diz "sem economia, sem fatura"; página atual não descreve preço por resultado; NV) | **Cai como ineditismo.** Sobra o escopo: blobs e arquivos genéricos, on-prem, API |
+
+**Outros achados relevantes:** Weka e VAST usam similaridade/delta (VAST liga e desliga a similaridade pelo benefício de redução, não pelo US$); Intel QAT chega a 73 Gb/s no Silesia (Red Hat, NV) e BlueField/ScaleFlux oferecem offload, o que torna a compressão genérica uma commodity em hardware; S3 Intelligent-Tiering, GCS Autoclass e Azure lifecycle **não citam compressão** na documentação (ausência na doc, não prova de inexistência).
+
+**Efeito sobre o posicionamento (inferência minha, apoiada na varredura):**
+
+1. **A hipótese de diferenciação por composição cai de "forte" para "parcial".** O que resta é execução e escopo: motor genérico (blobs e arquivos), **on-premise com API**, planejamento por **valor líquido do cliente** (processamento + armazenamento, Seção 9.7), integridade verificável e cobrança por economia entregue, para **um cliente de escala PB**.
+2. **OpenZL passa a ser o baseline obrigatório e candidato a componente.** Em dados estruturados ele reporta ganhos grandes sobre zstd/xz com decoder universal e licença BSD. Se confirmado nos dados do cliente, faz mais sentido **adotá-lo como codec do motor** e diferenciar na camada de decisão do que reconstruir trainer e seletor (tarefa T1.9 do plano). Em texto genérico ele reverte para zstd, então a camada de recompressão por classe continua útil.
+3. **Risco de patente (US11990923):** a seleção de compressão por modelo de custo financeiro pode sobrepor a hipótese (1). **Precisa de análise de liberdade de operação por advogado antes de comercializar** (decisão D8 do plano). Só foi lida a reivindicação 1 resumida; não verifiquei se a patente virou produto.
+4. **Savings-share exige definir a linha de base da economia** (contra o quê se mede). Compradores de armazenamento estão acostumados com **razão garantida com remédio em hardware**; uma cobrança por % da economia precisa de um critério auditável de medição.
+
+**Não foi possível verificar:** preço atual da Granica (404 na FAQ); termos primários de NetApp, Hitachi e IBM (403 ou PDF ilegível); Veeam, Rubrik, HPE e Qumulo; Cloudflare e Snowflake (não pesquisados); release OpenZL 0.2 (só fonte secundária); vazões de QAT e BlueField por fonte primária; se a patente da Elasticsearch virou produto.
 
 ### 10.6 Benchmark v2: o que falta medir (prioridade)
 
@@ -917,7 +969,7 @@ O que **falsificaria** a hipótese: se produtos existentes já fazem (1)+(2) com
 |---|---|---|
 | 1 | Rodar em **servidor-alvo** (homogêneo, 1 e 2 sockets, NUMA) e em vCPU de nuvem (c7i/EPYC) | η real e fator servidor/notebook, hoje as maiores incertezas |
 | 2 | **Energia**: RAPL com permissão ou medidor de tomada; J/GB por configuração | Seção 6.4 só tem estimativa por TDP |
-| 3 | **Classificador de plano**: previsão vs oráculo | valida o componente B |
+| 3 | **Classificador de plano**: previsão vs oráculo | **executado (10.9): não vale agora**; falta só medir features em código nativo para reabrir |
 | 4 | **Dedup/CDC e delta** em VM, bancos e backups reais (o F1 cobriu só código-fonte do kernel e um par sintético), memória de `--long`, índice com BLAKE3 | componente D; F1 só parcialmente respondido |
 | 5 | **I/O real**: leitura e escrita de NVMe e rede no caminho, latência p50/p99 | hoje tudo é memória/tmpfs |
 | 6 | **Corpus do cliente** (logs de produção, bancos reais) | os logs são sintéticos e o dicionário foi testado na mesma fonte |
@@ -992,6 +1044,48 @@ Vazão isolada de 1 núcleo: P 463 / E 275 MB/s em compressão (E/P = 0,59) e 1.
 **Conclusão (inferência):** a queda da curva anterior (0,64 a 16; 0,42 a 32) **não é só artefato de híbrido**: com 16 E-cores homogêneos a eficiência é 0,72 (zstd-3) e 0,88 (zstd-1). Atribuição multiplicativa a 16 threads: ~60% híbrido/SMT e ~40% limite de sistema. O 0,64 original usava uma referência isolada ~8% pessimista (N=1 dava 1,08): 0,64/1,08 ≈ 0,59, igual ao valor atual. **Um servidor homogêneo deve ficar em ~0,8–0,9 entre 8 e 16 núcleos; acima de 16 núcleos não há dado.** Com η = 0,85, o N de pico para 5 PB/mês seria ~15 (zstd-1) e ~24 (zstd-3), contra 26 e 48 com o η = 0,42 do híbrido.
 
 **Falhas e limites desta rodada:** a primeira extração em paralelo estourou a quota do `/tmp` (`usrquota`, ~7,5 GiB reais apesar de o `df` mostrar 11 GB) e travou até o shell; o preparo foi refeito extraindo uma versão por vez, e a "árvore" da análise é lida do tar por offset com sha256 de cada arquivo conferido contra a árvore antes de apagá-la (desvio da letra do pedido, registrado nos dados). A análise foi rodada duas vezes por engano; `dedup.json` vem da primeira execução completa. zstd-19 só por amostra de 1/4 dos chunks únicos, sem baseline de arquivo inteiro com zstd-19. A referência isolada de 1 núcleo tem ruído de ~8% entre rodadas. Energia continua não medida. O tempo total provavelmente excedeu os 60 min pedidos (as fases de medição somam ~11 min).
+
+### 10.9 Rodada 3: classificador de plano por bloco (T1.2)
+
+Código: [bench/plano_bloco.py](../bench/plano_bloco.py) (subcomandos `autoteste`, `kernel`, `rotular`, `features`, `custo-transform`, `avaliar`, `tempo`, `relatorio`); resultados em [plano_bloco.md](../bench/resultados/plano_bloco.md) e [plano_bloco.json](../bench/resultados/plano_bloco.json). Pergunta: **um classificador barato (µs–ms) escolhe, por bloco, o melhor plano (transform + codec + nível) melhor que um plano fixo ou um *probe* simples?** O plano fica no envelope; a rede/modelo ficaria só no plano de controle.
+
+**Dados e verificação.** 34 arquivos/grupos, 574,7 MB: Silesia, Canterbury, 3 classes sintéticas (incompressível, logs, já comprimido) e uma classe `código kernel` (primeiros 256 MiB do tar de `linux-6.12.115.tar.xz` lidos em streaming: 242,6 MB, 42% dos bytes, em 16 pseudo-arquivos por diretório; o sha256 do `tar.xz` inteiro não foi conferido). Os dados foram **regenerados** porque a máquina reiniciou e o tmpfs foi limpo (sha256 dos 18 arquivos conferido contra `medicoes.json`). Blocos independentes de 64 KiB (8.782), 256 KiB (2.207) e 1 MiB (562). **139.652 comparações bloco × candidato com decodificação e sha256: 0 falhas**; os transforms foram conferidos contra uma implementação ingênua da semântica de `src/transform.rs` em 846 casos de borda. Candidatos síncronos: `stored`, `zstd-1`, `zstd-3`, `delta` (1/2/4/8) e `byte_split` (4/8) seguidos de `zstd-3`.
+
+**Regret de bytes contra o oráculo de tamanho** (leave-one-file-out, global; menor é melhor):
+
+| Plano | 64 KiB | 256 KiB | 1 MiB |
+|---|---:|---:|---:|
+| **`zstd-3` fixo** | **1,52%** | **1,58%** | **1,12%** |
+| `zstd-1` fixo | 4,78% | 4,99% | 7,63% |
+| *probe* + `zstd-3` | 1,59% | 1,72% | 1,41% |
+| regra manual | 3,03% | 4,11% | 3,35% |
+| CART (profundidade 6) | 0,62% | 1,66% | 0,47% |
+| regressão logística | 0,39% | 0,76% | 0,80% |
+
+**Critério de parada** (declarado antes do experimento: (i) regret ≤1%, (ii) ganho ≥1% sobre *probe* + `zstd-3`, (iii) features + inferência ≤2% do tempo do `zstd-3`):
+
+| Granularidade (melhor modelo) | (i) | (ii) | (iii) medido em numpy / **estimado nativo** | Veredito |
+|---|---|---|---|---|
+| 64 KiB (logística) | 0,39% [IC95 0,15–0,70] atende | 1,18% [IC95 0,07–3,42] atende | 123,6% / 37,0% **falha** | **não vale** |
+| 256 KiB (logística) | 0,76% atende | 0,95% [IC95 0,12–2,59] **falha** | 31,2% / 8,8% **falha** | **não vale** |
+| 1 MiB (CART) | 0,47% [IC95 0,11–1,05] atende | 0,92% [IC95 −0,02–2,80] **falha por 0,08 p.p.** | 3,2% **falha** / 1,4% (atenderia; **inferência**) | **não vale** com o medido |
+
+O *probe* fica a 1,41–1,72% do oráculo, então a regra "usar só o *probe*" também não dispara; o veredito vem das condições (ii) e (iii). Os intervalos de confiança (*bootstrap* por arquivo) têm 1 a 3 pontos de largura: o resultado de 1 MiB está no limite.
+
+**Custo (numpy, 1 núcleo, mediana de 3 por bloco):** `zstd-3` 121 µs (64 KiB), 516 µs (256 KiB), 1.912 µs (1 MiB); features completas 147–158 µs; features do CART 110/123/60 µs; inferência 0,35 µs (CART) e 2,8–3,0 µs (logística). O CART tem 73, 51 e 23 nós; a logística, 198 pesos. A estimativa nativa (**inferência própria**: ~2 GB/s por passada sobre a amostra) dá 30%, 7,6% e 1,4% do `zstd-3` para o CART em 64 KiB, 256 KiB e 1 MiB. Em classes incompressíveis o `zstd-3` já detecta em ~150 µs.
+
+**O que o experimento mostra de útil:**
+
+1. **O teto é pequeno:** qualquer seletor só pode ganhar o que sobra do `zstd-3` fixo: **1,1–1,6% dos bytes**. Em texto, banco, XML e kernel ele já está a menos de 0,7% do oráculo.
+2. **O valor está concentrado em dados numéricos:** a perda do `zstd-3` fixo é de **11–13% em `científico`** e 3,4–3,6% em `dna` (64 e 256 KiB). Escolher o **melhor transform por bloco** ganha **9,4–11,6%** sobre o `zstd-3` em `científico`; um transform **fixo** por classe perde 1,0–3,5% (`byte_split 4`). Código ganha 0,4–1,2% e binário 0–0,8% com transforms; o resto ≈ 0.
+3. **Custo de vazão dos transforms (numpy):** a compressão cai de 348 para 325 MB/s e a descompressão de 1.412 para 786 MB/s, porque a inversão em numpy é lenta (delta de largura 1: 0,73 GB/s); a implementação nativa do motor não deve ter essa penalidade (**inferência**, não medida).
+4. **Rótulo econômico:** treinar com o oráculo econômico (valor líquido) não melhorou nada sobre o oráculo de tamanho.
+5. **Medir todos os candidatos** custa 8x o tempo do `zstd-3` com os 9 candidatos síncronos e 173x com 14: é o que o planner atual faz, e é inviável no caminho síncrono.
+6. **Generalização** (leave-one-class-out): o regret global sobe para 0,56–2,92%; DNA, código, XML, banco e logs têm 1 arquivo cada, então o resultado dessas classes já equivale a "classe nova".
+
+**Decisão e efeito (inferência minha, apoiada nos números):** **não implementar classificador aprendido agora.** O componente B passa a ser um **planejador simples**: *probe* de incompressibilidade + `zstd-3` por bloco + **seleção de transform por amostra só em blocos numéricos** (detectados pela entropia dos deltas), tudo em código nativo. Isso reforça o T1.9 (OpenZL), que ataca exatamente dados estruturados/numéricos, onde está o ganho. **Reabrir o classificador** se (a) features nativas medirem ≤2% do `zstd-3` e (b) o IC do ganho sobre o *probe* ficar acima de 1% com dados do cliente.
+
+**Limites:** o "não vale" depende do custo em numpy (a estimativa nativa é inferência); 18 arquivos reais (a validação por arquivo é grossa) e IC de 1–3 pontos; as vazões por classe vêm do benchmark anterior e o kernel usa a de `código` (inferência); o classificador do caminho assíncrono **não foi treinado** (só o oráculo assíncrono, 14–19% menor que o síncrono); o limiar de 3% para tentar transform + xz, a tolerância de 0,3% nos rótulos e a margem de 0,5 bit da regra manual são escolhas do pesquisador. Excedeu o orçamento de 60 min (a regeneração dos dados e o desenvolvimento; o cálculo soma ~5 min).
 
 ---
 
