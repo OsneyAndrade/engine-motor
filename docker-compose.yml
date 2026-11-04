@@ -32,6 +32,7 @@ services:
 
       SYNTRA_BIND_ADDR: 0.0.0.0:3002
       SYNTRA_MAX_BODY_MB: 4096
+      SYNTRA_MAX_DECOMPRESSED_MB: ${SYNTRA_MAX_DECOMPRESSED_MB:-}
 
       SYNTRA_DEFAULT_EFFORT: max
       SYNTRA_VERIFY_ON_WRITE: "true"
@@ -44,6 +45,11 @@ services:
       - "${SYNTRA_PUBLISH_HOST:-127.0.0.1}:${SYNTRA_PUBLISH_PORT:-3002}:3002"
     volumes:
       - syntra_data_dev:/data
+      - type: bind
+        source: ${SYNTRA_WATCH_HOST_DIR:-./watch_in}
+        target: /data/watch_in
+        bind:
+          create_host_path: false
     depends_on:
       postgres:
         condition: service_healthy

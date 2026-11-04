@@ -1420,10 +1420,15 @@ async fn ledger_registra_bytes_e_cpu_de_analyze_decompress_e_leitura() {
     let id = headers["x-syntra-id"].to_str().unwrap().to_string();
     let payload_gravado: i64 = headers["x-syntra-essence-size"].to_str().unwrap().parse().unwrap();
 
-    let fatura_antes = {
+    let (fatura_antes, economia_antes) = {
         let (_, u) = enviar(&state, get_com_chave("/api/v1/usage", &chave)).await;
-        json(&u)["quote"]["amount_micro_cents"].as_i64().unwrap()
+        let u = json(&u);
+        (
+            u["quote"]["amount_micro_cents"].as_i64().unwrap(),
+            u["totals"]["savings_pct"].as_f64().unwrap(),
+        )
     };
+    assert!(economia_antes > 50.0, "economia de referência: {economia_antes}");
 
     let (status, _) = enviar(
         &state,
@@ -1492,6 +1497,11 @@ async fn ledger_registra_bytes_e_cpu_de_analyze_decompress_e_leitura() {
         u["quote"]["amount_micro_cents"].as_i64().unwrap(),
         fatura_antes,
         "analyze, decompress e leitura não podem alterar a fatura"
+    );
+    assert_eq!(
+        u["totals"]["savings_pct"].as_f64().unwrap(),
+        economia_antes,
+        "a economia percentual vem só dos eventos de compress"
     );
     let compress = u["totals"]["by_operation"]
         .as_array()
@@ -1579,6 +1589,83 @@ async fn envelope_forjado_com_bomba_vira_422_sem_derrubar_o_servico() {
 
     let (status, _) = enviar(&state, get("/health")).await;
     assert_eq!(status, StatusCode::OK);
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn bombas_reais_de_1_gib_em_todos_os_codecs_viram_422_rapido_pela_api() {
+    use crate::proto::ProcessedFile;
+
+    let (state, raiz) = motor_com("bombas-1gib", vec![], |c| c.max_decompressed_mb = 32).await;
+
+    for (nome, codec_id, payload) in &crate::bombas_tests::bombas().por_codec {
+        for declarado in [0u64, 1 << 30, u64::MAX] {
+            let forjado = ProcessedFile {
+                version: 3,
+                original_name: "bomba.bin".to_string(),
+                original_size: declarado,
+                data: payload.clone(),
+                codec: *codec_id as i32,
+                ..Default::default()
+            };
+            let bytes = crate::container::seal(forjado).unwrap().bytes;
+
+            let inicio = std::time::Instant::now();
+            let (status, corpo) = enviar(&state, post("/api/v1/decompress", bytes)).await;
+            let tempo = inicio.elapsed();
+
+            assert_eq!(
+                status,
+                StatusCode::UNPROCESSABLE_ENTITY,
+                "{nome} declarando {declarado}: {}",
+                String::from_utf8_lossy(&corpo)
+            );
+            let j = json(&corpo);
+            assert_eq!(j["error"]["code"], "decompressed_too_large", "{nome} declarando {declarado}");
+            assert!(
+                j["error"]["hint"].as_str().unwrap().contains("SYNTRA_MAX_DECOMPRESSED_MB"),
+                "{nome}: {}",
+                j["error"]["hint"]
+            );
+            assert!(
+                tempo < std::time::Duration::from_secs(10),
+                "{nome} declarando {declarado}: {tempo:?}"
+            );
+        }
+    }
+
+    let (status, _) = enviar(&state, get("/health")).await;
+    assert_eq!(status, StatusCode::OK);
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn hash_forjado_no_envelope_nao_entra_no_ledger() {
+    use crate::proto::ProcessedFile;
+
+    let (state, raiz) = motor("hash-forjado", vec![]).await;
+
+    let forjado = ProcessedFile {
+        version: 3,
+        original_name: "ola.txt".to_string(),
+        original_size: 3,
+        data: b"ola".to_vec(),
+        codec: crate::codec::Codec::Stored as i32,
+        file_hash: vec![7u8; 1 << 20],
+        ..Default::default()
+    };
+    let bytes = crate::container::seal(forjado).unwrap().bytes;
+    let (status, devolvido) = enviar(&state, post("/api/v1/decompress", bytes)).await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(devolvido, b"ola");
+
+    let (_, corpo) = enviar(&state, get("/api/v1/usage?events=5")).await;
+    let u = json(&corpo);
+    let evento = &u["recent"][0];
+    assert_eq!(evento["operation"], "decompress");
+    let objeto = evento["object_id"].as_str().unwrap_or("");
+    assert!(objeto.len() <= 64, "o ledger guardou {} caracteres vindos do envelope", objeto.len());
+
     limpar(&raiz);
 }
 

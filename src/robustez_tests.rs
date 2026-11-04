@@ -236,7 +236,7 @@ impl Contagem {
 
 fn mutar(rng: &mut Rng, dados: &mut Vec<u8>) {
     match rng.abaixo(8) {
-        0 | 1 | 2 => {
+        0..=2 => {
             if dados.is_empty() {
                 return;
             }
@@ -761,7 +761,7 @@ fn carregar_corpus() -> (Vec<(String, Vec<u8>)>, Dicionarios) {
     (envelopes, Dicionarios(dicts))
 }
 
-fn mutar_envelope_serializado(rng: &mut Rng, bytes: &mut Vec<u8>) {
+fn mutar_envelope_serializado(rng: &mut Rng, bytes: &mut [u8]) {
     let n = 1 + rng.abaixo(4);
     for _ in 0..n {
         if bytes.is_empty() {

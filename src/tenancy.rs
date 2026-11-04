@@ -120,17 +120,12 @@ impl PerEffortCents {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum Currency {
+    #[default]
     Brl,
     Usd,
-}
-
-impl Default for Currency {
-    fn default() -> Self {
-        Currency::Brl
-    }
 }
 
 impl Currency {

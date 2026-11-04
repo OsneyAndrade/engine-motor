@@ -355,8 +355,9 @@ async fn build_usage(
         _ => Vec::new(),
     };
 
-    let savings_pct = if totals.bytes_in > 0 {
-        totals.bytes_saved as f64 * 100.0 / totals.bytes_in as f64
+    let compress_in = totals.compress_bytes_in();
+    let savings_pct = if compress_in > 0 {
+        totals.compress_bytes_saved() as f64 * 100.0 / compress_in as f64
     } else {
         0.0
     };

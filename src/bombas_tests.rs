@@ -44,9 +44,11 @@ fn comprimir_zeros(codec_id: Codec, bytes: u64, com_tamanho: bool) -> Vec<u8> {
             enc.read_to_end(&mut out).unwrap();
         }
         Codec::Brotli => {
-            let mut params = brotli::enc::BrotliEncoderParams::default();
-            params.quality = 1;
-            params.lgwin = 22;
+            let params = brotli::enc::BrotliEncoderParams {
+                quality: 1,
+                lgwin: 22,
+                ..Default::default()
+            };
             brotli::BrotliCompress(&mut Zeros(bytes), &mut out, &params).unwrap();
         }
         Codec::Xz => {
@@ -79,13 +81,13 @@ fn bomba_lz4(declarado: u32, real: u64) -> Vec<u8> {
     out
 }
 
-struct Bombas {
-    por_codec: Vec<(&'static str, Codec, Vec<u8>)>,
+pub(crate) struct Bombas {
+    pub(crate) por_codec: Vec<(&'static str, Codec, Vec<u8>)>,
     zstd_sem_tamanho: Vec<u8>,
     tempo_de_geracao: Duration,
 }
 
-fn bombas() -> &'static Bombas {
+pub(crate) fn bombas() -> &'static Bombas {
     static BOMBAS: OnceLock<Bombas> = OnceLock::new();
     BOMBAS.get_or_init(|| {
         let inicio = Instant::now();
@@ -200,6 +202,46 @@ fn lz4_valida_o_prefixo_antes_de_alocar() {
     let erro = resultado.unwrap_err();
     assert_eq!(codec::too_large_limit(&erro), Some(TETO), "{erro}");
     assert!(pico < (1 << 20), "o prefixo de 4 GiB provocou alocação de {pico} bytes");
+}
+
+#[test]
+fn lz4_com_prefixo_inflado_e_corpo_minusculo_nao_aloca_o_declarado() {
+    let mut hostil = Vec::new();
+    hostil.extend_from_slice(&3_500_000_000u32.to_le_bytes());
+    hostil.extend_from_slice(&[0x11; 64]);
+    let (resultado, pico) = memtrack::medir(|| {
+        codec::decode_limited(&hostil, Codec::Lz4, None, None, 4 * GIB)
+    });
+    let erro = resultado.unwrap_err();
+    assert_eq!(erro.kind(), io::ErrorKind::InvalidData, "{erro}");
+    assert!(codec::too_large_limit(&erro).is_none(), "{erro}");
+    assert!(
+        pico < (1 << 20),
+        "o prefixo de 3,5 GB com corpo de 64 bytes provocou alocação de {pico} bytes"
+    );
+}
+
+#[test]
+fn envelope_lz4_forjado_com_tamanho_inflado_nao_aloca_o_declarado() {
+    let mut payload = Vec::new();
+    payload.extend_from_slice(&3_500_000_000u32.to_le_bytes());
+    payload.extend_from_slice(&[0x11; 64]);
+    let bytes = envelope_forjado(Codec::Lz4, payload, 3_500_000_000);
+    let env = container::parse(&bytes).unwrap();
+    let (resultado, pico) = memtrack::medir(|| {
+        container::restore_with_limit(&env, &NoDictionaries, 4 * GIB)
+    });
+    assert!(resultado.is_err());
+    assert!(pico < (1 << 20), "alocou {pico} bytes para um corpo de 68 bytes");
+}
+
+#[test]
+fn lz4_legitimo_de_razao_extrema_continua_restaurando() {
+    let dados = vec![0u8; 8 << 20];
+    let enc = codec::encode(&dados, Codec::Lz4, 0, None).unwrap();
+    assert!(enc.len() * 255 + (1 << 20) >= dados.len());
+    let out = codec::decode_limited(&enc, Codec::Lz4, None, Some(dados.len() as u64), 16 << 20).unwrap();
+    assert_eq!(out, dados);
 }
 
 #[test]
@@ -423,6 +465,51 @@ fn bloco_v4_usa_o_original_len_como_teto_em_todos_os_codecs_sem_tamanho_declarad
         assert!(
             pico < (20 << 20),
             "{nome}: bloco de 1 MiB com bomba de 64 MiB alocou {pico} bytes"
+        );
+    }
+}
+
+#[test]
+fn bloco_v4_recusa_bomba_real_de_1_gib_em_todos_os_codecs() {
+    let b = bombas();
+    let mut chegaram_ao_leitor = Vec::new();
+    for (nome, codec_id, payload) in &b.por_codec {
+        let mut w = Writer::new(Vec::new(), 20).unwrap();
+        let idx = w
+            .add_plan(BlockPlan::new(*codec_id, codec::default_level(*codec_id)))
+            .unwrap();
+        if w.push_block(&vec![0u8; 1 << 20], idx, payload).is_err() {
+            assert!(
+                payload.len() > crate::blockfile::slack_len(1 << 20),
+                "{nome}: o escritor recusou um payload de {} bytes",
+                payload.len()
+            );
+            continue;
+        }
+        let bytes = w.finish(&Metadata::default()).unwrap().0;
+        let mut leitor = Reader::from_bytes(&bytes).unwrap();
+        leitor.verify_all().unwrap();
+
+        let inicio = Instant::now();
+        let (resultado, pico) = memtrack::medir(|| leitor.read_block(0, &NoDictionaries));
+        let tempo = inicio.elapsed();
+        let erro = resultado.unwrap_err();
+        assert_eq!(erro.code(), "block_decode_failed", "{nome}: {erro}");
+        assert!(tempo < Duration::from_secs(10), "{nome}: demorou {tempo:?}");
+        assert!(
+            pico < (20 << 20),
+            "{nome}: bloco de 1 MiB com bomba de 1 GiB alocou {pico} bytes"
+        );
+        eprintln!(
+            "BOMBA v4 {nome}: recusada em {} ms, pico {pico} bytes, erro: {erro}",
+            tempo.as_millis()
+        );
+        chegaram_ao_leitor.push(*nome);
+    }
+    for esperado in ["zstd", "xz", "bzip2"] {
+        assert!(
+            chegaram_ao_leitor.contains(&esperado),
+            "{esperado} não chegou ao leitor: {chegaram_ao_leitor:?}"
         );
     }
 }

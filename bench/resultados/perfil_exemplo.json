@@ -1,0 +1,3893 @@
+{
+ "meta": {
+  "ferramenta": "perfil_dataset.py",
+  "versao": "1.0",
+  "etapa": "varrer",
+  "data": "2026-11-04 20:16:49",
+  "semente": 1,
+  "anonimizado": true,
+  "raiz": "(oculta na saida anonimizada)",
+  "modo_rapido": false,
+  "opcoes": {
+   "amostra_mib": 256,
+   "amostra_mib_lento": 32,
+   "max_arquivos": 0,
+   "hash_completo": false,
+   "processos": 5,
+   "max_pares": 200,
+   "delta_mib": 16,
+   "reamostras_bootstrap": 1000,
+   "min_arquivos_confianca": 5,
+   "tol_tamanho_familias": 0.5,
+   "prof_max": 64,
+   "mesmo_dispositivo": true
+  },
+  "python": "3.14.4",
+  "zstd": "1.5.7"
+ },
+ "resumo_executivo": [
+  "Dataset: 204 arquivos, 285,02 MiB em 41 diretorios (mediana 223,90 KiB, p99 12,00 MiB); classes dominantes: texto 28,0%, binario 25,1%, cientifico_numerico 10,8%.",
+  "Fracao incompressivel: 11,5% por classificacao (midia, containers comprimidos, criptografado/aleatorio) e 11,5% [11,5%; 11,5%] por amostra (blocos com economia zstd-3 < 3%).",
+  "Dedup de arquivo inteiro: 20,3% dos bytes (57,77 MiB) sao copias exatas, em 36 grupos.",
+  "Familias de versoes: 55,3% dos bytes em 52 familias (27,7% sao versoes nao-base); o delta (patch-from) custa 11,1% [7,0%; 14,9%] do zstd-3 isolado em 52 pares medidos.",
+  "Compressao do dataset (blocos de 1 MiB, ponderada por bytes): zstd-3 economiza 52,9% [50,2%; 54,7%] (razao 2,12x); zstd-19 56,9%; xz-9e 59,3% [56,6%; 61,3%].",
+  "Ganho por classe (zstd-3, IC95): texto 70,3% [65,1%; 72,8%]; binario 50,8% [42,6%; 56,3%]; cientifico_numerico 16,3% [10,4%; 21,9%]; xml_html 78,0% [69,3%; 85,5%].",
+  "Economia mensal estimada so com compressao (politica por classe): US$ 3.665.227 [US$ 3.486.138; US$ 3.788.281] = armazenamento US$ 3.675.350 + movimento US$ 0,00 - CPU US$ 10.122.",
+  "Com dedup e delta: US$ 4.775.620 [US$ 4.643.875; US$ 4.826.543] por mes; recompressao assincrona recomendada em: texto->xz-9e, codigo->xz-9e, csv_tabular->xz-9e, json_ndjson->xz-9e, log->xz-9e, xml_html->xz-9e, binario->xz-9e, banco_de_dados->xz-9e, cientifico_numerico->xz-9e; stored em: imagem_audio_video, criptografado_aleatorio.",
+  "Parametros (premissas): volume 5,00 PB/mes, fracao retida 0,90, retencao 60 meses, armazenamento US$ 0,0230/GB-mes, nucleo US$ 0,0446/h, 3 leituras/GB, custo de movimento 0,00 (DESCONHECIDO).",
+  "Limites: amostra de blocos de 1 MiB e heuristicas de classe e familia; vazoes de outro corpus/CPU; desconhecido: o que o cliente chama de processamento e se o consumo aceita dado comprimido (ver secao de limites)."
+ ],
+ "inventario": {
+  "n_arquivos": 204,
+  "n_diretorios": 41,
+  "bytes": 298860417,
+  "inventario_truncado_por_max_arquivos": false,
+  "tamanho_dos_arquivos": {
+   "n": 204,
+   "media": 1465002.044117647,
+   "p50": 229278.0,
+   "p90": 3044523.4,
+   "p99": 12582912.0,
+   "p99_9": 21609830.288,
+   "max": 21610704.0,
+   "tamanho_abaixo_do_qual_ficam_50_pct_dos_bytes": 3046462.0,
+   "tamanho_abaixo_do_qual_ficam_90_pct_dos_bytes": 21606400.0,
+   "tamanho_abaixo_do_qual_ficam_99_pct_dos_bytes": 21610704.0
+  },
+  "por_classe": {
+   "texto": {
+    "arquivos": 25,
+    "bytes": 83546205,
+    "pct_bytes": 0.27954924857111474
+   },
+   "binario": {
+    "arquivos": 23,
+    "bytes": 74895248,
+    "pct_bytes": 0.2506027688504497
+   },
+   "cientifico_numerico": {
+    "arquivos": 11,
+    "bytes": 32368633,
+    "pct_bytes": 0.10830685885043118
+   },
+   "xml_html": {
+    "arquivos": 6,
+    "bytes": 23277334,
+    "pct_bytes": 0.07788697557763229
+   },
+   "criptografado_aleatorio": {
+    "arquivos": 12,
+    "bytes": 20971520,
+    "pct_bytes": 0.07017162128901132
+   },
+   "log": {
+    "arquivos": 7,
+    "bytes": 18259094,
+    "pct_bytes": 0.06109572550051016
+   },
+   "json_ndjson": {
+    "arquivos": 6,
+    "bytes": 12575502,
+    "pct_bytes": 0.04207817858997366
+   },
+   "csv_tabular": {
+    "arquivos": 14,
+    "bytes": 11396132,
+    "pct_bytes": 0.03813195509260097
+   },
+   "imagem_audio_video": {
+    "arquivos": 3,
+    "bytes": 9437243,
+    "pct_bytes": 0.03157742699663034
+   },
+   "banco_de_dados": {
+    "arquivos": 2,
+    "bytes": 4308992,
+    "pct_bytes": 0.014418075311726545
+   },
+   "container_comprimido": {
+    "arquivos": 9,
+    "bytes": 3895042,
+    "pct_bytes": 0.01303298054355589
+   },
+   "codigo": {
+    "arquivos": 84,
+    "bytes": 3863936,
+    "pct_bytes": 0.012928898509835111
+   },
+   "ilegivel": {
+    "arquivos": 1,
+    "bytes": 65536,
+    "pct_bytes": 0.00021928631652816036
+   },
+   "vazio": {
+    "arquivos": 1,
+    "bytes": 0,
+    "pct_bytes": 0.0
+   }
+  },
+  "por_extensao_top25_bytes": [
+   {
+    "extensao": "tar",
+    "arquivos": 4,
+    "bytes": 68382928,
+    "pct_bytes": 0.22881226187943116,
+    "classe_dominante": "texto"
+   },
+   {
+    "extensao": "txt",
+    "arquivos": 28,
+    "bytes": 52915875,
+    "pct_bytes": 0.17705882743247325,
+    "classe_dominante": "texto"
+   },
+   {
+    "extensao": "dat",
+    "arquivos": 11,
+    "bytes": 44575466,
+    "pct_bytes": 0.14915145487466813,
+    "classe_dominante": "binario"
+   },
+   {
+    "extensao": "bin",
+    "arquivos": 12,
+    "bytes": 20971520,
+    "pct_bytes": 0.07017162128901132,
+    "classe_dominante": "criptografado_aleatorio"
+   },
+   {
+    "extensao": "log",
+    "arquivos": 7,
+    "bytes": 18259094,
+    "pct_bytes": 0.06109572550051016,
+    "classe_dominante": "log"
+   },
+   {
+    "extensao": "raw",
+    "arquivos": 5,
+    "bytes": 14128633,
+    "pct_bytes": 0.04727502270733966,
+    "classe_dominante": "cientifico_numerico"
+   },
+   {
+    "extensao": "ndjson",
+    "arquivos": 6,
+    "bytes": 12575502,
+    "pct_bytes": 0.04207817858997366,
+    "classe_dominante": "json_ndjson"
+   },
+   {
+    "extensao": "dll",
+    "arquivos": 2,
+    "bytes": 12307079,
+    "pct_bytes": 0.041180023515793994,
+    "classe_dominante": "binario"
+   },
+   {
+    "extensao": "csv",
+    "arquivos": 14,
+    "bytes": 11396132,
+    "pct_bytes": 0.03813195509260097,
+    "classe_dominante": "csv_tabular"
+   },
+   {
+    "extensao": "(sem extensao)",
+    "arquivos": 15,
+    "bytes": 11152415,
+    "pct_bytes": 0.037316467372793635,
+    "classe_dominante": "binario"
+   },
+   {
+    "extensao": "xml",
+    "arquivos": 2,
+    "bytes": 10690560,
+    "pct_bytes": 0.03577108038365616,
+    "classe_dominante": "xml_html"
+   },
+   {
+    "extensao": "mp4",
+    "arquivos": 2,
+    "bytes": 8388656,
+    "pct_bytes": 0.028068809125699642,
+    "classe_dominante": "imagem_audio_video"
+   },
+   {
+    "extensao": "sqlite",
+    "arquivos": 2,
+    "bytes": 4308992,
+    "pct_bytes": 0.014418075311726545,
+    "classe_dominante": "banco_de_dados"
+   },
+   {
+    "extensao": "py",
+    "arquivos": 84,
+    "bytes": 3863936,
+    "pct_bytes": 0.012928898509835111,
+    "classe_dominante": "codigo"
+   },
+   {
+    "extensao": "parquet",
+    "arquivos": 2,
+    "bytes": 2097168,
+    "pct_bytes": 0.007017215665599503,
+    "classe_dominante": "container_comprimido"
+   },
+   {
+    "extensao": "xz",
+    "arquivos": 3,
+    "bytes": 1262264,
+    "pct_bytes": 0.004223590439546231,
+    "classe_dominante": "container_comprimido"
+   },
+   {
+    "extensao": "jpg",
+    "arquivos": 1,
+    "bytes": 1048587,
+    "pct_bytes": 0.003508617870930696,
+    "classe_dominante": "imagem_audio_video"
+   },
+   {
+    "extensao": "gz",
+    "arquivos": 2,
+    "bytes": 271694,
+    "pct_bytes": 0.0009090999829529115,
+    "classe_dominante": "container_comprimido"
+   },
+   {
+    "extensao": "zip",
+    "arquivos": 2,
+    "bytes": 263916,
+    "pct_bytes": 0.0008830744554572445,
+    "classe_dominante": "container_comprimido"
+   }
+  ],
+  "n_extensoes_distintas": 19,
+  "matriz_classe_x_extensao_top": {
+   "tar": {
+    "texto": 43217104,
+    "binario": 25165824
+   },
+   "txt": {
+    "texto": 40329101,
+    "xml_html": 12586774,
+    "vazio": 0
+   },
+   "dat": {
+    "binario": 26269930,
+    "cientifico_numerico": 18240000,
+    "ilegivel": 65536
+   },
+   "bin": {
+    "criptografado_aleatorio": 20971520
+   },
+   "log": {
+    "log": 18259094
+   },
+   "raw": {
+    "cientifico_numerico": 14128633
+   },
+   "ndjson": {
+    "json_ndjson": 12575502
+   },
+   "dll": {
+    "binario": 12307079
+   },
+   "csv": {
+    "csv_tabular": 11396132
+   },
+   "(sem extensao)": {
+    "binario": 11152415
+   }
+  },
+  "fracao_incompressivel_por_classificacao": 0.11478202882919754,
+  "bytes_incompressiveis_por_classificacao": 34303805,
+  "classes_incompressiveis": [
+   "imagem_audio_video",
+   "container_comprimido",
+   "criptografado_aleatorio"
+  ],
+  "como_foram_classificados": {
+   "texto": {
+    "conteudo": 23,
+    "assinatura": 2
+   },
+   "vazio": {
+    "tamanho_zero": 1
+   },
+   "csv_tabular": {
+    "extensao": 14
+   },
+   "criptografado_aleatorio": {
+    "entropia>=7.9_sem_assinatura": 12
+   },
+   "banco_de_dados": {
+    "assinatura": 2
+   },
+   "binario": {
+    "conteudo_binario": 4,
+    "assinatura": 19
+   },
+   "cientifico_numerico": {
+    "extensao": 5,
+    "entropia_dos_deltas": 6
+   },
+   "codigo": {
+    "extensao": 84
+   },
+   "container_comprimido": {
+    "assinatura": 9
+   },
+   "log": {
+    "extensao": 7
+   },
+   "json_ndjson": {
+    "conteudo_ndjson": 6
+   },
+   "imagem_audio_video": {
+    "assinatura": 3
+   },
+   "xml_html": {
+    "conteudo": 4,
+    "assinatura": 2
+   }
+  },
+  "ilegiveis_por_motivo": {
+   "sem_permissao_leitura": 1
+  },
+  "ignorados_por_motivo": {
+   "nao_regular": 1,
+   "link_simbolico": 4,
+   "sem_permissao_diretorio": 1
+  }
+ },
+ "dedup": {
+  "modo": "pre_filtro_tamanho+hash_de_amostra, hash_completo_so_nos_candidatos",
+  "arquivos_candidatos_por_tamanho": 90,
+  "bytes_candidatos_por_tamanho": 143251422,
+  "arquivos_candidatos_apos_hash_de_amostra": 79,
+  "bytes_lidos_hash_amostra": 13391036,
+  "bytes_lidos_hash_completo": 114451246,
+  "grupos_de_duplicatas": 36,
+  "arquivos_redundantes": 41,
+  "bytes_duplicados": 60573953,
+  "pct_bytes_duplicados": 0.20268309068176132,
+  "copias_por_grupo_media": 2.138888888888889,
+  "copias_por_grupo_max": 4,
+  "por_classe": {
+   "texto": {
+    "bytes_classe": 83546205,
+    "bytes_duplicados": 10174080,
+    "pct": 0.12177788326830644
+   },
+   "codigo": {
+    "bytes_classe": 3863936,
+    "bytes_duplicados": 725586,
+    "pct": 0.18778416619736973
+   },
+   "csv_tabular": {
+    "bytes_classe": 11396132,
+    "bytes_duplicados": 1969982,
+    "pct": 0.1728640910793241
+   },
+   "json_ndjson": {
+    "bytes_classe": 12575502,
+    "bytes_duplicados": 2094494,
+    "pct": 0.1665535101501316
+   },
+   "log": {
+    "bytes_classe": 18259094,
+    "bytes_duplicados": 0,
+    "pct": 0.0
+   },
+   "xml_html": {
+    "bytes_classe": 23277334,
+    "bytes_duplicados": 8491008,
+    "pct": 0.3647757943413967
+   },
+   "binario": {
+    "bytes_classe": 74895248,
+    "bytes_duplicados": 13817800,
+    "pct": 0.18449501629262247
+   },
+   "banco_de_dados": {
+    "bytes_classe": 4308992,
+    "bytes_duplicados": 0,
+    "pct": 0.0
+   },
+   "cientifico_numerico": {
+    "bytes_classe": 32368633,
+    "bytes_duplicados": 8904746,
+    "pct": 0.2751041726105641
+   },
+   "imagem_audio_video": {
+    "bytes_classe": 9437243,
+    "bytes_duplicados": 4194328,
+    "pct": 0.44444420897077674
+   },
+   "container_comprimido": {
+    "bytes_classe": 3895042,
+    "bytes_duplicados": 1813321,
+    "pct": 0.4655459427651871
+   },
+   "criptografado_aleatorio": {
+    "bytes_classe": 20971520,
+    "bytes_duplicados": 8388608,
+    "pct": 0.4
+   }
+  },
+  "maiores_grupos": [
+   {
+    "id": "39787470ad8145f4",
+    "copias": 2,
+    "tamanho": 12582912,
+    "bytes_redundantes": 12582912,
+    "classe": "binario"
+   },
+   {
+    "id": "5284c6e6f3127a29",
+    "copias": 4,
+    "tamanho": 2097152,
+    "bytes_redundantes": 6291456,
+    "classe": "criptografado_aleatorio"
+   },
+   {
+    "id": "574c32a6b5c7cf57",
+    "copias": 2,
+    "tamanho": 5345280,
+    "bytes_redundantes": 5345280,
+    "classe": "xml_html"
+   },
+   {
+    "id": "dae91855159076e9",
+    "copias": 3,
+    "tamanho": 2500000,
+    "bytes_redundantes": 5000000,
+    "classe": "texto"
+   },
+   {
+    "id": "2c803abd213f5c5b",
+    "copias": 2,
+    "tamanho": 4194328,
+    "bytes_redundantes": 4194328,
+    "classe": "imagem_audio_video"
+   },
+   {
+    "id": "c86232e67ec29dfa",
+    "copias": 2,
+    "tamanho": 3145728,
+    "bytes_redundantes": 3145728,
+    "classe": "xml_html"
+   },
+   {
+    "id": "4e0b187bdec9a169",
+    "copias": 2,
+    "tamanho": 3040000,
+    "bytes_redundantes": 3040000,
+    "classe": "cientifico_numerico"
+   },
+   {
+    "id": "4658f1259cb3412a",
+    "copias": 2,
+    "tamanho": 3040000,
+    "bytes_redundantes": 3040000,
+    "classe": "cientifico_numerico"
+   },
+   {
+    "id": "03aa430f906f9b57",
+    "copias": 2,
+    "tamanho": 2824746,
+    "bytes_redundantes": 2824746,
+    "classe": "cientifico_numerico"
+   },
+   {
+    "id": "2ede24e600abf6b5",
+    "copias": 2,
+    "tamanho": 2500000,
+    "bytes_redundantes": 2500000,
+    "classe": "texto"
+   }
+  ]
+ },
+ "familias": {
+  "criterio": "tres passadas, cada arquivo entra na primeira que o agrupa: (A) diretorio-pai normalizado (digitos viram #) + mesmo nome; (B) mesmo diretorio + radical do nome sem datas, versoes e marcas de copia; (C) diretorio-pai normalizado + radical normalizado + mesma extensao; membros ordenados pelo caminho (ordem natural), com tamanhos consecutivos dentro de x1.5",
+  "n_familias": 52,
+  "n_membros": 104,
+  "bytes_em_familias": 165272648,
+  "pct_bytes_em_familias": 0.5530094940609014,
+  "bytes_nao_base": 82853287,
+  "pct_bytes_nao_base": 0.2772307146984942,
+  "membros_por_familia": {
+   "media": 2.0,
+   "max": 2
+  },
+  "por_classe": {
+   "texto": {
+    "bytes_classe": 83546205,
+    "bytes_em_familias": 62142717,
+    "pct_bytes_em_familias": 0.7438125645563434,
+    "bytes_nao_base": 31085445,
+    "pct_bytes_nao_base": 0.3720748895775697
+   },
+   "codigo": {
+    "bytes_classe": 3863936,
+    "bytes_em_familias": 2193851,
+    "pct_bytes_em_familias": 0.5677762261072647,
+    "bytes_nao_base": 1166475,
+    "pct_bytes_nao_base": 0.3018877641865704
+   },
+   "csv_tabular": {
+    "bytes_classe": 11396132,
+    "bytes_em_familias": 7456168,
+    "pct_bytes_em_familias": 0.6542718178413518,
+    "bytes_nao_base": 3739547,
+    "pct_bytes_nao_base": 0.328141776525579
+   },
+   "json_ndjson": {
+    "bytes_classe": 12575502,
+    "bytes_em_familias": 8386514,
+    "pct_bytes_em_familias": 0.6668929796997368,
+    "bytes_nao_base": 4197539,
+    "pct_bytes_nao_base": 0.3337869931554223
+   },
+   "log": {
+    "bytes_classe": 18259094,
+    "bytes_em_familias": 15653669,
+    "pct_bytes_em_familias": 0.8573080898756532,
+    "bytes_nao_base": 7836134,
+    "pct_bytes_nao_base": 0.4291633527928604
+   },
+   "xml_html": {
+    "bytes_classe": 23277334,
+    "bytes_em_familias": 6295318,
+    "pct_bytes_em_familias": 0.2704484113172067,
+    "bytes_nao_base": 3149590,
+    "pct_bytes_nao_base": 0.1353071618940554
+   },
+   "binario": {
+    "bytes_classe": 74895248,
+    "bytes_em_familias": 47101024,
+    "pct_bytes_em_familias": 0.6288920226287253,
+    "bytes_nao_base": 26612492,
+    "pct_bytes_nao_base": 0.35532951302865035
+   },
+   "banco_de_dados": {
+    "bytes_classe": 4308992,
+    "bytes_em_familias": 4308992,
+    "pct_bytes_em_familias": 1.0,
+    "bytes_nao_base": 2236416,
+    "pct_bytes_nao_base": 0.5190114068441065
+   },
+   "cientifico_numerico": {
+    "bytes_classe": 32368633,
+    "bytes_em_familias": 11734395,
+    "pct_bytes_em_familias": 0.3625236505971692,
+    "bytes_nao_base": 2829649,
+    "pct_bytes_nao_base": 0.08741947798660511
+   },
+   "imagem_audio_video": {
+    "bytes_classe": 9437243,
+    "bytes_em_familias": 0,
+    "pct_bytes_em_familias": 0.0,
+    "bytes_nao_base": 0,
+    "pct_bytes_nao_base": 0.0
+   },
+   "container_comprimido": {
+    "bytes_classe": 3895042,
+    "bytes_em_familias": 0,
+    "pct_bytes_em_familias": 0.0,
+    "bytes_nao_base": 0,
+    "pct_bytes_nao_base": 0.0
+   },
+   "criptografado_aleatorio": {
+    "bytes_classe": 20971520,
+    "bytes_em_familias": 0,
+    "pct_bytes_em_familias": 0.0,
+    "bytes_nao_base": 0,
+    "pct_bytes_nao_base": 0.0
+   }
+  },
+  "pares_possiveis": 52,
+  "pares_medidos": 52,
+  "pares_com_erro": {},
+  "pares_com_falha_de_roundtrip": 0,
+  "janela_por_arquivo_mib": 16,
+  "delta_por_classe": {
+   "texto": {
+    "pares_medidos": 6,
+    "bytes_janela_novos": 26251957,
+    "bytes_z3_sozinho": 7608697,
+    "bytes_patch_from": 1222547,
+    "razao_patch_sobre_z3": 0.1606775772514006,
+    "ic95_razao_patch_sobre_z3": [
+     0.11746325474421505,
+     0.18139333450866782
+    ],
+    "ganho_delta_sobre_z3": 0.8393224227485994,
+    "ic95_ganho_delta_sobre_z3": [
+     0.8186066654913322,
+     0.882536745255785
+    ],
+    "baixa_confianca": false
+   },
+   "codigo": {
+    "pares_medidos": 26,
+    "bytes_janela_novos": 1166475,
+    "bytes_z3_sozinho": 308619,
+    "bytes_patch_from": 67342,
+    "razao_patch_sobre_z3": 0.21820432312981378,
+    "ic95_razao_patch_sobre_z3": [
+     0.19045580075183108,
+     0.24852158321708284
+    ],
+    "ganho_delta_sobre_z3": 0.7817956768701863,
+    "ic95_ganho_delta_sobre_z3": [
+     0.7514784167829172,
+     0.8095441992481689
+    ],
+    "baixa_confianca": false
+   },
+   "csv_tabular": {
+    "pares_medidos": 4,
+    "bytes_janela_novos": 3739547,
+    "bytes_z3_sozinho": 1258420,
+    "bytes_patch_from": 138641,
+    "razao_patch_sobre_z3": 0.11017069023060663,
+    "ic95_razao_patch_sobre_z3": [
+     0.10678840557609953,
+     0.1148651434189037
+    ],
+    "ganho_delta_sobre_z3": 0.8898293097693933,
+    "ic95_ganho_delta_sobre_z3": [
+     0.8851348565810963,
+     0.8932115944239005
+    ],
+    "baixa_confianca": true
+   },
+   "json_ndjson": {
+    "pares_medidos": 2,
+    "bytes_janela_novos": 4197539,
+    "bytes_z3_sozinho": 597841,
+    "bytes_patch_from": 67428,
+    "razao_patch_sobre_z3": 0.11278584105138323,
+    "ic95_razao_patch_sobre_z3": [
+     0.11252505679540291,
+     0.11304732330388817
+    ],
+    "ganho_delta_sobre_z3": 0.8872141589486168,
+    "ic95_ganho_delta_sobre_z3": [
+     0.8869526766961118,
+     0.8874749432045971
+    ],
+    "baixa_confianca": true
+   },
+   "log": {
+    "pares_medidos": 3,
+    "bytes_janela_novos": 7836134,
+    "bytes_z3_sozinho": 1683883,
+    "bytes_patch_from": 178057,
+    "razao_patch_sobre_z3": 0.10574190724652485,
+    "ic95_razao_patch_sobre_z3": [
+     0.10024892145938688,
+     0.10958441165746201
+    ],
+    "ganho_delta_sobre_z3": 0.8942580927534751,
+    "ic95_ganho_delta_sobre_z3": [
+     0.890415588342538,
+     0.8997510785406131
+    ],
+    "baixa_confianca": true
+   },
+   "xml_html": {
+    "pares_medidos": 1,
+    "bytes_janela_novos": 3149590,
+    "bytes_z3_sozinho": 976628,
+    "bytes_patch_from": 122945,
+    "razao_patch_sobre_z3": 0.12588723649127406,
+    "ic95_razao_patch_sobre_z3": [
+     0.12588723649127406,
+     0.12588723649127406
+    ],
+    "ganho_delta_sobre_z3": 0.8741127635087259,
+    "ic95_ganho_delta_sobre_z3": [
+     0.8741127635087259,
+     0.8741127635087259
+    ],
+    "baixa_confianca": true
+   },
+   "binario": {
+    "pares_medidos": 8,
+    "bytes_janela_novos": 26612492,
+    "bytes_z3_sozinho": 14574439,
+    "bytes_patch_from": 1231141,
+    "razao_patch_sobre_z3": 0.08447261675046291,
+    "ic95_razao_patch_sobre_z3": [
+     0.02573022437901984,
+     0.1608919052678257
+    ],
+    "ganho_delta_sobre_z3": 0.9155273832495371,
+    "ic95_ganho_delta_sobre_z3": [
+     0.8391080947321743,
+     0.9742697756209802
+    ],
+    "baixa_confianca": false
+   },
+   "banco_de_dados": {
+    "pares_medidos": 1,
+    "bytes_janela_novos": 2236416,
+    "bytes_z3_sozinho": 967432,
+    "bytes_patch_from": 113819,
+    "razao_patch_sobre_z3": 0.11765064624697136,
+    "ic95_razao_patch_sobre_z3": [
+     0.11765064624697136,
+     0.11765064624697136
+    ],
+    "ganho_delta_sobre_z3": 0.8823493537530287,
+    "ic95_ganho_delta_sobre_z3": [
+     0.8823493537530287,
+     0.8823493537530287
+    ],
+    "baixa_confianca": true
+   },
+   "cientifico_numerico": {
+    "pares_medidos": 1,
+    "bytes_janela_novos": 2829649,
+    "bytes_z3_sozinho": 2116755,
+    "bytes_patch_from": 186770,
+    "razao_patch_sobre_z3": 0.08823411306457289,
+    "ic95_razao_patch_sobre_z3": [
+     0.08823411306457289,
+     0.08823411306457289
+    ],
+    "ganho_delta_sobre_z3": 0.9117658869354272,
+    "ic95_ganho_delta_sobre_z3": [
+     0.9117658869354272,
+     0.9117658869354272
+    ],
+    "baixa_confianca": true
+   }
+  },
+  "delta_agregado_todas_as_classes": {
+   "pares_medidos": 52,
+   "bytes_janela_novos": 78019799,
+   "bytes_z3_sozinho": 30092714,
+   "bytes_patch_from": 3328690,
+   "razao_patch_sobre_z3": 0.11061448296089213,
+   "ic95_razao_patch_sobre_z3": [
+    0.07012603701741377,
+    0.14943387951822432
+   ],
+   "ganho_delta_sobre_z3": 0.8893855170391078,
+   "ic95_ganho_delta_sobre_z3": [
+    0.8505661204817757,
+    0.9298739629825863
+   ],
+   "baixa_confianca": false
+  },
+  "maiores_familias": [
+   {
+    "id": "2152292cbf4df061",
+    "membros": 2,
+    "bytes": 43217104,
+    "classe": "texto",
+    "razao_patch_sobre_z3_medida": 0.18161898231718168
+   },
+   {
+    "id": "6e53080814ace469",
+    "membros": 2,
+    "bytes": 20176453,
+    "classe": "binario",
+    "razao_patch_sobre_z3_medida": 0.1881459932575901
+   },
+   {
+    "id": "b662b8a677c19973",
+    "membros": 2,
+    "bytes": 12307079,
+    "classe": "binario",
+    "razao_patch_sobre_z3_medida": 0.0021230846120030983
+   },
+   {
+    "id": "00f9180da9b7906e",
+    "membros": 2,
+    "bytes": 8099214,
+    "classe": "texto",
+    "razao_patch_sobre_z3_medida": 0.12942254069126516
+   },
+   {
+    "id": "ea2b472380e4a9b2",
+    "membros": 2,
+    "bytes": 6295318,
+    "classe": "xml_html",
+    "razao_patch_sobre_z3_medida": 0.12588723649127406
+   },
+   {
+    "id": "df4ff5a318fbb0cb",
+    "membros": 2,
+    "bytes": 6087015,
+    "classe": "binario",
+    "razao_patch_sobre_z3_medida": 0.04766854817522482
+   },
+   {
+    "id": "19ebb7adea5aaa45",
+    "membros": 2,
+    "bytes": 6086462,
+    "classe": "binario",
+    "razao_patch_sobre_z3_medida": 0.047950880186373106
+   },
+   {
+    "id": "c528e3435e87ac2e",
+    "membros": 2,
+    "bytes": 5654395,
+    "classe": "cientifico_numerico",
+    "razao_patch_sobre_z3_medida": 0.08823411306457289
+   },
+   {
+    "id": "91187ea039e64601",
+    "membros": 2,
+    "bytes": 5218179,
+    "classe": "log",
+    "razao_patch_sobre_z3_medida": 0.10958441165746201
+   },
+   {
+    "id": "608cad854fbb0d80",
+    "membros": 2,
+    "bytes": 5217970,
+    "classe": "log",
+    "razao_patch_sobre_z3_medida": 0.10024892145938688
+   }
+  ]
+ },
+ "compressibilidade": {
+  "meta": {
+   "ferramenta": "perfil_dataset.py",
+   "versao": "1.0",
+   "etapa": "amostrar",
+   "data": "2026-11-04 20:17:06",
+   "semente": 1,
+   "anonimizado": true,
+   "raiz": "(oculta na saida anonimizada)",
+   "modo_rapido": false,
+   "opcoes": {
+    "amostra_mib": 256,
+    "amostra_mib_lento": 32,
+    "max_arquivos": 0,
+    "hash_completo": false,
+    "processos": 5,
+    "max_pares": 200,
+    "delta_mib": 16,
+    "reamostras_bootstrap": 1000,
+    "min_arquivos_confianca": 5,
+    "tol_tamanho_familias": 0.5,
+    "prof_max": 64,
+    "mesmo_dispositivo": true
+   },
+   "python": "3.14.4",
+   "zstd": "1.5.7"
+  },
+  "metodo": {
+   "unidade": "bloco independente de 1 MiB, comprimido sozinho",
+   "estratificacao": "probabilidade de inclusao igual para todos os blocos da classe (pi = orcamento / bytes da classe), com arredondamento aleatorio por arquivo e escolha aleatoria dos blocos dentro de cada arquivo (determinista pela semente); censo quando a classe cabe no orcamento",
+   "estimador": "razao de somas (bytes comprimidos / bytes originais) sobre os blocos sorteados: pondera por bytes",
+   "ic95": "bootstrap de Poisson por arquivo (por bloco quando ha menos de 5 arquivos amostrados), 1000 reamostras, mesmos pesos para todos os codecs da classe",
+   "armazenamento_cru": "bloco que nao comprime e armazenado cru (min(comprimido, original)); contado em blocos_armazenados_sem_compressao_pct",
+   "codecs_rapidos": {
+    "codecs": [
+     "zstd-1",
+     "zstd-3",
+     "zstd-9"
+    ],
+    "orcamento_mib_por_classe": 256
+   },
+   "codecs_lentos": {
+    "codecs": [
+     "zstd-19",
+     "xz-9e",
+     "bzip2-9"
+    ],
+    "orcamento_mib_por_classe": 32
+   },
+   "xz": "LZMA2 com dicionario do tamanho do bloco, CRC64 (como bench/syntrabench.py)",
+   "bit_exatidao": "roundtrip zstd-3 conferido em todo bloco amostrado"
+  },
+  "roundtrip_zstd3_falhas": 0,
+  "arquivos_com_erro_na_amostragem": {},
+  "por_classe": {
+   "texto": {
+    "arquivos_populacao": 25,
+    "bytes_populacao": 83546205,
+    "arquivos_amostrados": 25,
+    "unidades_amostradas": 95,
+    "bytes_amostrados_rapidos": 83546205,
+    "bytes_amostrados_lentos": 30025080,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": false,
+    "ic95_por": "arquivo",
+    "codecs": {
+     "zstd-1": {
+      "razao": 3.0435458850956962,
+      "economia": 0.6714358719226086,
+      "ic95_razao": [
+       2.5228120117243735,
+       3.372103761823519
+      ],
+      "ic95_economia": [
+       0.6036169182037121,
+       0.7034492202401168
+      ],
+      "bytes_amostrados": 83546205,
+      "blocos": 95,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 527.3928317442505
+     },
+     "zstd-3": {
+      "razao": 3.3655036520696675,
+      "economia": 0.7028676526958945,
+      "ic95_razao": [
+       2.8680328518544975,
+       3.677489690496888
+      ],
+      "ic95_economia": [
+       0.6513289590273033,
+       0.7280753763677081
+      ],
+      "bytes_amostrados": 83546205,
+      "blocos": 95,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 385.5653387865896
+     },
+     "zstd-9": {
+      "razao": 3.6811660084328306,
+      "economia": 0.7283469428683206,
+      "ic95_razao": [
+       3.1236671781001557,
+       4.038289298390754
+      ],
+      "ic95_economia": [
+       0.6798634608030778,
+       0.7523703909973718
+      ],
+      "bytes_amostrados": 83546205,
+      "blocos": 95,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 94.47087541610159
+     },
+     "zstd-19": {
+      "razao": 4.117971864829391,
+      "economia": 0.7571620125575019,
+      "ic95_razao": [
+       3.4299235573010374,
+       4.540073796265191
+      ],
+      "ic95_economia": [
+       0.7084483128286139,
+       0.7797392630880512
+      ],
+      "bytes_amostrados": 30025080,
+      "blocos": 36,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 6.122932524436587
+     },
+     "xz-9e": {
+      "razao": 4.2119441861717855,
+      "economia": 0.7625799498286099,
+      "ic95_razao": [
+       3.462949162069952,
+       4.676880915842285
+      ],
+      "ic95_economia": [
+       0.711228795688627,
+       0.7861822830227216
+      ],
+      "bytes_amostrados": 30025080,
+      "blocos": 36,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 4.553807958058926
+     },
+     "bzip2-9": {
+      "razao": 4.247550397174965,
+      "economia": 0.764570185991178,
+      "ic95_razao": [
+       3.815437048961406,
+       4.610065037300621
+      ],
+      "ic95_economia": [
+       0.7379068276667784,
+       0.7830833205369396
+      ],
+      "bytes_amostrados": 30025080,
+      "blocos": 36,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 24.246001411591475
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 0.0,
+     "ic95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "codigo": {
+    "arquivos_populacao": 84,
+    "bytes_populacao": 3863936,
+    "arquivos_amostrados": 84,
+    "unidades_amostradas": 84,
+    "bytes_amostrados_rapidos": 3863936,
+    "bytes_amostrados_lentos": 3863936,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": false,
+    "ic95_por": "arquivo",
+    "codecs": {
+     "zstd-1": {
+      "razao": 3.7558537953317384,
+      "economia": 0.7337489544340279,
+      "ic95_razao": [
+       3.632498650025529,
+       3.8664024888775086
+      ],
+      "ic95_economia": [
+       0.7247073994114294,
+       0.7413616396956336
+      ],
+      "bytes_amostrados": 3863936,
+      "blocos": 84,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 451.68387117934833
+     },
+     "zstd-3": {
+      "razao": 3.948388072482324,
+      "economia": 0.7467320887302481,
+      "ic95_razao": [
+       3.81409371828661,
+       4.0692193036491435
+      ],
+      "ic95_economia": [
+       0.7378145179795881,
+       0.754252615703648
+      ],
+      "bytes_amostrados": 3863936,
+      "blocos": 84,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 389.0226539959629
+     },
+     "zstd-9": {
+      "razao": 4.374318341082481,
+      "economia": 0.7713929526783052,
+      "ic95_razao": [
+       4.200656180120398,
+       4.526297357300409
+      ],
+      "ic95_economia": [
+       0.7619419545135593,
+       0.7790688677607289
+      ],
+      "bytes_amostrados": 3863936,
+      "blocos": 84,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 86.35467201776254
+     },
+     "zstd-19": {
+      "razao": 4.6088342223536936,
+      "economia": 0.7830253917249147,
+      "ic95_razao": [
+       4.404944872012948,
+       4.784089527792397
+      ],
+      "ic95_economia": [
+       0.7729824029459362,
+       0.7909738113823621
+      ],
+      "bytes_amostrados": 3863936,
+      "blocos": 84,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 4.809795724512985
+     },
+     "xz-9e": {
+      "razao": 4.64658883741961,
+      "economia": 0.7847883608838242,
+      "ic95_razao": [
+       4.434773884296449,
+       4.833872098732455
+      ],
+      "ic95_economia": [
+       0.7745093603213901,
+       0.7931265081957337
+      ],
+      "bytes_amostrados": 3863936,
+      "blocos": 84,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 6.922247689348481
+     },
+     "bzip2-9": {
+      "razao": 4.741817039407803,
+      "economia": 0.7891103786398118,
+      "ic95_razao": [
+       4.509529549253601,
+       4.935294347243163
+      ],
+      "ic95_economia": [
+       0.7782473783400496,
+       0.7973778401771322
+      ],
+      "bytes_amostrados": 3863936,
+      "blocos": 84,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 24.366364856748344
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 0.0,
+     "ic95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "csv_tabular": {
+    "arquivos_populacao": 14,
+    "bytes_populacao": 11396132,
+    "arquivos_amostrados": 14,
+    "unidades_amostradas": 14,
+    "bytes_amostrados_rapidos": 11396132,
+    "bytes_amostrados_lentos": 11396132,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": false,
+    "ic95_por": "arquivo",
+    "codecs": {
+     "zstd-1": {
+      "razao": 3.2618148543663477,
+      "economia": 0.6934222067627858,
+      "ic95_razao": [
+       3.247176984235305,
+       3.2776090938021425
+      ],
+      "ic95_economia": [
+       0.6920401921869697,
+       0.694899552881102
+      ],
+      "bytes_amostrados": 11396132,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 464.65620243969596
+     },
+     "zstd-3": {
+      "razao": 2.9846448140956574,
+      "economia": 0.6649517573155523,
+      "ic95_razao": [
+       2.9784277586713817,
+       2.991428217158861
+      ],
+      "ic95_economia": [
+       0.664252390514222,
+       0.6657115172398287
+      ],
+      "bytes_amostrados": 11396132,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 317.40391338219536
+     },
+     "zstd-9": {
+      "razao": 3.384671677878979,
+      "economia": 0.7045503684934502,
+      "ic95_razao": [
+       3.3748009974713025,
+       3.3947649392571937
+      ],
+      "ic95_economia": [
+       0.7036862319439612,
+       0.7054287946608729
+      ],
+      "bytes_amostrados": 11396132,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 72.83110820164117
+     },
+     "zstd-19": {
+      "razao": 3.8194579623179785,
+      "economia": 0.7381827448120117,
+      "ic95_razao": [
+       3.8053524614262715,
+       3.8335501835554613
+      ],
+      "ic95_economia": [
+       0.7372122529682328,
+       0.7391451912408407
+      ],
+      "bytes_amostrados": 11396132,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 5.28100655553044
+     },
+     "xz-9e": {
+      "razao": 4.936750030756861,
+      "economia": 0.7974375867180198,
+      "ic95_razao": [
+       4.922483639378233,
+       4.94631372233862
+      ],
+      "ic95_economia": [
+       0.7968505183033352,
+       0.7978292408983716
+      ],
+      "bytes_amostrados": 11396132,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 4.406891401636353
+     },
+     "bzip2-9": {
+      "razao": 4.389656462130407,
+      "economia": 0.7721917401448141,
+      "ic95_razao": [
+       4.344575951564066,
+       4.432262432616357
+      ],
+      "ic95_economia": [
+       0.7698279392169457,
+       0.7743815906203682
+      ],
+      "bytes_amostrados": 11396132,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 26.43040146715999
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 0.0,
+     "ic95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "json_ndjson": {
+    "arquivos_populacao": 6,
+    "bytes_populacao": 12575502,
+    "arquivos_amostrados": 6,
+    "unidades_amostradas": 14,
+    "bytes_amostrados_rapidos": 12575502,
+    "bytes_amostrados_lentos": 12575502,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": false,
+    "ic95_por": "arquivo",
+    "codecs": {
+     "zstd-1": {
+      "razao": 7.049459161296398,
+      "economia": 0.8581451460148469,
+      "ic95_razao": [
+       7.01960753362588,
+       7.073049345412825
+      ],
+      "ic95_economia": [
+       0.8575418931600206,
+       0.8586182633309998
+      ],
+      "bytes_amostrados": 12575502,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 841.4455933276304
+     },
+     "zstd-3": {
+      "razao": 7.0018212360240595,
+      "economia": 0.8571800155572318,
+      "ic95_razao": [
+       6.985595556798658,
+       7.01535707287827
+      ],
+      "ic95_economia": [
+       0.8568482827456622,
+       0.8574555807193263
+      ],
+      "bytes_amostrados": 12575502,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 744.8205646619731
+     },
+     "zstd-9": {
+      "razao": 8.259158433561254,
+      "economia": 0.8789222887483935,
+      "ic95_razao": [
+       8.239243073132233,
+       8.2751132419496
+      ],
+      "ic95_economia": [
+       0.8786296276097314,
+       0.8791557322828367
+      ],
+      "bytes_amostrados": 12575502,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 127.24585534699028
+     },
+     "zstd-19": {
+      "razao": 9.710092533680902,
+      "economia": 0.8970143696848046,
+      "ic95_razao": [
+       9.670305324105374,
+       9.744148850053874
+      ],
+      "ic95_economia": [
+       0.8965906487453629,
+       0.8973743099178466
+      ],
+      "bytes_amostrados": 12575502,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 4.964688415968054
+     },
+     "xz-9e": {
+      "razao": 10.766991903887776,
+      "economia": 0.907123548626528,
+      "ic95_razao": [
+       10.740258408307296,
+       10.7900188128553
+      ],
+      "ic95_economia": [
+       0.9068923705572551,
+       0.9073217556573123
+      ],
+      "bytes_amostrados": 12575502,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 4.206711006832307
+     },
+     "bzip2-9": {
+      "razao": 11.214249152388206,
+      "economia": 0.9108277347496744,
+      "ic95_razao": [
+       11.189780919766468,
+       11.23404463586531
+      ],
+      "ic95_economia": [
+       0.910632745433512,
+       0.9109848649873221
+      ],
+      "bytes_amostrados": 12575502,
+      "blocos": 14,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 17.889403693848774
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 0.0,
+     "ic95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "log": {
+    "arquivos_populacao": 7,
+    "bytes_populacao": 18259094,
+    "arquivos_amostrados": 7,
+    "unidades_amostradas": 21,
+    "bytes_amostrados_rapidos": 18259094,
+    "bytes_amostrados_lentos": 18259094,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": false,
+    "ic95_por": "arquivo",
+    "codecs": {
+     "zstd-1": {
+      "razao": 4.741875434671842,
+      "economia": 0.7891129757040519,
+      "ic95_razao": [
+       4.718252708922111,
+       4.762608348167119
+      ],
+      "ic95_economia": [
+       0.788057134347844,
+       0.7900310235703408
+      ],
+      "bytes_amostrados": 18259094,
+      "blocos": 21,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 727.0294285560728
+     },
+     "zstd-3": {
+      "razao": 4.666103776128347,
+      "economia": 0.7856884355817435,
+      "ic95_razao": [
+       4.645414623681815,
+       4.685789505498752
+      ],
+      "ic95_economia": [
+       0.7847339621952991,
+       0.7865887917443785
+      ],
+      "bytes_amostrados": 18259094,
+      "blocos": 21,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 536.8627646757972
+     },
+     "zstd-9": {
+      "razao": 5.514499988825486,
+      "economia": 0.8186598962686757,
+      "ic95_razao": [
+       5.5095884641305135,
+       5.51840911725824
+      ],
+      "ic95_economia": [
+       0.8184982405654478,
+       0.8187883538984803
+      ],
+      "bytes_amostrados": 18259094,
+      "blocos": 21,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 120.52393018688224
+     },
+     "zstd-19": {
+      "razao": 6.061083885779082,
+      "economia": 0.8350130077647884,
+      "ic95_razao": [
+       6.054558874058204,
+       6.065628577283393
+      ],
+      "ic95_economia": [
+       0.834835200912048,
+       0.8351366247934903
+      ],
+      "bytes_amostrados": 18259094,
+      "blocos": 21,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 5.398887226208949
+     },
+     "xz-9e": {
+      "razao": 6.349867223461037,
+      "economia": 0.8425163921057639,
+      "ic95_razao": [
+       6.3442957020743975,
+       6.3544143087118075
+      ],
+      "ic95_economia": [
+       0.8423780909718585,
+       0.8426290840638113
+      ],
+      "bytes_amostrados": 18259094,
+      "blocos": 21,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 4.8115256575318215
+     },
+     "bzip2-9": {
+      "razao": 7.235823462509361,
+      "economia": 0.8617987288964064,
+      "ic95_razao": [
+       7.218434007694664,
+       7.2519772754169844
+      ],
+      "ic95_economia": [
+       0.8614657972997986,
+       0.8621065728667082
+      ],
+      "bytes_amostrados": 18259094,
+      "blocos": 21,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 19.281362248807227
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 0.0,
+     "ic95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "xml_html": {
+    "arquivos_populacao": 6,
+    "bytes_populacao": 23277334,
+    "arquivos_amostrados": 6,
+    "unidades_amostradas": 25,
+    "bytes_amostrados_rapidos": 23277334,
+    "bytes_amostrados_lentos": 23277334,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": false,
+    "ic95_por": "arquivo",
+    "codecs": {
+     "zstd-1": {
+      "razao": 4.12028613071087,
+      "economia": 0.7572984088298085,
+      "ic95_razao": [
+       2.919726138074498,
+       6.347645531244538
+      ],
+      "ic95_economia": [
+       0.6575021242713261,
+       0.8424612724390839
+      ],
+      "bytes_amostrados": 23277334,
+      "blocos": 25,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 589.5699164689104
+     },
+     "zstd-3": {
+      "razao": 4.5486837204521535,
+      "economia": 0.7801561811159302,
+      "ic95_razao": [
+       3.2596412770087952,
+       6.885916830119417
+      ],
+      "ic95_economia": [
+       0.6932177761236205,
+       0.8547760560182865
+      ],
+      "bytes_amostrados": 23277334,
+      "blocos": 25,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 446.99592877543233
+     },
+     "zstd-9": {
+      "razao": 5.219605991215348,
+      "economia": 0.8084146577954331,
+      "ic95_razao": [
+       3.673229882267383,
+       8.163503877326407
+      ],
+      "ic95_economia": [
+       0.7277600280811372,
+       0.8775035799545053
+      ],
+      "bytes_amostrados": 23277334,
+      "blocos": 25,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 105.42818410539957
+     },
+     "zstd-19": {
+      "razao": 5.7199114295101126,
+      "economia": 0.8251721180784707,
+      "ic95_razao": [
+       3.9992342778999403,
+       9.040040491907009
+      ],
+      "ic95_economia": [
+       0.7499521332055807,
+       0.8893810264572113
+      ],
+      "bytes_amostrados": 23277334,
+      "blocos": 25,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 5.096488758690522
+     },
+     "xz-9e": {
+      "razao": 5.828974624028143,
+      "economia": 0.8284432401064487,
+      "ic95_razao": [
+       4.045605077896077,
+       9.363296832397703
+      ],
+      "ic95_economia": [
+       0.7528181864651872,
+       0.8932000108615669
+      ],
+      "bytes_amostrados": 23277334,
+      "blocos": 25,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 4.936269736213708
+     },
+     "bzip2-9": {
+      "razao": 6.431410872760629,
+      "economia": 0.8445131216487249,
+      "ic95_razao": [
+       4.50505996980857,
+       10.054379539130897
+      ],
+      "ic95_economia": [
+       0.7780273721766922,
+       0.9005408542508193
+      ],
+      "bytes_amostrados": 23277334,
+      "blocos": 25,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 19.172235262964115
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 0.0,
+     "ic95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "binario": {
+    "arquivos_populacao": 23,
+    "bytes_populacao": 74895248,
+    "arquivos_amostrados": 23,
+    "unidades_amostradas": 83,
+    "bytes_amostrados_rapidos": 74895248,
+    "bytes_amostrados_lentos": 38665618,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": false,
+    "ic95_por": "arquivo",
+    "codecs": {
+     "zstd-1": {
+      "razao": 1.8904307015126705,
+      "economia": 0.4710200171845349,
+      "ic95_razao": [
+       1.6189028650967727,
+       2.1268159823953376
+      ],
+      "ic95_economia": [
+       0.38229771435964244,
+       0.5298135765964366
+      ],
+      "bytes_amostrados": 74895248,
+      "blocos": 83,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 598.6098550100363
+     },
+     "zstd-3": {
+      "razao": 2.0307534142072767,
+      "economia": 0.5075719223200916,
+      "ic95_razao": [
+       1.7414462438619138,
+       2.2878053801646434
+      ],
+      "ic95_economia": [
+       0.4257646461814678,
+       0.5628998827129105
+      ],
+      "bytes_amostrados": 74895248,
+      "blocos": 83,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 391.01931712735825
+     },
+     "zstd-9": {
+      "razao": 2.101879895845664,
+      "economia": 0.5242354227867702,
+      "ic95_razao": [
+       1.7826315137623394,
+       2.3765261131443696
+      ],
+      "ic95_economia": [
+       0.4390315708660135,
+       0.5792177521344779
+      ],
+      "bytes_amostrados": 74895248,
+      "blocos": 83,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 101.83306926196707
+     },
+     "zstd-19": {
+      "razao": 2.1442691586264098,
+      "economia": 0.5336406364951932,
+      "ic95_razao": [
+       1.7915024151842596,
+       2.4912546929776167
+      ],
+      "ic95_economia": [
+       0.44180929284588877,
+       0.5985958389486175
+      ],
+      "bytes_amostrados": 38665618,
+      "blocos": 41,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 7.25929053499614
+     },
+     "xz-9e": {
+      "razao": 2.2918478263446675,
+      "economia": 0.5636708561078734,
+      "ic95_razao": [
+       1.9409754161781094,
+       2.676217203056331
+      ],
+      "ic95_economia": [
+       0.4847951232844274,
+       0.626338251298151
+      ],
+      "bytes_amostrados": 38665618,
+      "blocos": 41,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 5.732037509737526
+     },
+     "bzip2-9": {
+      "razao": 2.0827085756343204,
+      "economia": 0.5198560126466878,
+      "ic95_razao": [
+       1.7065673280886897,
+       2.5556212715826194
+      ],
+      "ic95_economia": [
+       0.41402839282059056,
+       0.6087057142936011
+      ],
+      "bytes_amostrados": 38665618,
+      "blocos": 41,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 21.75525550377753
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 0.0,
+     "ic95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "banco_de_dados": {
+    "arquivos_populacao": 2,
+    "bytes_populacao": 4308992,
+    "arquivos_amostrados": 2,
+    "unidades_amostradas": 5,
+    "bytes_amostrados_rapidos": 4308992,
+    "bytes_amostrados_lentos": 4308992,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": true,
+    "ic95_por": "bloco",
+    "codecs": {
+     "zstd-1": {
+      "razao": 2.0652414285611584,
+      "economia": 0.5157951093898527,
+      "ic95_razao": [
+       2.027863955075027,
+       2.2173598637825442
+      ],
+      "ic95_economia": [
+       0.5068702722895422,
+       0.5490132132661035
+      ],
+      "bytes_amostrados": 4308992,
+      "blocos": 5,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 426.27138471684225
+     },
+     "zstd-3": {
+      "razao": 2.253110123902986,
+      "economia": 0.5561690529942966,
+      "ic95_razao": [
+       2.213004092948217,
+       2.4041608469519185
+      ],
+      "ic95_economia": [
+       0.5481255533207008,
+       0.5840544524016203
+      ],
+      "bytes_amostrados": 4308992,
+      "blocos": 5,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 297.44959793508315
+     },
+     "zstd-9": {
+      "razao": 2.312869756581949,
+      "economia": 0.567636700184173,
+      "ic95_razao": [
+       2.270441169907195,
+       2.465988929004781
+      ],
+      "ic95_economia": [
+       0.559556964851516,
+       0.5944831753954476
+      ],
+      "bytes_amostrados": 4308992,
+      "blocos": 5,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 75.07633791659866
+     },
+     "zstd-19": {
+      "razao": 2.495952251864003,
+      "economia": 0.5993513100047528,
+      "ic95_razao": [
+       2.4544801256527835,
+       2.6499998003170964
+      ],
+      "ic95_economia": [
+       0.5925817489624023,
+       0.6226414809992284
+      ],
+      "bytes_amostrados": 4308992,
+      "blocos": 5,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 6.9394142835201285
+     },
+     "xz-9e": {
+      "razao": 2.6635874738833185,
+      "economia": 0.6245664879396388,
+      "ic95_razao": [
+       2.6234469369067335,
+       2.8353530346796108
+      ],
+      "ic95_economia": [
+       0.6188220977783203,
+       0.6473102334104939
+      ],
+      "bytes_amostrados": 4308992,
+      "blocos": 5,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 5.227946250276574
+     },
+     "bzip2-9": {
+      "razao": 3.0907752846545486,
+      "economia": 0.6764565819569868,
+      "ic95_razao": [
+       3.0635842791694983,
+       3.214677524760187
+      ],
+      "ic95_economia": [
+       0.6735849551130716,
+       0.688926807650917
+      ],
+      "bytes_amostrados": 4308992,
+      "blocos": 5,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 24.589180034292347
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 0.0,
+     "ic95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "cientifico_numerico": {
+    "arquivos_populacao": 11,
+    "bytes_populacao": 32368633,
+    "arquivos_amostrados": 11,
+    "unidades_amostradas": 33,
+    "bytes_amostrados_rapidos": 32368633,
+    "bytes_amostrados_lentos": 32368633,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": false,
+    "ic95_por": "arquivo",
+    "codecs": {
+     "zstd-1": {
+      "razao": 1.144262692519635,
+      "economia": 0.12607480210857225,
+      "ic95_razao": [
+       1.0949170641520618,
+       1.1949311880748468
+      ],
+      "ic95_economia": [
+       0.08668881622149949,
+       0.16313172676403265
+      ],
+      "bytes_amostrados": 32368633,
+      "blocos": 33,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 1108.3483867077962
+     },
+     "zstd-3": {
+      "razao": 1.194571912040513,
+      "economia": 0.162880032653835,
+      "ic95_razao": [
+       1.115657495087031,
+       1.2803391287601122
+      ],
+      "ic95_economia": [
+       0.10366756428056689,
+       0.2189569329429104
+      ],
+      "bytes_amostrados": 32368633,
+      "blocos": 33,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 410.6985566847337
+     },
+     "zstd-9": {
+      "razao": 1.2237484753064387,
+      "economia": 0.18283861416081426,
+      "ic95_razao": [
+       1.114228514543436,
+       1.3474448827360843
+      ],
+      "ic95_economia": [
+       0.10251803203065768,
+       0.25785461593840653
+      ],
+      "bytes_amostrados": 32368633,
+      "blocos": 33,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 146.71652610124056
+     },
+     "zstd-19": {
+      "razao": 1.2746585369657135,
+      "economia": 0.21547616793084834,
+      "ic95_razao": [
+       1.1486576998288711,
+       1.4155524178243235
+      ],
+      "ic95_economia": [
+       0.1294186247574176,
+       0.29356201338204024
+      ],
+      "bytes_amostrados": 32368633,
+      "blocos": 33,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 7.742362667506029
+     },
+     "xz-9e": {
+      "razao": 1.4695999704342317,
+      "economia": 0.3195427190267812,
+      "ic95_razao": [
+       1.3172948760579744,
+       1.6462968168414396
+      ],
+      "ic95_economia": [
+       0.24086852672461934,
+       0.3925761200713581
+      ],
+      "bytes_amostrados": 32368633,
+      "blocos": 33,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 5.333839032290492
+     },
+     "bzip2-9": {
+      "razao": 1.3388209109743694,
+      "economia": 0.25307411035863026,
+      "ic95_razao": [
+       1.1181126554747849,
+       1.6418100027398685
+      ],
+      "ic95_economia": [
+       0.10563573795221082,
+       0.3909161240757516
+      ],
+      "bytes_amostrados": 32368633,
+      "blocos": 33,
+      "blocos_armazenados_sem_compressao_pct": 0.0,
+      "vazao_comp_indicativa_MBps": 19.466974904587058
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 0.0,
+     "ic95": [
+      0.0,
+      0.0
+     ]
+    },
+    "transform": {
+     "criterio": "melhor entre zstd-3 puro e {delta 1/2/4/8, byte_split 4/8}+zstd-3 por bloco de 1 MiB (oraculo: o planejador real nao conhece o resultado antes de comprimir; limite superior)",
+     "razao_melhor_por_bloco": 1.4614663628205316,
+     "economia_melhor_por_bloco": 0.3157557194336875,
+     "ganho_pp_sobre_zstd3": 15.287568677985252,
+     "ic95_ganho_pp_sobre_zstd3": [
+      14.493663243133728,
+      16.170851891076637
+     ],
+     "blocos": 33,
+     "escolha_pct_dos_blocos": {
+      "raw": 0.0,
+      "d1": 0.0,
+      "d2": 0.09090909090909091,
+      "d4": 0.0,
+      "d8": 0.0,
+      "b4": 0.36363636363636365,
+      "b8": 0.5454545454545454
+     },
+     "razao_por_transform_unico": {
+      "d1": 1.0184422606005847,
+      "d2": 1.2275326533872895,
+      "d4": 1.2139129904526231,
+      "d8": 1.310878458494102,
+      "b4": 1.3550593929990162,
+      "b8": 1.452310884827601
+     }
+    }
+   },
+   "imagem_audio_video": {
+    "arquivos_populacao": 3,
+    "bytes_populacao": 9437243,
+    "arquivos_amostrados": 3,
+    "unidades_amostradas": 12,
+    "bytes_amostrados_rapidos": 9437243,
+    "bytes_amostrados_lentos": 9437243,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": true,
+    "ic95_por": "bloco",
+    "codecs": {
+     "zstd-1": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 9437243,
+      "blocos": 12,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 3895.8380370051755
+     },
+     "zstd-3": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 9437243,
+      "blocos": 12,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 3933.3006562675228
+     },
+     "zstd-9": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 9437243,
+      "blocos": 12,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 953.3026081250039
+     },
+     "zstd-19": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 9437243,
+      "blocos": 12,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 11.361519014068723
+     },
+     "xz-9e": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 9437243,
+      "blocos": 12,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 4.592388807371668
+     },
+     "bzip2-9": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 9437243,
+      "blocos": 12,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 16.826537898993656
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 1.0,
+     "ic95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "container_comprimido": {
+    "arquivos_populacao": 9,
+    "bytes_populacao": 3895042,
+    "arquivos_amostrados": 9,
+    "unidades_amostradas": 11,
+    "bytes_amostrados_rapidos": 3895042,
+    "bytes_amostrados_lentos": 3895042,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": false,
+    "ic95_por": "arquivo",
+    "codecs": {
+     "zstd-1": {
+      "razao": 1.0000241338266904,
+      "economia": 2.4133244262869447e-05,
+      "ic95_razao": [
+       1.0,
+       1.0001081094028528
+      ],
+      "ic95_economia": [
+       0.0,
+       0.00010809771647313227
+      ],
+      "bytes_amostrados": 3895042,
+      "blocos": 11,
+      "blocos_armazenados_sem_compressao_pct": 0.8181818181818182,
+      "vazao_comp_indicativa_MBps": 3406.183184985193
+     },
+     "zstd-3": {
+      "razao": 1.0000246473250207,
+      "economia": 2.464671754498493e-05,
+      "ic95_razao": [
+       1.0,
+       1.000110409856878
+      ],
+      "ic95_economia": [
+       0.0,
+       0.00011039766788734084
+      ],
+      "bytes_amostrados": 3895042,
+      "blocos": 11,
+      "blocos_armazenados_sem_compressao_pct": 0.8181818181818182,
+      "vazao_comp_indicativa_MBps": 3399.485415521753
+     },
+     "zstd-9": {
+      "razao": 1.0000241338266904,
+      "economia": 2.4133244262869447e-05,
+      "ic95_razao": [
+       1.0,
+       1.0001081094028528
+      ],
+      "ic95_economia": [
+       0.0,
+       0.00010809771647313227
+      ],
+      "bytes_amostrados": 3895042,
+      "blocos": 11,
+      "blocos_armazenados_sem_compressao_pct": 0.8181818181818182,
+      "vazao_comp_indicativa_MBps": 844.0030490036904
+     },
+     "zstd-19": {
+      "razao": 1.0000282418280986,
+      "economia": 2.824103052034843e-05,
+      "ic95_razao": [
+       1.0,
+       1.0001265133313861
+      ],
+      "ic95_economia": [
+       0.0,
+       0.00012649732778768907
+      ],
+      "bytes_amostrados": 3895042,
+      "blocos": 11,
+      "blocos_armazenados_sem_compressao_pct": 0.8181818181818182,
+      "vazao_comp_indicativa_MBps": 12.195917871461251
+     },
+     "xz-9e": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 3895042,
+      "blocos": 11,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 5.5932812845457
+     },
+     "bzip2-9": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 3895042,
+      "blocos": 11,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 17.22959381874627
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 1.0,
+     "ic95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "criptografado_aleatorio": {
+    "arquivos_populacao": 12,
+    "bytes_populacao": 20971520,
+    "arquivos_amostrados": 12,
+    "unidades_amostradas": 20,
+    "bytes_amostrados_rapidos": 20971520,
+    "bytes_amostrados_lentos": 20971520,
+    "fracao_amostrada": 1.0,
+    "censo": true,
+    "probabilidade_de_inclusao": 1.0,
+    "baixa_confianca": false,
+    "ic95_por": "arquivo",
+    "codecs": {
+     "zstd-1": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 20971520,
+      "blocos": 20,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 3872.633031258365
+     },
+     "zstd-3": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 20971520,
+      "blocos": 20,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 3671.980233670864
+     },
+     "zstd-9": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 20971520,
+      "blocos": 20,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 970.0576877337027
+     },
+     "zstd-19": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 20971520,
+      "blocos": 20,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 11.886017448181805
+     },
+     "xz-9e": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 20971520,
+      "blocos": 20,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 4.719120893703564
+     },
+     "bzip2-9": {
+      "razao": 1.0,
+      "economia": 0.0,
+      "ic95_razao": [
+       1.0,
+       1.0
+      ],
+      "ic95_economia": [
+       0.0,
+       0.0
+      ],
+      "bytes_amostrados": 20971520,
+      "blocos": 20,
+      "blocos_armazenados_sem_compressao_pct": 1.0,
+      "vazao_comp_indicativa_MBps": 16.9731242950775
+     }
+    },
+    "incompressivel_por_amostra": {
+     "criterio": "bloco de 1 MiB com economia zstd-3 < 3%",
+     "fracao_dos_bytes": 1.0,
+     "ic95": [
+      1.0,
+      1.0
+     ]
+    }
+   }
+  },
+  "dataset": {
+   "bytes_considerados": 298794881,
+   "zstd-1": {
+    "razao": 2.0250030007900426,
+    "economia": 0.5061735712935457,
+    "ic95_razao": [
+     1.902093308713715,
+     2.106888789720329
+    ],
+    "ic95_economia": [
+     0.4742634362789242,
+     0.525366500178331
+    ]
+   },
+   "zstd-3": {
+    "razao": 2.1245246543506973,
+    "economia": 0.5293064742966598,
+    "ic95_razao": [
+     2.0063958062195977,
+     2.2075263327259727
+    ],
+    "ic95_economia": [
+     0.5015938545624377,
+     0.5470042711720924
+    ]
+   },
+   "zstd-9": {
+    "razao": 2.2217071766988714,
+    "economia": 0.5498956791030165,
+    "ic95_razao": [
+     2.0938159469899245,
+     2.316319479862696
+    ],
+    "ic95_economia": [
+     0.522403102604313,
+     0.5682806241998721
+    ]
+   },
+   "zstd-19": {
+    "razao": 2.3191237399056313,
+    "economia": 0.568802654729975,
+    "ic95_razao": [
+     2.177377892237936,
+     2.4318183226262855
+    ],
+    "ic95_economia": [
+     0.5407319953211303,
+     0.5887850705393024
+    ]
+   },
+   "xz-9e": {
+    "razao": 2.4564191827429527,
+    "economia": 0.5929033582601512,
+    "ic95_razao": [
+     2.303585361439902,
+     2.582736023390962
+    ],
+    "ic95_economia": [
+     0.5658940985043723,
+     0.6128137018482184
+    ]
+   },
+   "bzip2-9": {
+    "razao": 2.3680083733958828,
+    "economia": 0.5777041959670384,
+    "ic95_razao": [
+     2.20385922321525,
+     2.5289611947085398
+    ],
+    "ic95_economia": [
+     0.5462505093491943,
+     0.6045807258362266
+    ]
+   },
+   "incompressivel_por_amostra": {
+    "fracao_dos_bytes": 0.11480720447817847,
+    "ic95": [
+     0.11480720447817847,
+     0.11480720447817847
+    ]
+   }
+  },
+  "vazao_nota": "vazao_comp_indicativa_MBps foi medida com ate 5 processos concorrentes, sem fixar CPU, na maquina atual: so indicativa; a estimativa economica usa bench/resultados/medicoes.json (rotulada)"
+ },
+ "estimativa_economica": {
+  "parametros": {
+   "volume_mensal_bytes": {
+    "valor": 5000000000000000.0,
+    "unidade": "B/mes",
+    "fonte": "requisito do pedido: 5 PB/mes de processamento (PB = 10^15 B); bench/precos.json",
+    "tipo": "premissa"
+   },
+   "fracao_retida": {
+    "valor": 0.9,
+    "unidade": "fracao do volume processado",
+    "fonte": "premissa: o cliente armazena 'um pouco menos' do que processa (docs/pesquisa-compressao-neural.md 9.1); trocar pelo numero real",
+    "tipo": "premissa"
+   },
+   "retencao_meses": {
+    "valor": 60,
+    "unidade": "meses",
+    "fonte": "premissa do pedido anterior (T = 60 meses, bench/precos.json e docs/anexos/modelo_cliente.py)",
+    "tipo": "premissa"
+   },
+   "preco_armazenamento_gb_mes": {
+    "valor": 0.023,
+    "unidade": "USD/GB-mes",
+    "fonte": "AWS S3 Standard, tabela publica (bench/precos.json); o preco real do cliente e desconhecido",
+    "tipo": "verificado"
+   },
+   "preco_nucleo_hora": {
+    "valor": 0.0446,
+    "unidade": "USD/vCPU-h",
+    "fonte": "AWS c7i, Vantage 2026-11-03 (bench/precos.json); o custo de CPU real do cliente e desconhecido",
+    "tipo": "verificado"
+   },
+   "custo_movimento_usd_por_gb": {
+    "valor": 0.0,
+    "unidade": "USD/GB movido",
+    "fonte": "DESCONHECIDO: usado 0 (mesma regiao) ate o cliente informar; ver sensibilidade (referencia: egress S3 US$0,09/GB)",
+    "tipo": "desconhecido"
+   },
+   "passagens_movimento": {
+    "valor": 1,
+    "unidade": "passagens por mes",
+    "fonte": "DESCONHECIDO: quantas vezes o dado atravessa o transporte por mes",
+    "tipo": "desconhecido"
+   },
+   "leituras_por_gb_processado": {
+    "valor": 3,
+    "unidade": "leituras (descompressoes) por GB processado",
+    "fonte": "premissa: modelo_cliente.py usa 1, 3 e 10; o volume lido real e desconhecido",
+    "tipo": "premissa"
+   },
+   "eficiencia_escala": {
+    "valor": 1.0,
+    "unidade": "fator multiplicativo sobre a vazao por nucleo",
+    "fonte": "premissa do modelo_cliente.py (1,0, otimista: medido 0,42 a 0,95 em CPU hibrida)",
+    "tipo": "premissa"
+   },
+   "idade_recompressao_meses": {
+    "valor": 1,
+    "unidade": "meses",
+    "fonte": "premissa: recompressao assincrona 1 mes depois da ingestao (dado ja em zstd-3)",
+    "tipo": "premissa"
+   },
+   "vazao_hash_mbps": {
+    "valor": 1160,
+    "unidade": "MB/s por nucleo",
+    "fonte": "medido em outro corpus: blake2b em 1 P-core (docs/pesquisa-compressao-neural.md 10.8, 1,16 a 1,25 GB/s)",
+    "tipo": "medido"
+   },
+   "dedup_aplicavel": {
+    "valor": true,
+    "unidade": "booleano",
+    "fonte": "premissa: o produto elimina arquivos inteiros duplicados (gate F1: dedup de arquivo inteiro ganha das alternativas em arvores)",
+    "tipo": "premissa"
+   },
+   "delta_aplicavel": {
+    "valor": true,
+    "unidade": "booleano",
+    "fonte": "premissa: o produto usa referencia entre versoes (zstd --patch-from, janela longa) em familias de arquivos",
+    "tipo": "premissa"
+   },
+   "consumo_aceita_dado_comprimido": {
+    "valor": null,
+    "unidade": "booleano",
+    "fonte": "DESCONHECIDO: o que o cliente chama de 'processamento' e se o consumo aceita dado comprimido; sem isso o ganho de movimento nao e garantido",
+    "tipo": "desconhecido"
+   },
+   "vazao_mbps": {
+    "valor": null,
+    "unidade": "MB/s por nucleo por classe e codec",
+    "fonte": "opcional: {classe_do_perfil: {codec: {\"comp\": x, \"decomp\": y}}}; padrao = bench/resultados/medicoes.json (bloco de 1 MiB, outro corpus e outra CPU)",
+    "tipo": "medido"
+   }
+  },
+  "avisos_config": [],
+  "formula": "armazenamento = s_arm x fracao_retida x volume_GB x retencao x preco_GB_mes; movimento = s_compressao x volume_GB x custo_movimento x passagens; CPU = volume_GB x (custo_comp_GB + leituras x custo_decomp_GB), custo_GB = preco_nucleo_h / (vazao_MBps x eficiencia x 3,6); identica a docs/anexos/modelo_cliente.py (conferida em autoteste). Acrescimos deste perfil: dedup e delta reduzem s_arm; recompressao assincrona segue a regra de M* de resultados/resumo.md secao 11",
+  "por_classe": {
+   "texto": {
+    "bytes": 83546205,
+    "pct_bytes": 0.2796105633416123,
+    "volume_mensal_tb": 1398.0528167080613,
+    "economia_compressao": {
+     "zstd-3": 0.7028676526958945,
+     "ic95_zstd-3": [
+      0.6513289590273033,
+      0.7280753763677081
+     ],
+     "zstd-19": 0.7571620125575019,
+     "xz-9e": 0.7625799498286099
+    },
+    "dedup_bytes_pct": 0.12177788326830644,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.4236683209052484,
+    "delta_razao_patch_sobre_z3": 0.1606775772514006,
+    "delta_origem": "medido nesta classe (6 pares)",
+    "economia_armazenamento_total_fracao": 0.8318434987822693,
+    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,9 meses)",
+    "politica_sincrona": "zstd-3",
+    "politica_assincrona": "xz-9e",
+    "avaliacao_assincrona": [
+     {
+      "destino": "zstd-19",
+      "delta_economia_pp": 5.429435986160747,
+      "custo_recompressao_usd_por_gb": 0.0018876891756469754,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0007067182098464766,
+      "m_estrela_meses": 2.6709642840951613,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.03981023319133122,
+      "nucleos_medios_recompressao": 73.96550361778509,
+      "paga_na_vida_restante": true
+     },
+     {
+      "destino": "xz-9e",
+      "delta_economia_pp": 5.971229713271542,
+      "custo_recompressao_usd_por_gb": 0.002210849094129128,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0007772403587226704,
+      "m_estrela_meses": 2.8560383117171155,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.04346084095935443,
+      "nucleos_medios_recompressao": 86.62790928709904,
+      "paga_na_vida_restante": true
+     }
+    ],
+    "armazenamento_usd_mes": 1502097.42915795,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 3135.083019580637,
+    "liquido_usd_mes": 1498962.3461383693,
+    "ic95_liquido_usd_mes": [
+     1447914.8262800854,
+     1522751.2089617385
+    ],
+    "ic95_armazenamento_usd_mes": [
+     1451049.909299666,
+     1525886.2919813192
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 85.13327174115479,
+     "cpu_hash_dedup_usd_mes": 14.931311212926135,
+     "cpu_delta_usd_mes": 19.829280218395194,
+     "cpu_recompressao_assincrona_usd_mes": 3015.189156408161
+    },
+    "compressao_apenas_liquido_usd_mes": 1318915.6789894646,
+    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,8 meses)",
+    "baixa_confianca": false,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 324.9969971248421,
+      "decomp_MBps": 1631.9662451215188,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'texto' usada como proxy de 'texto'"
+     },
+     "zstd-19": {
+      "comp_MBps": 5.784193259290199,
+      "decomp_MBps": 1740.2273183241598,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'texto' usada como proxy de 'texto'"
+     },
+     "xz-9e": {
+      "comp_MBps": 4.936160166489257,
+      "decomp_MBps": 193.02777849233212,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'texto' usada como proxy de 'texto'"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 1.6596221917122602
+   },
+   "codigo": {
+    "bytes": 3863936,
+    "pct_bytes": 0.012931734262207792,
+    "volume_mensal_tb": 64.65867131103896,
+    "economia_compressao": {
+     "zstd-3": 0.7467320887302481,
+     "ic95_zstd-3": [
+      0.7378145179795881,
+      0.754252615703648
+     ],
+     "zstd-19": 0.7830253917249147,
+     "xz-9e": 0.7847883608838242
+    },
+    "dedup_bytes_pct": 0.18778416619736973,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.3716841652460688,
+    "delta_razao_patch_sobre_z3": 0.21820432312981378,
+    "delta_origem": "medido nesta classe (26 pares)",
+    "economia_armazenamento_total_fracao": 0.8540667041121646,
+    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=3,2 meses)",
+    "politica_sincrona": "zstd-3",
+    "politica_assincrona": "xz-9e",
+    "avaliacao_assincrona": [
+     {
+      "destino": "zstd-19",
+      "delta_economia_pp": 3.62933029946666,
+      "custo_recompressao_usd_por_gb": 0.001218498163133491,
+      "ganho_armazenamento_usd_por_gb_mes": 0.00048098169980012904,
+      "m_estrela_meses": 2.533399126502095,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.02715894575117683,
+      "nucleos_medios_recompressao": 2.208141037644427,
+      "paga_na_vida_restante": true
+     },
+     {
+      "destino": "xz-9e",
+      "delta_economia_pp": 3.80562721535761,
+      "custo_recompressao_usd_por_gb": 0.0016021867750984123,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0005043456769744332,
+      "m_estrela_meses": 3.2018764145876393,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.027920820202977117,
+      "nucleos_medios_recompressao": 2.903454822589176,
+      "paga_na_vida_restante": true
+     }
+    ],
+    "armazenamento_usd_mes": 70318.34839115343,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 110.58276467319376,
+    "liquido_usd_mes": 70207.76562648024,
+    "ic95_liquido_usd_mes": [
+     69728.34890695264,
+     70612.37289546552
+    ],
+    "ic95_armazenamento_usd_mes": [
+     69838.93167162583,
+     70722.95566013872
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 2.6074176637988424,
+     "cpu_hash_dedup_usd_mes": 0.6905595642893528,
+     "cpu_delta_usd_mes": 0.46754612909899496,
+     "cpu_recompressao_assincrona_usd_mes": 106.81724131600657
+    },
+    "compressao_apenas_liquido_usd_mes": 62841.352288138194,
+    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,3 meses)",
+    "baixa_confianca": false,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 517.2257989412561,
+      "decomp_MBps": 2269.955175152449,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'codigo' usada como proxy de 'codigo'"
+     },
+     "zstd-19": {
+      "comp_MBps": 8.28822955848172,
+      "decomp_MBps": 2211.076617160907,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'codigo' usada como proxy de 'codigo'"
+     },
+     "xz-9e": {
+      "comp_MBps": 6.297873399163938,
+      "decomp_MBps": 161.60641003086172,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'codigo' usada como proxy de 'codigo'"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 0.04822937118353658
+   },
+   "csv_tabular": {
+    "bytes": 11396132,
+    "pct_bytes": 0.03814031874260925,
+    "volume_mensal_tb": 190.70159371304624,
+    "economia_compressao": {
+     "zstd-3": 0.6649517573155523,
+     "ic95_zstd-3": [
+      0.664252390514222,
+      0.6657115172398287
+     ],
+     "zstd-19": 0.7381827448120117,
+     "xz-9e": 0.7974375867180198
+    },
+    "dedup_bytes_pct": 0.1728640910793241,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.3967205062512266,
+    "delta_razao_patch_sobre_z3": 0.11017069023060663,
+    "delta_origem": "medido nesta classe (4 pares)",
+    "economia_armazenamento_total_fracao": 0.8207003607661886,
+    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,3 meses)",
+    "politica_sincrona": "zstd-3",
+    "politica_assincrona": "xz-9e",
+    "avaliacao_assincrona": [
+     {
+      "destino": "zstd-19",
+      "delta_economia_pp": 7.32309874964594,
+      "custo_recompressao_usd_por_gb": 0.001777882237661181,
+      "ganho_armazenamento_usd_por_gb_mes": 0.000901352770197918,
+      "m_estrela_meses": 1.9724025336317925,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.05140347919005206,
+      "nucleos_medios_recompressao": 9.502381618724888,
+      "paga_na_vida_restante": true
+     },
+     {
+      "destino": "xz-9e",
+      "delta_economia_pp": 13.248582940246745,
+      "custo_recompressao_usd_por_gb": 0.0020822439336467186,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0016306822210974065,
+      "m_estrela_meses": 1.2793824443832649,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.09394251599994628,
+      "nucleos_medios_recompressao": 11.129126587605151,
+      "paga_na_vida_restante": true
+     }
+    ],
+    "armazenamento_usd_mes": 210896.71589984733,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 405.2493841214323,
+    "liquido_usd_mes": 210491.4665157259,
+    "ic95_liquido_usd_mes": [
+     210383.07819905004,
+     210568.19243735884
+    ],
+    "ic95_armazenamento_usd_mes": [
+     210788.3275831715,
+     210973.4418214803
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 11.612616065015398,
+     "cpu_hash_dedup_usd_mes": 2.0367076340042773,
+     "cpu_delta_usd_mes": 2.3854419762322556,
+     "cpu_recompressao_assincrona_usd_mes": 389.21461844618034
+    },
+    "compressao_apenas_liquido_usd_mes": 187875.685351845,
+    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=0,8 meses)",
+    "baixa_confianca": false,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 324.9969971248421,
+      "decomp_MBps": 1631.9662451215188,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'texto' usada como proxy de 'csv_tabular'"
+     },
+     "zstd-19": {
+      "comp_MBps": 5.784193259290199,
+      "decomp_MBps": 1740.2273183241598,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'texto' usada como proxy de 'csv_tabular'"
+     },
+     "xz-9e": {
+      "comp_MBps": 4.936160166489257,
+      "decomp_MBps": 193.02777849233212,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'texto' usada como proxy de 'csv_tabular'"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 0.22638100158926697
+   },
+   "json_ndjson": {
+    "bytes": 12575502,
+    "pct_bytes": 0.04208740778259853,
+    "volume_mensal_tb": 210.43703891299262,
+    "economia_compressao": {
+     "zstd-3": 0.8571800155572318,
+     "ic95_zstd-3": [
+      0.8568482827456622,
+      0.8574555807193263
+     ],
+     "zstd-19": 0.8970143696848046,
+     "xz-9e": 0.907123548626528
+    },
+    "dedup_bytes_pct": 0.1665535101501316,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.4004900101211639,
+    "delta_razao_patch_sobre_z3": 0.11278584105138323,
+    "delta_origem": "medido nesta classe (2 pares)",
+    "economia_armazenamento_total_fracao": 0.9232619735155365,
+    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,9 meses)",
+    "politica_sincrona": "zstd-3",
+    "politica_assincrona": "xz-9e",
+    "avaliacao_assincrona": [
+     {
+      "destino": "zstd-19",
+      "delta_economia_pp": 3.9834354127572857,
+      "custo_recompressao_usd_por_gb": 0.001941558318773215,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0004922744102029847,
+      "m_estrela_meses": 3.9436921915379863,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.027105318375461377,
+      "nucleos_medios_recompressao": 11.451115007834181,
+      "paga_na_vida_restante": true
+     },
+     {
+      "destino": "xz-9e",
+      "delta_economia_pp": 4.9943533069296215,
+      "custo_recompressao_usd_por_gb": 0.0018099914011398244,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0006172040145649802,
+      "m_estrela_meses": 2.9386176416753655,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.03453005201000868,
+      "nucleos_medios_recompressao": 10.67514660632969,
+      "paga_na_vida_restante": true
+     }
+    ],
+    "armazenamento_usd_mes": 248203.10195841567,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 366.826487188891,
+    "liquido_usd_mes": 247836.27547122678,
+    "ic95_liquido_usd_mes": [
+     240558.31976222614,
+     247864.2313451487
+    ],
+    "ic95_armazenamento_usd_mes": [
+     240925.14624941503,
+     248231.0578323376
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 6.494469467787226,
+     "cpu_hash_dedup_usd_mes": 2.2474837010343562,
+     "cpu_delta_usd_mes": 1.080966941015307,
+     "cpu_recompressao_assincrona_usd_mes": 357.0035670790541
+    },
+    "compressao_apenas_liquido_usd_mes": 236438.79411785124,
+    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,9 meses)",
+    "baixa_confianca": false,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 805.0290216962405,
+      "decomp_MBps": 2402.1193267227954,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'xml' usada como proxy de 'json_ndjson'"
+     },
+     "zstd-19": {
+      "comp_MBps": 5.329938597886466,
+      "decomp_MBps": 2855.9811370857906,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'xml' usada como proxy de 'json_ndjson'"
+     },
+     "xz-9e": {
+      "comp_MBps": 5.718290120210573,
+      "decomp_MBps": 441.8789344901881,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'xml' usada como proxy de 'json_ndjson'"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 0.10084994083715608
+   },
+   "log": {
+    "bytes": 18259094,
+    "pct_bytes": 0.06110912589563407,
+    "volume_mensal_tb": 305.5456294781703,
+    "economia_compressao": {
+     "zstd-3": 0.7856884355817435,
+     "ic95_zstd-3": [
+      0.7847339621952991,
+      0.7865887917443785
+     ],
+     "zstd-19": 0.8350130077647884,
+     "xz-9e": 0.8425163921057639
+    },
+    "dedup_bytes_pct": 0.0,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.4291633527928604,
+    "delta_razao_patch_sobre_z3": 0.10574190724652485,
+    "delta_origem": "medido nesta classe (3 pares)",
+    "economia_armazenamento_total_fracao": 0.8679375281355036,
+    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=3,0 meses)",
+    "politica_sincrona": "zstd-3",
+    "politica_assincrona": "xz-9e",
+    "avaliacao_assincrona": [
+     {
+      "destino": "zstd-19",
+      "delta_economia_pp": 4.932457218304487,
+      "custo_recompressao_usd_por_gb": 0.0020319173523916136,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0006990769429926572,
+      "m_estrela_meses": 2.906066970684164,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.039220787764339266,
+      "nucleos_medios_recompressao": 17.40032137007043,
+      "paga_na_vida_restante": true
+     },
+     {
+      "destino": "xz-9e",
+      "delta_economia_pp": 5.6827956524020395,
+      "custo_recompressao_usd_por_gb": 0.0023716878591775892,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0008054223760097378,
+      "m_estrela_meses": 2.9568965997005314,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.044951435886728695,
+      "nucleos_medios_recompressao": 20.309945623827094,
+      "paga_na_vida_restante": true
+     }
+    ],
+    "armazenamento_usd_mes": 342439.1453633004,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 728.1502319721947,
+    "liquido_usd_mes": 341710.99513132824,
+    "ic95_liquido_usd_mes": [
+     318636.5436299856,
+     341867.04566578555
+    ],
+    "ic95_armazenamento_usd_mes": [
+     319364.69386195776,
+     342595.1958977577
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 14.931098295038687,
+     "cpu_hash_dedup_usd_mes": 3.263250736285057,
+     "cpu_delta_usd_mes": 3.6456465097791138,
+     "cpu_recompressao_assincrona_usd_mes": 706.3102364310918
+    },
+    "compressao_apenas_liquido_usd_mes": 318643.91762025614,
+    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,8 meses)",
+    "baixa_confianca": false,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 445.6116200372793,
+      "decomp_MBps": 1764.3790784374557,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_logs' usada como proxy de 'log'; proxy SINTETICO"
+     },
+     "zstd-19": {
+      "comp_MBps": 6.118285006452405,
+      "decomp_MBps": 2562.0211256743983,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_logs' usada como proxy de 'log'; proxy SINTETICO"
+     },
+     "xz-9e": {
+      "comp_MBps": 5.239170310501687,
+      "decomp_MBps": 184.7398705174841,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_logs' usada como proxy de 'log'; proxy SINTETICO"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 0.2645358715656235
+   },
+   "xml_html": {
+    "bytes": 23277334,
+    "pct_bytes": 0.07790405887174486,
+    "volume_mensal_tb": 389.52029435872424,
+    "economia_compressao": {
+     "zstd-3": 0.7801561811159302,
+     "ic95_zstd-3": [
+      0.6932177761236205,
+      0.8547760560182865
+     ],
+     "zstd-19": 0.8251721180784707,
+     "xz-9e": 0.8284432401064487
+    },
+    "dedup_bytes_pct": 0.3647757943413967,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.2130069362734191,
+    "delta_razao_patch_sobre_z3": 0.12588723649127406,
+    "delta_origem": "medido nesta classe (1 pares)",
+    "economia_armazenamento_total_fracao": 0.8863516304445362,
+    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,4 meses)",
+    "politica_sincrona": "zstd-3",
+    "politica_assincrona": "xz-9e",
+    "avaliacao_assincrona": [
+     {
+      "destino": "zstd-19",
+      "delta_economia_pp": 4.501593696254047,
+      "custo_recompressao_usd_por_gb": 0.0014797888716343768,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0005352332438218226,
+      "m_estrela_meses": 2.7645199727511467,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.030101659006111656,
+      "nucleos_medios_recompressao": 16.154927042258603,
+      "paga_na_vida_restante": true
+     },
+     {
+      "destino": "xz-9e",
+      "delta_economia_pp": 4.828705899051844,
+      "custo_recompressao_usd_por_gb": 0.0013795130989693843,
+      "ganho_armazenamento_usd_por_gb_mes": 0.000574126430815322,
+      "m_estrela_meses": 2.408135118074103,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.03241895287094929,
+      "nucleos_medios_recompressao": 15.060211557799065,
+      "paga_na_vida_restante": true
+     }
+    ],
+    "armazenamento_usd_mes": 440677.87930628436,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 526.8963422884254,
+    "liquido_usd_mes": 440150.9829639959,
+    "ic95_liquido_usd_mes": [
+     408124.47907145193,
+     455224.7285268343
+    ],
+    "ic95_armazenamento_usd_mes": [
+     408651.3754137404,
+     455751.62486912275
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 12.02130419560869,
+     "cpu_hash_dedup_usd_mes": 4.160106592049593,
+     "cpu_delta_usd_mes": 0.8110949458128679,
+     "cpu_recompressao_assincrona_usd_mes": 509.90383655495435
+    },
+    "compressao_apenas_liquido_usd_mes": 399598.7739507335,
+    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,0 meses)",
+    "baixa_confianca": false,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 805.0290216962405,
+      "decomp_MBps": 2402.1193267227954,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'xml' usada como proxy de 'xml_html'"
+     },
+     "zstd-19": {
+      "comp_MBps": 5.329938597886466,
+      "decomp_MBps": 2855.9811370857906,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'xml' usada como proxy de 'xml_html'"
+     },
+     "xz-9e": {
+      "comp_MBps": 5.718290120210573,
+      "decomp_MBps": 441.8789344901881,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'xml' usada como proxy de 'xml_html'"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 0.18667388043409494
+   },
+   "binario": {
+    "bytes": 74895248,
+    "pct_bytes": 0.250657734661793,
+    "volume_mensal_tb": 1253.2886733089647,
+    "economia_compressao": {
+     "zstd-3": 0.5075719223200916,
+     "ic95_zstd-3": [
+      0.4257646461814678,
+      0.5628998827129105
+     ],
+     "zstd-19": 0.5336406364951932,
+     "xz-9e": 0.5636708561078734
+    },
+    "dedup_bytes_pct": 0.18449501629262247,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.4357171570102274,
+    "delta_razao_patch_sobre_z3": 0.08447261675046291,
+    "delta_origem": "medido nesta classe (8 pares)",
+    "economia_armazenamento_total_fracao": 0.7586161465870166,
+    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,3 meses)",
+    "politica_sincrona": "zstd-3",
+    "politica_assincrona": "xz-9e",
+    "avaliacao_assincrona": [
+     {
+      "destino": "zstd-19",
+      "delta_economia_pp": 2.6068714175101593,
+      "custo_recompressao_usd_por_gb": 0.0009875947161012441,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0002939089792510869,
+      "m_estrela_meses": 3.361336046182442,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.01634720533049035,
+      "nucleos_medios_recompressao": 34.6900580580009,
+      "paga_na_vida_restante": true
+     },
+     {
+      "destino": "xz-9e",
+      "delta_economia_pp": 5.609893378778175,
+      "custo_recompressao_usd_por_gb": 0.0014313949533219558,
+      "ganho_armazenamento_usd_por_gb_mes": 0.000632481535371968,
+      "m_estrela_meses": 2.287487918996974,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.03548783926192423,
+      "nucleos_medios_recompressao": 50.278898038958005,
+      "paga_na_vida_restante": true
+     }
+    ],
+    "armazenamento_usd_mes": 1222941.5709376966,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 2157.687432266925,
+    "liquido_usd_mes": 1220783.8835054298,
+    "ic95_liquido_usd_mes": [
+     1157458.9950076481,
+     1273578.9663146161
+    ],
+    "ic95_armazenamento_usd_mes": [
+     1159616.682439915,
+     1275736.653746883
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 68.32962963925058,
+     "cpu_hash_dedup_usd_mes": 13.385219068385975,
+     "cpu_delta_usd_mes": 13.417626570553995,
+     "cpu_recompressao_assincrona_usd_mes": 2062.5549569887344
+    },
+    "compressao_apenas_liquido_usd_mes": 873449.8048554711,
+    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,4 meses)",
+    "baixa_confianca": false,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 411.1866941650785,
+      "decomp_MBps": 1523.8068091134562,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'binario' usada como proxy de 'binario'"
+     },
+     "zstd-19": {
+      "comp_MBps": 10.29925226555926,
+      "decomp_MBps": 1250.293531961428,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'binario' usada como proxy de 'binario'"
+     },
+     "xz-9e": {
+      "comp_MBps": 7.09113618364451,
+      "decomp_MBps": 95.81309025259951,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'binario' usada como proxy de 'binario'"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 1.175918072165083
+   },
+   "banco_de_dados": {
+    "bytes": 4308992,
+    "pct_bytes": 0.014421237691819761,
+    "volume_mensal_tb": 72.10618845909882,
+    "economia_compressao": {
+     "zstd-3": 0.5561690529942966,
+     "ic95_zstd-3": [
+      0.5481255533207008,
+      0.5840544524016203
+     ],
+     "zstd-19": 0.5993513100047528,
+     "xz-9e": 0.6245664879396388
+    },
+    "dedup_bytes_pct": 0.0,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.5190114068441065,
+    "delta_razao_patch_sobre_z3": 0.11765064624697136,
+    "delta_origem": "medido nesta classe (1 pares)",
+    "economia_armazenamento_total_fracao": 0.7594211597426599,
+    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=2,3 meses)",
+    "politica_sincrona": "zstd-3",
+    "politica_assincrona": "xz-9e",
+    "avaliacao_assincrona": [
+     {
+      "destino": "zstd-19",
+      "delta_economia_pp": 4.31822570104562,
+      "custo_recompressao_usd_por_gb": 0.0015584711159997518,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0005383602918435931,
+      "m_estrela_meses": 2.8948538734820533,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.03020471965721335,
+      "nucleos_medios_recompressao": 3.149535089639578,
+      "paga_na_vida_restante": true
+     },
+     {
+      "destino": "xz-9e",
+      "delta_economia_pp": 6.839743494534211,
+      "custo_recompressao_usd_por_gb": 0.001915547878013717,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0008527220573396923,
+      "m_estrela_meses": 2.2583240401153986,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.04812922992855571,
+      "nucleos_medios_recompressao": 3.871156286280378,
+      "paga_na_vida_restante": true
+     }
+    ],
+    "armazenamento_usd_mes": 71275.56999251025,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 146.80310942682908,
+    "liquido_usd_mes": 71128.76688308342,
+    "ic95_liquido_usd_mes": [
+     55245.15546869814,
+     71760.5659927787
+    ],
+    "ic95_armazenamento_usd_mes": [
+     55391.95857812497,
+     71907.36910220554
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 3.4478800792227524,
+     "cpu_hash_dedup_usd_mes": 0.7700996181216012,
+     "cpu_delta_usd_mes": 1.0237866526562238,
+     "cpu_recompressao_assincrona_usd_mes": 141.5613430768285
+    },
+    "compressao_apenas_liquido_usd_mes": 55686.50613001361,
+    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=1,2 meses)",
+    "baixa_confianca": true,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 452.86873276019463,
+      "decomp_MBps": 1816.5318839088984,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'banco_de_dados' usada como proxy de 'banco_de_dados'"
+     },
+     "zstd-19": {
+      "comp_MBps": 7.984326748987135,
+      "decomp_MBps": 1811.1485515640104,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'banco_de_dados' usada como proxy de 'banco_de_dados'"
+     },
+     "xz-9e": {
+      "comp_MBps": 6.490652511013182,
+      "decomp_MBps": 140.91285865144846,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'banco_de_dados' usada como proxy de 'banco_de_dados'"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 0.06142783445864996
+   },
+   "cientifico_numerico": {
+    "bytes": 32368633,
+    "pct_bytes": 0.10833061427180207,
+    "volume_mensal_tb": 541.6530713590104,
+    "economia_compressao": {
+     "zstd-3": 0.162880032653835,
+     "ic95_zstd-3": [
+      0.10366756428056689,
+      0.2189569329429104
+     ],
+     "zstd-19": 0.21547616793084834,
+     "xz-9e": 0.3195427190267812
+    },
+    "dedup_bytes_pct": 0.2751041726105641,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.12059591831481288,
+    "delta_razao_patch_sobre_z3": 0.08823411306457289,
+    "delta_origem": "medido nesta classe (1 pares)",
+    "economia_armazenamento_total_fracao": 0.45989879470256134,
+    "politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=0,8 meses)",
+    "politica_sincrona": "zstd-3",
+    "politica_assincrona": "xz-9e",
+    "avaliacao_assincrona": [
+     {
+      "destino": "zstd-19",
+      "delta_economia_pp": 5.259613527701335,
+      "custo_recompressao_usd_por_gb": 0.0011836280398112022,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0007804931847279274,
+      "m_estrela_meses": 1.5165664807510737,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.04486384514070897,
+      "nucleos_medios_recompressao": 17.96849111856454,
+      "paga_na_vida_restante": true
+     },
+     {
+      "destino": "xz-9e",
+      "delta_economia_pp": 15.666268637294623,
+      "custo_recompressao_usd_por_gb": 0.0018238327101979483,
+      "ganho_armazenamento_usd_por_gb_mes": 0.0023247745936323966,
+      "m_estrela_meses": 0.7865811550370523,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": 0.13497849113470792,
+      "nucleos_medios_recompressao": 27.687348349880793,
+      "paga_na_vida_restante": true
+     }
+    ],
+    "armazenamento_usd_mes": 376253.79954324727,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 1105.286853324766,
+    "liquido_usd_mes": 375148.51268992247,
+    "ic95_liquido_usd_mes": [
+     309682.8926128622,
+     405359.9540526237
+    ],
+    "ic95_armazenamento_usd_mes": [
+     310788.179466187,
+     406465.2409059485
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 33.52930193496726,
+     "cpu_hash_dedup_usd_mes": 5.784896308096711,
+     "cpu_delta_usd_mes": 1.6845471691194391,
+     "cpu_recompressao_assincrona_usd_mes": 1064.2881079125827
+    },
+    "compressao_apenas_liquido_usd_mes": 211775.19534189554,
+    "compressao_apenas_politica": "zstd-3 sincrono + recompressao assincrona para xz-9e (M*=0,7 meses)",
+    "baixa_confianca": false,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 348.2399571160554,
+      "decomp_MBps": 1411.7813469591372,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'cientifico' usada como proxy de 'cientifico_numerico'"
+     },
+     "zstd-19": {
+      "comp_MBps": 7.628392919840528,
+      "decomp_MBps": 1336.3003276716934,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'cientifico' usada como proxy de 'cientifico_numerico'"
+     },
+     "xz-9e": {
+      "comp_MBps": 4.941290093081249,
+      "decomp_MBps": 104.62187597764007,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'cientifico' usada como proxy de 'cientifico_numerico'"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 0.6000778718096813
+   },
+   "imagem_audio_video": {
+    "bytes": 9437243,
+    "pct_bytes": 0.0315843530130625,
+    "volume_mensal_tb": 157.9217650653125,
+    "economia_compressao": {
+     "zstd-3": 0.0,
+     "ic95_zstd-3": [
+      0.0,
+      0.0
+     ],
+     "zstd-19": 0.0,
+     "xz-9e": 0.0
+    },
+    "dedup_bytes_pct": 0.44444420897077674,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.0,
+    "delta_razao_patch_sobre_z3": null,
+    "delta_origem": "nao medido (delta tratado como 0)",
+    "economia_armazenamento_total_fracao": 0.44444420897077674,
+    "politica": "stored (sem compressao; zstd-3 nao paga o CPU nesta classe)",
+    "politica_sincrona": "stored",
+    "politica_assincrona": null,
+    "avaliacao_assincrona": [],
+    "armazenamento_usd_mes": 87172.7681305223,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 1.6866165521822167,
+    "liquido_usd_mes": 87171.08151397012,
+    "ic95_liquido_usd_mes": [
+     87171.08151397012,
+     87171.08151397012
+    ],
+    "ic95_armazenamento_usd_mes": [
+     87172.7681305223,
+     87172.7681305223
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 0.0,
+     "cpu_hash_dedup_usd_mes": 1.6866165521822167,
+     "cpu_delta_usd_mes": 0.0,
+     "cpu_recompressao_assincrona_usd_mes": 0.0
+    },
+    "compressao_apenas_liquido_usd_mes": 0.0,
+    "compressao_apenas_politica": "stored (sem compressao; zstd-3 nao paga o CPU nesta classe)",
+    "baixa_confianca": true,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 5125.901982849413,
+      "decomp_MBps": 7928.549277664321,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_ja_comprimido' usada como proxy de 'imagem_audio_video'; proxy SINTETICO"
+     },
+     "zstd-19": {
+      "comp_MBps": 43.03014358778424,
+      "decomp_MBps": 8984.958047749815,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_ja_comprimido' usada como proxy de 'imagem_audio_video'; proxy SINTETICO"
+     },
+     "xz-9e": {
+      "comp_MBps": 10.845207046506015,
+      "decomp_MBps": 6832.79991134983,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_ja_comprimido' usada como proxy de 'imagem_audio_video'; proxy SINTETICO"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 0.0
+   },
+   "container_comprimido": {
+    "bytes": 3895042,
+    "pct_bytes": 0.0130358391247004,
+    "volume_mensal_tb": 65.179195623502,
+    "economia_compressao": {
+     "zstd-3": 2.464671754498493e-05,
+     "ic95_zstd-3": [
+      0.0,
+      0.00011039766788734084
+     ],
+     "zstd-19": 2.824103052034843e-05,
+     "xz-9e": 0.0
+    },
+    "dedup_bytes_pct": 0.4655459427651871,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.0,
+    "delta_razao_patch_sobre_z3": null,
+    "delta_origem": "nao medido (delta tratado como 0)",
+    "economia_armazenamento_total_fracao": 0.46555911530337657,
+    "politica": "zstd-3 sincrono (recompressao assincrona nao paga na vida restante)",
+    "politica_sincrona": "zstd-3",
+    "politica_assincrona": null,
+    "avaliacao_assincrona": [
+     {
+      "destino": "zstd-19",
+      "delta_economia_pp": 0.00035943129753635006,
+      "custo_recompressao_usd_por_gb": 0.0001547107845763177,
+      "ganho_armazenamento_usd_por_gb_mes": 4.4182888511059364e-08,
+      "m_estrela_meses": 2844.4966813418228,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": -0.00015150180340580817,
+      "nucleos_medios_recompressao": 0.2826212021570988,
+      "paga_na_vida_restante": false
+     },
+     {
+      "destino": "xz-9e",
+      "delta_economia_pp": -0.002464671754498493,
+      "custo_recompressao_usd_por_gb": 0.0006113621394886101,
+      "ganho_armazenamento_usd_por_gb_mes": -3.029683783570658e-07,
+      "m_estrela_meses": null,
+      "vida_restante_meses": 59,
+      "valor_liquido_por_gb_retido_usd": -0.0006300586283471942,
+      "nucleos_medios_recompressao": 1.1168187356090478,
+      "paga_na_vida_restante": false
+     }
+    ],
+    "armazenamento_usd_mes": 37688.202664123826,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 1.1591921937930953,
+    "liquido_usd_mes": 37687.04347193003,
+    "ic95_liquido_usd_mes": [
+     37685.97712122919,
+     37690.75352321081
+    ],
+    "ic95_armazenamento_usd_mes": [
+     37687.13631342298,
+     37691.91271540461
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 0.4630733899597167,
+     "cpu_hash_dedup_usd_mes": 0.6961188038333785,
+     "cpu_delta_usd_mes": 0.0,
+     "cpu_recompressao_assincrona_usd_mes": 0.0
+    },
+    "compressao_apenas_liquido_usd_mes": 1.5321415146727637,
+    "compressao_apenas_politica": "zstd-3 sincrono (recompressao assincrona nao paga na vida restante)",
+    "baixa_confianca": false,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 5125.901982849413,
+      "decomp_MBps": 7928.549277664321,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_ja_comprimido' usada como proxy de 'container_comprimido'; proxy SINTETICO"
+     },
+     "zstd-19": {
+      "comp_MBps": 43.03014358778424,
+      "decomp_MBps": 8984.958047749815,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_ja_comprimido' usada como proxy de 'container_comprimido'; proxy SINTETICO"
+     },
+     "xz-9e": {
+      "comp_MBps": 10.845207046506015,
+      "decomp_MBps": 6832.79991134983,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_ja_comprimido' usada como proxy de 'container_comprimido'; proxy SINTETICO"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 0.004905730677638534
+   },
+   "criptografado_aleatorio": {
+    "bytes": 20971520,
+    "pct_bytes": 0.07018701234041556,
+    "volume_mensal_tb": 350.9350617020778,
+    "economia_compressao": {
+     "zstd-3": 0.0,
+     "ic95_zstd-3": [
+      0.0,
+      0.0
+     ],
+     "zstd-19": 0.0,
+     "xz-9e": 0.0
+    },
+    "dedup_bytes_pct": 0.4,
+    "familias_bytes_nao_base_pct_dos_unicos": 0.0,
+    "delta_razao_patch_sobre_z3": null,
+    "delta_origem": "nao medido (delta tratado como 0)",
+    "economia_armazenamento_total_fracao": 0.4,
+    "politica": "stored (sem compressao; zstd-3 nao paga o CPU nesta classe)",
+    "politica_sincrona": "stored",
+    "politica_assincrona": null,
+    "avaliacao_assincrona": [],
+    "armazenamento_usd_mes": 174344.5386535923,
+    "movimento_usd_mes": 0.0,
+    "cpu_usd_mes": 3.7480133505538,
+    "liquido_usd_mes": 174340.79064024173,
+    "ic95_liquido_usd_mes": [
+     174340.79064024173,
+     174340.79064024173
+    ],
+    "ic95_armazenamento_usd_mes": [
+     174344.5386535923,
+     174344.5386535923
+    ],
+    "detalhe_cpu": {
+     "cpu_compressao_e_leitura_usd_mes": 0.0,
+     "cpu_hash_dedup_usd_mes": 3.7480133505538,
+     "cpu_delta_usd_mes": 0.0,
+     "cpu_recompressao_assincrona_usd_mes": 0.0
+    },
+    "compressao_apenas_liquido_usd_mes": 0.0,
+    "compressao_apenas_politica": "stored (sem compressao; zstd-3 nao paga o CPU nesta classe)",
+    "baixa_confianca": false,
+    "vazoes_usadas": {
+     "zstd-3": {
+      "comp_MBps": 5538.702077985188,
+      "decomp_MBps": 8369.166426391492,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_incompressivel' usada como proxy de 'criptografado_aleatorio'; proxy SINTETICO"
+     },
+     "zstd-19": {
+      "comp_MBps": 41.99628393868456,
+      "decomp_MBps": 8789.147007422247,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_incompressivel' usada como proxy de 'criptografado_aleatorio'; proxy SINTETICO"
+     },
+     "xz-9e": {
+      "comp_MBps": 10.87861001007354,
+      "decomp_MBps": 6854.238689650832,
+      "origem": "medido em outro corpus e outra CPU (medicoes.json, bloco de 1 MiB), classe 'sint_incompressivel' usada como proxy de 'criptografado_aleatorio'; proxy SINTETICO"
+     }
+    },
+    "nucleos_medios_sincrono_zstd3": 0.0
+   }
+  },
+  "total": {
+   "politica_recomendada_com_dedup_e_delta": {
+    "armazenamento_usd_mes": {
+     "estimativa": 4784309.069998643,
+     "ic95": [
+      4652564.631945868,
+      4835231.7878929265
+     ]
+    },
+    "movimento_usd_mes": {
+     "estimativa": 0.0,
+     "ic95": [
+      0.0,
+      0.0
+     ]
+    },
+    "cpu_usd_mes": {
+     "estimativa": 8689.159446939824,
+     "ic95": [
+      8689.159446939824,
+      8689.159446939824
+     ]
+    },
+    "liquido_usd_mes": {
+     "estimativa": 4775619.910551704,
+     "ic95": [
+      4643875.472498929,
+      4826542.628445987
+     ]
+    }
+   },
+   "compressao_apenas_politica_por_classe": {
+    "armazenamento_usd_mes": {
+     "estimativa": 3675349.539266641,
+     "ic95": [
+      3496260.5063966406,
+      3798403.372358266
+     ]
+    },
+    "movimento_usd_mes": {
+     "estimativa": 0.0,
+     "ic95": [
+      0.0,
+      0.0
+     ]
+    },
+    "cpu_usd_mes": {
+     "estimativa": 10122.298479456875,
+     "ic95": [
+      10122.298479456875,
+      10122.298479456875
+     ]
+    },
+    "liquido_usd_mes": {
+     "estimativa": 3665227.240787184,
+     "ic95": [
+      3486138.2079171836,
+      3788281.073878809
+     ]
+    }
+   },
+   "dedup_aplicado": true,
+   "delta_aplicado": true
+  },
+  "sensibilidade": {
+   "fracao_retida_x_armazenamento": [
+    {
+     "fracao_retida": 0.8,
+     "cenario_armazenamento": "s3_standard",
+     "preco_gb_mes": 0.023,
+     "preco_nucleo_hora": 0.0446,
+     "liquido": 4244845.456012657,
+     "armazenamento": 4252719.173332128,
+     "movimento": 0.0,
+     "cpu": 7873.71731947163
+    },
+    {
+     "fracao_retida": 0.8,
+     "cenario_armazenamento": "b2",
+     "preco_gb_mes": 0.00695,
+     "preco_nucleo_hora": 0.0446,
+     "liquido": 1277199.1075383727,
+     "armazenamento": 1285038.9609692567,
+     "movimento": 0.0,
+     "cpu": 7839.853430884105
+    },
+    {
+     "fracao_retida": 0.8,
+     "cenario_armazenamento": "glacier_ir",
+     "preco_gb_mes": 0.004,
+     "preco_nucleo_hora": 0.0446,
+     "liquido": 731750.9154722854,
+     "armazenamento": 739590.7689031694,
+     "movimento": 0.0,
+     "cpu": 7839.853430884105
+    },
+    {
+     "fracao_retida": 0.8,
+     "cenario_armazenamento": "onprem",
+     "preco_gb_mes": 0.002,
+     "preco_nucleo_hora": 0.0135,
+     "liquido": 367422.3346462723,
+     "armazenamento": 369795.3844515847,
+     "movimento": 0.0,
+     "cpu": 2373.049805312453
+    },
+    {
+     "fracao_retida": 0.9,
+     "cenario_armazenamento": "s3_standard",
+     "preco_gb_mes": 0.023,
+     "preco_nucleo_hora": 0.0446,
+     "liquido": 4775619.910551704,
+     "armazenamento": 4784309.069998643,
+     "movimento": 0.0,
+     "cpu": 8689.159446939824
+    },
+    {
+     "fracao_retida": 0.9,
+     "cenario_armazenamento": "b2",
+     "preco_gb_mes": 0.00695,
+     "preco_nucleo_hora": 0.0446,
+     "liquido": 1437016.0164116463,
+     "armazenamento": 1445668.831090414,
+     "movimento": 0.0,
+     "cpu": 8652.814678767618
+    },
+    {
+     "fracao_retida": 0.9,
+     "cenario_armazenamento": "glacier_ir",
+     "preco_gb_mes": 0.004,
+     "preco_nucleo_hora": 0.0446,
+     "liquido": 823386.8003372981,
+     "armazenamento": 832039.6150160657,
+     "movimento": 0.0,
+     "cpu": 8652.814678767618
+    },
+    {
+     "fracao_retida": 0.9,
+     "cenario_armazenamento": "onprem",
+     "preco_gb_mes": 0.002,
+     "preco_nucleo_hora": 0.0135,
+     "liquido": 413400.6819886749,
+     "armazenamento": 416019.8075080328,
+     "movimento": 0.0,
+     "cpu": 2619.125519357911
+    },
+    {
+     "fracao_retida": 0.95,
+     "cenario_armazenamento": "s3_standard",
+     "preco_gb_mes": 0.023,
+     "preco_nucleo_hora": 0.0446,
+     "liquido": 5041007.137821227,
+     "armazenamento": 5050104.018331902,
+     "movimento": 0.0,
+     "cpu": 9096.88051067392
+    },
+    {
+     "fracao_retida": 0.95,
+     "cenario_armazenamento": "b2",
+     "preco_gb_mes": 0.00695,
+     "preco_nucleo_hora": 0.0446,
+     "liquido": 1516924.4708482833,
+     "armazenamento": 1525983.7661509926,
+     "movimento": 0.0,
+     "cpu": 9059.295302709372
+    },
+    {
+     "fracao_retida": 0.95,
+     "cenario_armazenamento": "glacier_ir",
+     "preco_gb_mes": 0.004,
+     "preco_nucleo_hora": 0.0446,
+     "liquido": 869204.7427698042,
+     "armazenamento": 878264.0380725135,
+     "movimento": 0.0,
+     "cpu": 9059.295302709372
+    },
+    {
+     "fracao_retida": 0.95,
+     "cenario_armazenamento": "onprem",
+     "preco_gb_mes": 0.002,
+     "preco_nucleo_hora": 0.0135,
+     "liquido": 436389.85565987614,
+     "armazenamento": 439132.01903625677,
+     "movimento": 0.0,
+     "cpu": 2742.163376380639
+    }
+   ],
+   "movimento": [
+    {
+     "custo_movimento_usd_por_gb": 0.0,
+     "passagens": 1,
+     "liquido": 4775619.910551704,
+     "armazenamento": 4784309.069998643,
+     "movimento": 0.0,
+     "cpu": 8689.159446939824
+    },
+    {
+     "custo_movimento_usd_por_gb": 0.0,
+     "passagens": 3,
+     "liquido": 4775619.910551704,
+     "armazenamento": 4784309.069998643,
+     "movimento": 0.0,
+     "cpu": 8689.159446939824
+    },
+    {
+     "custo_movimento_usd_por_gb": 0.01,
+     "passagens": 1,
+     "liquido": 4802085.234266537,
+     "armazenamento": 4784309.069998643,
+     "movimento": 26465.323714832994,
+     "cpu": 8689.159446939824
+    },
+    {
+     "custo_movimento_usd_por_gb": 0.01,
+     "passagens": 3,
+     "liquido": 4855015.881696203,
+     "armazenamento": 4784309.069998643,
+     "movimento": 79395.97114449895,
+     "cpu": 8689.159446939824
+    },
+    {
+     "custo_movimento_usd_por_gb": 0.05,
+     "passagens": 1,
+     "liquido": 4907946.529125868,
+     "armazenamento": 4784309.069998643,
+     "movimento": 132326.61857416492,
+     "cpu": 8689.159446939824
+    },
+    {
+     "custo_movimento_usd_por_gb": 0.05,
+     "passagens": 3,
+     "liquido": 5172599.766274199,
+     "armazenamento": 4784309.069998643,
+     "movimento": 396979.85572249483,
+     "cpu": 8689.159446939824
+    },
+    {
+     "custo_movimento_usd_por_gb": 0.09,
+     "passagens": 1,
+     "liquido": 5013807.8239852,
+     "armazenamento": 4784309.069998643,
+     "movimento": 238187.91343349684,
+     "cpu": 8689.159446939824
+    },
+    {
+     "custo_movimento_usd_por_gb": 0.09,
+     "passagens": 3,
+     "liquido": 5490183.650852195,
+     "armazenamento": 4784309.069998643,
+     "movimento": 714563.7403004906,
+     "cpu": 8689.159446939824
+    }
+   ],
+   "leituras": [
+    {
+     "leituras_por_gb": 1,
+     "liquido": 4776362.199403242,
+     "armazenamento": 4784309.069998643,
+     "movimento": 0.0,
+     "cpu": 7946.87059540119
+    },
+    {
+     "leituras_por_gb": 3,
+     "liquido": 4775619.910551704,
+     "armazenamento": 4784309.069998643,
+     "movimento": 0.0,
+     "cpu": 8689.159446939824
+    },
+    {
+     "leituras_por_gb": 10,
+     "liquido": 4773022.009221995,
+     "armazenamento": 4784308.003647942,
+     "movimento": 0.0,
+     "cpu": 11285.994425946728
+    }
+   ]
+  },
+  "origem_dos_numeros": {
+   "medido_no_dataset": [
+    "numero de arquivos, bytes, percentis de tamanho, extensoes (inventario completo da raiz, so leitura de metadados)",
+    "classe de cada arquivo (heuristica de extensao + bytes magicos + entropia de amostra de ate 48 KiB; nao e verdade absoluta)",
+    "bytes de arquivos inteiros duplicados (hash de amostra e hash completo dos candidatos)",
+    "familias de versoes (heuristica de nome/diretorio/tamanho) e a razao patch/zstd-3 em ate 200 pares (janela de 16 MiB por arquivo)",
+    "razao de compressao por classe (zstd-1/3/9/19, xz-9e, bzip2-9) em blocos de 1 MiB sorteados, com IC95 por bootstrap",
+    "fracao incompressivel por classificacao e por amostra (blocos com economia zstd-3 < 3%)"
+   ],
+   "medido_em_outro_corpus": [
+    "vazao por nucleo de cada codec por classe: bench/resultados/medicoes.json (Silesia, Canterbury e sinteticos, i9-14900HX, tmpfs); a classe do cliente usa a classe medida mais parecida (proxy rotulado)",
+    "vazao do hash (blake2b) do dedup: bench/resultados/dedup.md"
+   ],
+   "premissa": [
+    "volume mensal de 5,00 PB e fracao retida 0,90 (o dataset e tratado como representativo do fluxo mensal)",
+    "precos (S3 Standard, c7i), retencao de 60 meses, eficiencia de escala 1,00, leituras por GB 3",
+    "dado duplicado e dado de familia tem a mesma compressibilidade da media da classe",
+    "leituras uniformes no tempo; recompressao assincrona 1 mes(es) apos a ingestao",
+    "o produto realiza dedup de arquivo inteiro e delta por familia (ver dedup_aplicavel e delta_aplicavel)",
+    "o ganho de transform (delta/byte_split) e oraculo por bloco: limite superior, nao entra na estimativa economica"
+   ],
+   "desconhecido": [
+    "o que o cliente chama de 'processamento' e se o consumo aceita dado comprimido (define se ha ganho de movimento e de CPU do cliente)",
+    "custo real de movimento de dados e numero de passagens (usado US$ 0,00/GB e 1 passagem(ns))",
+    "volume realmente lido, padrao quente/frio e popularidade por objeto",
+    "precos reais de armazenamento e computacao do cliente, descontos, custo de recuperacao e de saida",
+    "se o dado ja chega comprimido ou criptografado na origem do fluxo (alem do que existe neste dataset)",
+    "SLA de latencia de leitura, restricoes de LGPD e de residencia do dado",
+    "se a amostra recebida representa o fluxo de 5 PB/mes (sazonalidade, novos tipos de dado)"
+   ]
+  },
+  "classes_sem_estimativa": [
+   "ilegivel",
+   "vazio"
+  ],
+  "bytes_sem_estimativa": 65536
+ },
+ "registro_leitura": {
+  "arquivos_inventariados": 204,
+  "arquivos_com_leitura": 202,
+  "bytes_lidos_total": 587948771,
+  "bytes_lidos_por_fase": {
+   "classificacao": 5701632,
+   "dedup": 127842282,
+   "amostra_compressibilidade": 298794881,
+   "delta": 155609976
+  },
+  "bytes_inventariados": 298860417,
+  "fracao_lida_do_inventario": 1.9673022506690807,
+  "ilegiveis": 1,
+  "ilegiveis_por_motivo": {
+   "sem_permissao_leitura": 1
+  },
+  "ignorados_por_motivo": {
+   "nao_regular": 1,
+   "link_simbolico": 4,
+   "sem_permissao_diretorio": 1
+  },
+  "diretorios_inacessiveis": 1,
+  "nomes_com_bytes_invalidos_em_utf8": 2,
+  "alterados_durante_leitura": 0,
+  "abertura": "O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK, tentando O_NOATIME (negado em arquivos de outro dono: reabre sem)",
+  "tempo_por_fase_s": {
+   "inventario": 0.001,
+   "classificacao": 0.042,
+   "dedup": 0.063,
+   "familias": 0.001,
+   "delta": 0.105,
+   "amostragem": 17.814
+  }
+ },
+ "limites_e_o_que_nao_sabemos": [
+  "A classificacao e uma heuristica (extensao, bytes magicos e entropia de uma amostra de ate 48 KiB por arquivo); arquivos mal classificados mudam a vazao e a politica atribuidas, nao a razao medida (que e calculada sobre os blocos reais da classe atribuida).",
+  "A razao por classe vem de blocos de 1 MiB sorteados (ou de todos os blocos quando a classe cabe no orcamento); a amostra pode perder estruturas raras e nao ve redundancia entre blocos (cada bloco e comprimido sozinho, como no motor).",
+  "O IC95 e de bootstrap por arquivo: cobre a variacao entre arquivos da amostra, nao a diferenca entre este dataset e o fluxo real de 5 PB/mes.",
+  "Classes com menos de 5 arquivos estao marcadas como baixa confianca: o IC por bloco subestima a incerteza entre arquivos.",
+  "Dedup cobre so arquivos inteiros identicos; nao ha dedup por bloco nem por similaridade alem das familias; o hash de amostra so serve de pre-filtro, a confirmacao e pelo hash completo.",
+  "Familias de versoes sao inferidas por nome, diretorio e tamanho; a razao patch/zstd-3 e medida em ate 200 pares por janela de 16 MiB (prefixo ou janela alinhada) e extrapolada a todos os pares da classe; pares fora da amostra podem ser mais ou menos parecidos.",
+  "O ganho de transform (delta/byte_split) e oraculo por bloco, um limite superior; a classe cientifico_numerico so aparece quando a entropia dos deltas cai pelo menos 0.75 bit.",
+  "As vazoes por nucleo vem de bench/resultados/medicoes.json (outro corpus, CPU de notebook hibrido, tmpfs, sem I/O); classes sem medida propria usam proxy rotulado (log, ja comprimido e aleatorio usam classes SINTETICAS).",
+  "O custo de CPU nao inclui I/O, rede, metadados, erasure coding, migracao do dado existente nem o custo de operar o indice de dedup a 5 PB/mes.",
+  "Nao ha modelo de popularidade por objeto: as leituras sao uniformes no tempo.",
+  "O volume mensal e a fracao retida sao premissas; o perfil do dataset recebido e extrapolado ao fluxo mensal sem correcao de sazonalidade.",
+  "Desconhecido (perguntar ao cliente): o que ele chama de 'processamento' e se o consumo aceita dado comprimido; custo de movimento e passagens; volume lido e padrao quente/frio; precos reais; se o dado ja chega comprimido ou criptografado; SLA de latencia; restricoes de LGPD.",
+  "Fracao incompressivel por classificacao conta so classes ja comprimidas, midia e criptografado; a por amostra conta qualquer bloco com economia zstd-3 menor que 3% e e a mais confiavel.",
+  "Entradas ignoradas (nao medidas): link_simbolico=4, nao_regular=1, sem_permissao_diretorio=1.",
+  "Arquivos ilegiveis (contados no inventario, sem classe nem estimativa): sem_permissao_leitura=1.",
+  "Classes de baixa confianca (poucos arquivos): banco_de_dados, imagem_audio_video.",
+  "Bytes sem estimativa economica (ilegiveis ou sem amostra): 64,00 KiB."
+ ]
+}

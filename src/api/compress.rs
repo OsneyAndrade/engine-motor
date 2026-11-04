@@ -84,10 +84,15 @@ pub async fn decompress(
     let (envelope, restored) = service::reconstruct_bytes(&state, body.into()).await?;
     let meta = DecompressMeta::build(&envelope, &restored);
 
+    let ledger_hash = if envelope.file_hash.len() == 32 {
+        hex::encode(&envelope.file_hash)
+    } else {
+        String::new()
+    };
     service::record_read(
         &state,
         &ctx,
-        &hex::encode(&envelope.file_hash),
+        &ledger_hash,
         OpMeasure {
             bytes_in: received,
             bytes_out: restored.data.len() as u64,

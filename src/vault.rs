@@ -46,7 +46,7 @@ impl VaultManager {
         self.base_dir
             .join(&h[0..2])
             .join(&h[2..4])
-            .join(format!("{}.{}", h, ESSENCE_EXTENSION))
+            .join(format!("{h}.{ESSENCE_EXTENSION}"))
     }
 
     pub fn ensure_path(&self, hash: &[u8; 32]) -> Result<PathBuf> {
@@ -60,7 +60,7 @@ impl VaultManager {
 
     pub fn parse_id(id: &str) -> Result<[u8; 32]> {
         let cleaned = id
-            .strip_suffix(&format!(".{}", ESSENCE_EXTENSION))
+            .strip_suffix(&format!(".{ESSENCE_EXTENSION}"))
             .unwrap_or(id);
         let hex_part = cleaned.split('_').next().unwrap_or(cleaned);
 
@@ -98,10 +98,11 @@ impl VaultManager {
             Some(mut r) => {
                 r.refs = r.refs.saturating_add(1);
                 r.updated_at_ms = now_ms;
-                if !name.is_empty() && !r.names.iter().any(|n| n == name) {
-                    if r.names.len() < MAX_TRACKED_NAMES {
-                        r.names.push(name.to_string());
-                    }
+                if !name.is_empty()
+                    && !r.names.iter().any(|n| n == name)
+                    && r.names.len() < MAX_TRACKED_NAMES
+                {
+                    r.names.push(name.to_string());
                 }
                 r
             }
@@ -128,6 +129,7 @@ impl VaultManager {
         Ok(())
     }
 
+    #[cfg(test)]
     pub fn release(&self, hash: &[u8; 32], now_ms: i64) -> Result<Option<u32>> {
         let Some(mut record) = self.get_ref(hash)? else {
             let path = self.path_for(hash);

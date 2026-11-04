@@ -178,6 +178,39 @@ echo '---LOG'
 tail -c 3000 treino.log
 """
 
+SCRIPT_CORRUPCAO = r"""
+cd /saida || exit 90
+cp o.zl base.zl
+for pos in "$@"; do
+  cp base.zl c.zl
+  b=$(od -An -tu1 -j "$pos" -N1 base.zl | tr -d ' ')
+  nb=$((b ^ 1))
+  printf "$(printf '\\%03o' "$nb")" | dd of=c.zl bs=1 seek="$pos" conv=notrunc 2>/dev/null
+  rm -f c.out
+  zli decompress c.zl -o c.out -f > c.log 2>&1
+  rcd=$?
+  sha=$(sha256sum c.out 2>/dev/null | cut -d' ' -f1)
+  printf '%s %s %s\n' "$pos" "$rcd" "${sha:--}"
+done
+"""
+
+SCRIPT_TRUNCAR = r"""
+cd /saida || exit 90
+for n in "$@"; do
+  head -c "$n" o.zl > t.zl
+  rm -f t.out
+  zli decompress t.zl -o t.out -f > t.log 2>&1
+  rcd=$?
+  sha=$(sha256sum t.out 2>/dev/null | cut -d' ' -f1)
+  printf '%s %s %s\n' "$n" "$rcd" "${sha:--}"
+done
+"""
+
+TAMANHOS_SOBRECARGA = (0, 1, 16, 256, 4096, 65536)
+BLOCOS_PEQUENOS = {65536: 16, 1048576: 8}
+ARQUIVOS_BLOCOS = ["dickens", "samba", "xml", "sao", "mr", "logs.log", "sint_vendas.csv", "sint_eventos.ndjson", "sint_telemetria_f32.bin", "sint_timestamps_i64.bin"]
+MAGIC_BASE = 0xD7B1A5C0
+
 
 def sha256_bytes(dados):
     return hashlib.sha256(dados).hexdigest()
@@ -313,8 +346,14 @@ class Conteiner:
         self.ativo = True
         atexit.register(self.parar)
 
-    def executar(self, args, timeout=None):
-        return subprocess.run(["docker", "exec", self.nome] + args, capture_output=True, timeout=timeout)
+    def executar(self, args, timeout=None, entrada=None):
+        prefixo = ["docker", "exec"] + (["-i"] if entrada is not None else []) + [self.nome]
+        return subprocess.run(prefixo + args, capture_output=True, timeout=timeout, input=entrada)
+
+    def enviar(self, destino, dados):
+        r = self.executar(["sh", "-c", 'cat > "$1"', "sh", destino], entrada=dados)
+        if r.returncode != 0:
+            raise RuntimeError("falha ao enviar " + destino)
 
     def sh(self, script, args, timeout=None):
         return self.executar(["sh", "-c", script, "sh"] + args, timeout=timeout)
@@ -917,6 +956,14 @@ def cmd_razao(a):
                     if rot_t in item["treinos"]:
                         continue
                     tr = treinar(cont, it["id"], perfil, None, a.threads, a.treino_max_s, perfil_arg=arg)
+                    if a.salvar_compressores and tr["rc"] == 0 and tr["tamanho_compressor_bytes"]:
+                        os.makedirs(a.salvar_compressores, exist_ok=True)
+                        blob = cont.ler(tr["destino"])
+                        if sha256_bytes(blob) == tr["sha256_compressor"]:
+                            nome_zlc = os.path.basename(tr["destino"])
+                            with open(os.path.join(a.salvar_compressores, nome_zlc), "wb") as f:
+                                f.write(blob)
+                            tr["compressor_salvo"] = nome_zlc
                     item["treinos"][rot_t] = tr
                     print(it["id"], "treino", rot_t, tr["rc"], tr["tempo_relogio_s"], tr.get("ganho_in_sample_pct"), file=sys.stderr, flush=True)
                     if tr["rc"] != 0 or tr["tamanho_compressor_bytes"] == 0:
@@ -949,7 +996,7 @@ def cmd_determinismo_treino(a):
     sha = sha256_bytes(dados)
     cont = Conteiner("detrain", CPUS_E, os.path.abspath(a.fatias))
     cont.iniciar()
-    saida = {"id": a.id, "perfil": a.perfil, "rodadas": []}
+    saida = {"id": a.id, "perfil": a.perfil, "threads": a.threads, "treino_max_s": a.treino_max_s, "rodadas": []}
     try:
         for k in range(a.rodadas):
             tr = treinar(cont, a.id, a.perfil, None, a.threads, a.treino_max_s)
@@ -970,9 +1017,375 @@ def cmd_determinismo_treino(a):
     print(json.dumps(saida, indent=1))
 
 
+def ler_cabecalho(quadro):
+    if len(quadro) < 5:
+        return None
+    magic = struct.unpack("<I", quadro[:4])[0]
+    flags = quadro[4]
+    return {
+        "magic_hex": "%08x" % magic,
+        "versao_formato": magic - MAGIC_BASE,
+        "flags": flags,
+        "checksum_conteudo": bool(flags & 1),
+        "checksum_comprimido": bool(flags & 2),
+        "comentario": bool(flags & 4),
+        "bundle_id": bool(flags & 8),
+        "primeiros_16_bytes": quadro[:16].hex(),
+    }
+
+
+def cortar_blocos(dados, tamanho, maximo, alinhamento, por_linha):
+    tamanho = max(alinhamento, tamanho // alinhamento * alinhamento)
+    saida = []
+    pos = 0
+    while pos < len(dados) and len(saida) < maximo:
+        fim = pos + tamanho
+        if fim >= len(dados):
+            break
+        if por_linha:
+            j = dados.find(b"\n", fim)
+            if j == -1:
+                break
+            fim = j + 1
+        saida.append(dados[pos:fim])
+        pos = fim
+    return saida
+
+
+def classificar_corrupcao(linhas, sha_orig):
+    detectado = 0
+    sem_efeito = []
+    silencioso = []
+    for l in linhas:
+        campos = l.split()
+        if len(campos) != 3:
+            continue
+        pos, rcd, sha = int(campos[0]), int(campos[1]), campos[2]
+        if rcd != 0:
+            detectado += 1
+        elif sha == sha_orig:
+            sem_efeito.append(pos)
+        else:
+            silencioso.append(pos)
+    return {
+        "detectado_rc_nao_zero": detectado,
+        "sem_efeito_sha_igual_posicoes": sem_efeito,
+        "corrupcao_silenciosa_posicoes": silencioso,
+    }
+
+
+def cmd_quadro(a):
+    try:
+        os.sched_setaffinity(0, set(range(16, 32)))
+    except Exception:
+        pass
+    cont = Conteiner("quadro", CPUS_E, os.path.abspath(a.fatias), memoria="2g")
+    cont.iniciar()
+    resultado = {
+        "data": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "protocolo": {"cpus_conteiner": CPUS_E, "memoria": "2g", "rede": "none", "dados": "somente leitura", "saida": "tmpfs", "tempo_medido": False},
+        "ambiente": versoes_ambiente(cont),
+    }
+    try:
+        with open(os.path.join(a.fatias, "aleatorio.bin", "teste.bin"), "rb") as f:
+            aleatorio = f.read(max(TAMANHOS_SOBRECARGA))
+        sobrecarga = []
+        for n in TAMANHOS_SOBRECARGA:
+            dados = aleatorio[:n]
+            cont.enviar("/saida/e.bin", dados)
+            r = medir_openzl(cont, "/saida/e.bin", n, sha256_bytes(dados), "serial", None)
+            linha = {"entrada_bytes": n, "sha256_entrada": sha256_bytes(dados), "falhou": r.get("falhou", False)}
+            if r.get("falhou"):
+                linha["log"] = r.get("log")
+            else:
+                quadro = cont.ler("/saida/o.zl")
+                linha.update({"quadro_bytes": r["bytes_comp"], "sobrecarga_bytes": r["bytes_comp"] - n, "bit_exato": r["bit_exato"], "cabecalho": ler_cabecalho(quadro)})
+            sobrecarga.append(linha)
+            print("sobrecarga", n, linha.get("quadro_bytes"), file=sys.stderr, flush=True)
+        resultado["sobrecarga_entrada_incompressivel"] = sobrecarga
+
+        with open(os.path.join(a.fatias, "dickens", "teste.bin"), "rb") as f:
+            texto = f.read(65536)
+        sha_texto = sha256_bytes(texto)
+        cont.enviar("/saida/e.bin", texto)
+        r = medir_openzl(cont, "/saida/e.bin", len(texto), sha_texto, "serial", None)
+        quadro = cont.ler("/saida/o.zl")
+        resultado["quadro_texto_64KiB"] = {"entrada_bytes": len(texto), "quadro_bytes": len(quadro), "bit_exato": r.get("bit_exato"), "cabecalho": ler_cabecalho(quadro), "sha256_quadro": sha256_bytes(quadro)}
+        tam = len(quadro)
+        posicoes = set(range(min(tam, 64))) | set(range(max(0, tam - 12), tam))
+        passo = max(1, tam // 200)
+        posicoes |= set(range(0, tam, passo))
+        posicoes = sorted(posicoes)
+        saida = cont.sh(SCRIPT_CORRUPCAO, [str(p) for p in posicoes], timeout=1800).stdout.decode().splitlines()
+        classe = classificar_corrupcao(saida, sha_texto)
+        classe.update({"posicoes_testadas": len(posicoes), "tamanho_quadro": tam, "inversao": "um bit (bit 0) por posicao, uma posicao por vez", "faixas": "bytes 0-63, ultimos 12 bytes, e posicoes espacadas de %d em %d" % (passo, passo)})
+        resultado["corrupcao_de_um_bit"] = classe
+        cortes = sorted({0, 4, 5, 16, tam // 2, tam - 9, tam - 1})
+        saida = cont.sh(SCRIPT_TRUNCAR, [str(c) for c in cortes], timeout=600).stdout.decode().splitlines()
+        resultado["truncamento"] = [
+            {"bytes_mantidos": int(l.split()[0]), "rc_decompressao": int(l.split()[1]), "sha256_saida": l.split()[2]}
+            for l in saida
+            if len(l.split()) == 3
+        ]
+
+        blocos = []
+        for nome in ARQUIVOS_BLOCOS:
+            with open(os.path.join(a.fatias, nome, "teste.bin"), "rb") as f:
+                teste = f.read()
+            alin = ALINHAMENTO.get(nome, {"alinhamento": 1})["alinhamento"]
+            por_linha = nome in POR_LINHA
+            plano = PLANO[nome]
+            configs = [("generico:serial", "serial", None, None)]
+            for e in plano["perfis"]:
+                perfil, nivel, arg = normalizar_perfil(e)
+                if arg or nivel is not None:
+                    continue
+                configs.append(("perfil:" + perfil, perfil, None, None))
+            for tamanho, maximo in BLOCOS_PEQUENOS.items():
+                lista = cortar_blocos(teste, tamanho, maximo, alin, por_linha)
+                if not lista:
+                    continue
+                total = sum(len(b) for b in lista)
+                linha = {"id": nome, "bloco_bytes_nominal": tamanho, "n_blocos": len(lista), "bytes_total": total, "baselines": {}, "openzl": {}}
+                for rot, tipo, nivel in BASELINES:
+                    soma = 0
+                    exato = True
+                    for b in lista:
+                        x = baseline(rot, tipo, nivel, b)
+                        soma += x["bytes_comp"]
+                        exato = exato and x["bit_exato"]
+                    linha["baselines"][rot] = {"bytes_comp": soma, "razao": total / soma, "bit_exato": exato}
+                for rot, perfil, nivel, arg in configs:
+                    soma = 0
+                    exato = True
+                    estrito_falhou = 0
+                    falhas = 0
+                    for b in lista:
+                        cont.enviar("/saida/blk.bin", b)
+                        r = medir_com_fallback(cont, "/saida/blk.bin", len(b), sha256_bytes(b), perfil, nivel, perfil_arg=arg)
+                        if r.get("falhou"):
+                            falhas += 1
+                            continue
+                        soma += r["bytes_comp"]
+                        exato = exato and r["bit_exato"]
+                        estrito_falhou += 1 if r.get("modo_estrito_falhou") else 0
+                    linha["openzl"][rot] = {"bytes_comp": soma, "razao": (total / soma) if soma else None, "bit_exato": exato, "blocos_com_estrito_falho": estrito_falhou, "blocos_que_falharam": falhas}
+                    if not exato:
+                        resultado.setdefault("violacoes_bit_exatidao", []).append({"id": nome, "bloco": tamanho, "config": rot})
+                blocos.append(linha)
+                print("blocos", nome, tamanho, len(lista), file=sys.stderr, flush=True)
+        resultado["blocos_pequenos"] = blocos
+        resultado.setdefault("violacoes_bit_exatidao", [])
+    finally:
+        cont.parar()
+    gravar_json(a.saida, resultado)
+    print("escrito", a.saida)
+
+
+CODIGO_ARRAY = {1: "B", 2: "H", 4: "I", 8: "Q"}
+
+ALVOS_TRANSFORMADAS = {
+    "sint_vendas.csv": {"tipo": "csv"},
+    "sint_telemetria_f32.bin": {"tipo": "numerico", "largura": 4},
+    "sint_timestamps_i64.bin": {"tipo": "numerico", "largura": 8},
+    "mr": {"tipo": "numerico", "largura": 2},
+    "x-ray": {"tipo": "numerico", "largura": 2},
+}
+
+
+def t_delta(dados, w):
+    n = len(dados) // w
+    a = array(CODIGO_ARRAY[w])
+    a.frombytes(dados[: n * w])
+    mascara = (1 << (8 * w)) - 1
+    d = array(CODIGO_ARRAY[w], a[:1])
+    d.extend((a[i] - a[i - 1]) & mascara for i in range(1, n))
+    return d.tobytes() + dados[n * w :]
+
+
+def t_delta_inv(dados, w):
+    n = len(dados) // w
+    d = array(CODIGO_ARRAY[w])
+    d.frombytes(dados[: n * w])
+    mascara = (1 << (8 * w)) - 1
+    acc = 0
+    saida = array(CODIGO_ARRAY[w])
+    for x in d:
+        acc = (acc + x) & mascara
+        saida.append(acc)
+    return saida.tobytes() + dados[n * w :]
+
+
+def t_split(dados, w):
+    n = len(dados) // w
+    return b"".join(dados[p : n * w : w] for p in range(w)) + dados[n * w :]
+
+
+def t_split_inv(dados, w):
+    n = len(dados) // w
+    saida = bytearray(len(dados))
+    for p in range(w):
+        saida[p : n * w : w] = dados[p * n : (p + 1) * n]
+    saida[n * w :] = dados[n * w :]
+    return bytes(saida)
+
+
+def varint(v, saida):
+    while True:
+        b = v & 0x7F
+        v >>= 7
+        if v == 0:
+            saida.append(b)
+            return
+        saida.append(b | 0x80)
+
+
+def t_csv(dados, delim=b","):
+    final = dados.endswith(b"\n")
+    corpo = dados[:-1] if final else dados
+    linhas = [l.split(delim) for l in corpo.split(b"\n")]
+    cols = len(linhas[0])
+    if cols < 2 or len(linhas) < 4 or any(len(l) != cols for l in linhas):
+        return None
+    colunas = list(zip(*linhas))
+    saida = bytearray([0x43, delim[0], 1 if final else 0])
+    varint(len(linhas), saida)
+    varint(cols, saida)
+    for c in colunas:
+        for f in c:
+            varint(len(f), saida)
+    for c in colunas:
+        for f in c:
+            saida += f
+    return bytes(saida)
+
+
+def t_csv_inv(dados):
+    delim = dados[1:2]
+    final = dados[2] != 0
+    p = 3
+
+    def ler():
+        nonlocal p
+        v = 0
+        sh = 0
+        while True:
+            b = dados[p]
+            p += 1
+            v |= (b & 0x7F) << sh
+            if b < 0x80:
+                return v
+            sh += 7
+
+    linhas_n = ler()
+    cols = ler()
+    tamanhos = [ler() for _ in range(linhas_n * cols)]
+    campos = []
+    for t in tamanhos:
+        campos.append(dados[p : p + t])
+        p += t
+    linhas = [delim.join(campos[c * linhas_n + r] for c in range(cols)) for r in range(linhas_n)]
+    return b"\n".join(linhas) + (b"\n" if final else b"")
+
+
+def cadeias_transformadas(alvo):
+    if alvo["tipo"] == "csv":
+        csv = [("csv", lambda d: t_csv(d), lambda d: t_csv_inv(d))]
+        csv_delta = csv + [("delta1", lambda d: t_delta(d, 1), lambda d: t_delta_inv(d, 1))]
+        return [
+            ("zstd-19", "zstd", 19, []),
+            ("zstd-19+csv", "zstd", 19, csv),
+            ("zstd-22+csv", "zstd", 22, csv),
+            ("zstd-19+csv>delta1", "zstd", 19, csv_delta),
+            ("xz-9e+csv", "xz", 9, csv),
+        ]
+    w = alvo["largura"]
+    split = [("split%d" % w, lambda d: t_split(d, w), lambda d: t_split_inv(d, w))]
+    delta = [("delta%d" % w, lambda d: t_delta(d, w), lambda d: t_delta_inv(d, w))]
+    return [
+        ("zstd-19", "zstd", 19, []),
+        ("zstd-19+split", "zstd", 19, split),
+        ("zstd-19+delta", "zstd", 19, delta),
+        ("zstd-19+delta>split", "zstd", 19, delta + split),
+        ("xz-9e+split", "xz", 9, split),
+        ("xz-9e+delta>split", "xz", 9, delta + split),
+    ]
+
+
+def cmd_transformadas(a):
+    try:
+        os.sched_setaffinity(0, set(range(16, 32)))
+    except Exception:
+        pass
+    if sys.byteorder != "little":
+        sys.exit("emulacao das transformadas assume little-endian")
+    saida = {
+        "data": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "metodo": "emulacao em Python das transformadas Delta, ByteSplit e CsvColumnar de src/transform.rs (semantica lida do codigo; INFERENCIA PROPRIA de que equivalem em bytes) seguidas de zstd-19, zstd-22 ou xz-9e; mesma fatia de teste; sha256 do original conferido apos inverter",
+        "itens": [],
+    }
+    for nome, alvo in ALVOS_TRANSFORMADAS.items():
+        with open(os.path.join(a.fatias, nome, "teste.bin"), "rb") as f:
+            dados = f.read()
+        sha = sha256_bytes(dados)
+        item = {"id": nome, "teste_bytes": len(dados), "candidatas": {}}
+        for rot, tipo, nivel, cadeia in cadeias_transformadas(alvo):
+            x = dados
+            ok = True
+            for _, direta, _ in cadeia:
+                x = direta(x)
+                if x is None:
+                    ok = False
+                    break
+            if not ok:
+                item["candidatas"][rot] = {"aplicavel": False}
+                continue
+            if tipo == "zstd":
+                comp = zstd.compress(x, level=nivel)
+                rec = zstd.decompress(comp)
+            else:
+                comp = lzma.compress(x, format=lzma.FORMAT_XZ, check=lzma.CHECK_CRC64, preset=nivel | lzma.PRESET_EXTREME)
+                rec = lzma.decompress(comp)
+            for _, _, inversa in reversed(cadeia):
+                rec = inversa(rec)
+            exato = sha256_bytes(rec) == sha
+            item["candidatas"][rot] = {"aplicavel": True, "bytes_comp": len(comp), "razao": len(dados) / len(comp), "bit_exato": exato}
+            print(nome, rot, len(comp), exato, file=sys.stderr, flush=True)
+        validas = {k: v for k, v in item["candidatas"].items() if v.get("aplicavel") and v["bit_exato"]}
+        k = max(validas, key=lambda z: validas[z]["razao"])
+        item["melhor"] = {"config": k, "razao": validas[k]["razao"], "bytes_comp": validas[k]["bytes_comp"]}
+        saida["itens"].append(item)
+    saida["violacoes_bit_exatidao"] = [
+        {"id": i["id"], "config": k} for i in saida["itens"] for k, v in i["candidatas"].items() if v.get("aplicavel") and not v["bit_exato"]
+    ]
+    gravar_json(a.saida, saida)
+    print("escrito", a.saida, "violacoes:", len(saida["violacoes_bit_exatidao"]))
+
+
 def mediana_tres(fn, repeticoes):
     valores = [fn() for _ in range(repeticoes)]
     return {"valores": valores, "mediana": statistics.median(valores)}
+
+
+def compressores_salvos(pasta, id_item):
+    if not pasta or not os.path.isdir(pasta):
+        return []
+    prefixo = re.sub(r"[^A-Za-z0-9_.-]", "_", id_item) + "__"
+    return sorted(n for n in os.listdir(pasta) if n.startswith(prefixo) and n.endswith(".zlc"))
+
+
+def configs_de_tempo(id_item, pasta):
+    configs = [("generico:serial", ["--profile", "serial"])]
+    for e in PLANO[id_item]["perfis"]:
+        perfil, nivel, arg = normalizar_perfil(e)
+        configs.append((
+            "perfil:" + rotulo_perfil(perfil, nivel, arg),
+            ["--profile", perfil] + (["--profile-arg", arg] if arg else []) + (["--level", str(nivel)] if nivel is not None else []),
+        ))
+    prefixo = re.sub(r"[^A-Za-z0-9_.-]", "_", id_item) + "__"
+    for nome in compressores_salvos(pasta, id_item):
+        configs.append(("treinado:" + nome[len(prefixo) : -4], ["--compressor", "/saida/zlc/" + nome]))
+    return configs
 
 
 def cmd_tempo(a):
@@ -980,8 +1393,7 @@ def cmd_tempo(a):
     itens = [i for i in manifesto["itens"] if not a.somente or i["id"] in a.somente]
     plano_exec = []
     for it in itens:
-        plano_exec.append({"id": it["id"], "teste_bytes": it["teste_bytes"], "configs": ["generico:serial"] + [
-            "perfil:" + rotulo_perfil(*normalizar_perfil(e)) for e in PLANO[it["id"]]["perfis"]]})
+        plano_exec.append({"id": it["id"], "teste_bytes": it["teste_bytes"], "configs": [rot for rot, _ in configs_de_tempo(it["id"], a.compressores)]})
     if a.dry_run:
         print(json.dumps({"cpu_p_core": a.cpu, "repeticoes": a.repeticoes, "plano": plano_exec}, indent=1))
         return
@@ -1021,16 +1433,12 @@ def cmd_tempo(a):
                     "comp_MBps_mediana": len(dados) / 1e6 / statistics.median(tc),
                     "decomp_MBps_mediana": len(dados) / 1e6 / statistics.median(td),
                 }
-            configs = [("generico:serial", "serial", None, None)] + [
-                ("perfil:" + rotulo_perfil(*normalizar_perfil(e)), normalizar_perfil(e)[0], normalizar_perfil(e)[1], normalizar_perfil(e)[2])
-                for e in PLANO[it["id"]]["perfis"]]
-            for rot, perfil, nivel, arg in configs:
-                cargs = (
-                    ["--profile", perfil]
-                    + (["--profile-arg", arg] if arg else [])
-                    + (["--level", str(nivel)] if nivel is not None else [])
-                    + ["/dados/%s/teste.bin" % it["id"]]
-                )
+            for nome in compressores_salvos(a.compressores, it["id"]):
+                cont.executar(["mkdir", "-p", "/saida/zlc"])
+                with open(os.path.join(a.compressores, nome), "rb") as f:
+                    cont.enviar("/saida/zlc/" + nome, f.read())
+            for rot, cargs_base in configs_de_tempo(it["id"], a.compressores):
+                cargs = cargs_base + ["/dados/%s/teste.bin" % it["id"]]
                 script = (
                     "cd /saida || exit 90\n"
                     "zli compress \"$@\" -o t.zl -f > tc.log 2>&1\n"
@@ -1093,6 +1501,20 @@ def fmt_pct(x):
     return "%+.1f%%" % x
 
 
+def escolher_apriori(item):
+    ok = {k: v for k, v in item["openzl"].items() if not v.get("falhou")}
+    treinados = [k for k in ok if k.startswith("treinado:")]
+    for k in treinados:
+        if k != "treinado:serial":
+            return k
+    if "treinado:serial" in ok:
+        return "treinado:serial"
+    for k in ok:
+        if k.startswith("perfil:"):
+            return k
+    return "generico:serial"
+
+
 def agrupar_modo(item):
     grupos = {"generico": {}, "perfil": {}, "treinado": {}}
     for k, v in item["openzl"].items():
@@ -1120,6 +1542,7 @@ def construir_relatorio(razao, tempo):
         mp, rp = melhor(g["perfil"])
         mt, rt = melhor(g["treinado"])
         mb, rb = melhor(it["openzl"])
+        ap = escolher_apriori(it)
         linha = {
             "id": it["id"],
             "classe": it["classe"],
@@ -1135,8 +1558,10 @@ def construir_relatorio(razao, tempo):
                 "openzl_perfil": rp,
                 "openzl_treinado": rt,
                 "openzl_melhor": rb,
+                "openzl_apriori": it["openzl"][ap]["razao"],
             },
             "melhor_configuracao": mb,
+            "configuracao_apriori": ap,
             "ganho_pct": {
                 "sobre_zstd-3": ganho(rb, bl["zstd-3"]["razao"]),
                 "sobre_zstd-19": ganho(rb, bl["zstd-19"]["razao"]),
@@ -1154,24 +1579,26 @@ def construir_relatorio(razao, tempo):
                 "zstd-19": bl["zstd-19"]["bytes_comp"],
                 "xz-9e": bl["xz-9e"]["bytes_comp"],
                 "openzl_melhor": it["openzl"][mb]["bytes_comp"] if mb else None,
+                "openzl_apriori": it["openzl"][ap]["bytes_comp"],
                 "openzl_generico": it["openzl"][mg]["bytes_comp"] if mg else None,
                 "openzl_generico_L6": it["openzl"]["generico:serial"]["bytes_comp"],
             },
         }
         linhas_item.append(linha)
-        c = por_classe.setdefault(it["classe"], {"teste_bytes": 0, "zstd-3": 0, "zstd-19": 0, "xz-9e": 0, "openzl_melhor": 0, "openzl_generico": 0, "openzl_generico_L6": 0, "arquivos": []})
+        c = por_classe.setdefault(it["classe"], {"teste_bytes": 0, "zstd-3": 0, "zstd-19": 0, "xz-9e": 0, "openzl_melhor": 0, "openzl_apriori": 0, "openzl_generico": 0, "openzl_generico_L6": 0, "arquivos": []})
         c["teste_bytes"] += it["teste_bytes"]
         c["zstd-3"] += linha["bytes_comp"]["zstd-3"]
         c["zstd-19"] += linha["bytes_comp"]["zstd-19"]
         c["xz-9e"] += linha["bytes_comp"]["xz-9e"]
         c["openzl_melhor"] += linha["bytes_comp"]["openzl_melhor"] or 0
+        c["openzl_apriori"] += linha["bytes_comp"]["openzl_apriori"]
         c["openzl_generico"] += linha["bytes_comp"]["openzl_generico"] or 0
         c["openzl_generico_L6"] += linha["bytes_comp"]["openzl_generico_L6"]
         c["arquivos"].append(it["id"])
     classes = []
     for nome, c in sorted(por_classe.items()):
         t = c["teste_bytes"]
-        r = {k: t / c[k] for k in ("zstd-3", "zstd-19", "xz-9e", "openzl_melhor", "openzl_generico", "openzl_generico_L6") if c[k]}
+        r = {k: t / c[k] for k in ("zstd-3", "zstd-19", "xz-9e", "openzl_melhor", "openzl_apriori", "openzl_generico", "openzl_generico_L6") if c[k]}
         classes.append(
             {
                 "classe": nome,
@@ -1187,6 +1614,11 @@ def construir_relatorio(razao, tempo):
                     "sobre_zstd-3": ganho(r.get("openzl_generico"), r.get("zstd-3")),
                     "sobre_zstd-19": ganho(r.get("openzl_generico"), r.get("zstd-19")),
                     "sobre_xz-9e": ganho(r.get("openzl_generico"), r.get("xz-9e")),
+                },
+                "ganho_apriori_pct": {
+                    "sobre_zstd-3": ganho(r.get("openzl_apriori"), r.get("zstd-3")),
+                    "sobre_zstd-19": ganho(r.get("openzl_apriori"), r.get("zstd-19")),
+                    "sobre_xz-9e": ganho(r.get("openzl_apriori"), r.get("xz-9e")),
                 },
             }
         )
@@ -1212,6 +1644,19 @@ def cmd_relatorio(a):
     if a.determinismo and os.path.exists(a.determinismo):
         with open(a.determinismo) as f:
             det = json.load(f)
+    det_extra = []
+    for caminho in a.determinismo_extra or []:
+        if os.path.exists(caminho):
+            with open(caminho) as f:
+                det_extra.append((os.path.basename(caminho), json.load(f)))
+    quadro = None
+    if a.quadro and os.path.exists(a.quadro):
+        with open(a.quadro) as f:
+            quadro = json.load(f)
+    transformadas = None
+    if a.transformadas and os.path.exists(a.transformadas):
+        with open(a.transformadas) as f:
+            transformadas = json.load(f)
     saida_json = {
         "gerado_em": time.strftime("%Y-%m-%d %H:%M:%S"),
         "ambiente": razao.get("ambiente"),
@@ -1225,6 +1670,9 @@ def cmd_relatorio(a):
         "tabela_por_classe": rel["classes"],
         "treinos": {it["id"]: it["treinos"] for it in razao["itens"] if it.get("treinos")},
         "determinismo_do_treino": det,
+        "determinismo_do_treino_extra": {nome: x for nome, x in det_extra},
+        "quadro_e_blocos": quadro,
+        "baseline_com_transformadas_do_motor": transformadas,
         "referencias_publicadas_rotuladas": REFERENCIAS_PUBLICADAS,
         "tempo": tempo if tempo else "NAO MEDIDO (fase B pendente)",
         "bruto_razao": razao["itens"],
@@ -1255,12 +1703,13 @@ def cmd_relatorio(a):
         r = c["razao"]
         linhas.append([
             c["classe"], c["teste_bytes"], fmt(r.get("zstd-3")), fmt(r.get("zstd-19")), fmt(r.get("xz-9e")),
-            fmt(r.get("openzl_generico_L6")), fmt(r.get("openzl_generico")), fmt(r.get("openzl_melhor")),
+            fmt(r.get("openzl_generico_L6")), fmt(r.get("openzl_generico")), fmt(r.get("openzl_apriori")), fmt(r.get("openzl_melhor")),
             fmt_pct(c["ganho_melhor_pct"]["sobre_zstd-3"]), fmt_pct(c["ganho_melhor_pct"]["sobre_zstd-19"]), fmt_pct(c["ganho_melhor_pct"]["sobre_xz-9e"]),
+            fmt_pct(c["ganho_apriori_pct"]["sobre_zstd-3"]), fmt_pct(c["ganho_apriori_pct"]["sobre_zstd-19"]), fmt_pct(c["ganho_apriori_pct"]["sobre_xz-9e"]),
         ])
-    md.append(tabela_md(["classe", "bytes de teste", "zstd-3", "zstd-19", "xz-9e", "OZL generico L6", "OZL generico (melhor de L6/L9)", "OZL melhor", "ganho vs zstd-3", "vs zstd-19", "vs xz-9e"], linhas))
+    md.append(tabela_md(["classe", "bytes de teste", "zstd-3", "zstd-19", "xz-9e", "OZL generico L6", "OZL generico (melhor de L6/L9)", "OZL a priori", "OZL melhor", "melhor vs zstd-3", "melhor vs zstd-19", "melhor vs xz-9e", "a priori vs zstd-3", "a priori vs zstd-19", "a priori vs xz-9e"], linhas))
     md.append("")
-    md.append("`OpenZL melhor` e o melhor entre generico, perfil e treinado, escolhido no proprio teste (otimista). Ganho = razao OpenZL / razao do baseline - 1.")
+    md.append("`OpenZL melhor` e o melhor entre generico, perfil e treinado, escolhido no proprio teste (otimista). `OpenZL a priori` nao olha o teste: treino com perfil estrutural, senao treino `serial`, senao perfil, senao generico L6. Ganho = razao OpenZL / razao do baseline - 1.")
     md.append("")
     md.append("## Por arquivo")
     md.append("")
@@ -1271,11 +1720,11 @@ def cmd_relatorio(a):
             l["id"], l["classe"], "SIM" if l["sintetico"] else "nao", l["teste_bytes"],
             fmt(r["zstd-1"]), fmt(r["zstd-3"]), fmt(r["zstd-19"]), fmt(r["xz-9e"]),
             fmt(r["openzl_generico_L6"]), fmt(r["openzl_generico"]), fmt(r["openzl_perfil"]), fmt(r["openzl_treinado"]),
-            l["melhor_configuracao"],
+            l["configuracao_apriori"], l["melhor_configuracao"],
             fmt_pct(l["ganho_pct"]["sobre_zstd-3"]), fmt_pct(l["ganho_pct"]["sobre_zstd-19"]), fmt_pct(l["ganho_pct"]["sobre_xz-9e"]),
         ])
     md.append(tabela_md(
-        ["arquivo", "classe", "sintetico", "bytes teste", "zstd-1", "zstd-3", "zstd-19", "xz-9e", "OZL gen. L6", "OZL gen. melhor L6/L9", "OZL perfil", "OZL treinado", "melhor OZL", "vs zstd-3", "vs zstd-19", "vs xz-9e"],
+        ["arquivo", "classe", "sintetico", "bytes teste", "zstd-1", "zstd-3", "zstd-19", "xz-9e", "OZL gen. L6", "OZL gen. melhor L6/L9", "OZL perfil", "OZL treinado", "config a priori", "melhor OZL", "vs zstd-3", "vs zstd-19", "vs xz-9e"],
         linhas))
     md.append("")
     md.append("## Onde o OpenZL perde ou nao usa codecs estruturais")
@@ -1302,6 +1751,63 @@ def cmd_relatorio(a):
         md.append("`%s` perfil `%s`, rodadas repetidas sobre as mesmas amostras:" % (det["id"], det["perfil"]))
         md.append("")
         md.append(tabela_md(["sha256 do compressor", "bytes do compressor", "bytes comprimidos no teste", "razao no teste"], linhas))
+        md.append("")
+    for nome_extra, extra in det_extra:
+        linhas = [[r["sha256_compressor"][:16] if r["sha256_compressor"] else "-", r["tamanho_compressor_bytes"], r["bytes_comp_teste"], fmt(r["razao_teste"], 4)] for r in extra["rodadas"]]
+        md.append("`%s` perfil `%s`, rodadas repetidas (`%s`):" % (extra["id"], extra["perfil"], nome_extra))
+        md.append("")
+        md.append(tabela_md(["sha256 do compressor", "bytes do compressor", "bytes comprimidos no teste", "razao no teste"], linhas))
+        md.append("")
+    if quadro:
+        md.append("## Quadro (frame) e entradas pequenas (`openzl_bench.py quadro`)")
+        md.append("")
+        linhas = []
+        for x in quadro["sobrecarga_entrada_incompressivel"]:
+            c = x.get("cabecalho") or {}
+            linhas.append([x["entrada_bytes"], x.get("quadro_bytes", "-"), x.get("sobrecarga_bytes", "-"), c.get("versao_formato", "-"), c.get("flags", "-"), c.get("primeiros_16_bytes", "-"), x.get("bit_exato", "-")])
+        md.append("Entrada incompressivel (fatia de `aleatorio.bin`), perfil `serial`, nivel 6:")
+        md.append("")
+        md.append(tabela_md(["entrada (B)", "quadro (B)", "sobrecarga (B)", "versao do formato", "flags", "primeiros 16 bytes (hex)", "bit-exato"], linhas))
+        md.append("")
+        c = quadro["corrupcao_de_um_bit"]
+        md.append("Corrupcao de 1 bit em quadro de %d B (texto de 64 KiB, `serial`): %d posicoes testadas (%s); detectadas com rc != 0: %d; sem efeito (saida identica): %d; CORRUPCAO SILENCIOSA (rc = 0 e saida diferente): %d. Truncamentos testados: %d, todos com rc != 0: %s." % (
+            c["tamanho_quadro"], c["posicoes_testadas"], c["faixas"], c["detectado_rc_nao_zero"], len(c["sem_efeito_sha_igual_posicoes"]), len(c["corrupcao_silenciosa_posicoes"]),
+            len(quadro["truncamento"]), "sim" if all(t["rc_decompressao"] != 0 for t in quadro["truncamento"]) else "NAO"))
+        md.append("")
+        linhas = []
+        for b in quadro["blocos_pequenos"]:
+            bl = b["baselines"]
+            oz = b["openzl"]
+            ozg = oz.get("generico:serial", {}).get("razao")
+            ozp = [(k, v["razao"]) for k, v in oz.items() if k.startswith("perfil:") and v["razao"]]
+            linhas.append([
+                b["id"], b["bloco_bytes_nominal"], b["n_blocos"], b["bytes_total"], fmt(bl["zstd-3"]["razao"]), fmt(bl["zstd-19"]["razao"]), fmt(bl["xz-9e"]["razao"]),
+                fmt(ozg), ", ".join("%s=%s" % (k.split(":")[1], fmt(v)) for k, v in ozp) or "-",
+                fmt_pct(ganho(ozg, bl["zstd-3"]["razao"])),
+            ])
+        md.append("Blocos independentes (cada bloco comprimido sozinho; razao = soma dos bytes originais / soma dos quadros; OpenZL sem treino):")
+        md.append("")
+        md.append(tabela_md(["arquivo", "bloco (B)", "n blocos", "bytes", "zstd-3", "zstd-19", "xz-9e", "OZL serial L6", "OZL perfil (sem treino)", "serial vs zstd-3"], linhas))
+        md.append("")
+    if transformadas:
+        md.append("## Baseline com as transformadas do motor (`openzl_bench.py transformadas`)")
+        md.append("")
+        md.append(transformadas["metodo"] + ".")
+        md.append("")
+        por_id = {l["id"]: l for l in rel["itens"]}
+        linhas = []
+        for it in transformadas["itens"]:
+            l = por_id[it["id"]]
+            r = l["razao"]
+            m = it["melhor"]
+            linhas.append([
+                it["id"], it["teste_bytes"], fmt(r["zstd-19"]), fmt(r["xz-9e"]), m["config"], fmt(m["razao"]),
+                l["configuracao_apriori"], fmt(r["openzl_apriori"]), fmt_pct(ganho(r["openzl_apriori"], m["razao"])),
+                fmt(r["openzl_melhor"]), fmt_pct(ganho(r["openzl_melhor"], m["razao"])),
+            ])
+        md.append(tabela_md(["arquivo", "bytes teste", "zstd-19 puro", "xz-9e puro", "melhor transformada+codec", "razao", "config OZL a priori", "razao OZL a priori", "OZL a priori vs transformada+codec", "melhor OZL", "melhor OZL vs transformada+codec"], linhas))
+        md.append("")
+        md.append("Violacoes de bit-exatidao nesta secao: %d." % len(transformadas.get("violacoes_bit_exatidao", [])))
         md.append("")
     md.append("## Referencias publicadas (apenas rotuladas; nao usadas para concluir)")
     md.append("")
@@ -1343,6 +1849,7 @@ def main():
     p.add_argument("--treino-max-s", type=int, default=360)
     p.add_argument("--threads", type=int, default=16)
     p.add_argument("--sem-treino", action="store_true")
+    p.add_argument("--salvar-compressores")
     p.add_argument("--retomar", action="store_true")
     p.add_argument("--somente", nargs="*")
     p.set_defaults(fn=cmd_razao)
@@ -1355,12 +1862,21 @@ def main():
     p.add_argument("--threads", type=int, default=16)
     p.add_argument("--saida", default="bench/resultados/openzl_determinismo_treino.json")
     p.set_defaults(fn=cmd_determinismo_treino)
+    p = sub.add_parser("quadro")
+    p.add_argument("--fatias", required=True)
+    p.add_argument("--saida", default="bench/resultados/openzl_quadro.json")
+    p.set_defaults(fn=cmd_quadro)
+    p = sub.add_parser("transformadas")
+    p.add_argument("--fatias", required=True)
+    p.add_argument("--saida", default="bench/resultados/openzl_transformadas.json")
+    p.set_defaults(fn=cmd_transformadas)
     p = sub.add_parser("tempo")
     p.add_argument("--fatias", required=True)
     p.add_argument("--saida", default="bench/resultados/openzl_tempo.json")
     p.add_argument("--cpu", default="0")
     p.add_argument("--repeticoes", type=int, default=3)
     p.add_argument("--somente", nargs="*")
+    p.add_argument("--compressores")
     p.add_argument("--carga-maxima", type=float, default=1.0)
     p.add_argument("--confirmo-janela-exclusiva", action="store_true")
     p.add_argument("--dry-run", action="store_true")
@@ -1369,6 +1885,9 @@ def main():
     p.add_argument("--razao", default="bench/resultados/openzl_razao.json")
     p.add_argument("--tempo", default="bench/resultados/openzl_tempo.json")
     p.add_argument("--determinismo", default="bench/resultados/openzl_determinismo_treino.json")
+    p.add_argument("--determinismo-extra", nargs="*", default=["bench/resultados/openzl_determinismo_treino_1thread.json"])
+    p.add_argument("--quadro", default="bench/resultados/openzl_quadro.json")
+    p.add_argument("--transformadas", default="bench/resultados/openzl_transformadas.json")
     p.add_argument("--md", default="bench/resultados/openzl.md")
     p.add_argument("--json", default="bench/resultados/openzl.json")
     p.set_defaults(fn=cmd_relatorio)

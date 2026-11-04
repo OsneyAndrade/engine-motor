@@ -150,10 +150,12 @@ pub fn encode(data: &[u8], codec: Codec, level: i32, dict: Option<&[u8]>) -> io:
         }
 
         Codec::Brotli => {
-            let mut params = brotli::enc::BrotliEncoderParams::default();
-            params.quality = level;
-            params.lgwin = 24;
-            params.size_hint = data.len();
+            let params = brotli::enc::BrotliEncoderParams {
+                quality: level,
+                lgwin: 24,
+                size_hint: data.len(),
+                ..Default::default()
+            };
             let mut out = Vec::with_capacity(data.len() / 3 + 64);
             let mut input = Cursor::new(data);
             brotli::BrotliCompress(&mut input, &mut out, &params)?;
@@ -198,6 +200,7 @@ pub const MAX_DECOMPRESSED: u64 = 64 * 1024 * 1024 * 1024;
 pub const XZ_MEMLIMIT: u64 = 256 * 1024 * 1024;
 const READ_CHUNK: usize = 128 * 1024;
 const CAPACITY_PER_INPUT_BYTE: usize = 64;
+const LZ4_MAX_EXPANSION: usize = 255;
 const CAPACITY_FLOOR: usize = 1024 * 1024;
 
 #[derive(Debug)]
@@ -223,6 +226,7 @@ pub fn too_large_limit(e: &io::Error) -> Option<u64> {
         .map(|t| t.limit)
 }
 
+#[cfg(test)]
 pub fn decode(
     data: &[u8],
     codec: Codec,
@@ -255,6 +259,16 @@ pub fn decode_limited(
                 lz4_flex::block::uncompressed_size(data).map_err(io::Error::other)?;
             if declared as u64 > limit {
                 return Err(too_large(limit));
+            }
+            let plausible = body
+                .len()
+                .saturating_mul(LZ4_MAX_EXPANSION)
+                .saturating_add(CAPACITY_FLOOR);
+            if declared > plausible {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    "prefixo LZ4 maior do que o bloco comprimido pode produzir",
+                ));
             }
             lz4_flex::block::decompress(body, declared).map_err(io::Error::other)
         }

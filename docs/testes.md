@@ -12,7 +12,7 @@ docker run --rm --cpuset-cpus=16-31 \
 
 - `--cpuset-cpus=16-31` prende o build aos E-cores deste notebook para não perturbar medições nos P-cores; ajuste ou remova em outra máquina.
 - `syntra-target` é o volume de artefatos. Quem rodar em paralelo com outra sessão deve usar **outro volume** (`syntra-target-m1`, por exemplo) para não disputar o *lock* do `target`.
-- Resultado esperado no marco M1: **174 passed, 0 failed, 2 ignored** (122 testes anteriores + 3 do corpus dourado + 41 do formato v4 + 8 do *probe*; os 2 ignorados são o gerador do corpus e o microbenchmark).
+- Resultado esperado no fechamento do M2b: **224 passed, 0 failed, 2 ignored** (em tempo de parede de cerca de 70 s). No marco M1 eram 174 (122 testes anteriores + 3 do corpus dourado + 41 do formato v4 + 8 do *probe*); o M2b somou a suíte de robustez, as bombas, os testes de `413`, de ledger, de ingestão e de teto de descompressão. Os 2 ignorados são o gerador do corpus e o microbenchmark.
 
 Subconjuntos (acrescente ao final do comando, depois de `cargo test --locked`):
 
@@ -21,6 +21,10 @@ Subconjuntos (acrescente ao final do comando, depois de `cargo test --locked`):
 | `golden` | restauro do corpus dourado v2/v3 e seus limites |
 | `blockfile` | formato v4: round-trip, fuzz do parser, corrupção injetada, compatibilidade |
 | `probe` | *probe* de incompressibilidade |
+| `robustez` | fuzz determinístico das inversões de transform, dos decoders de todos os codecs, de envelopes forjados e da mutação do corpus dourado (Seção 5); `-- --nocapture` imprime as linhas `FUZZ ...` com os contadores |
+| `bombas` | bombas reais de 1 GiB de zeros em lz4, zstd, brotli, xz, bzip2 e deflate, contra `codec::decode_limited`, `container::restore_with_limit` e o formato v4 (a primeira chamada gera as seis bombas, cerca de 20 s) |
+| `watcher` | ingestão por diretório, incluindo o registro persistido e o reinício |
+| `api::e2e` | API ponta a ponta em processo: `413` e `422` em JSON, ledger, bombas pela rota `/decompress`, cobrança |
 | `blockfile::tests::fuzz -- --nocapture` | imprime quantas entradas o fuzz do parser gerou (24 977 no marco M1) |
 
 O clippy não vem na imagem. Instale-o **dentro do contêiner efêmero** (nada fica no host):
@@ -32,7 +36,7 @@ docker run --rm --cpuset-cpus=16-31 \
   sh -c 'rustup component add clippy && cargo clippy --all-targets --locked'
 ```
 
-Em 2026-11-04 os módulos novos (`blockfile`, `blockfile_tests`, `probe`, `golden`) saem sem avisos; restam avisos antigos em `codec`, `content`, `dict_store`, `planner`, `tenancy`, `transform`, `usage` e `vault`, que o M1 não tocou.
+Em 2026-11-04, no fechamento do M2b, `cargo clippy --all-targets --locked` termina **sem nenhum aviso** (os 16 avisos antigos de `codec`, `content`, `dict_store`, `planner`, `tenancy`, `transform`, `usage` e `vault` foram corrigidos sem mudar comportamento; funções que só os testes usam, como `codec::decode`, `container::restore`, `transform::invert` e `transform::invert_chain`, passaram a `#[cfg(test)]`, o que também impede o código de produção de chamar um decodificador sem teto).
 
 ## 2. Corpus dourado v2/v3
 
@@ -129,3 +133,31 @@ Medição de 2026-11-04 (um E-core, release sem LTO, três execuções, variaç�
 | `zstd-3` em texto | 2620 a 2650 |
 
 Razão *probe* / `zstd-3` em bloco incompressível: **1,01 a 1,02%** (0,14% em texto). Ressalva: este E-core detecta incompressível a 2,9 GB/s, não aos ~5,5 GB/s do benchmark de referência; o custo do *probe* é praticamente constante (amostra de 4 KiB), então num núcleo em que o `zstd-3` leve ~190 µs o mesmo *probe* seria ~2%, no limite da meta. Medir em P-core ou no servidor-alvo quando houver (T1.5, T1.11).
+
+## 5. Robustez diante de entrada hostil (M2b)
+
+Todos os testes abaixo usam PRNG xorshift com sementes fixas (reproduzíveis), rodam com a suíte e não têm dependências novas. Cada um captura pânico (`catch_unwind`), mede o pico de alocação do Rust (`src/memtrack.rs`, alocador contador só em teste), cronometra cada caso (limite de 10 s) e tem um vigia que aborta o processo se um caso passar de 60 s.
+
+| Teste (`src/robustez_tests.rs`) | Casos | O que gera |
+|---|---:|---|
+| `fuzz_delta_...`, `fuzz_byte_split_...`, `fuzz_rle_...` | 25.000 cada | entradas aleatórias, amostras válidas mutadas e pares de controle RLE hostis, com larguras e `input_len` hostis, contra `invert` e `invert_limited` com teto aleatório |
+| `fuzz_csv_colunar_comprimentos_hostis_...` | 25.000 | cabeçalho colunar válido com varints de comprimento hostis (2^64-1, `usize::MAX`, 10 bytes `0xFF`) |
+| `fuzz_csv_colunar_dimensoes_hostis_...` | 25.000 | linhas e colunas hostis (0, 2^63, `usize::MAX`, produtos que estouram) |
+| `fuzz_csv_colunar_mutacoes_do_formato_valido` | 25.000 | tabela colunar real, mutada (bit flip, truncamento, inserção, remoção, varint sujo) |
+| `fuzz_dos_decoders_de_todos_os_codecs` | 3.000 por codec (21.000) | payload real mutado ou aleatório, `expected_len` ausente, verdadeiro ou hostil, teto de 1 MiB |
+| `fuzz_envelopes_forjados_com_checksum_valido` e `..._com_tamanho_original_hostil` | 20.000 cada | `ProcessedFile` forjado e selado (checksum válido) com codec, versão, transforms, dicionário e `file_hash` hostis |
+| `fuzz_de_mutacao_do_corpus_dourado_nao_causa_panico` | 24.400 (400 por envelope) | os 61 envelopes v2/v3 do corpus dourado com mutação nos bytes serializados, na camada de transform e nos campos |
+
+Regras de aceite de cada caso: nenhum pânico, nenhuma saída acima do teto, pico de alocação proporcional à entrada, tempo < 10 s. O contador `FUZZ ...` de cada teste imprime `casos`, `panicos`, `saidas_acima_do_teto`, `estouros_de_memoria`, `ok`, `erros`, `pico_max_bytes` e `tempo_max_ms`.
+
+`src/bombas_tests.rs` gera bombas **reais** de 1 GiB de zeros (zstd com tamanho declarado e sem, brotli, xz, bzip2, deflate e um bloco lz4 construído à mão) e exige: recusa em menos de 10 s, erro tipado com o teto certo, pico de alocação até o teto mais folga de leitura, capacidade final do buffer sem passar do teto, e o limite exato (saída igual ao teto passa, um byte acima falha) em todos os codecs. Também cobre `stored`, prefixo LZ4 inflado, `original_size` forjado, amplificação por RLE encadeado, cadeia de 9 transforms e a recusa no formato v4. A rota `/decompress` recebe as mesmas bombas no teste `bombas_reais_de_1_gib_em_todos_os_codecs_viram_422_rapido_pela_api`.
+
+### Como reproduzir "o teste falha no código antigo"
+
+O M2b exige que cada defeito tenha teste que falha antes e passa depois. Procedimento usado (nada disso entra no repositório):
+
+```
+mkdir /tmp/antigo && git archive a3b9ab0 -- Cargo.toml Cargo.lock build.rs proto src static | tar -x -C /tmp/antigo
+```
+
+Copie para `/tmp/antigo/src` os arquivos `robustez_tests.rs`, `memtrack.rs`, `bombas_tests.rs` (sem as linhas do `blockfile`) e `testdata/golden/`, registre os módulos em `main.rs` (alocador contador sob `#[cfg(test)]`) e acrescente **só** estas funções de cola, que repassam para as funções antigas sem teto: `codec::decode_limited`, `transform::invert_limited`, `container::restore_with_limit`, `codec::too_large_limit` (devolve `None`) e a variante `ContainerError::DecompressedTooLarge`. Rode cada teste isolado (`cargo test --locked <nome> -- --exact`) no mesmo contêiner, com `--memory=12g`, porque no código antigo alguns casos abortam o processo. O resultado de 2026-11-04 está em [seguranca.md](seguranca.md#5-evidência-medida-2026-11-04).

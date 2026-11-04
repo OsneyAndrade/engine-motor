@@ -1,6 +1,6 @@
 # Índice de docs/ e bench/
 
-Escrito em 2026-11-04 (marco M2 do [plano de trabalho](plano-de-trabalho.md)). O estado de cada item é o que o próprio documento declara nessa data; quando um documento novo entrar em `docs/` (por exemplo, a especificação do formato v4 do marco M1), acrescente a linha aqui.
+Escrito em 2026-11-04 (marco M2 do [plano de trabalho](plano-de-trabalho.md)) e atualizado no fechamento do M2b. O estado de cada item é o que o próprio documento declara nessa data; quando um documento novo entrar em `docs/`, acrescente a linha aqui.
 
 Para **usar** o motor, comece por [uso.md](uso.md) e pelo [README da raiz](../README.md). Os documentos abaixo explicam **por que** o projeto é como é e **para onde** vai.
 
@@ -8,10 +8,13 @@ Para **usar** o motor, comece por [uso.md](uso.md) e pelo [README da raiz](../RE
 
 | Documento | O que é | Estado |
 |---|---|---|
-| [uso.md](uso.md) | Guia de uso e operação: subir (Docker, compose), variáveis, chaves e tenants, CLI, ingestão por diretório, backup, métricas e limites conhecidos | **Novo (M2).** Verificado em 2026-11-04 com `scripts/smoke.sh`; o que não foi executado está marcado |
-| [plano-de-trabalho.md](plano-de-trabalho.md) | Plano para levar o motor a 5 PB/mês: condições V1 a V6, decisões D1 a D9, tarefas por fase, riscos e os marcos M1 a M5 (seção 12) | **Vivo.** Fase 1: T1.1 a T1.3 feitas, T1.4 a T1.6 pendentes; M1 e M2 em execução; M3 a M5 pendentes; faixa neural congelada |
+| [uso.md](uso.md) | Guia de uso e operação: subir (Docker, compose), variáveis, chaves e tenants, CLI, ingestão por diretório, backup, métricas e limites conhecidos | **M2, atualizado no M2b** (publicação em loopback, `watch_in`, registro persistido da ingestão, `413` em JSON, teto de descompressão). Verificado em 2026-11-04 com `scripts/smoke.sh`; o que não foi executado está marcado |
+| [seguranca.md](seguranca.md) | Modelo de ameaça de uma API que recebe envelopes e corpos de clientes: envelope forjado, bomba de descompressão, corpo gigante, id malicioso, reingestão; defesas, limites configuráveis e **o que ainda não está coberto** | **Novo (M2b).** Cada defesa aponta o código e o teste; as lacunas estão listadas sem eufemismo |
+| [testes.md](testes.md) | Como rodar a suíte, o clippy, o corpus dourado, o fuzz, as bombas e os microbenchmarks, sempre em contêiner | M1, atualizado no M2b (suíte de robustez, contagem de testes, clippy sem avisos) |
+| [blockfile-v4.md](blockfile-v4.md) | Especificação do formato v4 em blocos (`src/blockfile.rs`): layout byte a byte, invariantes, limites, API, decisões e riscos | M1: módulo isolado, **não ligado à API**; riscos 1 e 2 da seção 6 resolvidos no M2b |
+| [plano-de-trabalho.md](plano-de-trabalho.md) | Plano para levar o motor a 5 PB/mês: condições V1 a V6, decisões D1 a D9, tarefas por fase, riscos e os marcos M1 a M5 e M2b (seção 12) | **Vivo.** Fase 1: T1.1 a T1.3 feitas, T1.4 a T1.6 pendentes; M1, M2 e M2b feitos; M3 a M5 pendentes; faixa neural congelada |
 | [pesquisa-compressao-neural.md](pesquisa-compressao-neural.md) | Pesquisa: estado da arte (neural e clássico), armazenamento, modos de falha, viabilidade de 5 PB/mês (seção 9) e benchmark com direção de desenvolvimento (seção 10, rodadas 1 a 3) | **Documento vivo, com 3 rodadas de benchmark registradas**; as seções 9 e 10 sustentam o plano. Contém números medidos e inferências, cada um rotulado |
-| [adr-001-envelope-v4-blocos.md](adr-001-envelope-v4-blocos.md) | ADR 001: envelope v4 em blocos independentes de 1 MiB, rodapé com tabela de blocos e processamento em fluxo; critérios de aceite A1 a A9 | **Proposta, não ligada à API.** O marco M1 implementa o módulo isolado; a integração é o M3 |
+| [adr-001-envelope-v4-blocos.md](adr-001-envelope-v4-blocos.md) | ADR 001: envelope v4 em blocos independentes de 1 MiB, rodapé com tabela de blocos e processamento em fluxo; critérios de aceite A1 a A9 | **Proposta, não ligada à API.** O marco M1 implementou o módulo isolado ([blockfile-v4.md](blockfile-v4.md)); a integração é o M3 |
 | [anexos/](anexos/) | Cálculos de apoio da pesquisa (abaixo) | Scripts em Python, só biblioteca padrão, sem comentários; não foram reexecutados no M2 |
 
 ### docs/anexos/
@@ -57,7 +60,7 @@ Benchmark reprodutível de razão e vazão por núcleo, convertido em núcleos p
 
 | Arquivo | O que faz |
 |---|---|
-| [smoke.sh](../scripts/smoke.sh) | Teste de fumaça ponta a ponta em Docker (constrói a imagem, sobe o serviço, comprime, restaura, mede, limpa tudo) |
+| [smoke.sh](../scripts/smoke.sh) | Teste de fumaça ponta a ponta em Docker (constrói a imagem, sobe o serviço, comprime, restaura, mede, injeta bombas de descompressão e envelope hostil, confere a publicação em loopback, limpa tudo) |
 | [syntra.sh](../scripts/syntra.sh) | Cliente de linha de comando sobre `curl` (comprimir, restaurar, baixar, analisar, inspecionar, listar, consumo) |
 
 Os dois são descritos em [uso.md](uso.md#1-verificação-rápida). Convenção do projeto: nenhum comentário em código, nem em scripts; o "porquê" fica nos documentos.
@@ -67,5 +70,5 @@ Os dois são descritos em [uso.md](uso.md#1-verificação-rápida). Convenção 
 | Arquivo | O que é |
 |---|---|
 | [README.md](../README.md) | Visão geral, garantias, API, configuração, medições, estado e roadmap |
-| `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml` | Imagem de produção, compose de desenvolvimento (Postgres, API aberta) e de produção (chaves e senha obrigatórias) |
+| `Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml` | Imagem de produção, compose de desenvolvimento (Postgres, API aberta, `./watch_in` montado) e de produção (chaves e senha obrigatórias); os dois publicam a porta só em `127.0.0.1` por padrão |
 | `Dockerfile.dev` | Imagem de desenvolvimento com `cargo watch` (não exercitada no M2) |

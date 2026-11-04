@@ -5,7 +5,6 @@ fn main() {
     if std::env::var_os("PROTOC").is_none() && !protoc_no_path() {
         match protoc_bin_vendored::protoc_bin_path() {
             Ok(path) => {
-                println!("cargo:warning=usando protoc vendorizado: {}", path.display());
                 std::env::set_var("PROTOC", path);
             }
             Err(e) => {

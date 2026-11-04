@@ -2,7 +2,7 @@
 
 Para quem vai subir, operar e consumir o Syntra Engine. O contrato da API, as garantias e o modelo de cobrança estão no [README](../README.md); aqui está o **ciclo de uso**: subir, comprimir, restaurar, medir, fazer backup e conhecer os limites.
 
-Tudo o que está marcado como **verificado** foi executado em 2026-11-04 (M2 do [plano de trabalho](plano-de-trabalho.md)) com `scripts/smoke.sh` ou com os roteiros descritos neste guia, sobre a imagem construída do `Dockerfile` do projeto. O que não foi executado está dito como tal.
+Tudo o que está marcado como **verificado** foi executado em 2026-11-04 (M2 e M2b do [plano de trabalho](plano-de-trabalho.md)) com `scripts/smoke.sh` ou com os roteiros descritos neste guia, sobre a imagem construída do `Dockerfile` do projeto. O que não foi executado está dito como tal. Para o modelo de ameaça e o que ainda não está coberto, veja [seguranca.md](seguranca.md).
 
 ## Índice
 
@@ -34,9 +34,13 @@ O script constrói a imagem (`syntra-engine:smoke`), sobe um contêiner **descar
 | Ciclo por arquivo (CSV de 5 MB, NDJSON, 2 MB aleatórios, arquivo vazio, 1 byte) | `compress` com os cabeçalhos `x-syntra-*`; `decompress` byte a byte (`cmp`); reenvio deduplicado; `GET /objects/:id`, `/content` e `/essence`; dado aleatório vira `stored` sem expandir |
 | API | `analyze` (não grava), `codecs`, `health`, `ready`, `metrics` (`syntra_verify_failures_total 0`), OpenAPI, dashboard, `stats` |
 | Erros e autenticação | sem chave ou chave errada: `401`; id malformado: `400`; id inexistente: `404`; nível inválido: `400`; container com 1 byte alterado: `422` |
+| Ledger | `analyze`, `decompress` e leitura gravam `bytes_in > 0` e `cpu_ms > 0` (`/usage?events=500`) |
+| Limites (contêiner extra com `SYNTRA_MAX_BODY_MB=1`) | `413` em JSON padrão (`payload_too_large`, mensagem e `hint`) em `/compress`, `/decompress` e `/analyze`; corpo pequeno ainda passa; envelope legítimo de 5 MB devolve `422 decompressed_too_large`; bombas de 1 GiB sem tamanho declarado (xz, bzip2) devolvem o mesmo `422` |
+| Entrada hostil (contêiner principal) | bombas reais de 1 GiB em lz4, deflate, xz e bzip2 com tamanho declarado de 1 MiB: `422 decompressed_too_large` com `hint`, em menos de 10 s; envelope com varint colunar de 2^64-1: `422 restore_failed`; depois disso `/health` e `/content` seguem respondendo e o contêiner segue de pé |
+| Publicação | `docker port` do contêiner de teste só em `127.0.0.1`; o endereço da máquina fora do loopback não responde; `docker compose config` dos dois arquivos mostra `127.0.0.1:3002` por padrão e aceita `SYNTRA_PUBLISH_HOST` e `SYNTRA_PUBLISH_PORT` |
 | Tenants | criar tenant e chave, comprimir com a chave, `/usage` e cotação, `Idempotency-Key`, isolamento (`404`), escopos (`403`), revogação (`401`) |
 | CLI | `scripts/syntra.sh` contra o próprio serviço (compress, decompress, get, analyze, inspect, list, stats, usage, codecs, health e os códigos de erro) |
-| Operação | ingestão por diretório, remoção com e sem `purge`, reinício do contêiner (dados persistem), encerramento por `SIGTERM` com código 0 |
+| Operação | ingestão por diretório, remoção com e sem `purge`, reinício do contêiner (dados persistem e o arquivo inalterado do diretório observado **não** é reingerido: 1 referência, nenhum evento `compress` novo), encerramento por `SIGTERM` com código 0 |
 
 Ao final, imprime a tabela `arquivo, tamanho, essência, economia %, plano, ok`.
 
@@ -48,9 +52,11 @@ Ao final, imprime a tabela `arquivo, tamanho, essência, economia %, plano, ok`.
 | `SYNTRA_SMOKE_PG_IMAGE` | `postgres:16-alpine` | imagem do Postgres do modo `postgres` |
 | `SYNTRA_SMOKE_READY_TIMEOUT` | `120` | segundos de espera por `/ready` |
 
-Os dois modos (`sqlite` e `postgres`) passaram com o mesmo conjunto de passos. O modo `postgres` cobre o caminho que os 122 testes de `cargo test` **não** cobrem (eles usam `sqlite::memory:`).
+Resultado de 2026-11-04 (fechamento do M2b), mesma máquina e imagem construída do `Dockerfile` do projeto: **SQLite, 100 PASS, 0 FAIL, 27 s**; **Postgres, 100 PASS, 0 FAIL, 31 s** (os dois com a imagem já em cache e sem sobras no Docker). No M2 eram 81 passos; o M2b acrescentou o ledger, os limites (`413` em JSON e teto de descompressão), as bombas e o envelope hostil, a publicação em loopback e a ingestão com reinício.
 
-Tempos medidos na máquina de desenvolvimento (32 threads, compartilhada): construção da imagem em **47 s** com a camada de dependências em cache (só o crate do motor recompila) e em **90 s e 93 s** em duas construções com `docker build --no-cache` (a segunda, de um instantâneo limpo do commit `a3b9ab0`); imagem final de 170 MB; serviço pronto em ~2 s; com a imagem em cache (`SYNTRA_SMOKE_SKIP_BUILD=1`) o teste inteiro leva 7 s com SQLite e 12 s com Postgres. Em máquina menor, espere mais. O `HEALTHCHECK` da imagem (intervalo de 30 s) não foi observado até o estado `healthy`; o smoke consulta `/ready` diretamente.
+O modo `postgres` cobre o caminho que o `cargo test` **não** cobre (os testes usam `sqlite::memory:`).
+
+Tempos medidos na máquina de desenvolvimento (32 threads, compartilhada) no M2: construção da imagem em **47 s** com a camada de dependências em cache (só o crate do motor recompila) e em **90 s e 93 s** em duas construções com `docker build --no-cache` (a segunda, de um instantâneo limpo do commit `a3b9ab0`); imagem final de 170 MB; serviço pronto em ~2 s. Com a imagem em cache o teste inteiro leva cerca de 30 s (27 s com SQLite e 31 s com Postgres no M2b; a geração das bombas de 1 GiB em Python soma uns 7 s). Em máquina menor, espere mais. O `HEALTHCHECK` da imagem (intervalo de 30 s) não foi observado até o estado `healthy`; o smoke consulta `/ready` diretamente.
 
 ---
 
@@ -83,10 +89,19 @@ docker compose up --build
 
 Sobe Postgres + motor, com esforço `max`, **sem chave** (API aberta) e dashboard em <http://localhost:3002/>. Verificado, num projeto compose separado (nome, portas e contêineres próprios): o ciclo comprimir/restaurar pelo CLI fechou byte a byte e `GET /api/v1/stats` respondeu `database.backend = postgres` e `auth_enabled = false`.
 
-Dois cuidados, ambos verificados:
+Dois cuidados (corrigidos no M2b; no M2 os dois eram defeitos, e o resultado de cada correção está no roteiro ao fim desta seção):
 
-- **Crie `watch_in/` antes.** Se o diretório não existir, o Docker o cria como `root:root 755` e o seu usuário recebe `Permission denied` ao copiar arquivos para ele.
-- **A porta 3002 é publicada em todas as interfaces** (`"3002:3002"`), não só em `127.0.0.1`. Com a API aberta, qualquer máquina da rede alcança o motor. Em máquina exposta, edite para `"127.0.0.1:3002:3002"`.
+- **Crie `watch_in/` antes.** O diretório do host é montado em `/data/watch_in` com `create_host_path: false`: se ele não existir, o `up` **falha** (`bind source path does not exist`) em vez de o Docker criá-lo como `root:root`, que era o defeito (o usuário recebia `Permission denied` ao copiar arquivos). Criado por você, o diretório é seu. O motor roda como uid 1000: com outro uid no host, o motor lê os arquivos (diretório `755`), mas só consegue apagar a origem (`SYNTRA_WATCH_DELETE_SOURCE=true`) se o diretório for gravável por ele. `SYNTRA_WATCH_HOST_DIR` aponta outro diretório.
+- **A porta é publicada só em `127.0.0.1`** por padrão (`SYNTRA_PUBLISH_HOST`, `SYNTRA_PUBLISH_PORT`); o Postgres também (`SYNTRA_POSTGRES_PORT`). Com a API aberta, não troque `SYNTRA_PUBLISH_HOST` para `0.0.0.0` sem pôr um proxy com chave na frente.
+
+Para subir uma segunda instância (ou rodar ao lado de outros projetos), `SYNTRA_CONTAINER_PREFIX=outro docker compose -p outro up --build` troca os nomes dos contêineres, e as portas saem de `SYNTRA_PUBLISH_PORT` e `SYNTRA_POSTGRES_PORT`.
+
+Roteiro verificado em 2026-11-04 (projeto compose próprio: `-p`, prefixo, portas e `SYNTRA_WATCH_HOST_DIR` fora do repositório; tudo removido com `down -v --rmi local`):
+
+1. Sem o diretório: `docker compose up` falhou com `invalid mount config for type "bind": bind source path does not exist` e o diretório **não** foi criado.
+2. Com o diretório criado por um usuário comum: Postgres e motor saudáveis; `docker port` mostrou `127.0.0.1:<porta>`; o endereço da máquina na LAN recusou a conexão; `GET /api/v1/stats` respondeu `backend = postgres`, `auth_enabled = false`.
+3. Um arquivo copiado por esse usuário para `./watch_in` foi arquivado em 2 s, com conteúdo idêntico (`/content`), e o dono do diretório e do arquivo seguiu sendo o usuário (nenhum `root`).
+4. Depois de `docker compose restart engine`: 1 objeto, 1 referência e 1 evento `compress` (nada reingerido, com Postgres); modificar o arquivo gerou o segundo objeto em 2 s.
 
 ### 2.3 `docker compose` de produção
 
@@ -96,9 +111,9 @@ export POSTGRES_PASSWORD="$(python3 -c 'import secrets; print(secrets.token_hex(
 docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-As duas variáveis são obrigatórias: sem elas `docker compose -f docker-compose.prod.yml config -q` falha com `defina SYNTRA_API_KEYS` e `defina POSTGRES_PASSWORD` (verificado; com as duas definidas a configuração valida). **O arquivo de produção não foi levantado** nesta verificação: o que foi levantado é o de desenvolvimento e o smoke contra Postgres.
+As duas variáveis são obrigatórias: sem elas `docker compose -f docker-compose.prod.yml config -q` falha com `defina SYNTRA_API_KEYS` e `defina POSTGRES_PASSWORD` (verificado; com as duas definidas a configuração valida). **O arquivo de produção foi levantado e verificado em 2026-11-04 (M2b)**, com `SYNTRA_API_KEYS`, `POSTGRES_PASSWORD`, `SYNTRA_CONTAINER_PREFIX` e `SYNTRA_PUBLISH_PORT` próprios (para não colidir com nada, e removido com `down -v --rmi local`): `up -d --build --wait` terminou com Postgres e motor `healthy`; a porta saiu em `127.0.0.1:<porta>` e o endereço da máquina na LAN recusou a conexão; sem chave `POST /api/v1/compress` devolveu `401`; com a chave `GET /api/v1/stats` mostrou `backend = postgres`, autenticação ativa e `max_body_mb` e `max_decompressed_mb` de 10240; `/ready` devolveu `ready: true`. Sem as duas variáveis, `docker compose -f docker-compose.prod.yml config` falha com `defina SYNTRA_API_KEYS` e `defina POSTGRES_PASSWORD`. Não foi observado: carga, retenção por semanas, `HEALTHCHECK` fora dos primeiros minutos, o comportamento atrás de proxy com TLS.
 
-Pontos do arquivo, lidos e não executados: ingestão por diretório desligada (`SYNTRA_WATCH_ENABLED=false`), limite de corpo de **10240 MB** (veja a [seção 9](#9-limites-conhecidos)), volumes nomeados `syntra_data_prod` e `syntra_postgres_prod_data`, e a mesma porta `3002:3002` em todas as interfaces. Coloque um proxy com TLS na frente e restrinja `/metrics`, que é aberto por design.
+Pontos do arquivo: ingestão por diretório desligada (`SYNTRA_WATCH_ENABLED=false`), limite de corpo de **10240 MB** (e, sem `SYNTRA_MAX_DECOMPRESSED_MB`, teto de descompressão também de 10240 MB: veja a [seção 9](#9-limites-conhecidos) e [seguranca.md](seguranca.md#3-limites-configuráveis)), volumes nomeados `syntra_data_prod` e `syntra_postgres_prod_data` (com `SYNTRA_CONTAINER_PREFIX` o prefixo muda; sem ele os nomes são os de sempre) e a porta publicada em `127.0.0.1:3002` por padrão. Coloque um proxy com TLS na frente e restrinja `/metrics`, que é aberto por design.
 
 ### 2.4 Sem Docker
 
@@ -116,6 +131,7 @@ A tabela completa está no [README](../README.md#configuração). O que muda ent
 | `SYNTRA_DEFAULT_EFFORT` | `balanced` | `balanced` | `max` | `balanced` |
 | `SYNTRA_API_KEYS` | vazio (API aberta) | vazio | vazio | obrigatório |
 | `SYNTRA_MAX_BODY_MB` | 4096 | 4096 | 4096 | 10240 |
+| `SYNTRA_MAX_DECOMPRESSED_MB` | igual a `SYNTRA_MAX_BODY_MB` | idem | idem (repassa a variável do host, se houver) | idem |
 | `SYNTRA_WATCH_ENABLED` | `true` | `true` | `true` | `false` |
 | Caminhos | relativos ao diretório atual | `/data/...` | `/data/...` | `/data/...` |
 
@@ -237,7 +253,13 @@ scripts/syntra.sh get <ID> --out relatorio.csv
 ```
 
 - Não apaga o original, a não ser com `SYNTRA_WATCH_DELETE_SOURCE=true` **e** arquivamento confirmado.
-- Dentro de um mesmo processo, um arquivo só é reprocessado se tamanho ou data de modificação mudarem. **Depois de cada reinício o motor reingere tudo o que ainda estiver no diretório** ([`src/watcher.rs:39`](../src/watcher.rs): o registro do que já foi visto fica só em memória). Verificado: após um reinício, `references` foi de 1 para 2 e o ledger do tenant `default` ganhou um segundo evento `compress` (`dedup_same_tenant = 1`). Com `SYNTRA_WATCH_DELETE_SOURCE=false` (padrão) isso se repete a cada boot e **infla referências e consumo**; use `SYNTRA_WATCH_DELETE_SOURCE=true` ou esvazie o diretório depois de arquivar.
+- **O registro do que já foi arquivado é persistido** (tabela `watch_seen` do banco: caminho, tamanho, mtime em ns, hash do objeto; [`src/watch_registry.rs`](../src/watch_registry.rs)) e carregado no boot. Corrigido no M2b: no M2 ele ficava só em memória, e depois de um reinício `references` foi de 1 para 2 e o ledger do tenant `default` ganhou um segundo evento `compress`. Agora:
+  - arquivo inalterado (mesmo tamanho e mtime): ignorado, antes e depois de reiniciar;
+  - só o mtime mudou: o motor relê o arquivo, confere o BLAKE3 contra o hash registrado e, sendo igual, só atualiza o registro (sem referência nem evento novo);
+  - conteúdo diferente: vira objeto novo; o objeto da versão anterior **mantém** a sua referência (solte com `DELETE /objects/:id`);
+  - arquivo removido do diretório: sai do registro;
+  - registro ilegível ou banco novo: tudo é tratado como novo (o log avisa), então um banco perdido reingere o diretório.
+  Não percebe um arquivo trocado por outro de mesmo tamanho **e** mesmo mtime. Verificado pelo smoke: 1 referência e nenhum evento `compress` novo depois de `docker restart`.
 
 Em Docker com volume nomeado, entregue o arquivo pelo próprio contêiner (o usuário `syntra` precisa ser o dono):
 
@@ -347,7 +369,11 @@ docker exec syntra grep -E 'VmHWM|VmRSS' /proc/1/status
 
 `SYNTRA_MAX_BODY_MB` vale **4096** por padrão e **10240 no compose de produção**; com 3,5x, um único arquivo no limite do compose de produção pede da ordem de 36 GB de RAM, sem contar o paralelismo.
 
-Acima do limite o motor devolve `413`, mas com **texto puro** (`Failed to buffer the request body: length limit exceeded`), não no formato JSON `error.code` do resto da API (verificado com `SYNTRA_MAX_BODY_MB=1` e um envio de 2 MB; o CLI mostra `erro 413: ...`). Clientes devem tratar `413` pelo status, não pelo corpo.
+Acima do limite o motor devolve `413` **em JSON**, no mesmo formato do resto da API (`error.code = payload_too_large`, `message` com o limite em MB e `hint` citando `SYNTRA_MAX_BODY_MB`), em todas as rotas com corpo, com `x-request-id` e CORS (corrigido no M2b; no M2 a resposta era texto puro em inglês). Verificado pelo smoke com `SYNTRA_MAX_BODY_MB=1` e um envio de 2 MiB, e por um teste que percorre as 11 rotas com corpo. O contrato OpenAPI documenta o `413` nas rotas com corpo.
+
+### Teto de descompressão
+
+`SYNTRA_MAX_DECOMPRESSED_MB` (padrão: o valor de `SYNTRA_MAX_BODY_MB`) limita a saída de **toda** reconstrução, em todos os codecs. O limite efetivo é o menor entre ele e o `original_size` do envelope; estouro devolve `422 decompressed_too_large` com `hint`. Protege contra envelopes forjados e bombas de descompressão (1 GiB de zeros cabe em poucos KB), mas o padrão é alto: veja os riscos que restam e como escolher o valor em [seguranca.md](seguranca.md#3-limites-configuráveis). Atenção: `/compress` não confere o original contra este teto; com o teto abaixo do limite de corpo, um objeto grande é arquivado e depois `/content` devolve `422` (`/essence` ainda entrega o container).
 
 ### Envelope único
 
@@ -364,10 +390,11 @@ O formato v4 em blocos (ADR 001) está em desenho e implementação isolada (mar
 
 - **Tamanho mínimo do container.** O container acrescenta metadados ao payload: nas medições, +200 B (arquivo vazio), +339 B (1 byte), +367 B (2 MB aleatórios), +411 B (CSV), +429 B (NDJSON). Para arquivos de poucos bytes o `.syntra` é **maior** que o original, embora o payload nunca seja.
 - **Nome do objeto.** O nome registrado é o do **primeiro** envio do tenant para aquele conteúdo; envios posteriores do mesmo conteúdo com outro nome só incrementam `references`. `GET /objects?search=` é uma busca por trecho **desse nome**; não existe o parâmetro `type` (`name|mime|id`) que o README descrevia antes do M2. O `id` é o hash BLAKE3 e é a chave estável.
-- **Ledger de leitura.** Os eventos de `analyze` e `decompress` gravam `bytes_in = 0` e `cpu_ms = 0` (`src/service.rs:635-650` e `src/api/compress.rs:154-163`, no commit `a3b9ab0`); só a compressão preenche essas dimensões. Não dá para faturar nem dimensionar por esses campos nessas operações.
+- **Ledger.** Corrigido no M2b: `analyze`, `decompress` e leitura gravam `bytes_in`, `bytes_out` e `cpu_ms` (no M2 saíam `bytes_in = 0` e `cpu_ms = 0`). `totals.bytes_in` do `/usage` soma todas as operações; use `by_operation` para separar, e note que a cotação e o `savings_pct` usam só `compress`.
 - **Sem TLS e CORS aberto.** O motor fala HTTP puro e, sem `SYNTRA_CORS_ORIGINS`, libera qualquer origem. Use proxy reverso.
 - **Dashboard com autenticação.** `GET /` abre sem chave, mas as rotas de dados que ele consome (`/stats`, `/api/files`) exigem chave: com autenticação ativa a página fica sem dados (verificado: `/stats` sem chave devolve `401`).
-- **Reingestão a cada reinício** quando o diretório observado mantém os arquivos: veja a [seção 6](#6-ingestão-por-diretório).
+- **Ingestão por diretório:** segue links simbólicos e não percebe arquivo trocado por outro de mesmo tamanho e mtime; veja a [seção 6](#6-ingestão-por-diretório) e [seguranca.md](seguranca.md#6-o-que-ainda-não-está-coberto).
+- **Segurança.** Sem TLS, sem limite de taxa por IP ou chave, sem limite de concorrência de upload e sem timeout de leitura do corpo no motor: tudo isso fica no proxy. Lista completa em [seguranca.md](seguranca.md#6-o-que-ainda-não-está-coberto).
 - **Desempenho de servidor não medido.** Os números de vazão do README e do [benchmark](../bench/README.md) são de um notebook híbrido; **não existe medição do serviço sob carga**, nem em servidor, nem com I/O real de rede e disco.
 
 ---
@@ -382,8 +409,10 @@ O formato v4 em blocos (ADR 001) está em desenho e implementação isolada (mar
 | `404 not_found` num id que você acabou de enviar | O id pertence a **outro tenant**, ou o banco foi perdido (sem grant) | Confira a chave usada; veja a [seção 7](#7-backup-do-que-importa) |
 | `400 invalid_object_id` | O id não tem 64 dígitos hexadecimais | Use o `x-syntra-id` devolvido pelo `compress` |
 | `409 dictionary_unavailable` | Falta o dicionário com que a essência foi comprimida | Restaure `SYNTRA_DICT_PATH` |
-| `413` com texto em inglês | Corpo acima de `SYNTRA_MAX_BODY_MB` | Aumente o limite (e a RAM) ou divida o arquivo |
+| `413 payload_too_large` | Corpo acima de `SYNTRA_MAX_BODY_MB` | Aumente o limite (e a RAM) ou divida o arquivo |
+| `422 decompressed_too_large` | A reconstrução passaria do teto (o menor entre o `original_size` do envelope e `SYNTRA_MAX_DECOMPRESSED_MB`): objeto grande demais para o teto, ou envelope forjado | Se o objeto é legítimo, aumente `SYNTRA_MAX_DECOMPRESSED_MB`; senão, recuse o envelope |
 | `422 envelope_corrupted` | O container mudou depois de gerado | Use outra cópia do `.syntra` ou recomprima o original |
-| `Permission denied` ao copiar para `watch_in/` | O Docker criou o diretório como root | Com o contêiner parado e o diretório vazio, `rmdir watch_in && mkdir watch_in`; suba de novo |
+| `docker compose up` falha com `bind source path does not exist` | `./watch_in` não existe (o compose não o cria, de propósito) | `mkdir -p watch_in` e suba de novo |
+| `Permission denied` ao copiar para `watch_in/` | O diretório foi criado como root (compose do M2 ou outro meio) | Com o contêiner parado e o diretório vazio, `rmdir watch_in && mkdir watch_in`; suba de novo |
 | Arquivo colocado em `watch_in` não é arquivado | Vazio, oculto, `.tmp`/`.part`, subdiretório, ou ingestão desligada | Veja a [seção 6](#6-ingestão-por-diretório) |
 | Pico de memória muito acima do tamanho do arquivo | Arquivo inteiro em RAM, com cópia de verificação | Veja a [seção 9](#9-limites-conhecidos) |

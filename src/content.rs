@@ -318,10 +318,8 @@ fn detect_stride(sample: &[u8]) -> Option<u32> {
 
     for w in [2u32, 4, 8] {
         let r = match_rate(probe, w as usize);
-        if r > 0.25 && r > base * 1.6 {
-            if best.map(|(_, br)| r > br).unwrap_or(true) {
-                best = Some((w, r));
-            }
+        if r > 0.25 && r > base * 1.6 && best.map(|(_, br)| r > br).unwrap_or(true) {
+            best = Some((w, r));
         }
     }
 
@@ -360,7 +358,7 @@ mod tests {
     fn classifica_json_como_estruturado() {
         let mut s = String::from("[");
         for i in 0..400 {
-            s.push_str(&format!(r#"{{"id":{},"ativo":true,"tag":"x"}},"#, i));
+            s.push_str(&format!(r#"{{"id":{i},"ativo":true,"tag":"x"}},"#));
         }
         s.push(']');
         let p = classify(s.as_bytes(), "dados.json", None);

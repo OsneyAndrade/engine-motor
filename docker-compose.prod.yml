@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: syntra-postgres-prod
+    container_name: ${SYNTRA_CONTAINER_PREFIX:-syntra}-postgres-prod
     environment:
       POSTGRES_USER: syntra
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD}
@@ -23,7 +23,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: syntra-engine-prod
+    container_name: ${SYNTRA_CONTAINER_PREFIX:-syntra}-engine-prod
     environment:
       SYNTRA_DB_URL: postgres://syntra:${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD}@postgres:5432/syntra_monitoring
 
@@ -34,6 +34,7 @@ services:
 
       SYNTRA_BIND_ADDR: 0.0.0.0:3002
       SYNTRA_MAX_BODY_MB: 10240
+      SYNTRA_MAX_DECOMPRESSED_MB: ${SYNTRA_MAX_DECOMPRESSED_MB:-}
 
       SYNTRA_DEFAULT_EFFORT: balanced
       SYNTRA_VERIFY_ON_WRITE: "true"
@@ -66,11 +67,11 @@ services:
 
 volumes:
   postgres_prod_data:
-    name: syntra_postgres_prod_data
+    name: ${SYNTRA_CONTAINER_PREFIX:-syntra}_postgres_prod_data
   syntra_data_prod:
-    name: syntra_data_prod
+    name: ${SYNTRA_CONTAINER_PREFIX:-syntra}_data_prod
 
 networks:
   syntra-prod-network:
-    name: syntra-prod-network
+    name: ${SYNTRA_CONTAINER_PREFIX:-syntra}-prod-network
     driver: bridge

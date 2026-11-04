@@ -1,0 +1,3162 @@
+{
+ "data": "2026-11-04 20:17:50",
+ "python": "3.14.4",
+ "zstd": "1.5.7",
+ "autoteste": {
+  "rc": 0,
+  "linha_final": "autoteste: 41 testes, 41 passaram, 0 falharam, 43s",
+  "saida": [
+   "[ok]    classifica_texto                                             0.0s",
+   "[ok]    classifica_codigo                                            0.0s",
+   "[ok]    classifica_csv_json_log_xml_dna                              0.0s",
+   "[ok]    magic_bytes_containers_comprimidos                           0.0s",
+   "[ok]    magic_bytes_imagem_audio_video                               0.0s",
+   "[ok]    magic_bytes_binarios_banco_cientifico_cripto                 0.0s",
+   "[ok]    aleatorio_sem_magic_por_entropia                             0.0s",
+   "[ok]    numerico_por_entropia_dos_deltas                             0.0s",
+   "[ok]    arquivo_vazio                                                0.0s",
+   "[ok]    inventario_percentis_e_extensoes                             0.0s",
+   "[ok]    nao_segue_symlink_para_fora_da_raiz                          4.5s",
+   "[ok]    raiz_intacta_e_abertura_somente_leitura_nofollow             4.1s",
+   "[ok]    nao_escreve_fora_da_saida_e_sem_rede_ou_execucao             4.1s",
+   "[ok]    saida_dentro_da_raiz_recusada                                0.0s",
+   "[ok]    codigo_sem_imports_de_rede_nem_execucao                      0.0s",
+   "[ok]    codigo_sem_comentarios                                       0.0s",
+   "[ok]    nada_do_dado_e_executado                                     0.0s",
+   "[ok]    anonimizacao_nenhum_nome_vaza                                4.5s",
+   "[ok]    revelar_nomes_mostra_nomes                                   0.0s",
+   "[ok]    registro_de_leitura_fecha_com_o_inventario                   0.0s",
+   "[ok]    arquivo_ilegivel_nao_aborta                                  0.0s",
+   "[ok]    nomes_com_bytes_invalidos_em_utf8                            0.0s",
+   "[ok]    determinismo_por_semente_e_sal_aleatorio                     9.1s",
+   "[ok]    dedup_acha_copias_e_nao_confunde_mesmo_tamanho               0.0s",
+   "[ok]    dedup_hash_completo_igual_ao_prefiltro                       2.3s",
+   "[ok]    familias_acham_v1_v2_e_delta_barato                          0.0s",
+   "[ok]    familias_pares_conhecidos                                    0.0s",
+   "[ok]    arquivos_numerados_nao_viram_familia                         0.0s",
+   "[ok]    conta_bate_modelo_cliente_grade_27_casos                     0.0s",
+   "[ok]    conta_fim_a_fim_bate_modelo_cliente                          0.0s",
+   "[ok]    politica_por_classe                                          0.0s",
+   "[ok]    config_exige_fonte_e_tipo                                    0.0s",
+   "[ok]    limite_de_processos                                          0.0s",
+   "[ok]    estimador_e_ic_contra_o_censo                                9.0s",
+   "[ok]    fracao_incompressivel                                        0.7s",
+   "[ok]    ganho_de_transform_so_em_cientifico                          0.0s",
+   "[ok]    hardlink_conta_uma_vez_e_max_arquivos                        0.0s",
+   "[ok]    nunca_carrega_arquivo_inteiro                                1.8s",
+   "[ok]    subcomandos_separados_igual_a_tudo                           2.2s",
+   "[ok]    relatorio_formato_e_secoes                                   0.0s",
+   "[ok]    poucos_arquivos_baixa_confianca                              0.0s",
+   "autoteste: 41 testes, 41 passaram, 0 falharam, 43s"
+  ]
+ },
+ "a_corpora_publicos": {
+  "linhas_por_arquivo": [
+   {
+    "arquivo": "E.coli",
+    "classe_da_ferramenta": "sequencia",
+    "classe_medicoes": "dna",
+    "tamanho": 4638690,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 3.2858940084919013,
+    "razao_amostra_padrao": 3.2858940084919013,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.2858940084919013,
+    "razao_medicoes_inteiro": 3.2852889391894093,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.018417536895285223,
+    "erro_censo_vs_medicoes_inteira_pct": 0.018417536895285223
+   },
+   {
+    "arquivo": "E.coli",
+    "classe_da_ferramenta": "sequencia",
+    "classe_medicoes": "dna",
+    "tamanho": 4638690,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 3.310339955169335,
+    "razao_amostra_padrao": 3.310339955169335,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.310339955169335,
+    "razao_medicoes_inteiro": 3.3315641370751234,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.63706358432654,
+    "erro_censo_vs_medicoes_inteira_pct": -0.63706358432654
+   },
+   {
+    "arquivo": "E.coli",
+    "classe_da_ferramenta": "sequencia",
+    "classe_medicoes": "dna",
+    "tamanho": 4638690,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 3.4667771764841286,
+    "razao_amostra_padrao": 3.4667771764841286,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.4667771764841286,
+    "razao_medicoes_inteiro": 3.4744321182119897,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.22032209775335768,
+    "erro_censo_vs_medicoes_inteira_pct": -0.22032209775335768
+   },
+   {
+    "arquivo": "E.coli",
+    "classe_da_ferramenta": "sequencia",
+    "classe_medicoes": "dna",
+    "tamanho": 4638690,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 3.997867776273366,
+    "razao_amostra_padrao": 3.997867776273366,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.997867776273366,
+    "razao_medicoes_inteiro": 4.029848412321266,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.7935940208103023,
+    "erro_censo_vs_medicoes_inteira_pct": -0.7935940208103023
+   },
+   {
+    "arquivo": "E.coli",
+    "classe_da_ferramenta": "sequencia",
+    "classe_medicoes": "dna",
+    "tamanho": 4638690,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 3.7969887269619766,
+    "razao_amostra_padrao": 3.7969887269619766,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.7969887269619766,
+    "razao_medicoes_inteiro": 3.910612217370045,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -2.905516683637893,
+    "erro_censo_vs_medicoes_inteira_pct": -2.905516683637893
+   },
+   {
+    "arquivo": "E.coli",
+    "classe_da_ferramenta": "sequencia",
+    "classe_medicoes": "dna",
+    "tamanho": 4638690,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 3.7031428124371324,
+    "razao_amostra_padrao": 3.7031428124371324,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.7031428124371324,
+    "razao_medicoes_inteiro": 3.707973755479599,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.13028525445541092,
+    "erro_censo_vs_medicoes_inteira_pct": -0.13028525445541092
+   },
+   {
+    "arquivo": "aleatorio.bin",
+    "classe_da_ferramenta": "criptografado_aleatorio",
+    "classe_medicoes": "sint_incompressivel",
+    "tamanho": 33554432,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.999967576124584,
+    "razao_medicoes_inteiro": 0.9999759203033565,
+    "razao_medicoes_completo": 0.9999768143307701,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.002318620681759683,
+    "erro_censo_vs_medicoes_inteira_pct": 0.002318620681759683
+   },
+   {
+    "arquivo": "aleatorio.bin",
+    "classe_da_ferramenta": "criptografado_aleatorio",
+    "classe_medicoes": "sint_incompressivel",
+    "tamanho": 33554432,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.9999685297379671,
+    "razao_medicoes_inteiro": 0.9999759203033565,
+    "razao_medicoes_completo": 0.9999768143307701,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.002318620681759683,
+    "erro_censo_vs_medicoes_inteira_pct": 0.002318620681759683
+   },
+   {
+    "arquivo": "aleatorio.bin",
+    "classe_da_ferramenta": "criptografado_aleatorio",
+    "classe_medicoes": "sint_incompressivel",
+    "tamanho": 33554432,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.9999685297379671,
+    "razao_medicoes_inteiro": 0.9999759203033565,
+    "razao_medicoes_completo": 0.9999768143307701,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.002318620681759683,
+    "erro_censo_vs_medicoes_inteira_pct": 0.002318620681759683
+   },
+   {
+    "arquivo": "aleatorio.bin",
+    "classe_da_ferramenta": "criptografado_aleatorio",
+    "classe_medicoes": "sint_incompressivel",
+    "tamanho": 33554432,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.9999685297379671,
+    "razao_medicoes_inteiro": 0.9999760395069193,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "aleatorio.bin",
+    "classe_da_ferramenta": "criptografado_aleatorio",
+    "classe_medicoes": "sint_incompressivel",
+    "tamanho": 33554432,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.9998931998840456,
+    "razao_medicoes_inteiro": 0.9999427828150093,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "aleatorio.bin",
+    "classe_da_ferramenta": "criptografado_aleatorio",
+    "classe_medicoes": "sint_incompressivel",
+    "tamanho": 33554432,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.9952535493973268,
+    "razao_medicoes_inteiro": 0.9954192436857223,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "bible.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 4047392,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 3.108369205011923,
+    "razao_amostra_padrao": 3.108369205011923,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.108369205011923,
+    "razao_medicoes_inteiro": 3.1240265860019805,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.5011923093169024,
+    "erro_censo_vs_medicoes_inteira_pct": -0.5011923093169024
+   },
+   {
+    "arquivo": "bible.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 4047392,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 3.4109439654809157,
+    "razao_amostra_padrao": 3.4109439654809157,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.4109439654809157,
+    "razao_medicoes_inteiro": 3.454900712168148,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.2723013003649177,
+    "erro_censo_vs_medicoes_inteira_pct": -1.2723013003649177
+   },
+   {
+    "arquivo": "bible.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 4047392,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 3.8202296823957043,
+    "razao_amostra_padrao": 3.8202296823957043,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.8202296823957043,
+    "razao_medicoes_inteiro": 3.921089777187029,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -2.5722465060129553,
+    "erro_censo_vs_medicoes_inteira_pct": -2.5722465060129553
+   },
+   {
+    "arquivo": "bible.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 4047392,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 4.2775272432120515,
+    "razao_amostra_padrao": 4.362328436197054,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.2775272432120515,
+    "razao_medicoes_inteiro": 4.536138211609909,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 1.9824816573540849,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -3.8316684215662105,
+    "erro_censo_vs_medicoes_inteira_pct": -5.7011262958426245
+   },
+   {
+    "arquivo": "bible.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 4047392,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 4.3105419659364905,
+    "razao_amostra_padrao": 4.393738679066749,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.3105419659364905,
+    "razao_medicoes_inteiro": 4.5698130250203235,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 1.9300754705025571,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -3.852987966674873,
+    "erro_censo_vs_medicoes_inteira_pct": -5.67355945777847
+   },
+   {
+    "arquivo": "bible.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 4047392,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 4.714860682196514,
+    "razao_amostra_padrao": 4.814741665349977,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.714860682196514,
+    "razao_medicoes_inteiro": 4.786216275343381,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 2.1184291516951204,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.5959904100771026,
+    "erro_censo_vs_medicoes_inteira_pct": -1.4908560132240793
+   },
+   {
+    "arquivo": "dickens",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 10192446,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 2.381629077969937,
+    "razao_amostra_padrao": 2.381629077969937,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.389306889181565,
+    "razao_medicoes_inteiro": 2.3994970231574153,
+    "razao_medicoes_completo": 2.3916194675688347,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.417724882004466,
+    "erro_censo_vs_medicoes_inteira_pct": -0.417724882004466
+   },
+   {
+    "arquivo": "dickens",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 10192446,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 2.7307955800128014,
+    "razao_amostra_padrao": 2.7307955800128014,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.7383093307949986,
+    "razao_medicoes_inteiro": 2.786389930129394,
+    "razao_medicoes_completo": 2.782157737510318,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.8461267240540853,
+    "erro_censo_vs_medicoes_inteira_pct": -1.8461267240540853
+   },
+   {
+    "arquivo": "dickens",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 10192446,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 2.967981447433327,
+    "razao_amostra_padrao": 2.967981447433327,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.977176281276629,
+    "razao_medicoes_inteiro": 3.1088607970232998,
+    "razao_medicoes_completo": 3.105063664424083,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -4.4147956952174745,
+    "erro_censo_vs_medicoes_inteira_pct": -4.4147956952174745
+   },
+   {
+    "arquivo": "dickens",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 10192446,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 3.2269219639545286,
+    "razao_amostra_padrao": 3.1874678729310166,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.237498538252626,
+    "razao_medicoes_inteiro": 3.558831864594311,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -1.2226540171787028,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "dickens",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 10192446,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 3.256484888296465,
+    "razao_amostra_padrao": 3.219661465388019,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.267599664694096,
+    "razao_medicoes_inteiro": 3.5826949753654187,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -1.1307721107746085,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "dickens",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 10192446,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 3.5828289049087387,
+    "razao_amostra_padrao": 3.5795673016590115,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.5860537073935834,
+    "razao_medicoes_inteiro": 3.650728743705909,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -0.09103430100328276,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "ja_comprimido.xz",
+    "classe_da_ferramenta": "container_comprimido",
+    "classe_medicoes": "sint_ja_comprimido",
+    "tamanho": 8385868,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.9999675655307447,
+    "razao_medicoes_inteiro": 0.9999759124357417,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.003243552128418925,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.002408814448304081,
+    "erro_censo_vs_medicoes_inteira_pct": 0.002408814448304081
+   },
+   {
+    "arquivo": "ja_comprimido.xz",
+    "classe_da_ferramenta": "container_comprimido",
+    "classe_medicoes": "sint_ja_comprimido",
+    "tamanho": 8385868,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.9999685194556919,
+    "razao_medicoes_inteiro": 0.9999759124357417,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.003148153536399566,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.002408814448304081,
+    "erro_censo_vs_medicoes_inteira_pct": 0.002408814448304081
+   },
+   {
+    "arquivo": "ja_comprimido.xz",
+    "classe_da_ferramenta": "container_comprimido",
+    "classe_medicoes": "sint_ja_comprimido",
+    "tamanho": 8385868,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.9999685194556919,
+    "razao_medicoes_inteiro": 0.9999759124357417,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.003148153536399566,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.002408814448304081,
+    "erro_censo_vs_medicoes_inteira_pct": 0.002408814448304081
+   },
+   {
+    "arquivo": "ja_comprimido.xz",
+    "classe_da_ferramenta": "container_comprimido",
+    "classe_medicoes": "sint_ja_comprimido",
+    "tamanho": 8385868,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.9999685194556919,
+    "razao_medicoes_inteiro": 0.9999760316782511,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.003148153536399566,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.002396889624310775,
+    "erro_censo_vs_medicoes_inteira_pct": 0.002396889624310775
+   },
+   {
+    "arquivo": "ja_comprimido.xz",
+    "classe_da_ferramenta": "container_comprimido",
+    "classe_medicoes": "sint_ja_comprimido",
+    "tamanho": 8385868,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.9998931649918849,
+    "razao_medicoes_inteiro": 0.9999427641209261,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.010684642305362101,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.0057239155207279326,
+    "erro_censo_vs_medicoes_inteira_pct": 0.0057239155207279326
+   },
+   {
+    "arquivo": "ja_comprimido.xz",
+    "classe_da_ferramenta": "container_comprimido",
+    "classe_medicoes": "sint_ja_comprimido",
+    "tamanho": 8385868,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 1.0,
+    "razao_amostra_padrao": 1.0,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 0.9952952391713354,
+    "razao_medicoes_inteiro": 0.9957699889485128,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.4727000234203525,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.42479800540624185,
+    "erro_censo_vs_medicoes_inteira_pct": 0.42479800540624185
+   },
+   {
+    "arquivo": "logs.log",
+    "classe_da_ferramenta": "log",
+    "classe_medicoes": "sint_logs",
+    "tamanho": 67108864,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 4.085525106619034,
+    "razao_amostra_padrao": 4.085525106619034,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.087459843422849,
+    "razao_medicoes_inteiro": 4.097534574716215,
+    "razao_medicoes_completo": 4.096747886531287,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.2739436309749435,
+    "erro_censo_vs_medicoes_inteira_pct": -0.2739436309749435
+   },
+   {
+    "arquivo": "logs.log",
+    "classe_da_ferramenta": "log",
+    "classe_medicoes": "sint_logs",
+    "tamanho": 67108864,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 4.046464155927115,
+    "razao_amostra_padrao": 4.046464155927115,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.04794449487119,
+    "razao_medicoes_inteiro": 4.077694179547481,
+    "razao_medicoes_completo": 4.079345742348635,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.8060504918759047,
+    "erro_censo_vs_medicoes_inteira_pct": -0.8060504918759047
+   },
+   {
+    "arquivo": "logs.log",
+    "classe_da_ferramenta": "log",
+    "classe_medicoes": "sint_logs",
+    "tamanho": 67108864,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 4.583455406069196,
+    "razao_amostra_padrao": 4.583455406069196,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.586771066286833,
+    "razao_medicoes_inteiro": 4.585652779508844,
+    "razao_medicoes_completo": 4.580135783430097,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.07247869486988673,
+    "erro_censo_vs_medicoes_inteira_pct": 0.07247869486988673
+   },
+   {
+    "arquivo": "logs.log",
+    "classe_da_ferramenta": "log",
+    "classe_medicoes": "sint_logs",
+    "tamanho": 67108864,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 5.361045398382105,
+    "razao_amostra_padrao": 5.359891210747777,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 5.365673436596511,
+    "razao_medicoes_inteiro": 5.720900574162744,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -0.02152915240517257,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "logs.log",
+    "classe_da_ferramenta": "log",
+    "classe_medicoes": "sint_logs",
+    "tamanho": 67108864,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 5.4164588882923415,
+    "razao_amostra_padrao": 5.415570952892854,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 5.419305490234587,
+    "razao_medicoes_inteiro": 5.75805300209768,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -0.016393282360299133,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "logs.log",
+    "classe_da_ferramenta": "log",
+    "classe_medicoes": "sint_logs",
+    "tamanho": 67108864,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 6.121912502879245,
+    "razao_amostra_padrao": 6.121489775634617,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 6.126152495671181,
+    "razao_medicoes_inteiro": 6.239935968674638,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -0.006905150056109686,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "mozilla",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 51220480,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 2.5542956022393613,
+    "razao_amostra_padrao": 2.5542956022393613,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.7180243905735877,
+    "razao_medicoes_inteiro": 1.7240488617745153,
+    "razao_medicoes_completo": 2.5650635903953343,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.4197941991104177,
+    "erro_censo_vs_medicoes_inteira_pct": -0.4197941991104177
+   },
+   {
+    "arquivo": "mozilla",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 51220480,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 2.76159267676912,
+    "razao_amostra_padrao": 2.76159267676912,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.787928054965638,
+    "razao_medicoes_inteiro": 1.8015314914431309,
+    "razao_medicoes_completo": 2.8100975591771813,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.7260924714038675,
+    "erro_censo_vs_medicoes_inteira_pct": -1.7260924714038675
+   },
+   {
+    "arquivo": "mozilla",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 51220480,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 2.923680051025216,
+    "razao_amostra_padrao": 2.923680051025216,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.831461432169773,
+    "razao_medicoes_inteiro": 1.8578197624652377,
+    "razao_medicoes_completo": 3.0734736329095975,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -4.873755228626274,
+    "erro_censo_vs_medicoes_inteira_pct": -4.873755228626274
+   },
+   {
+    "arquivo": "mozilla",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 51220480,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 3.2069294070166356,
+    "razao_amostra_padrao": 3.2206801066250286,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.8892414506647113,
+    "razao_medicoes_inteiro": 1.9132761201536075,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 0.42878086366063856,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "mozilla",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 51220480,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 3.5669344790499924,
+    "razao_amostra_padrao": 3.595087833036193,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.9453197903622281,
+    "razao_medicoes_inteiro": 1.9709223097497666,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 0.7892871077827798,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "mozilla",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 51220480,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 2.855152216593541,
+    "razao_amostra_padrao": 2.872321984538871,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.753335966908914,
+    "razao_medicoes_inteiro": 1.7464569043859166,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 0.6013608607465258,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "mr",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 9970564,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 2.6116882810719626,
+    "razao_amostra_padrao": 2.6116882810719626,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.6377072350888997,
+    "razao_medicoes_inteiro": 2.6405327017667117,
+    "razao_medicoes_completo": 2.6146065108673104,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.1116125804482836,
+    "erro_censo_vs_medicoes_inteira_pct": -0.1116125804482836
+   },
+   {
+    "arquivo": "mr",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 9970564,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 2.806674158214279,
+    "razao_amostra_padrao": 2.806674158214279,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.8418080014743268,
+    "razao_medicoes_inteiro": 2.845095635156837,
+    "razao_medicoes_completo": 2.8105682664482234,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.13855234474931952,
+    "erro_censo_vs_medicoes_inteira_pct": -0.13855234474931952
+   },
+   {
+    "arquivo": "mr",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 9970564,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 2.93818779763308,
+    "razao_amostra_padrao": 2.93818779763308,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.979361920064555,
+    "razao_medicoes_inteiro": 3.0450137883244452,
+    "razao_medicoes_completo": 3.006407476937606,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -2.2691428167287584,
+    "erro_censo_vs_medicoes_inteira_pct": -2.2691428167287584
+   },
+   {
+    "arquivo": "mr",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 9970564,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 3.075312834463763,
+    "razao_amostra_padrao": 2.998157019226495,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.1185645233604,
+    "razao_medicoes_inteiro": 3.2444241951216495,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -2.5088769627796683,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "mr",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 9970564,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 3.5367897555957577,
+    "razao_amostra_padrao": 3.4410688964120704,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.587659482743873,
+    "razao_medicoes_inteiro": 3.671844578600143,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -2.706433398599447,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "mr",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 9970564,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 4.066809370834509,
+    "razao_amostra_padrao": 3.948247887814389,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.136055924416444,
+    "razao_medicoes_inteiro": 4.149813845759611,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -2.915344000886652,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "nci",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "cientifico",
+    "tamanho": 33553445,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 11.65925022212848,
+    "razao_amostra_padrao": 11.65925022212848,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 11.06809392684346,
+    "razao_medicoes_inteiro": 11.13999816737205,
+    "razao_medicoes_completo": 11.779015705380017,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.0167698748957028,
+    "erro_censo_vs_medicoes_inteira_pct": -1.0167698748957028
+   },
+   {
+    "arquivo": "nci",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "cientifico",
+    "tamanho": 33553445,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 11.58277467861532,
+    "razao_amostra_padrao": 11.58277467861532,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 10.999476815313184,
+    "razao_medicoes_inteiro": 11.169649728768151,
+    "razao_medicoes_completo": 11.840262498663476,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -2.174679996133716,
+    "erro_censo_vs_medicoes_inteira_pct": -2.174679996133716
+   },
+   {
+    "arquivo": "nci",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "cientifico",
+    "tamanho": 33553445,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 14.004333593635549,
+    "razao_amostra_padrao": 14.004333593635549,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 13.146990187489322,
+    "razao_medicoes_inteiro": 13.777247837812093,
+    "razao_medicoes_completo": 14.93453957602725,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -6.228554805163577,
+    "erro_censo_vs_medicoes_inteira_pct": -6.228554805163577
+   },
+   {
+    "arquivo": "nci",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "cientifico",
+    "tamanho": 33553445,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 16.66996802476938,
+    "razao_amostra_padrao": 17.946284852020202,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 15.663947895192853,
+    "razao_medicoes_inteiro": 17.94097530407407,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 7.65638437550921,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "nci",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "cientifico",
+    "tamanho": 33553445,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 18.216678031693224,
+    "razao_amostra_padrao": 19.621067338639257,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 17.15475791213016,
+    "razao_medicoes_inteiro": 19.776243823318623,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 7.709360095746811,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "nci",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "cientifico",
+    "tamanho": 33553445,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 17.88355351030637,
+    "razao_amostra_padrao": 18.991641385555805,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 17.15637181715922,
+    "razao_medicoes_inteiro": 17.67432962300446,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 6.196128049220414,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "ooffice",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 6152192,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 1.7087485640516298,
+    "razao_amostra_padrao": 1.7087485640516298,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.7087485640516298,
+    "razao_medicoes_inteiro": 1.712164897039539,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.19953294182214604,
+    "erro_censo_vs_medicoes_inteira_pct": -0.19953294182214604
+   },
+   {
+    "arquivo": "ooffice",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 6152192,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 1.9509821518610813,
+    "razao_amostra_padrao": 1.9509821518610813,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.9509821518610813,
+    "razao_medicoes_inteiro": 1.9679797424688419,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.8637076002843938,
+    "erro_censo_vs_medicoes_inteira_pct": -0.8637076002843938
+   },
+   {
+    "arquivo": "ooffice",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 6152192,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 2.076945176367721,
+    "razao_amostra_padrao": 2.076945176367721,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.076945176367721,
+    "razao_medicoes_inteiro": 2.154936198085417,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -3.6191800846349054,
+    "erro_censo_vs_medicoes_inteira_pct": -3.6191800846349054
+   },
+   {
+    "arquivo": "ooffice",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 6152192,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 2.285423893524562,
+    "razao_amostra_padrao": 2.165902063293048,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.285423893524562,
+    "razao_medicoes_inteiro": 2.3707841570896067,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": -5.229744493796657,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -8.641954738219333,
+    "erro_censo_vs_medicoes_inteira_pct": -3.6005075919620406
+   },
+   {
+    "arquivo": "ooffice",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 6152192,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 2.4433588940730537,
+    "razao_amostra_padrao": 2.2997508509667686,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.4433588940730537,
+    "razao_medicoes_inteiro": 2.534661819428285,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": -5.877484615732897,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -9.267941255946432,
+    "erro_censo_vs_medicoes_inteira_pct": -3.6021738543339676
+   },
+   {
+    "arquivo": "ooffice",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "binario",
+    "tamanho": 6152192,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 2.1487119307069014,
+    "razao_amostra_padrao": 2.0401263872243063,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.1487119307069014,
+    "razao_medicoes_inteiro": 2.1492178586325505,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": -5.0535179672442965,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -5.0758684593126455,
+    "erro_censo_vs_medicoes_inteira_pct": -0.02354009499860961
+   },
+   {
+    "arquivo": "osdb",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "banco_de_dados",
+    "tamanho": 10085684,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 2.6766194240655956,
+    "razao_amostra_padrao": 2.6766194240655956,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.6772643073894544,
+    "razao_medicoes_inteiro": 2.703187777372465,
+    "razao_medicoes_completo": 2.7040679453882346,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.0150825303577227,
+    "erro_censo_vs_medicoes_inteira_pct": -1.0150825303577227
+   },
+   {
+    "arquivo": "osdb",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "banco_de_dados",
+    "tamanho": 10085684,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 2.8470180884184044,
+    "razao_amostra_padrao": 2.8470180884184044,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.8475467827056318,
+    "razao_medicoes_inteiro": 2.8785769852008354,
+    "razao_medicoes_completo": 2.8804249202546255,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.1597883215531946,
+    "erro_censo_vs_medicoes_inteira_pct": -1.1597883215531946
+   },
+   {
+    "arquivo": "osdb",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "banco_de_dados",
+    "tamanho": 10085684,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 2.957686398585803,
+    "razao_amostra_padrao": 2.957686398585803,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.958807899881875,
+    "razao_medicoes_inteiro": 3.014799768263949,
+    "razao_medicoes_completo": 3.0173811506197854,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.9783629927469042,
+    "erro_censo_vs_medicoes_inteira_pct": -1.9783629927469042
+   },
+   {
+    "arquivo": "osdb",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "banco_de_dados",
+    "tamanho": 10085684,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 3.0499627739261443,
+    "razao_amostra_padrao": 3.0423040229764062,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.052980735006067,
+    "razao_medicoes_inteiro": 3.238485928393263,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -0.2511096533771521,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "osdb",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "banco_de_dados",
+    "tamanho": 10085684,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 3.3362720969619986,
+    "razao_amostra_padrao": 3.3252577219703134,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.3403395208226483,
+    "razao_medicoes_inteiro": 3.533920311407315,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -0.3301401885570059,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "osdb",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "banco_de_dados",
+    "tamanho": 10085684,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 3.491867806192841,
+    "razao_amostra_padrao": 3.5009684350115715,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.4890384835345376,
+    "razao_medicoes_inteiro": 3.5951351763708566,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 0.26062352081572293,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "reymont",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 6627202,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 3.066306451030816,
+    "razao_amostra_padrao": 3.066306451030816,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.066306451030816,
+    "razao_medicoes_inteiro": 3.0836099517488145,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.5611442753382384,
+    "erro_censo_vs_medicoes_inteira_pct": -0.5611442753382384
+   },
+   {
+    "arquivo": "reymont",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 6627202,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 3.368973447584499,
+    "razao_amostra_padrao": 3.368973447584499,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.368973447584499,
+    "razao_medicoes_inteiro": 3.419656517402461,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.4821099592909033,
+    "erro_censo_vs_medicoes_inteira_pct": -1.4821099592909033
+   },
+   {
+    "arquivo": "reymont",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 6627202,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 3.8234173859514606,
+    "razao_amostra_padrao": 3.8234173859514606,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.8234173859514606,
+    "razao_medicoes_inteiro": 3.9671040304955465,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -3.6219530276884977,
+    "erro_censo_vs_medicoes_inteira_pct": -3.6219530276884977
+   },
+   {
+    "arquivo": "reymont",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 6627202,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 4.444126883432234,
+    "razao_amostra_padrao": 4.580974932065811,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.444126883432234,
+    "razao_medicoes_inteiro": 4.914652143411215,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 3.0793011141006845,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -6.789437006090969,
+    "erro_censo_vs_medicoes_inteira_pct": -9.573928047171892
+   },
+   {
+    "arquivo": "reymont",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 6627202,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 4.5518122899993685,
+    "razao_amostra_padrao": 4.678135484331501,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.5518122899993685,
+    "razao_medicoes_inteiro": 5.037429537424977,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 2.775228552584938,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -7.132487917183628,
+    "erro_censo_vs_medicoes_inteira_pct": -9.640179456958624
+   },
+   {
+    "arquivo": "reymont",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 6627202,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 5.2102569827658725,
+    "razao_amostra_padrao": 5.44262431225994,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 5.2102569827658725,
+    "razao_medicoes_inteiro": 5.317800085056531,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 4.459805538626523,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": 2.3472907068126894,
+    "erro_censo_vs_medicoes_inteira_pct": -2.022323151877476
+   },
+   {
+    "arquivo": "samba",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "codigo",
+    "tamanho": 21606400,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 3.8977497343189556,
+    "razao_amostra_padrao": 3.8977497343189556,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.827802416065392,
+    "razao_medicoes_inteiro": 2.8489413187115487,
+    "razao_medicoes_completo": 3.937313215248925,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.0048344840015004,
+    "erro_censo_vs_medicoes_inteira_pct": -1.0048344840015004
+   },
+   {
+    "arquivo": "samba",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "codigo",
+    "tamanho": 21606400,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 4.161165027601922,
+    "razao_amostra_padrao": 4.161165027601922,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.0150782522871133,
+    "razao_medicoes_inteiro": 3.1789455972824032,
+    "razao_medicoes_completo": 4.360421761988667,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -4.569666542895837,
+    "erro_censo_vs_medicoes_inteira_pct": -4.569666542895837
+   },
+   {
+    "arquivo": "samba",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "codigo",
+    "tamanho": 21606400,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 4.581702115568041,
+    "razao_amostra_padrao": 4.581702115568041,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.1880622790028794,
+    "razao_medicoes_inteiro": 3.486116802214197,
+    "razao_medicoes_completo": 4.966745306494188,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -7.752424720121837,
+    "erro_censo_vs_medicoes_inteira_pct": -7.752424720121837
+   },
+   {
+    "arquivo": "samba",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "codigo",
+    "tamanho": 21606400,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 4.94942430734884,
+    "razao_amostra_padrao": 4.611953263649578,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.3194116504170528,
+    "razao_medicoes_inteiro": 3.71512692873213,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -6.818389831685864,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "samba",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "codigo",
+    "tamanho": 21606400,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 5.12071835669838,
+    "razao_amostra_padrao": 4.739826422372228,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.3708682933101874,
+    "razao_medicoes_inteiro": 3.769056438293138,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -7.438251975485239,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "samba",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "codigo",
+    "tamanho": 21606400,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 4.691812107760716,
+    "razao_amostra_padrao": 4.37846516376472,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.1949299207800124,
+    "razao_medicoes_inteiro": 3.2401508561752306,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -6.678591060321653,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "sao",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 7251944,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 1.1587986686815304,
+    "razao_amostra_padrao": 1.1587986686815304,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.1587986686815304,
+    "razao_medicoes_inteiro": 1.1603091835053063,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.13018209674189368,
+    "erro_censo_vs_medicoes_inteira_pct": -0.13018209674189368
+   },
+   {
+    "arquivo": "sao",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 7251944,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 1.307149289425852,
+    "razao_amostra_padrao": 1.307149289425852,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.307149289425852,
+    "razao_medicoes_inteiro": 1.3119744463323773,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.36777826885378023,
+    "erro_censo_vs_medicoes_inteira_pct": -0.36777826885378023
+   },
+   {
+    "arquivo": "sao",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 7251944,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 1.3658680646392825,
+    "razao_amostra_padrao": 1.3658680646392825,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.3658680646392825,
+    "razao_medicoes_inteiro": 1.3904007920667552,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.7644356625405928,
+    "erro_censo_vs_medicoes_inteira_pct": -1.7644356625405928
+   },
+   {
+    "arquivo": "sao",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 7251944,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 1.4430718484993688,
+    "razao_amostra_padrao": 1.4517231473181065,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.4430718484993688,
+    "razao_medicoes_inteiro": 1.450222894500869,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.5995057576470699,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.10344980919321192,
+    "erro_censo_vs_medicoes_inteira_pct": -0.493099786840802
+   },
+   {
+    "arquivo": "sao",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 7251944,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 1.61442611739542,
+    "razao_amostra_padrao": 1.6238764549559874,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.61442611739542,
+    "razao_medicoes_inteiro": 1.6386115168254978,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.5853682282973618,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.8992407119203436,
+    "erro_censo_vs_medicoes_inteira_pct": -1.475969086128021
+   },
+   {
+    "arquivo": "sao",
+    "classe_da_ferramenta": "binario",
+    "classe_medicoes": "cientifico",
+    "tamanho": 7251944,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 1.4638887823508395,
+    "razao_amostra_padrao": 1.4718653365393388,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.4638887823508395,
+    "razao_medicoes_inteiro": 1.4678491593199425,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.5448879918110893,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.27360966853412866,
+    "erro_censo_vs_medicoes_inteira_pct": -0.2698081709525152
+   },
+   {
+    "arquivo": "webster",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 41458703,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 3.0208452860588073,
+    "razao_amostra_padrao": 3.0208452860588073,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.0143426025675395,
+    "razao_medicoes_inteiro": 3.026368044331563,
+    "razao_medicoes_completo": 3.034602948648901,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.4533595604729382,
+    "erro_censo_vs_medicoes_inteira_pct": -0.4533595604729382
+   },
+   {
+    "arquivo": "webster",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 41458703,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 3.3597586700450073,
+    "razao_amostra_padrao": 3.3597586700450073,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.350479130120813,
+    "razao_medicoes_inteiro": 3.4115883924929347,
+    "razao_medicoes_completo": 3.4272313040171616,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.968721337630979,
+    "erro_censo_vs_medicoes_inteira_pct": -1.968721337630979
+   },
+   {
+    "arquivo": "webster",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 41458703,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 3.7993393927941526,
+    "razao_amostra_padrao": 3.7993393927941526,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.7899435525479968,
+    "razao_medicoes_inteiro": 3.980333226730641,
+    "razao_medicoes_completo": 4.041436745490796,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -5.99037837142353,
+    "erro_censo_vs_medicoes_inteira_pct": -5.99037837142353
+   },
+   {
+    "arquivo": "webster",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 41458703,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 4.144551503711519,
+    "razao_amostra_padrao": 4.108828050074305,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.138649510704798,
+    "razao_medicoes_inteiro": 4.581888215055666,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -0.8619377417610321,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "webster",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 41458703,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 4.190495727097002,
+    "razao_amostra_padrao": 4.152880402280717,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.18334363966408,
+    "razao_medicoes_inteiro": 4.6177213406054785,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -0.8976342482120372,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "webster",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 41458703,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 4.694298637840854,
+    "razao_amostra_padrao": 4.650602516509884,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.6870016091543,
+    "razao_medicoes_inteiro": 4.779144658918116,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": -0.9308338625654196,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "world192.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 2473400,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 3.195660909033356,
+    "razao_amostra_padrao": 3.195660909033356,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.195660909033356,
+    "razao_medicoes_inteiro": 3.227502802240749,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.98657987795661,
+    "erro_censo_vs_medicoes_inteira_pct": -0.98657987795661
+   },
+   {
+    "arquivo": "world192.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 2473400,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 3.650672527264918,
+    "razao_amostra_padrao": 3.650672527264918,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 3.650672527264918,
+    "razao_medicoes_inteiro": 3.7740167476379973,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -3.2682478277362,
+    "erro_censo_vs_medicoes_inteira_pct": -3.2682478277362
+   },
+   {
+    "arquivo": "world192.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 2473400,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 4.151964520125294,
+    "razao_amostra_padrao": 4.151964520125294,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.151964520125294,
+    "razao_medicoes_inteiro": 4.4261992917079,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -6.195716765315125,
+    "erro_censo_vs_medicoes_inteira_pct": -6.195716765315125
+   },
+   {
+    "arquivo": "world192.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 2473400,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 4.481941945315742,
+    "razao_amostra_padrao": 4.505160042964555,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.481941945315742,
+    "razao_medicoes_inteiro": 4.908951980232408,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.5180365549598143,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -8.225624102534745,
+    "erro_censo_vs_medicoes_inteira_pct": -8.6985987362714
+   },
+   {
+    "arquivo": "world192.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 2473400,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 4.678692220969561,
+    "razao_amostra_padrao": 4.696153777252289,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.678692220969561,
+    "razao_medicoes_inteiro": 5.101350515208765,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.37321446801879465,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -7.942930734683962,
+    "erro_censo_vs_medicoes_inteira_pct": -8.285223549707547
+   },
+   {
+    "arquivo": "world192.txt",
+    "classe_da_ferramenta": "texto",
+    "classe_medicoes": "texto",
+    "tamanho": 2473400,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 4.850307973181526,
+    "razao_amostra_padrao": 4.870324525427429,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 4.850307973181526,
+    "razao_medicoes_inteiro": 5.05205450352647,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.41268621202155653,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -3.5971499906065767,
+    "erro_censo_vs_medicoes_inteira_pct": -3.993356172308106
+   },
+   {
+    "arquivo": "x-ray",
+    "classe_da_ferramenta": "cientifico_numerico",
+    "classe_medicoes": "cientifico",
+    "tamanho": 8474240,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 1.2512545043664947,
+    "razao_amostra_padrao": 1.2512545043664947,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.250870908682604,
+    "razao_medicoes_inteiro": 1.2508520700265346,
+    "razao_medicoes_completo": 1.2513426375618382,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.0070430905731168345,
+    "erro_censo_vs_medicoes_inteira_pct": -0.0070430905731168345
+   },
+   {
+    "arquivo": "x-ray",
+    "classe_da_ferramenta": "cientifico_numerico",
+    "classe_medicoes": "cientifico",
+    "tamanho": 8474240,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 1.3807693636257579,
+    "razao_amostra_padrao": 1.3807693636257579,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.3805169980704115,
+    "razao_medicoes_inteiro": 1.3916593422381132,
+    "razao_medicoes_completo": 1.3925966047504046,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -0.8492941232444355,
+    "erro_censo_vs_medicoes_inteira_pct": -0.8492941232444355
+   },
+   {
+    "arquivo": "x-ray",
+    "classe_da_ferramenta": "cientifico_numerico",
+    "classe_medicoes": "cientifico",
+    "tamanho": 8474240,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 1.5064903111985912,
+    "razao_amostra_padrao": 1.5064903111985912,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.5070481011366537,
+    "razao_medicoes_inteiro": 1.5797960463139729,
+    "razao_medicoes_completo": 1.5806150533559047,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": "completo (arquivo todo, quadro unico)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": -4.689613831016888,
+    "erro_censo_vs_medicoes_inteira_pct": -4.689613831016888
+   },
+   {
+    "arquivo": "x-ray",
+    "classe_da_ferramenta": "cientifico_numerico",
+    "classe_medicoes": "cientifico",
+    "tamanho": 8474240,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 1.5933272427363614,
+    "razao_amostra_padrao": 1.5933272427363614,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.5930152445902557,
+    "razao_medicoes_inteiro": 1.6508061954666338,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "x-ray",
+    "classe_da_ferramenta": "cientifico_numerico",
+    "classe_medicoes": "cientifico",
+    "tamanho": 8474240,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 1.8680457276883533,
+    "razao_amostra_padrao": 1.8680457276883533,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 1.8670776254488184,
+    "razao_medicoes_inteiro": 1.8854431324317666,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "x-ray",
+    "classe_da_ferramenta": "cientifico_numerico",
+    "classe_medicoes": "cientifico",
+    "tamanho": 8474240,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 2.0760507841438702,
+    "razao_amostra_padrao": 2.0760507841438702,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 2.0759179542257136,
+    "razao_medicoes_inteiro": 2.09014791433905,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": false,
+    "referencia_inteira": null,
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": null,
+    "erro_amostra_vs_medicoes_inteira_pct": null,
+    "erro_censo_vs_medicoes_inteira_pct": null
+   },
+   {
+    "arquivo": "xml",
+    "classe_da_ferramenta": "xml_html",
+    "classe_medicoes": "xml",
+    "tamanho": 5345280,
+    "codec": "zstd-1",
+    "razao_censo_1MiB": 7.623644182016559,
+    "razao_amostra_padrao": 7.623644182016559,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 7.623644182016559,
+    "razao_medicoes_inteiro": 7.709720084751996,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -1.1164595055231048,
+    "erro_censo_vs_medicoes_inteira_pct": -1.1164595055231048
+   },
+   {
+    "arquivo": "xml",
+    "classe_da_ferramenta": "xml_html",
+    "classe_medicoes": "xml",
+    "tamanho": 5345280,
+    "codec": "zstd-3",
+    "razao_censo_1MiB": 8.191221677020728,
+    "razao_amostra_padrao": 8.191221677020728,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 8.191221677020728,
+    "razao_medicoes_inteiro": 8.413802005040147,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -2.645419132588163,
+    "erro_censo_vs_medicoes_inteira_pct": -2.645419132588163
+   },
+   {
+    "arquivo": "xml",
+    "classe_da_ferramenta": "xml_html",
+    "classe_medicoes": "xml",
+    "tamanho": 5345280,
+    "codec": "zstd-9",
+    "razao_censo_1MiB": 9.8898756660746,
+    "razao_amostra_padrao": 9.8898756660746,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 9.8898756660746,
+    "razao_medicoes_inteiro": 10.34043294063026,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -4.357238010657201,
+    "erro_censo_vs_medicoes_inteira_pct": -4.357238010657201
+   },
+   {
+    "arquivo": "xml",
+    "classe_da_ferramenta": "xml_html",
+    "classe_medicoes": "xml",
+    "tamanho": 5345280,
+    "codec": "zstd-19",
+    "razao_censo_1MiB": 11.017833733211308,
+    "razao_amostra_padrao": 11.017833733211308,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 11.017833733211308,
+    "razao_medicoes_inteiro": 11.801272130365765,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -6.638592759322934,
+    "erro_censo_vs_medicoes_inteira_pct": -6.638592759322934
+   },
+   {
+    "arquivo": "xml",
+    "classe_da_ferramenta": "xml_html",
+    "classe_medicoes": "xml",
+    "tamanho": 5345280,
+    "codec": "xz-9e",
+    "razao_censo_1MiB": 11.522284590910267,
+    "razao_amostra_padrao": 11.522284590910267,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 11.522284590910267,
+    "razao_medicoes_inteiro": 12.29105157142463,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": -6.254688429602418,
+    "erro_censo_vs_medicoes_inteira_pct": -6.254688429602418
+   },
+   {
+    "arquivo": "xml",
+    "classe_da_ferramenta": "xml_html",
+    "classe_medicoes": "xml",
+    "tamanho": 5345280,
+    "codec": "bzip2-9",
+    "razao_censo_1MiB": 12.178227972687568,
+    "razao_amostra_padrao": 12.178227972687568,
+    "razao_medicoes_bloco_1MiB_prefixo_8MiB": 12.178227972687568,
+    "razao_medicoes_inteiro": 12.115706300743904,
+    "razao_medicoes_completo": null,
+    "arquivo_coberto_pelo_prefixo_de_8MiB": true,
+    "referencia_inteira": "inteiro (8 MiB)",
+    "erro_amostra_vs_censo_pct": 0.0,
+    "erro_censo_vs_medicoes_bloco_pct": 0.0,
+    "erro_amostra_vs_medicoes_inteira_pct": 0.5160381936612711,
+    "erro_censo_vs_medicoes_inteira_pct": 0.5160381936612711
+   }
+  ],
+  "resumo_por_codec": {
+   "zstd-1": {
+    "amostra_padrao_vs_censo": {
+     "n": 18,
+     "erro_abs_medio_pct": 0.0,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.0,
+     "erro_abs_max_pct": 0.0
+    },
+    "censo_vs_medicoes_bloco_arquivos_inteiros_no_prefixo": {
+     "n": 8,
+     "erro_abs_medio_pct": 0.00040544401605236563,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.0006054943986434466,
+     "erro_abs_max_pct": 0.003243552128418925
+    },
+    "amostra_padrao_vs_medicoes_inteira": {
+     "n": 18,
+     "erro_abs_medio_pct": 0.4576889339757409,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.44163296332760155,
+     "erro_abs_max_pct": 1.1164595055231048
+    },
+    "censo_vs_medicoes_inteira": {
+     "n": 18,
+     "erro_abs_medio_pct": 0.4576889339757409,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.44163296332760155,
+     "erro_abs_max_pct": 1.1164595055231048
+    }
+   },
+   "zstd-3": {
+    "amostra_padrao_vs_censo": {
+     "n": 18,
+     "erro_abs_medio_pct": 0.0,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.0,
+     "erro_abs_max_pct": 0.0
+    },
+    "censo_vs_medicoes_bloco_arquivos_inteiros_no_prefixo": {
+     "n": 8,
+     "erro_abs_medio_pct": 0.00039351919204994577,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.0005876857398585022,
+     "erro_abs_max_pct": 0.003148153536399566
+    },
+    "amostra_padrao_vs_medicoes_inteira": {
+     "n": 18,
+     "erro_abs_medio_pct": 1.4322404145620167,
+     "erro_abs_medio_ponderado_por_bytes_pct": 1.454624070074378,
+     "erro_abs_max_pct": 4.569666542895837
+    },
+    "censo_vs_medicoes_inteira": {
+     "n": 18,
+     "erro_abs_medio_pct": 1.4322404145620167,
+     "erro_abs_medio_ponderado_por_bytes_pct": 1.454624070074378,
+     "erro_abs_max_pct": 4.569666542895837
+    }
+   },
+   "zstd-9": {
+    "amostra_padrao_vs_censo": {
+     "n": 18,
+     "erro_abs_medio_pct": 0.0,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.0,
+     "erro_abs_max_pct": 0.0
+    },
+    "censo_vs_medicoes_bloco_arquivos_inteiros_no_prefixo": {
+     "n": 8,
+     "erro_abs_medio_pct": 0.00039351919204994577,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.0005876857398585022,
+     "erro_abs_max_pct": 0.003148153536399566
+    },
+    "amostra_padrao_vs_medicoes_inteira": {
+     "n": 18,
+     "erro_abs_medio_pct": 3.3680737080915457,
+     "erro_abs_medio_ponderado_por_bytes_pct": 3.3595704740719965,
+     "erro_abs_max_pct": 7.752424720121837
+    },
+    "censo_vs_medicoes_inteira": {
+     "n": 18,
+     "erro_abs_medio_pct": 3.3680737080915457,
+     "erro_abs_medio_ponderado_por_bytes_pct": 3.3595704740719965,
+     "erro_abs_max_pct": 7.752424720121837
+    }
+   },
+   "zstd-19": {
+    "amostra_padrao_vs_censo": {
+     "n": 18,
+     "erro_abs_medio_pct": 1.7321517875675418,
+     "erro_abs_medio_ponderado_por_bytes_pct": 1.7149160007615574,
+     "erro_abs_max_pct": 7.65638437550921
+    },
+    "censo_vs_medicoes_bloco_arquivos_inteiros_no_prefixo": {
+     "n": 8,
+     "erro_abs_medio_pct": 0.00039351919204994577,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.0005876857398585022,
+     "erro_abs_max_pct": 0.003148153536399566
+    },
+    "amostra_padrao_vs_medicoes_inteira": {
+     "n": 8,
+     "erro_abs_medio_pct": 4.378339718420252,
+     "erro_abs_medio_ponderado_por_bytes_pct": 3.87231797275245,
+     "erro_abs_max_pct": 8.641954738219333
+    },
+    "censo_vs_medicoes_inteira": {
+     "n": 8,
+     "erro_abs_medio_pct": 4.437730515980788,
+     "erro_abs_medio_ponderado_por_bytes_pct": 3.8500446368219277,
+     "erro_abs_max_pct": 9.573928047171892
+    }
+   },
+   "xz-9e": {
+    "amostra_padrao_vs_censo": {
+     "n": 18,
+     "erro_abs_medio_pct": 1.8088690968141543,
+     "erro_abs_medio_ponderado_por_bytes_pct": 1.8290173263843665,
+     "erro_abs_max_pct": 7.709360095746811
+    },
+    "censo_vs_medicoes_bloco_arquivos_inteiros_no_prefixo": {
+     "n": 8,
+     "erro_abs_medio_pct": 0.0013355802881702627,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.001994569783763309,
+     "erro_abs_max_pct": 0.010684642305362101
+    },
+    "amostra_padrao_vs_medicoes_inteira": {
+     "n": 8,
+     "erro_abs_medio_pct": 4.782689701896285,
+     "erro_abs_medio_ponderado_por_bytes_pct": 4.2965011068125545,
+     "erro_abs_max_pct": 9.267941255946432
+    },
+    "censo_vs_medicoes_inteira": {
+     "n": 8,
+     "erro_abs_medio_pct": 4.7303793042084585,
+     "erro_abs_medio_ponderado_por_bytes_pct": 4.166490883660357,
+     "erro_abs_max_pct": 9.640179456958624
+    }
+   },
+   "bzip2-9": {
+    "amostra_padrao_vs_censo": {
+     "n": 18,
+     "erro_abs_medio_pct": 1.681674870389687,
+     "erro_abs_medio_ponderado_por_bytes_pct": 1.592290736323002,
+     "erro_abs_max_pct": 6.678591060321653
+    },
+    "censo_vs_medicoes_bloco_arquivos_inteiros_no_prefixo": {
+     "n": 8,
+     "erro_abs_medio_pct": 0.05908750292754406,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.08824190427275992,
+     "erro_abs_max_pct": 0.4727000234203525
+    },
+    "amostra_padrao_vs_medicoes_inteira": {
+     "n": 8,
+     "erro_abs_medio_pct": 1.6201288361082584,
+     "erro_abs_medio_ponderado_por_bytes_pct": 1.491526554149781,
+     "erro_abs_max_pct": 5.0758684593126455
+    },
+    "censo_vs_medicoes_inteira": {
+     "n": 8,
+     "erro_abs_medio_pct": 1.1088756321104638,
+     "erro_abs_medio_ponderado_por_bytes_pct": 0.8534814941289722,
+     "erro_abs_max_pct": 3.993356172308106
+    }
+   }
+  },
+  "orcamento_pequeno": {
+   "sementes": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "por_classe": {
+    "texto": {
+     "arquivos": 7,
+     "bytes": 119958988,
+     "baixa_confianca": false,
+     "fracao_amostrada_orcamento_pequeno": null,
+     "codecs": {
+      "zstd-1": {
+       "economia_censo": 0.7443931671047441,
+       "erro_medio_pp": -0.527760721974642,
+       "erro_abs_medio_pp": 1.3428539437875187,
+       "erro_abs_max_pp": 4.254491510009196,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-3": {
+       "economia_censo": 0.7666480480812325,
+       "erro_medio_pp": -0.4691113403514788,
+       "erro_abs_medio_pp": 1.273603708938052,
+       "erro_abs_max_pp": 4.016446206622137,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-9": {
+       "economia_censo": 0.7928754534007906,
+       "erro_medio_pp": -0.5044108849388897,
+       "erro_abs_medio_pp": 1.2839248849643479,
+       "erro_abs_max_pp": 4.05185197637421,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-19": {
+       "economia_censo": 0.8121918300944653,
+       "erro_medio_pp": -3.4682813871148603,
+       "erro_abs_medio_pp": 4.966820337408686,
+       "erro_abs_max_pp": 12.635217707932856,
+       "ic95_cobriu_o_censo": 6,
+       "de": 8
+      },
+      "xz-9e": {
+       "economia_censo": 0.8165350644671994,
+       "erro_medio_pp": -3.4730501499380657,
+       "erro_abs_medio_pp": 4.933996308088513,
+       "erro_abs_max_pp": 12.677294898868375,
+       "ic95_cobriu_o_censo": 6,
+       "de": 8
+      },
+      "bzip2-9": {
+       "economia_censo": 0.8266224286587013,
+       "erro_medio_pp": -3.285006604099326,
+       "erro_abs_medio_pp": 4.991792453675654,
+       "erro_abs_max_pp": 10.658973670313488,
+       "ic95_cobriu_o_censo": 6,
+       "de": 8
+      }
+     }
+    },
+    "json_ndjson": {
+     "arquivos": 1,
+     "bytes": 5115,
+     "baixa_confianca": true,
+     "fracao_amostrada_orcamento_pequeno": null,
+     "codecs": {
+      "zstd-1": {
+       "economia_censo": 0.6787878787878787,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-3": {
+       "economia_censo": 0.6848484848484848,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-9": {
+       "economia_censo": 0.6944281524926686,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-19": {
+       "economia_censo": 0.6993157380254155,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "xz-9e": {
+       "economia_censo": 0.6864125122189638,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "bzip2-9": {
+       "economia_censo": 0.6703812316715543,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      }
+     }
+    },
+    "log": {
+     "arquivos": 2,
+     "bytes": 75497472,
+     "baixa_confianca": true,
+     "fracao_amostrada_orcamento_pequeno": null,
+     "codecs": {
+      "zstd-1": {
+       "economia_censo": 0.7551621463563707,
+       "erro_medio_pp": -0.0022256656799404806,
+       "erro_abs_medio_pp": 0.006378387508827743,
+       "erro_abs_max_pp": 0.009997420840801574,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-3": {
+       "economia_censo": 0.7528341346316867,
+       "erro_medio_pp": -0.0020720775610438835,
+       "erro_abs_medio_pp": 0.005456429291395004,
+       "erro_abs_max_pp": 0.009447203742141141,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-9": {
+       "economia_censo": 0.7818121910095215,
+       "erro_medio_pp": -0.001352800458086223,
+       "erro_abs_medio_pp": 0.006432962768217199,
+       "erro_abs_max_pp": 0.01039785497328749,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-19": {
+       "economia_censo": 0.8134356869591607,
+       "erro_medio_pp": 0.0033612856789266843,
+       "erro_abs_medio_pp": 0.017267276370336315,
+       "erro_abs_max_pp": 0.03312693701850167,
+       "ic95_cobriu_o_censo": 5,
+       "de": 8
+      },
+      "xz-9e": {
+       "economia_censo": 0.8153468237982856,
+       "erro_medio_pp": 0.006380724528477766,
+       "erro_abs_medio_pp": 0.018142707764155774,
+       "erro_abs_max_pp": 0.04490746392143974,
+       "ic95_cobriu_o_censo": 6,
+       "de": 8
+      },
+      "bzip2-9": {
+       "economia_censo": 0.8366123040517172,
+       "erro_medio_pp": -0.0008722714015460542,
+       "erro_abs_medio_pp": 0.01937156631833109,
+       "erro_abs_max_pp": 0.03208319346109656,
+       "ic95_cobriu_o_censo": 6,
+       "de": 8
+      }
+     }
+    },
+    "xml_html": {
+     "arquivos": 1,
+     "bytes": 5345280,
+     "baixa_confianca": true,
+     "fracao_amostrada_orcamento_pequeno": null,
+     "codecs": {
+      "zstd-1": {
+       "economia_censo": 0.868829135237069,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-3": {
+       "economia_censo": 0.8779180884818008,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-9": {
+       "economia_censo": 0.8988864942528736,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-19": {
+       "economia_censo": 0.9092380567528735,
+       "erro_medio_pp": 0.7533235586795001,
+       "erro_abs_medio_pp": 1.0674352324316294,
+       "erro_abs_max_pp": 2.061169054772549,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "xz-9e": {
+       "economia_censo": 0.9132116558908046,
+       "erro_medio_pp": 0.7201724007498744,
+       "erro_abs_medio_pp": 1.0334367931343817,
+       "erro_abs_max_pp": 1.9617345921931872,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "bzip2-9": {
+       "economia_censo": 0.9178862473060345,
+       "erro_medio_pp": 0.6395701418675028,
+       "erro_abs_medio_pp": 0.9499505540673401,
+       "erro_abs_max_pp": 2.199943453901587,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      }
+     }
+    },
+    "sequencia": {
+     "arquivos": 1,
+     "bytes": 4638690,
+     "baixa_confianca": true,
+     "fracao_amostrada_orcamento_pequeno": null,
+     "codecs": {
+      "zstd-1": {
+       "economia_censo": 0.6956688202919359,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-3": {
+       "economia_censo": 0.6979162220368251,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-9": {
+       "economia_censo": 0.7115476567737875,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-19": {
+       "economia_censo": 0.7498666649420418,
+       "erro_medio_pp": 0.001532125768829995,
+       "erro_abs_medio_pp": 0.014155763498255314,
+       "erro_abs_max_pp": 0.050494550917701275,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "xz-9e": {
+       "economia_censo": 0.7366334029650612,
+       "erro_medio_pp": 0.016112009618411693,
+       "erro_abs_medio_pp": 0.02992698076213912,
+       "erro_abs_max_pp": 0.13223262016055504,
+       "ic95_cobriu_o_censo": 7,
+       "de": 8
+      },
+      "bzip2-9": {
+       "economia_censo": 0.7299591048334767,
+       "erro_medio_pp": 0.005554110720749905,
+       "erro_abs_medio_pp": 0.006476098783887718,
+       "erro_abs_max_pp": 0.0276312850442495,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      }
+     }
+    },
+    "binario": {
+     "arquivos": 5,
+     "bytes": 84680864,
+     "baixa_confianca": false,
+     "fracao_amostrada_orcamento_pequeno": null,
+     "codecs": {
+      "zstd-1": {
+       "economia_censo": 0.5571964641267713,
+       "erro_medio_pp": 0.5722487637621217,
+       "erro_abs_medio_pp": 3.2762465951268567,
+       "erro_abs_max_pp": 9.983846311504152,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-3": {
+       "economia_censo": 0.5944334838151863,
+       "erro_medio_pp": 0.591947143227188,
+       "erro_abs_medio_pp": 3.1639296410283637,
+       "erro_abs_max_pp": 9.848740053560856,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-9": {
+       "economia_censo": 0.6150942673423833,
+       "erro_medio_pp": 0.6568310887479625,
+       "erro_abs_medio_pp": 3.178221435843671,
+       "erro_abs_max_pp": 9.917415061520273,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-19": {
+       "economia_censo": 0.6429176254035387,
+       "erro_medio_pp": -0.2613904363635329,
+       "erro_abs_medio_pp": 5.422231953284369,
+       "erro_abs_max_pp": 17.503813931955435,
+       "ic95_cobriu_o_censo": 4,
+       "de": 8
+      },
+      "xz-9e": {
+       "economia_censo": 0.6786542943161279,
+       "erro_medio_pp": -0.3824985876920639,
+       "erro_abs_medio_pp": 5.658863410245592,
+       "erro_abs_max_pp": 19.82137730758935,
+       "ic95_cobriu_o_censo": 4,
+       "de": 8
+      },
+      "bzip2-9": {
+       "economia_censo": 0.6327767274552135,
+       "erro_medio_pp": 0.4013839182766181,
+       "erro_abs_medio_pp": 5.716387132293654,
+       "erro_abs_max_pp": 18.74932191544323,
+       "ic95_cobriu_o_censo": 4,
+       "de": 8
+      }
+     }
+    },
+    "cientifico_numerico": {
+     "arquivos": 1,
+     "bytes": 8474240,
+     "baixa_confianca": true,
+     "fracao_amostrada_orcamento_pequeno": null,
+     "codecs": {
+      "zstd-1": {
+       "economia_censo": 0.2008020778264481,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-3": {
+       "economia_censo": 0.27576608639830824,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-9": {
+       "economia_censo": 0.33620548863378896,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-19": {
+       "economia_censo": 0.3723825381391134,
+       "erro_medio_pp": 0.1583439947149351,
+       "erro_abs_medio_pp": 0.405568873424933,
+       "erro_abs_max_pp": 0.7966912247101665,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "xz-9e": {
+       "economia_censo": 0.4646811985499585,
+       "erro_medio_pp": 0.1505639760897723,
+       "erro_abs_medio_pp": 0.34162290911183696,
+       "erro_abs_max_pp": 0.6728981683751134,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "bzip2-9": {
+       "economia_censo": 0.5183162147874028,
+       "erro_medio_pp": 0.20295503462257336,
+       "erro_abs_medio_pp": 0.3906127806291154,
+       "erro_abs_max_pp": 1.05843100690044,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      }
+     }
+    },
+    "container_comprimido": {
+     "arquivos": 1,
+     "bytes": 8385868,
+     "baixa_confianca": true,
+     "fracao_amostrada_orcamento_pequeno": null,
+     "codecs": {
+      "zstd-1": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-3": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-9": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-19": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "xz-9e": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "bzip2-9": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      }
+     }
+    },
+    "criptografado_aleatorio": {
+     "arquivos": 1,
+     "bytes": 33554432,
+     "baixa_confianca": true,
+     "fracao_amostrada_orcamento_pequeno": null,
+     "codecs": {
+      "zstd-1": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-3": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-9": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "zstd-19": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "xz-9e": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      },
+      "bzip2-9": {
+       "economia_censo": 0.0,
+       "erro_medio_pp": 0.0,
+       "erro_abs_medio_pp": 0.0,
+       "erro_abs_max_pp": 0.0,
+       "ic95_cobriu_o_censo": 8,
+       "de": 8
+      }
+     }
+    }
+   },
+   "cobertura_ic95_classes_com_5_ou_mais_arquivos": {
+    "zstd-1": [
+     16,
+     16
+    ],
+    "zstd-3": [
+     16,
+     16
+    ],
+    "zstd-9": [
+     16,
+     16
+    ],
+    "zstd-19": [
+     10,
+     16
+    ],
+    "xz-9e": [
+     10,
+     16
+    ],
+    "bzip2-9": [
+     10,
+     16
+    ]
+   },
+   "cobertura_ic95_todas_as_classes": {
+    "zstd-1": [
+     72,
+     72
+    ],
+    "zstd-3": [
+     72,
+     72
+    ],
+    "zstd-9": [
+     72,
+     72
+    ],
+    "zstd-19": [
+     63,
+     72
+    ],
+    "xz-9e": [
+     63,
+     72
+    ],
+    "bzip2-9": [
+     64,
+     72
+    ]
+   },
+   "erro_por_arquivo_vs_censo": {
+    "zstd-1": {
+     "n": 153,
+     "erro_abs_medio_pct": 3.0947445899663055,
+     "erro_abs_medio_ponderado_por_bytes_pct": 3.0947445899663055,
+     "erro_abs_max_pct": 42.48156288387988
+    },
+    "zstd-3": {
+     "n": 153,
+     "erro_abs_medio_pct": 3.129362918607745,
+     "erro_abs_medio_ponderado_por_bytes_pct": 3.129362918607745,
+     "erro_abs_max_pct": 44.918174197769495
+    },
+    "zstd-9": {
+     "n": 153,
+     "erro_abs_medio_pct": 3.474023652051386,
+     "erro_abs_medio_ponderado_por_bytes_pct": 3.474023652051386,
+     "erro_abs_max_pct": 51.06746512324413
+    },
+    "zstd-19": {
+     "n": 105,
+     "erro_abs_medio_pct": 6.3901690030954,
+     "erro_abs_medio_ponderado_por_bytes_pct": 6.3901690030954,
+     "erro_abs_max_pct": 85.508140434405
+    },
+    "xz-9e": {
+     "n": 105,
+     "erro_abs_medio_pct": 6.760277764562681,
+     "erro_abs_medio_ponderado_por_bytes_pct": 6.760277764562681,
+     "erro_abs_max_pct": 84.20800742437393
+    },
+    "bzip2-9": {
+     "n": 105,
+     "erro_abs_medio_pct": 6.028880919217511,
+     "erro_abs_medio_ponderado_por_bytes_pct": 6.028880919217511,
+     "erro_abs_max_pct": 74.82196010368773
+    }
+   }
+  },
+  "censo_por_classe": {
+   "texto": {
+    "arquivos": 7,
+    "bytes": 119958988,
+    "zstd-3": 0.7666480480812325,
+    "xz-9e": 0.8165350644671994
+   },
+   "json_ndjson": {
+    "arquivos": 1,
+    "bytes": 5115,
+    "zstd-3": 0.6848484848484848,
+    "xz-9e": 0.6864125122189638
+   },
+   "log": {
+    "arquivos": 2,
+    "bytes": 75497472,
+    "zstd-3": 0.7528341346316867,
+    "xz-9e": 0.8153468237982856
+   },
+   "xml_html": {
+    "arquivos": 1,
+    "bytes": 5345280,
+    "zstd-3": 0.8779180884818008,
+    "xz-9e": 0.9132116558908046
+   },
+   "sequencia": {
+    "arquivos": 1,
+    "bytes": 4638690,
+    "zstd-3": 0.6979162220368251,
+    "xz-9e": 0.7366334029650612
+   },
+   "binario": {
+    "arquivos": 5,
+    "bytes": 84680864,
+    "zstd-3": 0.5944334838151863,
+    "xz-9e": 0.6786542943161279
+   },
+   "cientifico_numerico": {
+    "arquivos": 1,
+    "bytes": 8474240,
+    "zstd-3": 0.27576608639830824,
+    "xz-9e": 0.4646811985499585
+   },
+   "container_comprimido": {
+    "arquivos": 1,
+    "bytes": 8385868,
+    "zstd-3": 0.0,
+    "xz-9e": 0.0
+   },
+   "criptografado_aleatorio": {
+    "arquivos": 1,
+    "bytes": 33554432,
+    "zstd-3": 0.0,
+    "xz-9e": 0.0
+   }
+  },
+  "classes_ferramenta_vs_medicoes": {
+   "E.coli": [
+    "sequencia",
+    "dna"
+   ],
+   "aleatorio.bin": [
+    "criptografado_aleatorio",
+    "sint_incompressivel"
+   ],
+   "bible.txt": [
+    "texto",
+    "texto"
+   ],
+   "dickens": [
+    "texto",
+    "texto"
+   ],
+   "ja_comprimido.xz": [
+    "container_comprimido",
+    "sint_ja_comprimido"
+   ],
+   "logs.log": [
+    "log",
+    "sint_logs"
+   ],
+   "mozilla": [
+    "binario",
+    "binario"
+   ],
+   "mr": [
+    "binario",
+    "cientifico"
+   ],
+   "nci": [
+    "texto",
+    "cientifico"
+   ],
+   "ooffice": [
+    "binario",
+    "binario"
+   ],
+   "osdb": [
+    "binario",
+    "banco_de_dados"
+   ],
+   "reymont": [
+    "texto",
+    "texto"
+   ],
+   "samba": [
+    "texto",
+    "codigo"
+   ],
+   "sao": [
+    "binario",
+    "cientifico"
+   ],
+   "webster": [
+    "texto",
+    "texto"
+   ],
+   "world192.txt": [
+    "texto",
+    "texto"
+   ],
+   "x-ray": [
+    "cientifico_numerico",
+    "cientifico"
+   ],
+   "xml": [
+    "xml_html",
+    "xml"
+   ]
+  }
+ },
+ "b_dataset_versionado": {
+  "dataset": {
+   "arquivos_v1_v2_total": 204,
+   "bytes": 298860417,
+   "bytes_v1_legiveis": 161639397,
+   "tempo_da_ferramenta_s": 18.069180011749268,
+   "bytes_lidos_total": 587948771,
+   "fracao_lida_do_inventario": 1.9673022506690807
+  },
+  "classificacao": {
+   "acertos": 183,
+   "total_com_expectativa": 189,
+   "acuracia": 0.9682539682539683,
+   "por_classe": {
+    "texto": [
+     21,
+     25
+    ],
+    "vazio": [
+     1,
+     1
+    ],
+    "csv_tabular": [
+     14,
+     14
+    ],
+    "criptografado_aleatorio": [
+     12,
+     12
+    ],
+    "banco_de_dados": [
+     2,
+     2
+    ],
+    "binario": [
+     19,
+     19
+    ],
+    "cientifico_numerico": [
+     11,
+     13
+    ],
+    "codigo": [
+     78,
+     78
+    ],
+    "container_comprimido": [
+     9,
+     9
+    ],
+    "log": [
+     7,
+     7
+    ],
+    "json_ndjson": [
+     6,
+     6
+    ],
+    "imagem_audio_video": [
+     3,
+     3
+    ]
+   },
+   "erros": [
+    [
+     "v1/texto/dicionario/webster_2.txt",
+     "texto",
+     "xml_html"
+    ],
+    [
+     "v1/texto/dicionario/webster_3.txt",
+     "texto",
+     "xml_html"
+    ],
+    [
+     "v2/cientifico/sensor_1.dat",
+     "cientifico_numerico",
+     "binario"
+    ],
+    [
+     "v2/cientifico/sensor_2.dat",
+     "cientifico_numerico",
+     "binario"
+    ],
+    [
+     "v2/texto/dicionario/webster_2.txt",
+     "texto",
+     "xml_html"
+    ],
+    [
+     "v2/texto/dicionario/webster_3.txt",
+     "texto",
+     "xml_html"
+    ]
+   ]
+  },
+  "dedup": {
+   "bytes_duplicados_ferramenta": 60573953,
+   "bytes_duplicados_oraculo_sha256": 60573953,
+   "grupos_ferramenta": 36,
+   "grupos_oraculo": 36,
+   "iguais": true,
+   "bytes_lidos_hash_completo": 114451246,
+   "bytes_candidatos_por_tamanho": 143251422
+  },
+  "familias": {
+   "pares_esperados": 52,
+   "pares_achados": 52,
+   "recall": 1.0,
+   "pares_extras_na_ferramenta": 0,
+   "razao_patch_z3_dos_extras_media": null,
+   "familias": 52,
+   "pct_bytes_em_familias": 0.5530094940609014,
+   "pares_medidos": 52,
+   "pares_possiveis": 52,
+   "falhas_de_roundtrip": 0,
+   "delta_por_classe_vs_exato": {
+    "texto": {
+     "razao_ferramenta": 0.1606775772514006,
+     "ic95": [
+      0.11746325474421505,
+      0.18139333450866782
+     ],
+     "pares_medidos": 6,
+     "razao_exata_dos_pares_esperados": 0.16291910396868461,
+     "pares_exatos": 6
+    },
+    "codigo": {
+     "razao_ferramenta": 0.21820432312981378,
+     "ic95": [
+      0.19045580075183108,
+      0.24852158321708284
+     ],
+     "pares_medidos": 26,
+     "razao_exata_dos_pares_esperados": 0.21820432312981378,
+     "pares_exatos": 26
+    },
+    "csv_tabular": {
+     "razao_ferramenta": 0.11017069023060663,
+     "ic95": [
+      0.10678840557609953,
+      0.1148651434189037
+     ],
+     "pares_medidos": 4,
+     "razao_exata_dos_pares_esperados": 0.11017069023060663,
+     "pares_exatos": 4
+    },
+    "json_ndjson": {
+     "razao_ferramenta": 0.11278584105138323,
+     "ic95": [
+      0.11252505679540291,
+      0.11304732330388817
+     ],
+     "pares_medidos": 2,
+     "razao_exata_dos_pares_esperados": 0.11278584105138323,
+     "pares_exatos": 2
+    },
+    "log": {
+     "razao_ferramenta": 0.10574190724652485,
+     "ic95": [
+      0.10024892145938688,
+      0.10958441165746201
+     ],
+     "pares_medidos": 3,
+     "razao_exata_dos_pares_esperados": 0.10574190724652485,
+     "pares_exatos": 3
+    },
+    "xml_html": {
+     "razao_ferramenta": 0.12588723649127406,
+     "ic95": [
+      0.12588723649127406,
+      0.12588723649127406
+     ],
+     "pares_medidos": 1,
+     "razao_exata_dos_pares_esperados": 0.12588723649127406,
+     "pares_exatos": 1
+    },
+    "binario": {
+     "razao_ferramenta": 0.08447261675046291,
+     "ic95": [
+      0.02573022437901984,
+      0.1608919052678257
+     ],
+     "pares_medidos": 8,
+     "razao_exata_dos_pares_esperados": 0.08447261675046291,
+     "pares_exatos": 8
+    },
+    "banco_de_dados": {
+     "razao_ferramenta": 0.11765064624697136,
+     "ic95": [
+      0.11765064624697136,
+      0.11765064624697136
+     ],
+     "pares_medidos": 1,
+     "razao_exata_dos_pares_esperados": 0.11765064624697136,
+     "pares_exatos": 1
+    },
+    "cientifico_numerico": {
+     "razao_ferramenta": 0.08823411306457289,
+     "ic95": [
+      0.08823411306457289,
+      0.08823411306457289
+     ],
+     "pares_medidos": 1,
+     "razao_exata_dos_pares_esperados": 0.08823411306457289,
+     "pares_exatos": 1
+    }
+   },
+   "delta_agregado_ferramenta": {
+    "pares_medidos": 52,
+    "bytes_janela_novos": 78019799,
+    "bytes_z3_sozinho": 30092714,
+    "bytes_patch_from": 3328690,
+    "razao_patch_sobre_z3": 0.11061448296089213,
+    "ic95_razao_patch_sobre_z3": [
+     0.07012603701741377,
+     0.14943387951822432
+    ],
+    "ganho_delta_sobre_z3": 0.8893855170391078,
+    "ic95_ganho_delta_sobre_z3": [
+     0.8505661204817757,
+     0.9298739629825863
+    ],
+    "baixa_confianca": false
+   },
+   "razao_exata_agregada_dos_pares_esperados": 0.1131811005842886,
+   "variante_12_pares": {
+    "razao_ferramenta": 0.06411691375295478,
+    "ic95": [
+     0.0302297454536725,
+     0.11961653980190308
+    ],
+    "pares_medidos": 12,
+    "razao_exata": 0.1131811005842886,
+    "ic95_cobre_o_exato": true
+   }
+  },
+  "ignorados_por_motivo": {
+   "nao_regular": 1,
+   "link_simbolico": 4,
+   "sem_permissao_diretorio": 1
+  },
+  "ilegiveis_por_motivo": {
+   "sem_permissao_leitura": 1
+  },
+  "resumo_executivo": [
+   "Dataset: 204 arquivos, 285,02 MiB em 41 diretorios (mediana 223,90 KiB, p99 12,00 MiB); classes dominantes: texto 28,0%, binario 25,1%, cientifico_numerico 10,8%.",
+   "Fracao incompressivel: 11,5% por classificacao (midia, containers comprimidos, criptografado/aleatorio) e 11,5% [11,5%; 11,5%] por amostra (blocos com economia zstd-3 < 3%).",
+   "Dedup de arquivo inteiro: 20,3% dos bytes (57,77 MiB) sao copias exatas, em 36 grupos.",
+   "Familias de versoes: 55,3% dos bytes em 52 familias (27,7% sao versoes nao-base); o delta (patch-from) custa 11,1% [7,0%; 14,9%] do zstd-3 isolado em 52 pares medidos.",
+   "Compressao do dataset (blocos de 1 MiB, ponderada por bytes): zstd-3 economiza 52,9% [50,2%; 54,7%] (razao 2,12x); zstd-19 56,9%; xz-9e 59,3% [56,6%; 61,3%].",
+   "Ganho por classe (zstd-3, IC95): texto 70,3% [65,1%; 72,8%]; binario 50,8% [42,6%; 56,3%]; cientifico_numerico 16,3% [10,4%; 21,9%]; xml_html 78,0% [69,3%; 85,5%].",
+   "Economia mensal estimada so com compressao (politica por classe): US$ 3.665.227 [US$ 3.486.138; US$ 3.788.281] = armazenamento US$ 3.675.350 + movimento US$ 0,00 - CPU US$ 10.122.",
+   "Com dedup e delta: US$ 4.775.620 [US$ 4.643.875; US$ 4.826.543] por mes; recompressao assincrona recomendada em: texto->xz-9e, codigo->xz-9e, csv_tabular->xz-9e, json_ndjson->xz-9e, log->xz-9e, xml_html->xz-9e, binario->xz-9e, banco_de_dados->xz-9e, cientifico_numerico->xz-9e; stored em: imagem_audio_video, criptografado_aleatorio.",
+   "Parametros (premissas): volume 5,00 PB/mes, fracao retida 0,90, retencao 60 meses, armazenamento US$ 0,0230/GB-mes, nucleo US$ 0,0446/h, 3 leituras/GB, custo de movimento 0,00 (DESCONHECIDO).",
+   "Limites: amostra de blocos de 1 MiB e heuristicas de classe e familia; vazoes de outro corpus/CPU; desconhecido: o que o cliente chama de processamento e se o consumo aceita dado comprimido (ver secao de limites)."
+  ],
+  "estimativa_total": {
+   "estimativa": 4775619.910551704,
+   "ic95": [
+    4643875.472498929,
+    4826542.628445987
+   ]
+  }
+ }
+}

@@ -416,6 +416,136 @@ make_data() {
   printf 'A' >"$WORK/um-byte.bin"
 }
 
+make_bombs() {
+  python3 -I - "$WORK" <<'PY'
+import bz2
+import lzma
+import struct
+import sys
+import zlib
+
+out = sys.argv[1]
+MIB = 1 << 20
+GIB = 1 << 30
+ZEROS = bytes(MIB)
+
+
+def varint(value):
+    buf = bytearray()
+    while True:
+        byte = value & 0x7F
+        value >>= 7
+        if value:
+            buf.append(byte | 0x80)
+        else:
+            buf.append(byte)
+            return bytes(buf)
+
+
+def field_varint(number, value):
+    return varint(number << 3) + varint(value)
+
+
+def field_bytes(number, payload):
+    return varint((number << 3) | 2) + varint(len(payload)) + payload
+
+
+def envelope(codec, payload, original_size, transforms=b""):
+    parts = [field_varint(1, 3), field_bytes(2, b"bomba.bin")]
+    if original_size:
+        parts.append(field_varint(4, original_size))
+    parts.append(field_bytes(10, payload))
+    parts.append(field_varint(20, codec))
+    parts.append(transforms)
+    return b"".join(parts)
+
+
+def stream(compressor):
+    chunks = [compressor.compress(ZEROS) for _ in range(GIB // MIB)]
+    chunks.append(compressor.flush())
+    return b"".join(chunks)
+
+
+def lz4_bomb(declared, real):
+    total = real - 25
+    return (
+        struct.pack("<I", declared)
+        + bytes([0x1F, 0x00, 0x01, 0x00])
+        + b"\xff" * (total // 255)
+        + bytes([total % 255])
+        + bytes([0x50, 0, 0, 0, 0, 0])
+    )
+
+
+def write(name, data):
+    with open(out + "/" + name, "wb") as handle:
+        handle.write(data)
+
+
+deflate = stream(zlib.compressobj(1, zlib.DEFLATED, -15))
+xz = stream(lzma.LZMACompressor(format=lzma.FORMAT_XZ, check=lzma.CHECK_CRC32, preset=0))
+bzip2 = stream(bz2.BZ2Compressor(1))
+lz4 = lz4_bomb(GIB, GIB)
+
+write("bomba-lz4.syntra", envelope(2, lz4, MIB))
+write("bomba-deflate.syntra", envelope(7, deflate, MIB))
+write("bomba-xz.syntra", envelope(5, xz, MIB))
+write("bomba-bzip2.syntra", envelope(6, bzip2, MIB))
+write("bomba-xz-sem-tamanho.syntra", envelope(5, xz, 0))
+write("bomba-bzip2-sem-tamanho.syntra", envelope(6, bzip2, 0))
+
+hostile = b"C,\x00" + varint(1) + varint(1) + b"\xff" * 9 + b"\x01"
+step_csv = field_varint(1, 4) + field_varint(2, 1)
+write("csv-hostil.syntra", envelope(1, hostile, 0, field_bytes(22, step_csv)))
+PY
+}
+
+non_loopback_ip() {
+  python3 -I -c '
+import socket
+
+try:
+    probe = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    probe.connect(("192.0.2.1", 9))
+    address = probe.getsockname()[0]
+    probe.close()
+except OSError:
+    address = ""
+print("" if address.startswith("127.") else address)
+'
+}
+
+compose_engine_port() {
+  local file=$1
+  shift
+  env "$@" docker compose -f "$ROOT/$file" config --format json 2>/dev/null | python3 -I -c '
+import json
+import sys
+
+try:
+    doc = json.load(sys.stdin)
+    port = doc["services"]["engine"]["ports"][0]
+    print("%s:%s" % (port.get("host_ip", ""), port.get("published", "")))
+except (KeyError, IndexError, ValueError):
+    print("")
+'
+}
+
+bomb_case() {
+  local label=$1 file=$2
+  local t0 t1 ms
+  t0=$(date +%s%N)
+  auth_upload "/api/v1/decompress" "$file"
+  t1=$(date +%s%N)
+  ms=$(((t1 - t0) / 1000000))
+  step_begin
+  eq "$HTTP_STATUS" 422 "status da bomba"
+  eq "$(jget "$WORK/resp.body" error.code)" decompressed_too_large "error.code"
+  match "$(jget "$WORK/resp.body" error.hint)" 'SYNTRA_MAX_DECOMPRESSED_MB' "hint da bomba"
+  chk "recusa em ${ms} ms (limite de 10000 ms)" test "$ms" -lt 10000
+  step_end "$label: 422 decompressed_too_large com hint, recusada em ${ms} ms"
+}
+
 declare -A OBJ_ID
 
 exercise_file() {
@@ -740,9 +870,78 @@ phase_limits() {
   match "$(jget "$WORK/resp.body" error.hint)" 'SYNTRA_MAX_DECOMPRESSED_MB' "hint do teto de descompressão"
   step_end "teto de descompressão (padrão = SYNTRA_MAX_BODY_MB = 1): envelope legítimo de 5 MB devolve 422 decompressed_too_large"
 
+  bomb_case "bomba real de 1 GiB em xz sem tamanho declarado, teto da configuração (SYNTRA_MAX_DECOMPRESSED_MB=1)" "$WORK/bomba-xz-sem-tamanho.syntra"
+  bomb_case "bomba real de 1 GiB em bzip2 sem tamanho declarado, teto da configuração (SYNTRA_MAX_DECOMPRESSED_MB=1)" "$WORK/bomba-bzip2-sem-tamanho.syntra"
+
+  http GET "/health"
+  step_begin
+  eq "$HTTP_STATUS" 200 "motor de limites pequenos depois das bombas"
+  step_end "o motor de limites pequenos segue respondendo depois das bombas"
+
   BASE=$saved
   docker rm -f "$SMALL_NAME" >/dev/null 2>&1 || true
   docker volume rm -f "$SMALL_VOLUME" >/dev/null 2>&1 || true
+}
+
+phase_bombs() {
+  local codec
+  for codec in lz4 deflate xz bzip2; do
+    bomb_case "bomba real de 1 GiB em $codec com tamanho declarado de 1 MiB" "$WORK/bomba-$codec.syntra"
+  done
+
+  auth_upload "/api/v1/decompress" "$WORK/csv-hostil.syntra"
+  step_begin
+  eq "$HTTP_STATUS" 422 "status do envelope com varint colunar hostil"
+  eq "$(jget "$WORK/resp.body" error.code)" restore_failed "error.code"
+  step_end "envelope com varint colunar de 2^64-1: 422 restore_failed em vez de derrubar o processo"
+
+  http GET "/health"
+  local health_status=$HTTP_STATUS
+  auth_http GET "/api/v1/objects/${OBJ_ID[vendas.csv]}/content"
+  step_begin
+  chk "contêiner parou depois das bombas" container_running
+  eq "$health_status" 200 "/health depois das bombas"
+  eq "$HTTP_STATUS" 200 "/content depois das bombas"
+  step_end "depois de 4 bombas de 1 GiB e do varint hostil o motor segue de pé e servindo"
+}
+
+phase_publish() {
+  local bound
+  bound=$(docker port "$NAME" 3002/tcp | tr '\n' ' ')
+  bound=${bound% }
+  step_begin
+  match "$bound" '^127\.0\.0\.1:[0-9]+$' "porta publicada do motor"
+  step_end "porta do motor publicada só em loopback ($bound)"
+
+  local other rc
+  other=$(non_loopback_ip)
+  if [ -n "$other" ]; then
+    rc=0
+    curl -sS --max-time 3 -o /dev/null "http://$other:$PORT/health" >/dev/null 2>&1 || rc=$?
+    step_begin
+    chk "o motor respondeu em $other:$PORT, fora do loopback" test "$rc" -ne 0
+    step_end "o motor não responde no endereço da máquina ($other:$PORT), só no loopback"
+  else
+    printf 'SKIP  sem interface fora do loopback para testar o acesso externo\n'
+  fi
+
+  if docker compose version >/dev/null 2>&1; then
+    local dev prod dev_open prod_open dev_port
+    dev=$(compose_engine_port docker-compose.yml)
+    dev_open=$(compose_engine_port docker-compose.yml SYNTRA_PUBLISH_HOST=0.0.0.0)
+    dev_port=$(compose_engine_port docker-compose.yml SYNTRA_PUBLISH_PORT=3999)
+    prod=$(compose_engine_port docker-compose.prod.yml SYNTRA_API_KEYS=x POSTGRES_PASSWORD=x)
+    prod_open=$(compose_engine_port docker-compose.prod.yml SYNTRA_API_KEYS=x POSTGRES_PASSWORD=x SYNTRA_PUBLISH_HOST=0.0.0.0)
+    step_begin
+    eq "$dev" "127.0.0.1:3002" "compose de desenvolvimento, padrão"
+    eq "$prod" "127.0.0.1:3002" "compose de produção, padrão"
+    eq "$dev_open" "0.0.0.0:3002" "compose de desenvolvimento com SYNTRA_PUBLISH_HOST"
+    eq "$prod_open" "0.0.0.0:3002" "compose de produção com SYNTRA_PUBLISH_HOST"
+    eq "$dev_port" "127.0.0.1:3999" "compose de desenvolvimento com SYNTRA_PUBLISH_PORT"
+    step_end "docker-compose.yml e docker-compose.prod.yml publicam o motor em 127.0.0.1 por padrão e aceitam SYNTRA_PUBLISH_HOST e SYNTRA_PUBLISH_PORT"
+  else
+    printf 'SKIP  o plugin docker compose não está disponível; os arquivos compose não foram conferidos\n'
+  fi
 }
 
 phase_tenants() {
@@ -1041,6 +1240,32 @@ phase_restart() {
   eq "$refs_after" 1 "referências do objeto ingerido por diretório depois do reinício e de uma varredura"
   eq "$events_after" "$COMPRESS_EVENTS_BEFORE" "eventos compress no ledger do tenant default depois do reinício"
   step_end "ingestão por diretório: o arquivo inalterado em /data/watch_in não foi reingerido após o reinício (1 referência, sem novo evento compress)"
+
+  docker exec -i "$NAME" sh -c 'printf "999999,2026-12-31,sul,produto-0,1.00,confirmado\n" >> /data/watch_in/watch-smoke.csv'
+  docker exec "$NAME" cat /data/watch_in/watch-smoke.csv >"$WORK/watch-smoke.v2.csv"
+  local deadline=$((SECONDS + 40)) new_id="" first second
+  while [ "$SECONDS" -lt "$deadline" ]; do
+    auth_http GET "/api/v1/objects?search=watch-smoke"
+    if [ "$(jget "$WORK/resp.body" count)" = 2 ]; then
+      first=$(jget "$WORK/resp.body" items.0.id)
+      second=$(jget "$WORK/resp.body" items.1.id)
+      new_id=$first
+      [ "$first" != "$WATCH_ID" ] || new_id=$second
+      break
+    fi
+    sleep 1
+  done
+  step_begin
+  chk "o arquivo modificado depois do reinício não virou objeto novo em 40 s" test -n "$new_id"
+  if [ -n "$new_id" ]; then
+    chk "o objeto novo tem o id do objeto antigo" test "$new_id" != "$WATCH_ID"
+    HTTP_OUT="$WORK/watch.v2.content" auth_http GET "/api/v1/objects/$new_id/content"
+    eq "$HTTP_STATUS" 200 "status de /content do objeto novo"
+    chk "conteúdo da versão nova difere do arquivo modificado" same_file "$WORK/watch-smoke.v2.csv" "$WORK/watch.v2.content"
+    auth_http GET "/api/v1/objects/$WATCH_ID"
+    eq "$(jget "$WORK/resp.body" references)" 1 "referências da versão antiga"
+  fi
+  step_end "ingestão por diretório: o arquivo modificado depois do reinício vira objeto novo (conteúdo idêntico ao arquivo), e a versão antiga segue com 1 referência"
 }
 
 phase_shutdown() {
@@ -1098,6 +1323,7 @@ main() {
   fi
 
   make_data
+  make_bombs
   printf '\n'
 
   local f
@@ -1109,6 +1335,8 @@ main() {
   phase_errors
   phase_ledger
   phase_limits
+  phase_bombs
+  phase_publish
   phase_tenants
   phase_cli
   phase_watch

@@ -1,0 +1,22 @@
+{
+ "id": "sao",
+ "perfil": "sao",
+ "rodadas": [
+  {
+   "sha256_compressor": "2d80db4de7002fcd547c18dae97840032705de383c20712c7e4b28527f9e457d",
+   "tamanho_compressor_bytes": 5055,
+   "tempo_relogio_s": 571.4,
+   "bytes_comp_teste": 1132228,
+   "razao_teste": 3.202510448425582,
+   "bit_exato": true
+  },
+  {
+   "sha256_compressor": "5f31ea93a7e99217a9a3533eb980d39afe5177b7639c03b2cb1b13c62e4ab64c",
+   "tamanho_compressor_bytes": 4747,
+   "tempo_relogio_s": 538.7,
+   "bytes_comp_teste": 1182312,
+   "razao_teste": 3.066848682919568,
+   "bit_exato": true
+  }
+ ]
+}

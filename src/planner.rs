@@ -407,7 +407,7 @@ pub fn compress_best(
             payload,
             candidates_tried: 1,
             sampled_decision: false,
-            reason: format!("plano imposto pelo cliente: {}", label),
+            reason: format!("plano imposto pelo cliente: {label}"),
         });
     }
 

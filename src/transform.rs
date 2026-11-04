@@ -56,6 +56,7 @@ pub fn apply(data: &[u8], s: &TransformStep) -> io::Result<Vec<u8>> {
 
 pub const MAX_CHAIN: usize = 8;
 
+#[cfg(test)]
 fn default_cap() -> usize {
     usize::try_from(crate::codec::MAX_DECOMPRESSED).unwrap_or(usize::MAX)
 }
@@ -68,6 +69,7 @@ fn check_len(len: usize, limit: usize) -> io::Result<()> {
     }
 }
 
+#[cfg(test)]
 pub fn invert(data: &[u8], s: &TransformStep) -> io::Result<Vec<u8>> {
     invert_limited(data, s, default_cap())
 }
@@ -121,6 +123,7 @@ pub fn apply_chain(data: &[u8], steps: &mut [TransformStep]) -> io::Result<Vec<u
     Ok(current)
 }
 
+#[cfg(test)]
 pub fn invert_chain(data: &[u8], steps: &[TransformStep]) -> io::Result<Vec<u8>> {
     invert_chain_limited(data, steps, default_cap(), default_cap())
 }
@@ -560,7 +563,7 @@ mod tests {
 
     #[test]
     fn rle_reversivel_inclusive_em_ruido() {
-        let repetitivo: Vec<u8> = std::iter::repeat(0u8).take(10_000).collect();
+        let repetitivo: Vec<u8> = std::iter::repeat_n(0u8, 10_000).collect();
         rt(&repetitivo, Transform::Rle, 1);
 
         let mut x = 0x12345678u32;

@@ -291,7 +291,7 @@ impl DictionaryStore {
     }
 
     fn path_for(&self, id: &str) -> PathBuf {
-        self.dir.join(format!("{}.dict", id))
+        self.dir.join(format!("{id}.dict"))
     }
 
     fn write_file(&self, id: &str, bytes: &[u8]) -> Result<()> {
@@ -306,7 +306,7 @@ impl DictionaryStore {
     }
 
     fn redis_key(id: &str) -> String {
-        format!("SYNTRA_DICT:{}", id)
+        format!("SYNTRA_DICT:{id}")
     }
 
     fn redis_get(&self, id: &str) -> Option<Vec<u8>> {
@@ -412,7 +412,7 @@ mod tests {
         let dict = store
             .active_for("application/json")
             .expect("dicionário deveria ter sido treinado");
-        assert!(dict.bytes.len() > 0);
+        assert!(!dict.bytes.is_empty());
         assert!(store.path_for(&dict.id).exists(), "não persistiu em disco");
 
         assert_eq!(store.resolve(&dict.id).unwrap().digest, dict.digest);
@@ -467,7 +467,7 @@ mod tests {
         let dir = tmpdir("corrompido");
         std::fs::create_dir_all(&dir).unwrap();
         let id = "application_json.0011223344556677";
-        std::fs::write(dir.join(format!("{}.dict", id)), b"conteudo-errado").unwrap();
+        std::fs::write(dir.join(format!("{id}.dict")), b"conteudo-errado").unwrap();
 
         let store = DictionaryStore::open(&dir, true, None).unwrap();
         assert!(store.resolve(id).is_none(), "aceitou dicionário corrompido");

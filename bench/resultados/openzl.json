@@ -1,5 +1,5 @@
 {
- "gerado_em": "2026-11-04 17:13:05",
+ "gerado_em": "2026-11-04 20:01:19",
  "ambiente": {
   "zli": "Demo CLI for OpenZL. Version 0.3.0",
   "imagem": "syntra-openzl:pinned",
@@ -318,9 +318,11 @@
     "openzl_generico": 2.991798673580751,
     "openzl_perfil": null,
     "openzl_treinado": 3.0718156348477286,
-    "openzl_melhor": 3.0718156348477286
+    "openzl_melhor": 3.0718156348477286,
+    "openzl_apriori": 3.0718156348477286
    },
    "melhor_configuracao": "treinado:serial",
+   "configuracao_apriori": "treinado:serial",
    "ganho_pct": {
     "sobre_zstd-3": 11.216615672460485,
     "sobre_zstd-19": -11.526800288364402,
@@ -340,6 +342,7 @@
     "zstd-19": 1467781,
     "xz-9e": 1454884,
     "openzl_melhor": 1659012,
+    "openzl_apriori": 1659012,
     "openzl_generico": 1703383,
     "openzl_generico_L6": 1751300
    }
@@ -358,9 +361,11 @@
     "openzl_generico": 3.841550442267137,
     "openzl_perfil": null,
     "openzl_treinado": null,
-    "openzl_melhor": 3.841550442267137
+    "openzl_melhor": 3.841550442267137,
+    "openzl_apriori": 3.722543804061694
    },
    "melhor_configuracao": "generico:serial@L9",
+   "configuracao_apriori": "generico:serial",
    "ganho_pct": {
     "sobre_zstd-3": 12.385586418975691,
     "sobre_zstd-19": -16.333956911296987,
@@ -378,6 +383,7 @@
     "zstd-19": 1826961,
     "xz-9e": 1812040,
     "openzl_melhor": 2183635,
+    "openzl_apriori": 2253444,
     "openzl_generico": 2183635,
     "openzl_generico_L6": 2253444
    }
@@ -396,9 +402,11 @@
     "openzl_generico": 3.737400177061502,
     "openzl_perfil": null,
     "openzl_treinado": null,
-    "openzl_melhor": 3.737400177061502
+    "openzl_melhor": 3.737400177061502,
+    "openzl_apriori": 3.610403635578226
    },
    "melhor_configuracao": "generico:serial@L9",
+   "configuracao_apriori": "generico:serial",
    "ganho_pct": {
     "sobre_zstd-3": 10.4791501047915,
     "sobre_zstd-19": -20.58102822143527,
@@ -416,6 +424,7 @@
     "zstd-19": 703309,
     "xz-9e": 686016,
     "openzl_melhor": 885568,
+    "openzl_apriori": 916718,
     "openzl_generico": 885568,
     "openzl_generico_L6": 916718
    }
@@ -434,9 +443,11 @@
     "openzl_generico": 3.630740027056219,
     "openzl_perfil": null,
     "openzl_treinado": null,
-    "openzl_melhor": 3.630740027056219
+    "openzl_melhor": 3.630740027056219,
+    "openzl_apriori": 3.5477555027656273
    },
    "melhor_configuracao": "generico:serial@L9",
+   "configuracao_apriori": "generico:serial",
    "ganho_pct": {
     "sobre_zstd-3": 9.15892478442939,
     "sobre_zstd-19": -14.063133569447272,
@@ -454,6 +465,7 @@
     "zstd-19": 478976,
     "xz-9e": 476300,
     "openzl_melhor": 557358,
+    "openzl_apriori": 570395,
     "openzl_generico": 557358,
     "openzl_generico_L6": 570395
    }
@@ -472,9 +484,11 @@
     "openzl_generico": 4.068566296215875,
     "openzl_perfil": null,
     "openzl_treinado": null,
-    "openzl_melhor": 4.068566296215875
+    "openzl_melhor": 4.068566296215875,
+    "openzl_apriori": 3.964292240077705
    },
    "melhor_configuracao": "generico:serial@L9",
+   "configuracao_apriori": "generico:serial",
    "ganho_pct": {
     "sobre_zstd-3": 8.909900840258711,
     "sobre_zstd-19": -12.231456075590398,
@@ -492,6 +506,7 @@
     "zstd-19": 266776,
     "xz-9e": 255636,
     "openzl_melhor": 303954,
+    "openzl_apriori": 311949,
     "openzl_generico": 303954,
     "openzl_generico_L6": 311949
    }
@@ -510,9 +525,11 @@
     "openzl_generico": 5.880142212352595,
     "openzl_perfil": null,
     "openzl_treinado": 6.969966000186118,
-    "openzl_melhor": 6.969966000186118
+    "openzl_melhor": 6.969966000186118,
+    "openzl_apriori": 6.969966000186118
    },
    "melhor_configuracao": "treinado:serial",
+   "configuracao_apriori": "treinado:serial",
    "ganho_pct": {
     "sobre_zstd-3": 18.624204012177458,
     "sobre_zstd-19": -14.693619467967721,
@@ -532,6 +549,7 @@
     "zstd-19": 1026693,
     "xz-9e": 941236,
     "openzl_melhor": 1203536,
+    "openzl_apriori": 1203536,
     "openzl_generico": 1426599,
     "openzl_generico_L6": 1456725
    }
@@ -550,9 +568,11 @@
     "openzl_generico": 3.3132064442487175,
     "openzl_perfil": null,
     "openzl_treinado": 3.783103363055992,
-    "openzl_melhor": 3.783103363055992
+    "openzl_melhor": 3.783103363055992,
+    "openzl_apriori": 3.783103363055992
    },
    "melhor_configuracao": "treinado:serial",
+   "configuracao_apriori": "treinado:serial",
    "ganho_pct": {
     "sobre_zstd-3": 10.841449489218835,
     "sobre_zstd-19": -10.728568928847814,
@@ -572,6 +592,7 @@
     "zstd-19": 1979494,
     "xz-9e": 1719224,
     "openzl_melhor": 2217388,
+    "openzl_apriori": 2217388,
     "openzl_generico": 2531870,
     "openzl_generico_L6": 2577899
    }
@@ -590,9 +611,11 @@
     "openzl_generico": 2.1320247711922264,
     "openzl_perfil": null,
     "openzl_treinado": null,
-    "openzl_melhor": 2.1320247711922264
+    "openzl_melhor": 2.1320247711922264,
+    "openzl_apriori": 2.1156093535075655
    },
    "melhor_configuracao": "generico:serial@L9",
+   "configuracao_apriori": "generico:serial",
    "ganho_pct": {
     "sobre_zstd-3": -0.3970737556357129,
     "sobre_zstd-19": -16.395285572201356,
@@ -610,6 +633,7 @@
     "zstd-19": 1206253,
     "xz-9e": 1112672,
     "openzl_melhor": 1442805,
+    "openzl_apriori": 1454000,
     "openzl_generico": 1442805,
     "openzl_generico_L6": 1454000
    }
@@ -628,9 +652,11 @@
     "openzl_generico": 1.3745624376874117,
     "openzl_perfil": 2.011005710279835,
     "openzl_treinado": 3.0715899455055413,
-    "openzl_melhor": 3.0715899455055413
+    "openzl_melhor": 3.0715899455055413,
+    "openzl_apriori": 3.0715899455055413
    },
    "melhor_configuracao": "treinado:sao",
+   "configuracao_apriori": "treinado:sao",
    "ganho_pct": {
     "sobre_zstd-3": 135.45900971378762,
     "sobre_zstd-19": 112.76617192734864,
@@ -648,6 +674,7 @@
     "zstd-19": 2511677,
     "xz-9e": 2227188,
     "openzl_melhor": 1180487,
+    "openzl_apriori": 1180487,
     "openzl_generico": 2637910,
     "openzl_generico_L6": 2658292
    }
@@ -666,9 +693,11 @@
     "openzl_generico": 13.23755081300813,
     "openzl_perfil": null,
     "openzl_treinado": 15.726509362509468,
-    "openzl_melhor": 15.726509362509468
+    "openzl_melhor": 15.726509362509468,
+    "openzl_apriori": 15.726509362509468
    },
    "melhor_configuracao": "treinado:serial",
+   "configuracao_apriori": "treinado:serial",
    "ganho_pct": {
     "sobre_zstd-3": 27.628776687088962,
     "sobre_zstd-19": -23.20886232574184,
@@ -688,6 +717,7 @@
     "zstd-19": 409607,
     "xz-9e": 372840,
     "openzl_melhor": 533404,
+    "openzl_apriori": 533404,
     "openzl_generico": 633696,
     "openzl_generico_L6": 651348
    }
@@ -706,9 +736,11 @@
     "openzl_generico": 1.4904060247702196,
     "openzl_perfil": 1.6443921296506512,
     "openzl_treinado": null,
-    "openzl_melhor": 1.6443921296506512
+    "openzl_melhor": 1.6443921296506512,
+    "openzl_apriori": 1.6443921296506512
    },
    "melhor_configuracao": "perfil:le-u16",
+   "configuracao_apriori": "perfil:le-u16",
    "ganho_pct": {
     "sobre_zstd-3": 20.567204135197258,
     "sobre_zstd-19": 0.9818726134771083,
@@ -726,6 +758,7 @@
     "zstd-19": 2602009,
     "xz-9e": 2252792,
     "openzl_melhor": 2576709,
+    "openzl_apriori": 2576709,
     "openzl_generico": 2842930,
     "openzl_generico_L6": 2919846
    }
@@ -744,9 +777,11 @@
     "openzl_generico": 2.8465139171525737,
     "openzl_perfil": 3.010256029379886,
     "openzl_treinado": 3.896185236911395,
-    "openzl_melhor": 3.896185236911395
+    "openzl_melhor": 3.896185236911395,
+    "openzl_apriori": 3.896185236911395
    },
    "melhor_configuracao": "treinado:le-u16",
+   "configuracao_apriori": "treinado:le-u16",
    "ganho_pct": {
     "sobre_zstd-3": 45.6242101585818,
     "sobre_zstd-19": 29.866536827223158,
@@ -764,6 +799,7 @@
     "zstd-19": 1661680,
     "xz-9e": 1462288,
     "openzl_melhor": 1279529,
+    "openzl_apriori": 1279529,
     "openzl_generico": 1751364,
     "openzl_generico_L6": 1775962
    }
@@ -782,9 +818,11 @@
     "openzl_generico": 2.9805909826502135,
     "openzl_perfil": null,
     "openzl_treinado": 3.0103925331836945,
-    "openzl_melhor": 3.0103925331836945
+    "openzl_melhor": 3.0103925331836945,
+    "openzl_apriori": 3.0103925331836945
    },
    "melhor_configuracao": "treinado:serial",
+   "configuracao_apriori": "treinado:serial",
    "ganho_pct": {
     "sobre_zstd-3": 4.609332326455329,
     "sobre_zstd-19": -6.1139781929325565,
@@ -804,6 +842,7 @@
     "zstd-19": 1572727,
     "xz-9e": 1440252,
     "openzl_melhor": 1675145,
+    "openzl_apriori": 1675145,
     "openzl_generico": 1691894,
     "openzl_generico_L6": 1715482
    }
@@ -822,9 +861,11 @@
     "openzl_generico": 8.331682303369645,
     "openzl_perfil": null,
     "openzl_treinado": 9.140560780992288,
-    "openzl_melhor": 9.140560780992288
+    "openzl_melhor": 9.140560780992288,
+    "openzl_apriori": 9.140560780992288
    },
    "melhor_configuracao": "treinado:serial",
+   "configuracao_apriori": "treinado:serial",
    "ganho_pct": {
     "sobre_zstd-3": 20.294209423616994,
     "sobre_zstd-19": -10.328533856372301,
@@ -844,6 +885,7 @@
     "zstd-19": 201160,
     "xz-9e": 192900,
     "openzl_melhor": 224330,
+    "openzl_apriori": 224330,
     "openzl_generico": 246109,
     "openzl_generico_L6": 255892
    }
@@ -862,9 +904,11 @@
     "openzl_generico": 3.486724905403394,
     "openzl_perfil": 3.4333098460199367,
     "openzl_treinado": null,
-    "openzl_melhor": 3.486724905403394
+    "openzl_melhor": 3.486724905403394,
+    "openzl_apriori": 3.4333098460199367
    },
    "melhor_configuracao": "generico:serial@L9",
+   "configuracao_apriori": "perfil:u8",
    "ganho_pct": {
     "sobre_zstd-3": 4.587390426537863,
     "sobre_zstd-19": -13.510364661083319,
@@ -882,6 +926,7 @@
     "zstd-19": 575323,
     "xz-9e": 601064,
     "openzl_melhor": 665193,
+    "openzl_apriori": 675542,
     "openzl_generico": 665193,
     "openzl_generico_L6": 673059
    }
@@ -900,9 +945,11 @@
     "openzl_generico": 0.9999969005680782,
     "openzl_perfil": null,
     "openzl_treinado": null,
-    "openzl_melhor": 0.9999969005680782
+    "openzl_melhor": 0.9999969005680782,
+    "openzl_apriori": 0.9999969005680782
    },
    "melhor_configuracao": "generico:serial",
+   "configuracao_apriori": "generico:serial",
    "ganho_pct": {
     "sobre_zstd-3": 0.002098076993228837,
     "sobre_zstd-19": 0.002086156101221981,
@@ -920,6 +967,7 @@
     "zstd-19": 8388809,
     "xz-9e": 8389088,
     "openzl_melhor": 8388634,
+    "openzl_apriori": 8388634,
     "openzl_generico": 8388634,
     "openzl_generico_L6": 8388634
    }
@@ -938,9 +986,11 @@
     "openzl_generico": 4.362059255892752,
     "openzl_perfil": null,
     "openzl_treinado": 4.5813619453115955,
-    "openzl_melhor": 4.5813619453115955
+    "openzl_melhor": 4.5813619453115955,
+    "openzl_apriori": 4.5813619453115955
    },
    "melhor_configuracao": "treinado:serial",
+   "configuracao_apriori": "treinado:serial",
    "ganho_pct": {
     "sobre_zstd-3": 12.421929102121876,
     "sobre_zstd-19": -19.754695176698544,
@@ -960,6 +1010,7 @@
     "zstd-19": 1469314,
     "xz-9e": 1457228,
     "openzl_melhor": 1831028,
+    "openzl_apriori": 1831028,
     "openzl_generico": 1923083,
     "openzl_generico_L6": 1970110
    }
@@ -978,9 +1029,11 @@
     "openzl_generico": 0.9999937991388435,
     "openzl_perfil": null,
     "openzl_treinado": null,
-    "openzl_melhor": 0.9999937991388435
+    "openzl_melhor": 0.9999937991388435,
+    "openzl_apriori": 0.9999937991388435
    },
    "melhor_configuracao": "generico:serial",
+   "configuracao_apriori": "generico:serial",
    "ganho_pct": {
     "sobre_zstd-3": 0.0019079572789237886,
     "sobre_zstd-19": 0.0018841078129439026,
@@ -998,6 +1051,7 @@
     "zstd-19": 4193045,
     "xz-9e": 4193212,
     "openzl_melhor": 4192966,
+    "openzl_apriori": 4192966,
     "openzl_generico": 4192966,
     "openzl_generico_L6": 4192966
    }
@@ -1016,9 +1070,11 @@
     "openzl_generico": 5.935285862313311,
     "openzl_perfil": 6.569246311041327,
     "openzl_treinado": 17.651826024011708,
-    "openzl_melhor": 17.651826024011708
+    "openzl_melhor": 17.651826024011708,
+    "openzl_apriori": 17.651826024011708
    },
    "melhor_configuracao": "treinado:csv",
+   "configuracao_apriori": "treinado:csv",
    "ganho_pct": {
     "sobre_zstd-3": 254.96873596064194,
     "sobre_zstd-19": 135.63553379283354,
@@ -1036,6 +1092,7 @@
     "zstd-19": 2239605,
     "xz-9e": 2110240,
     "openzl_melhor": 950453,
+    "openzl_apriori": 950453,
     "openzl_generico": 2826693,
     "openzl_generico_L6": 2925607
    }
@@ -1054,9 +1111,11 @@
     "openzl_generico": 6.532980278925962,
     "openzl_perfil": null,
     "openzl_treinado": 6.953565578662564,
-    "openzl_melhor": 6.953565578662564
+    "openzl_melhor": 6.953565578662564,
+    "openzl_apriori": 6.953565578662564
    },
    "melhor_configuracao": "treinado:serial",
+   "configuracao_apriori": "treinado:serial",
    "ganho_pct": {
     "sobre_zstd-3": 18.34465105175205,
     "sobre_zstd-19": -19.704186450568983,
@@ -1076,6 +1135,7 @@
     "zstd-19": 1937326,
     "xz-9e": 1904944,
     "openzl_melhor": 2412736,
+    "openzl_apriori": 2412736,
     "openzl_generico": 2568065,
     "openzl_generico_L6": 2651358
    }
@@ -1094,9 +1154,11 @@
     "openzl_generico": 4.895944213160077,
     "openzl_perfil": 9.855361783517315,
     "openzl_treinado": 10.768963549546415,
-    "openzl_melhor": 10.768963549546415
+    "openzl_melhor": 10.768963549546415,
+    "openzl_apriori": 10.768963549546415
    },
    "melhor_configuracao": "treinado:le-u32",
+   "configuracao_apriori": "treinado:le-u32",
    "ganho_pct": {
     "sobre_zstd-3": 145.75348075610924,
     "sobre_zstd-19": 87.8309775258469,
@@ -1114,6 +1176,7 @@
     "zstd-19": 2926262,
     "xz-9e": 2386508,
     "openzl_melhor": 1557923,
+    "openzl_apriori": 1557923,
     "openzl_generico": 3426758,
     "openzl_generico_L6": 3503951
    }
@@ -1132,9 +1195,11 @@
     "openzl_generico": 3.48838557423406,
     "openzl_perfil": 9.329953676155732,
     "openzl_treinado": 9.402867061301398,
-    "openzl_melhor": 9.402867061301398
+    "openzl_melhor": 9.402867061301398,
+    "openzl_apriori": 9.402867061301398
    },
    "melhor_configuracao": "treinado:le-i64",
+   "configuracao_apriori": "treinado:le-i64",
    "ganho_pct": {
     "sobre_zstd-3": 54.88766809433123,
     "sobre_zstd-19": 55.04425909589714,
@@ -1152,6 +1217,7 @@
     "zstd-19": 1383201,
     "xz-9e": 1222332,
     "openzl_melhor": 892133,
+    "openzl_apriori": 892133,
     "openzl_generico": 2404725,
     "openzl_generico_L6": 2406465
    }
@@ -1169,6 +1235,7 @@
     "zstd-19": 3.2064331571849407,
     "xz-9e": 3.5013622616042195,
     "openzl_melhor": 3.0103925331836945,
+    "openzl_apriori": 3.0103925331836945,
     "openzl_generico": 2.9805909826502135,
     "openzl_generico_L6": 2.9396076437992353
    },
@@ -1181,6 +1248,11 @@
     "sobre_zstd-3": 3.5737463458112684,
     "sobre_zstd-19": -7.043408156775777,
     "sobre_xz-9e": -14.873390413347408
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 4.609332326455329,
+    "sobre_zstd-19": -6.1139781929325565,
+    "sobre_xz-9e": -14.022248820251393
    }
   },
   {
@@ -1195,6 +1267,7 @@
     "zstd-19": 3.59874905320479,
     "xz-9e": 4.048419857226396,
     "openzl_melhor": 3.132267615396237,
+    "openzl_apriori": 3.1227165311865703,
     "openzl_generico": 2.884438098712473,
     "openzl_generico_L6": 2.843499799970188
    },
@@ -1207,6 +1280,11 @@
     "sobre_zstd-3": -2.008063552365924,
     "sobre_zstd-19": -19.848868146452237,
     "sobre_xz-9e": -28.751507984929592
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 6.08688049315409,
+    "sobre_zstd-19": -13.227722049535496,
+    "sobre_xz-9e": -22.865793536395508
    }
   },
   {
@@ -1223,6 +1301,7 @@
     "zstd-19": 2.9557462498467286,
     "xz-9e": 3.3628810465315873,
     "openzl_melhor": 3.8126508380685618,
+    "openzl_apriori": 3.8126508380685618,
     "openzl_generico": 2.69987630150396,
     "openzl_generico_L6": 2.652813059306612
    },
@@ -1235,6 +1314,11 @@
     "sobre_zstd-3": 7.175402687550059,
     "sobre_zstd-19": -8.65669535590332,
     "sobre_xz-9e": -19.715379041177737
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 51.34855943192698,
+    "sobre_zstd-19": 28.99114185685825,
+    "sobre_xz-9e": 13.374537645357943
    }
   },
   {
@@ -1248,6 +1332,7 @@
     "zstd-19": 8.17050958757876,
     "xz-9e": 8.91232910768394,
     "openzl_melhor": 6.969966000186118,
+    "openzl_apriori": 6.969966000186118,
     "openzl_generico": 5.880142212352595,
     "openzl_generico_L6": 5.7585371295199845
    },
@@ -1260,6 +1345,11 @@
     "sobre_zstd-3": 0.07612510593377753,
     "sobre_zstd-19": -28.032123953542655,
     "sobre_xz-9e": -34.02238470656436
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 18.624204012177458,
+    "sobre_zstd-19": -14.693619467967721,
+    "sobre_xz-9e": -21.794113346007105
    }
   },
   {
@@ -1273,6 +1363,7 @@
     "zstd-19": 4.031378894985947,
     "xz-9e": 3.8587321815979663,
     "openzl_melhor": 3.486724905403394,
+    "openzl_apriori": 3.4333098460199367,
     "openzl_generico": 3.486724905403394,
     "openzl_generico_L6": 3.4459757614117037
    },
@@ -1285,6 +1376,11 @@
     "sobre_zstd-3": 4.587390426537863,
     "sobre_zstd-19": -13.510364661083319,
     "sobre_xz-9e": -9.640660680434099
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 2.9851585837742167,
+    "sobre_zstd-19": -14.835347025055434,
+    "sobre_xz-9e": -11.024925171195864
    }
   },
   {
@@ -1298,6 +1394,7 @@
     "zstd-19": 7.491156252999971,
     "xz-9e": 7.9503900030328305,
     "openzl_melhor": 17.651826024011708,
+    "openzl_apriori": 17.651826024011708,
     "openzl_generico": 5.935285862313311,
     "openzl_generico_L6": 5.734615414852371
    },
@@ -1310,6 +1407,11 @@
     "sobre_zstd-3": 19.355409306918013,
     "sobre_zstd-19": -20.769429152723696,
     "sobre_xz-9e": -25.34597849854937
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 254.96873596064194,
+    "sobre_zstd-19": 135.63553379283354,
+    "sobre_xz-9e": 122.02465561158733
    }
   },
   {
@@ -1323,6 +1425,7 @@
     "zstd-19": 5.733326680932876,
     "xz-9e": 7.030027135882218,
     "openzl_melhor": 10.768963549546415,
+    "openzl_apriori": 10.768963549546415,
     "openzl_generico": 4.895944213160077,
     "openzl_generico_L6": 4.788085221511374
    },
@@ -1335,6 +1438,11 @@
     "sobre_zstd-3": 11.728053162785358,
     "sobre_zstd-19": -14.605525105653804,
     "sobre_xz-9e": -30.356681154607358
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 145.75348075610924,
+    "sobre_zstd-19": 87.8309775258469,
+    "sobre_xz-9e": 53.18523444355079
    }
   },
   {
@@ -1348,6 +1456,7 @@
     "zstd-19": 0.9999760395069193,
     "xz-9e": 0.9999427828150093,
     "openzl_melhor": 0.9999969005680782,
+    "openzl_apriori": 0.9999969005680782,
     "openzl_generico": 0.9999969005680782,
     "openzl_generico_L6": 0.9999969005680782
    },
@@ -1357,6 +1466,11 @@
     "sobre_xz-9e": 0.005412084971156972
    },
    "ganho_generico_pct": {
+    "sobre_zstd-3": 0.002098076993228837,
+    "sobre_zstd-19": 0.002086156101221981,
+    "sobre_xz-9e": 0.005412084971156972
+   },
+   "ganho_apriori_pct": {
     "sobre_zstd-3": 0.002098076993228837,
     "sobre_zstd-19": 0.002086156101221981,
     "sobre_xz-9e": 0.005412084971156972
@@ -1373,6 +1487,7 @@
     "zstd-19": 6.064634134879891,
     "xz-9e": 6.8627901421217805,
     "openzl_melhor": 9.402867061301398,
+    "openzl_apriori": 9.402867061301398,
     "openzl_generico": 3.48838557423406,
     "openzl_generico_L6": 3.4858632890983245
    },
@@ -1385,6 +1500,11 @@
     "sobre_zstd-3": -42.53796172119474,
     "sobre_zstd-19": -42.47986776034682,
     "sobre_xz-9e": -49.169572404328974
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 54.88766809433123,
+    "sobre_zstd-19": 55.04425909589714,
+    "sobre_xz-9e": 37.01230646103215
    }
   },
   {
@@ -1398,6 +1518,7 @@
     "zstd-19": 0.9999749585325223,
     "xz-9e": 0.9999351332582278,
     "openzl_melhor": 0.9999937991388435,
+    "openzl_apriori": 0.9999937991388435,
     "openzl_generico": 0.9999937991388435,
     "openzl_generico_L6": 0.9999937991388435
    },
@@ -1407,6 +1528,11 @@
     "sobre_xz-9e": 0.005866968632695091
    },
    "ganho_generico_pct": {
+    "sobre_zstd-3": 0.0019079572789237886,
+    "sobre_zstd-19": 0.0018841078129439026,
+    "sobre_xz-9e": 0.005866968632695091
+   },
+   "ganho_apriori_pct": {
     "sobre_zstd-3": 0.0019079572789237886,
     "sobre_zstd-19": 0.0018841078129439026,
     "sobre_xz-9e": 0.005866968632695091
@@ -1423,6 +1549,7 @@
     "zstd-19": 5.709196264379159,
     "xz-9e": 5.7565473625266605,
     "openzl_melhor": 4.5813619453115955,
+    "openzl_apriori": 4.5813619453115955,
     "openzl_generico": 4.362059255892752,
     "openzl_generico_L6": 4.257935851297643
    },
@@ -1435,6 +1562,11 @@
     "sobre_zstd-3": 7.040465752128222,
     "sobre_zstd-19": -23.59591343691353,
     "sobre_xz-9e": -24.224383450948295
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 12.421929102121876,
+    "sobre_zstd-19": -19.754695176698544,
+    "sobre_xz-9e": -20.41476154378852
    }
   },
   {
@@ -1448,6 +1580,7 @@
     "zstd-19": 8.659935395488422,
     "xz-9e": 8.807144986939248,
     "openzl_melhor": 6.953565578662564,
+    "openzl_apriori": 6.953565578662564,
     "openzl_generico": 6.532980278925962,
     "openzl_generico_L6": 6.3277452535644
    },
@@ -1460,6 +1593,11 @@
     "sobre_zstd-3": 11.186593797275378,
     "sobre_zstd-19": -24.56086586593409,
     "sobre_xz-9e": -25.82181525779137
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 18.34465105175205,
+    "sobre_zstd-19": -19.704186450568983,
+    "sobre_xz-9e": -21.046314225841524
    }
   },
   {
@@ -1477,6 +1615,7 @@
     "zstd-19": 4.227562569524915,
     "xz-9e": 4.280737419731066,
     "openzl_melhor": 3.5879107480829773,
+    "openzl_apriori": 3.5112773872024916,
     "openzl_generico": 3.5596533696563197,
     "openzl_generico_L6": 3.4554435485955253
    },
@@ -1489,6 +1628,11 @@
     "sobre_zstd-3": 10.349850139281912,
     "sobre_zstd-19": -15.798919327257966,
     "sobre_xz-9e": -16.844855906159463
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 8.850186587873843,
+    "sobre_zstd-19": -16.943218948097517,
+    "sobre_xz-9e": -17.974941162752167
    }
   },
   {
@@ -1502,6 +1646,7 @@
     "zstd-19": 10.193388347584012,
     "xz-9e": 10.629870399170555,
     "openzl_melhor": 9.140560780992288,
+    "openzl_apriori": 9.140560780992288,
     "openzl_generico": 8.331682303369645,
     "openzl_generico_L6": 8.013153986838198
    },
@@ -1514,6 +1659,11 @@
     "sobre_zstd-3": 9.648976672937604,
     "sobre_zstd-19": -18.26385869675631,
     "sobre_xz-9e": -21.62009516108716
+   },
+   "ganho_apriori_pct": {
+    "sobre_zstd-3": 20.294209423616994,
+    "sobre_zstd-19": -10.328533856372301,
+    "sobre_xz-9e": -14.01060937012437
    }
   }
  ],
@@ -2113,6 +2263,1273 @@
     "bit_exato": true
    }
   ]
+ },
+ "determinismo_do_treino_extra": {
+  "openzl_determinismo_treino_1thread.json": {
+   "id": "sao",
+   "perfil": "sao",
+   "rodadas": [
+    {
+     "sha256_compressor": "2d80db4de7002fcd547c18dae97840032705de383c20712c7e4b28527f9e457d",
+     "tamanho_compressor_bytes": 5055,
+     "tempo_relogio_s": 571.4,
+     "bytes_comp_teste": 1132228,
+     "razao_teste": 3.202510448425582,
+     "bit_exato": true
+    },
+    {
+     "sha256_compressor": "5f31ea93a7e99217a9a3533eb980d39afe5177b7639c03b2cb1b13c62e4ab64c",
+     "tamanho_compressor_bytes": 4747,
+     "tempo_relogio_s": 538.7,
+     "bytes_comp_teste": 1182312,
+     "razao_teste": 3.066848682919568,
+     "bit_exato": true
+    }
+   ]
+  }
+ },
+ "quadro_e_blocos": {
+  "data": "2026-11-04 19:58:35",
+  "protocolo": {
+   "cpus_conteiner": "16-31",
+   "memoria": "2g",
+   "rede": "none",
+   "dados": "somente leitura",
+   "saida": "tmpfs",
+   "tempo_medido": false
+  },
+  "ambiente": {
+   "zli": "Demo CLI for OpenZL. Version 0.3.0",
+   "imagem": "syntra-openzl:pinned",
+   "commit_openzl": "32246b48faee46807f84183dac4db479089f5445",
+   "debian": [
+    "12.15"
+   ],
+   "zstd_python": "1.5.7",
+   "python": "3.14.4",
+   "xz_cli": "xz (XZ Utils) 5.8.3"
+  },
+  "sobrecarga_entrada_incompressivel": [
+   {
+    "entrada_bytes": 0,
+    "sha256_entrada": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "falhou": false,
+    "quadro_bytes": 20,
+    "sobrecarga_bytes": 20,
+    "bit_exato": true,
+    "cabecalho": {
+     "magic_hex": "d7b1a5db",
+     "versao_formato": 27,
+     "flags": 3,
+     "checksum_conteudo": true,
+     "checksum_comprimido": true,
+     "comentario": false,
+     "bundle_id": false,
+     "primeiros_16_bytes": "dba5b1d703010102010100c294d3383d"
+    }
+   },
+   {
+    "entrada_bytes": 1,
+    "sha256_entrada": "18f5384d58bcb1bba0bcd9e6a6781d1a6ac2cc280c330ecbab6cb7931b721552",
+    "falhou": false,
+    "quadro_bytes": 21,
+    "sobrecarga_bytes": 20,
+    "bit_exato": true,
+    "cabecalho": {
+     "magic_hex": "d7b1a5db",
+     "versao_formato": 27,
+     "flags": 3,
+     "checksum_conteudo": true,
+     "checksum_comprimido": true,
+     "comentario": false,
+     "bundle_id": false,
+     "primeiros_16_bytes": "dba5b1d7030102e801010159b8e5ad8d"
+    }
+   },
+   {
+    "entrada_bytes": 16,
+    "sha256_entrada": "5fff299865f332ca391d9f8354d6e407b4da3da95b7dd0764d370a9dc1ebc83c",
+    "falhou": false,
+    "quadro_bytes": 36,
+    "sobrecarga_bytes": 20,
+    "bit_exato": true,
+    "cabecalho": {
+     "magic_hex": "d7b1a5db",
+     "versao_formato": 27,
+     "flags": 3,
+     "checksum_conteudo": true,
+     "checksum_comprimido": true,
+     "comentario": false,
+     "bundle_id": false,
+     "primeiros_16_bytes": "dba5b1d7030111fa01011059ce6148cf"
+    }
+   },
+   {
+    "entrada_bytes": 256,
+    "sha256_entrada": "f0dfd7f1f89941faf96aeebab1d3e2c40054f9235cd0ac99a06b7d14cd45dfa7",
+    "falhou": false,
+    "quadro_bytes": 278,
+    "sobrecarga_bytes": 22,
+    "bit_exato": true,
+    "cabecalho": {
+     "magic_hex": "d7b1a5db",
+     "versao_formato": 27,
+     "flags": 3,
+     "checksum_conteudo": true,
+     "checksum_comprimido": true,
+     "comentario": false,
+     "bundle_id": false,
+     "primeiros_16_bytes": "dba5b1d703018102a50101800259ce61"
+    }
+   },
+   {
+    "entrada_bytes": 4096,
+    "sha256_entrada": "ef6738a272d3f5390fba6b3cacb246c6def56cba2b895ee3e38bcbea65c7f44c",
+    "falhou": false,
+    "quadro_bytes": 4118,
+    "sobrecarga_bytes": 22,
+    "bit_exato": true,
+    "cabecalho": {
+     "magic_hex": "d7b1a5db",
+     "versao_formato": 27,
+     "flags": 3,
+     "checksum_conteudo": true,
+     "checksum_comprimido": true,
+     "comentario": false,
+     "bundle_id": false,
+     "primeiros_16_bytes": "dba5b1d703018120fb0101802059ce61"
+    }
+   },
+   {
+    "entrada_bytes": 65536,
+    "sha256_entrada": "1395a6bd9f89a7a1438d003bef865bfea7e70f95e6ced542148554dba2fa63d5",
+    "falhou": false,
+    "quadro_bytes": 65560,
+    "sobrecarga_bytes": 24,
+    "bit_exato": true,
+    "cabecalho": {
+     "magic_hex": "d7b1a5db",
+     "versao_formato": 27,
+     "flags": 3,
+     "checksum_conteudo": true,
+     "checksum_comprimido": true,
+     "comentario": false,
+     "bundle_id": false,
+     "primeiros_16_bytes": "dba5b1d70301818004cb010180800459"
+    }
+   }
+  ],
+  "quadro_texto_64KiB": {
+   "entrada_bytes": 65536,
+   "quadro_bytes": 26158,
+   "bit_exato": true,
+   "cabecalho": {
+    "magic_hex": "d7b1a5db",
+    "versao_formato": 27,
+    "flags": 3,
+    "checksum_conteudo": true,
+    "checksum_comprimido": true,
+    "comentario": false,
+    "bundle_id": false,
+    "primeiros_16_bytes": "dba5b1d70301818004cb0c0800000a85"
+   },
+   "sha256_quadro": "210ef6d6150331c16ac85fb31aafb1b895c8870329e3e5f32b12029c766524ba"
+  },
+  "corrupcao_de_um_bit": {
+   "detectado_rc_nao_zero": 277,
+   "sem_efeito_sha_igual_posicoes": [],
+   "corrupcao_silenciosa_posicoes": [],
+   "posicoes_testadas": 277,
+   "tamanho_quadro": 26158,
+   "inversao": "um bit (bit 0) por posicao, uma posicao por vez",
+   "faixas": "bytes 0-63, ultimos 12 bytes, e posicoes espacadas de 130 em 130"
+  },
+  "truncamento": [
+   {
+    "bytes_mantidos": 0,
+    "rc_decompressao": 1,
+    "sha256_saida": "-"
+   },
+   {
+    "bytes_mantidos": 4,
+    "rc_decompressao": 1,
+    "sha256_saida": "-"
+   },
+   {
+    "bytes_mantidos": 5,
+    "rc_decompressao": 1,
+    "sha256_saida": "-"
+   },
+   {
+    "bytes_mantidos": 16,
+    "rc_decompressao": 1,
+    "sha256_saida": "-"
+   },
+   {
+    "bytes_mantidos": 13079,
+    "rc_decompressao": 1,
+    "sha256_saida": "-"
+   },
+   {
+    "bytes_mantidos": 26149,
+    "rc_decompressao": 1,
+    "sha256_saida": "-"
+   },
+   {
+    "bytes_mantidos": 26157,
+    "rc_decompressao": 1,
+    "sha256_saida": "-"
+   }
+  ],
+  "blocos_pequenos": [
+   {
+    "id": "dickens",
+    "bloco_bytes_nominal": 65536,
+    "n_blocos": 16,
+    "bytes_total": 1048994,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 462788,
+      "razao": 2.266683665090711,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 434468,
+      "razao": 2.4144332839242475,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 397095,
+      "razao": 2.641670129314144,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 394516,
+      "razao": 2.658939054436322,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 421715,
+      "razao": 2.487447683862324,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "dickens",
+    "bloco_bytes_nominal": 1048576,
+    "n_blocos": 4,
+    "bytes_total": 4194477,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 1771422,
+      "razao": 2.3678587033468026,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 1543025,
+      "razao": 2.7183467539411224,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 1304408,
+      "razao": 3.2156173528527883,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 1292424,
+      "razao": 3.245434160925517,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 1476020,
+      "razao": 2.8417480792943186,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "samba",
+    "bloco_bytes_nominal": 65536,
+    "n_blocos": 16,
+    "bytes_total": 1050416,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 226574,
+      "razao": 4.6360835753440375,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 217275,
+      "razao": 4.834500057530779,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 195368,
+      "razao": 5.376602104745915,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 189756,
+      "razao": 5.5356141571281015,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 219098,
+      "razao": 4.79427470812148,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "samba",
+    "bloco_bytes_nominal": 1048576,
+    "n_blocos": 7,
+    "bytes_total": 7340255,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 1353663,
+      "razao": 5.422512841083785,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 1289091,
+      "razao": 5.694132532148623,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 935844,
+      "razao": 7.84346002111463,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 854736,
+      "razao": 8.587745221916474,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 1294510,
+      "razao": 5.670296096592533,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "xml",
+    "bloco_bytes_nominal": 65536,
+    "n_blocos": 16,
+    "bytes_total": 1573159,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 248903,
+      "razao": 6.320369782606075,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 235271,
+      "razao": 6.686582706750938,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 194172,
+      "razao": 8.101883896751334,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 190012,
+      "razao": 8.279261309812012,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 229737,
+      "razao": 6.847651880193439,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "xml",
+    "bloco_bytes_nominal": 1048576,
+    "n_blocos": 1,
+    "bytes_total": 1048579,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 85993,
+      "razao": 12.19377158605933,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 82354,
+      "razao": 12.732581295383346,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 58754,
+      "razao": 17.84693808081152,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 55804,
+      "razao": 18.79039136979428,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 81569,
+      "razao": 12.855116527112015,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "sao",
+    "bloco_bytes_nominal": 65536,
+    "n_blocos": 16,
+    "bytes_total": 1048320,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 912747,
+      "razao": 1.148532945054873,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 842553,
+      "razao": 1.2442184645951055,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 757102,
+      "razao": 1.3846483036631787,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 691300,
+      "razao": 1.516447273253291,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 826802,
+      "razao": 1.267921461244651,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     },
+     "perfil:sao": {
+      "bytes_comp": 582279,
+      "razao": 1.8003740474926968,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "sao",
+    "bloco_bytes_nominal": 1048576,
+    "n_blocos": 3,
+    "bytes_total": 3145716,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 2732761,
+      "razao": 1.1511127390942713,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 2412340,
+      "razao": 1.3040102141489176,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 2178672,
+      "razao": 1.4438685584613011,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 1944736,
+      "razao": 1.617554259292778,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 2315714,
+      "razao": 1.3584216358324042,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     },
+     "perfil:sao": {
+      "bytes_comp": 1609281,
+      "razao": 1.9547338221230475,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "mr",
+    "bloco_bytes_nominal": 65536,
+    "n_blocos": 16,
+    "bytes_total": 1048576,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 417653,
+      "razao": 2.5106392148506056,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 394147,
+      "razao": 2.6603678323062208,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 375907,
+      "razao": 2.789455902656774,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 319252,
+      "razao": 3.2844774660769547,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 386087,
+      "razao": 2.715906000461036,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     },
+     "perfil:le-u16": {
+      "bytes_comp": 335301,
+      "razao": 3.127267738539402,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "mr",
+    "bloco_bytes_nominal": 1048576,
+    "n_blocos": 4,
+    "bytes_total": 4194304,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 1671140,
+      "razao": 2.5098459734073746,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 1560902,
+      "razao": 2.6871027136873424,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 1431634,
+      "razao": 2.92973204045168,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 1243464,
+      "razao": 3.373080362599963,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 1500596,
+      "razao": 2.795092083412191,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     },
+     "perfil:le-u16": {
+      "bytes_comp": 1388275,
+      "razao": 3.0212342655453712,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "logs.log",
+    "bloco_bytes_nominal": 65536,
+    "n_blocos": 16,
+    "bytes_total": 1049884,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 265927,
+      "razao": 3.948015808849797,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 268999,
+      "razao": 3.9029290071710303,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 229670,
+      "razao": 4.571271824792093,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 228704,
+      "razao": 4.590579963621099,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 269152,
+      "razao": 3.9007103792652478,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "logs.log",
+    "bloco_bytes_nominal": 1048576,
+    "n_blocos": 7,
+    "bytes_total": 7340469,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 1796471,
+      "razao": 4.086049259910124,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 1814062,
+      "razao": 4.04642674836913,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 1369192,
+      "razao": 5.36116848477058,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 1354784,
+      "razao": 5.41818400571604,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 1737981,
+      "razao": 4.223561132141261,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "sint_vendas.csv",
+    "bloco_bytes_nominal": 65536,
+    "n_blocos": 16,
+    "bytes_total": 1049121,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 242531,
+      "razao": 4.325719186413283,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 239983,
+      "razao": 4.371647158340383,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 209708,
+      "razao": 5.002770519007382,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 198832,
+      "razao": 5.276419288645691,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 227044,
+      "razao": 4.620782755765402,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     },
+     "perfil:csv": {
+      "bytes_comp": 191539,
+      "razao": 5.477323156119642,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "sint_vendas.csv",
+    "bloco_bytes_nominal": 1048576,
+    "n_blocos": 8,
+    "bytes_total": 8388825,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 1802489,
+      "razao": 4.654022853953617,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 1737608,
+      "razao": 4.827800631672966,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 1309341,
+      "razao": 6.40690622229045,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 1232588,
+      "razao": 6.805862948527813,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 1539543,
+      "razao": 5.448905941568374,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     },
+     "perfil:csv": {
+      "bytes_comp": 1339041,
+      "razao": 6.264800704384705,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "sint_eventos.ndjson",
+    "bloco_bytes_nominal": 65536,
+    "n_blocos": 16,
+    "bytes_total": 1049860,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 170543,
+      "razao": 6.15598412130665,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 175864,
+      "razao": 5.9697266069235315,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 139353,
+      "razao": 7.533816997122416,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 142664,
+      "razao": 7.358969326529468,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 177725,
+      "razao": 5.907216204810803,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "sint_eventos.ndjson",
+    "bloco_bytes_nominal": 1048576,
+    "n_blocos": 8,
+    "bytes_total": 8389288,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 1348463,
+      "razao": 6.221370552992555,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 1410470,
+      "razao": 5.947867023049055,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 1015750,
+      "razao": 8.25920551316761,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 1008352,
+      "razao": 8.31980102186538,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 1307617,
+      "razao": 6.415707351617485,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "sint_telemetria_f32.bin",
+    "bloco_bytes_nominal": 65536,
+    "n_blocos": 16,
+    "bytes_total": 1048576,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 371359,
+      "razao": 2.8236181161625273,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 369285,
+      "razao": 2.839476285253937,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 309272,
+      "razao": 3.390465350888538,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 234708,
+      "razao": 4.467576733643506,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 353119,
+      "razao": 2.9694692157601263,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     },
+     "perfil:le-u32": {
+      "bytes_comp": 240006,
+      "razao": 4.368957442730599,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "sint_telemetria_f32.bin",
+    "bloco_bytes_nominal": 1048576,
+    "n_blocos": 8,
+    "bytes_total": 8388608,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 2138535,
+      "razao": 3.922595608676033,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 1809446,
+      "razao": 4.6360090325989285,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 1385276,
+      "razao": 6.055549940950395,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 1121280,
+      "razao": 7.481278538812785,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 1586759,
+      "razao": 5.286630168790598,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     },
+     "perfil:le-u32": {
+      "bytes_comp": 1299955,
+      "razao": 6.452998757649303,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "sint_timestamps_i64.bin",
+    "bloco_bytes_nominal": 65536,
+    "n_blocos": 16,
+    "bytes_total": 1048576,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 173446,
+      "razao": 6.045547317320665,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 173446,
+      "razao": 6.045547317320665,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 173551,
+      "razao": 6.0418897038910755,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 156784,
+      "razao": 6.688029390754159,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 287013,
+      "razao": 3.6534094274475373,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     },
+     "perfil:le-i64": {
+      "bytes_comp": 132048,
+      "razao": 7.940869986671514,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   },
+   {
+    "id": "sint_timestamps_i64.bin",
+    "bloco_bytes_nominal": 1048576,
+    "n_blocos": 7,
+    "bytes_total": 7340032,
+    "baselines": {
+     "zstd-1": {
+      "bytes_comp": 1209282,
+      "razao": 6.069743864541108,
+      "bit_exato": true
+     },
+     "zstd-3": {
+      "bytes_comp": 1209230,
+      "razao": 6.070004879137964,
+      "bit_exato": true
+     },
+     "zstd-19": {
+      "bytes_comp": 1210275,
+      "razao": 6.064763793352751,
+      "bit_exato": true
+     },
+     "xz-9e": {
+      "bytes_comp": 1073288,
+      "razao": 6.838827975343058,
+      "bit_exato": true
+     }
+    },
+    "openzl": {
+     "generico:serial": {
+      "bytes_comp": 2024641,
+      "razao": 3.6253498768423635,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     },
+     "perfil:le-i64": {
+      "bytes_comp": 895277,
+      "razao": 8.198615623991234,
+      "bit_exato": true,
+      "blocos_com_estrito_falho": 0,
+      "blocos_que_falharam": 0
+     }
+    }
+   }
+  ],
+  "violacoes_bit_exatidao": []
+ },
+ "baseline_com_transformadas_do_motor": {
+  "data": "2026-11-04 19:51:38",
+  "metodo": "emulacao em Python das transformadas Delta, ByteSplit e CsvColumnar de src/transform.rs (semantica lida do codigo; INFERENCIA PROPRIA de que equivalem em bytes) seguidas de zstd-19, zstd-22 ou xz-9e; mesma fatia de teste; sha256 do original conferido apos inverter",
+  "itens": [
+   {
+    "id": "sint_vendas.csv",
+    "teste_bytes": 16777231,
+    "candidatas": {
+     "zstd-19": {
+      "aplicavel": true,
+      "bytes_comp": 2239605,
+      "razao": 7.491156252999971,
+      "bit_exato": true
+     },
+     "zstd-19+csv": {
+      "aplicavel": true,
+      "bytes_comp": 2005739,
+      "razao": 8.364613242301216,
+      "bit_exato": true
+     },
+     "zstd-22+csv": {
+      "aplicavel": true,
+      "bytes_comp": 2005709,
+      "razao": 8.364738354367459,
+      "bit_exato": true
+     },
+     "zstd-19+csv>delta1": {
+      "aplicavel": true,
+      "bytes_comp": 2210153,
+      "razao": 7.590981710315982,
+      "bit_exato": true
+     },
+     "xz-9e+csv": {
+      "aplicavel": true,
+      "bytes_comp": 2027540,
+      "razao": 8.274673249356363,
+      "bit_exato": true
+     }
+    },
+    "melhor": {
+     "config": "zstd-22+csv",
+     "razao": 8.364738354367459,
+     "bytes_comp": 2005709
+    }
+   },
+   {
+    "id": "sint_telemetria_f32.bin",
+    "teste_bytes": 16777216,
+    "candidatas": {
+     "zstd-19": {
+      "aplicavel": true,
+      "bytes_comp": 2926262,
+      "razao": 5.733326680932876,
+      "bit_exato": true
+     },
+     "zstd-19+split": {
+      "aplicavel": true,
+      "bytes_comp": 3842599,
+      "razao": 4.366111582291048,
+      "bit_exato": true
+     },
+     "zstd-19+delta": {
+      "aplicavel": true,
+      "bytes_comp": 2244549,
+      "razao": 7.474649027488373,
+      "bit_exato": true
+     },
+     "zstd-19+delta>split": {
+      "aplicavel": true,
+      "bytes_comp": 4022726,
+      "razao": 4.1706086867462515,
+      "bit_exato": true
+     },
+     "xz-9e+split": {
+      "aplicavel": true,
+      "bytes_comp": 3660196,
+      "razao": 4.583693332269638,
+      "bit_exato": true
+     },
+     "xz-9e+delta>split": {
+      "aplicavel": true,
+      "bytes_comp": 3934900,
+      "razao": 4.263695646649216,
+      "bit_exato": true
+     }
+    },
+    "melhor": {
+     "config": "zstd-19+delta",
+     "razao": 7.474649027488373,
+     "bytes_comp": 2244549
+    }
+   },
+   {
+    "id": "sint_timestamps_i64.bin",
+    "teste_bytes": 8388608,
+    "candidatas": {
+     "zstd-19": {
+      "aplicavel": true,
+      "bytes_comp": 1383201,
+      "razao": 6.064634134879891,
+      "bit_exato": true
+     },
+     "zstd-19+split": {
+      "aplicavel": true,
+      "bytes_comp": 1180359,
+      "razao": 7.106827668531354,
+      "bit_exato": true
+     },
+     "zstd-19+delta": {
+      "aplicavel": true,
+      "bytes_comp": 1104318,
+      "razao": 7.596188778956786,
+      "bit_exato": true
+     },
+     "zstd-19+delta>split": {
+      "aplicavel": true,
+      "bytes_comp": 899628,
+      "razao": 9.324529694495947,
+      "bit_exato": true
+     },
+     "xz-9e+split": {
+      "aplicavel": true,
+      "bytes_comp": 1051576,
+      "razao": 7.977177113209126,
+      "bit_exato": true
+     },
+     "xz-9e+delta>split": {
+      "aplicavel": true,
+      "bytes_comp": 904928,
+      "razao": 9.269917606704622,
+      "bit_exato": true
+     }
+    },
+    "melhor": {
+     "config": "zstd-19+delta>split",
+     "razao": 9.324529694495947,
+     "bytes_comp": 899628
+    }
+   },
+   {
+    "id": "mr",
+    "teste_bytes": 4985282,
+    "candidatas": {
+     "zstd-19": {
+      "aplicavel": true,
+      "bytes_comp": 1661680,
+      "razao": 3.0001456357421405,
+      "bit_exato": true
+     },
+     "zstd-19+split": {
+      "aplicavel": true,
+      "bytes_comp": 1494317,
+      "razao": 3.3361609350626407,
+      "bit_exato": true
+     },
+     "zstd-19+delta": {
+      "aplicavel": true,
+      "bytes_comp": 1506873,
+      "razao": 3.3083624167398313,
+      "bit_exato": true
+     },
+     "zstd-19+delta>split": {
+      "aplicavel": true,
+      "bytes_comp": 1530971,
+      "razao": 3.256287676252522,
+      "bit_exato": true
+     },
+     "xz-9e+split": {
+      "aplicavel": true,
+      "bytes_comp": 1356696,
+      "razao": 3.674575586572084,
+      "bit_exato": true
+     },
+     "xz-9e+delta>split": {
+      "aplicavel": true,
+      "bytes_comp": 1444620,
+      "razao": 3.45092965624178,
+      "bit_exato": true
+     }
+    },
+    "melhor": {
+     "config": "xz-9e+split",
+     "razao": 3.674575586572084,
+     "bytes_comp": 1356696
+    }
+   },
+   {
+    "id": "x-ray",
+    "teste_bytes": 4237120,
+    "candidatas": {
+     "zstd-19": {
+      "aplicavel": true,
+      "bytes_comp": 2602009,
+      "razao": 1.6284032837703482,
+      "bit_exato": true
+     },
+     "zstd-19+split": {
+      "aplicavel": true,
+      "bytes_comp": 2270896,
+      "razao": 1.865836216189557,
+      "bit_exato": true
+     },
+     "zstd-19+delta": {
+      "aplicavel": true,
+      "bytes_comp": 2210795,
+      "razao": 1.9165594277171787,
+      "bit_exato": true
+     },
+     "zstd-19+delta>split": {
+      "aplicavel": true,
+      "bytes_comp": 2161101,
+      "razao": 1.960630252820206,
+      "bit_exato": true
+     },
+     "xz-9e+split": {
+      "aplicavel": true,
+      "bytes_comp": 2035672,
+      "razao": 2.08143551613423,
+      "bit_exato": true
+     },
+     "xz-9e+delta>split": {
+      "aplicavel": true,
+      "bytes_comp": 2137164,
+      "razao": 1.9825900118100437,
+      "bit_exato": true
+     }
+    },
+    "melhor": {
+     "config": "xz-9e+split",
+     "razao": 2.08143551613423,
+     "bytes_comp": 2035672
+    }
+   }
+  ],
+  "violacoes_bit_exatidao": []
  },
  "referencias_publicadas_rotuladas": [
   {

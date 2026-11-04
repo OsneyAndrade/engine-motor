@@ -239,6 +239,7 @@ pub struct Restored {
     pub fidelity_checked: bool,
 }
 
+#[cfg(test)]
 pub fn restore(
     envelope: &ProcessedFile,
     dicts: &dyn DictionaryResolver,

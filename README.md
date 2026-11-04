@@ -10,7 +10,7 @@ POST /api/v1/decompress    .syntra ──▶  bytes originais
 POST /api/v1/analyze       bytes  ──▶  comparativo de planos, sem gravar
 ```
 
-Guia de operação: [docs/uso.md](docs/uso.md) · Índice da documentação: [docs/README.md](docs/README.md) · Plano e marcos: [docs/plano-de-trabalho.md](docs/plano-de-trabalho.md)
+Guia de operação: [docs/uso.md](docs/uso.md) · Segurança: [docs/seguranca.md](docs/seguranca.md) · Índice da documentação: [docs/README.md](docs/README.md) · Plano e marcos: [docs/plano-de-trabalho.md](docs/plano-de-trabalho.md)
 
 ---
 
@@ -49,6 +49,7 @@ Guia de operação: [docs/uso.md](docs/uso.md) · Índice da documentação: [do
 | **Deduplicação global** | O vault é endereçado pelo hash do conteúdo. Um blob por conteúdo único, compartilhado entre tenants; cada tenant vê apenas o que lhe pertence. |
 | **Isolamento entre tenants** | O acesso passa por um *grant* `(tenant, objeto)`. Conhecer o id de um objeto de outro tenant devolve `404`. |
 | **Cobrança sem confiar no cliente** | Todo valor faturável sai dos contadores que executam o trabalho. Nada vindo do corpo da requisição entra no cálculo. |
+| **Envelope hostil não derruba o motor** | Toda reconstrução tem teto de saída em todos os codecs (o menor entre o tamanho declarado no envelope e `SYNTRA_MAX_DECOMPRESSED_MB`); estouro devolve `422 decompressed_too_large`. Aritmética de comprimentos verificada nos transforms; fuzz determinístico com mais de 20.000 casos por transform e por corpus. Modelo de ameaça e lacunas: [docs/seguranca.md](docs/seguranca.md). |
 
 ---
 
@@ -192,7 +193,7 @@ Detalhes e limites: seção 10.3 de
 
 ```bash
 # desenvolvimento (Postgres + engine, esforço max, API aberta)
-mkdir -p watch_in          # sem isto o Docker cria o diretório como root
+mkdir -p watch_in          # sem isto o `up` falha (de propósito: evita um diretório de root)
 docker compose up --build
 
 # produção
@@ -203,9 +204,12 @@ docker compose -f docker-compose.prod.yml up -d --build
 
 Dashboard: <http://localhost:3002/> · Contrato: <http://localhost:3002/api/v1/openapi.json>
 
-O compose publica a porta `3002` em **todas** as interfaces e, no de
-desenvolvimento, a API é **aberta**: em máquina exposta, troque para
-`"127.0.0.1:3002:3002"`. Sem Postgres (nó único), use SQLite:
+Os dois compose publicam a porta `3002` só em **loopback** (`127.0.0.1`) por
+padrão; para abrir a outra interface defina `SYNTRA_PUBLISH_HOST` (e
+`SYNTRA_PUBLISH_PORT` para trocar a porta). No de desenvolvimento a API é
+**aberta** (sem chave) e `./watch_in` precisa existir antes do `up` (o compose
+recusa o diretório ausente em vez de deixar o Docker criá-lo como `root`). Sem
+Postgres (nó único), use SQLite:
 
 ```bash
 docker build -t syntra-engine .
@@ -271,8 +275,16 @@ em `127.0.0.1`) e confere, passo a passo, com `PASS` ou `FAIL`:
 - `401` sem chave, `400` com id malformado, `404`, `422` com container adulterado;
 - tenant e chave pelas rotas `admin`, `/usage`, idempotência, isolamento entre
   tenants, escopos e revogação;
-- a [CLI](#cli) contra o próprio serviço, a ingestão por diretório, o reinício do
-  contêiner (os dados persistem) e o encerramento por `SIGTERM`.
+- `analyze`, `decompress` e leitura gravando `bytes_in`, `bytes_out` e `cpu_ms`
+  no ledger;
+- um contêiner extra com `SYNTRA_MAX_BODY_MB=1`: `413` em JSON padrão e teto de
+  descompressão;
+- bombas reais de 1 GiB (lz4, deflate, xz, bzip2) e um envelope com varint
+  colunar hostil: `422` rápido e o motor segue de pé;
+- a porta publicada só em loopback (no contêiner de teste e nos dois compose);
+- a [CLI](#cli) contra o próprio serviço, a ingestão por diretório (o arquivo
+  inalterado **não** é reingerido depois do reinício), o reinício do contêiner
+  (os dados persistem) e o encerramento por `SIGTERM`.
 
 Ao final imprime a tabela `arquivo, tamanho, essência, economia, plano, ok`, remove
 contêiner, volume e rede (inclusive se falhar ou for interrompido) e sai com
@@ -390,8 +402,8 @@ enumerados no OpenAPI.
 | `401` | API key ausente ou inválida |
 | `404` | Objeto inexistente |
 | `409` | Dicionário necessário indisponível neste nó |
-| `422` | Essência corrompida, infiel ao original ou irreconstruível |
-| `413` | Corpo acima de `SYNTRA_MAX_BODY_MB`. A resposta é **texto puro** (`Failed to buffer the request body: length limit exceeded`), fora do formato JSON acima: trate pelo status |
+| `422` | Essência corrompida, infiel ao original ou irreconstruível; `decompressed_too_large` quando a reconstrução passaria do teto (o menor entre o tamanho declarado no envelope e `SYNTRA_MAX_DECOMPRESSED_MB`) |
+| `413` | Corpo acima de `SYNTRA_MAX_BODY_MB`, em **todas** as rotas com corpo; o formato é o JSON acima (`payload_too_large`, com `hint`) |
 | `503` | Motor encerrando (requisições não são rejeitadas por fila: elas aguardam o permit de CPU) |
 
 ### Autenticação
@@ -515,10 +527,16 @@ append-only. Remover um objeto não apaga o histórico de consumo.
 Todas as dimensões são gravadas sempre, independentemente do plano. Trocar de
 plano recalcula faturas antigas sem reprocessar nada.
 
-Ressalva verificada no M2: nos eventos de `decompress`, `read` e `analyze`,
-`bytes_in` e `cpu_ms` são gravados como **0** (`bytes_out` traz os bytes
-servidos; em `analyze`, 0). Só a compressão preenche todas as dimensões
-(`src/service.rs`, `record_read`).
+Todas as operações preenchem as três dimensões (corrigido no M2b; no M2 os
+eventos de `decompress`, `read` e `analyze` saíam com `bytes_in` e `cpu_ms`
+zerados). `decompress`: `bytes_in` é o tamanho do container recebido e
+`bytes_out` o original reconstruído; `read` de `/content`: `bytes_in` é o payload
+gravado e `bytes_out` o original; `read` de `/essence`: os dois são o tamanho do
+container; `analyze`: `bytes_in` é o corpo recebido e `bytes_out` o JSON
+devolvido; `cpu_ms` é o tempo medido de cada operação. Como esses eventos agora
+têm `bytes_in`, `totals.bytes_in` do `/usage` soma **todas** as operações
+(`by_operation` traz a divisão), enquanto `totals.savings_pct`, a cotação e o
+`by_effort` usam só os eventos de `compress`; a fatura dos dois planos não muda.
 
 ### As duas fórmulas
 
@@ -629,7 +647,8 @@ curl -sS -X POST 'http://localhost:3002/api/v1/analyze?filename=vendas.csv&effor
 | Variável | Default | Descrição |
 |---|---|---|
 | `SYNTRA_BIND_ADDR` | `0.0.0.0:3002` | Endereço de escuta |
-| `SYNTRA_MAX_BODY_MB` | `4096` | Corpo máximo aceito (o compose de produção usa `10240`). O corpo é lido **inteiro em memória** (pico medido de ~3,5x o arquivo na compressão): veja [docs/uso.md](docs/uso.md#9-limites-conhecidos). Acima do limite: `413` em texto puro |
+| `SYNTRA_MAX_BODY_MB` | `4096` | Corpo máximo aceito (o compose de produção usa `10240`). O corpo é lido **inteiro em memória** (pico medido de ~3,5x o arquivo na compressão): veja [docs/uso.md](docs/uso.md#9-limites-conhecidos). Acima do limite: `413 payload_too_large` em JSON |
+| `SYNTRA_MAX_DECOMPRESSED_MB` | igual a `SYNTRA_MAX_BODY_MB` | Teto de saída de toda reconstrução; vale o menor entre ele e o `original_size` do envelope. Acima: `422 decompressed_too_large`. Veja [docs/seguranca.md](docs/seguranca.md#3-limites-configuráveis) |
 | `SYNTRA_API_KEYS` | — | Chaves estáticas de bootstrap; operam no tenant `default` com todos os escopos |
 | `SYNTRA_CORS_ORIGINS` | — | Origens permitidas (vazio = liberado) |
 | `SYNTRA_VAULT_PATH` | `essence_vault` | Raiz das essências |
@@ -652,6 +671,16 @@ curl -sS -X POST 'http://localhost:3002/api/v1/analyze?filename=vendas.csv&effor
 
 Valor inválido gera aviso e cai no default — um typo não impede o serviço de
 subir.
+
+Variáveis lidas só pelos arquivos compose (não pelo motor):
+
+| Variável | Default | Descrição |
+|---|---|---|
+| `SYNTRA_PUBLISH_HOST` | `127.0.0.1` | Interface em que a porta do motor é publicada (`0.0.0.0` para todas) |
+| `SYNTRA_PUBLISH_PORT` | `3002` | Porta publicada no host |
+| `SYNTRA_POSTGRES_PORT` | `5432` | Porta do Postgres do compose de desenvolvimento, sempre em `127.0.0.1` |
+| `SYNTRA_WATCH_HOST_DIR` | `./watch_in` | Diretório do host montado em `/data/watch_in` (compose de desenvolvimento; precisa existir) |
+| `SYNTRA_CONTAINER_PREFIX` | `syntra` | Prefixo dos nomes de contêiner, e no de produção também dos volumes e da rede, para subir duas instâncias lado a lado |
 
 ---
 
@@ -708,11 +737,16 @@ começam com `.` ou `~` e extensões `.tmp`, `.part`, `.crdownload`, `.swp` e
 para o vault, não de volta ao diretório: recupere o original por
 `GET /api/v1/objects` e `/content`.
 
-**Reingestão a cada reinício.** O registro do que já foi visto fica só em memória
-(`src/watcher.rs:39`): depois de cada reinício o motor reingere o que ainda estiver
-no diretório. Verificado no M2: `references` passou de 1 para 2 e o ledger do tenant
-`default` ganhou um segundo evento `compress`. Com `SYNTRA_WATCH_DELETE_SOURCE=false`
-(padrão), isso se repete a cada boot.
+**Reinício não reingere (corrigido no M2b).** O registro do que já foi visto fica
+no banco (tabela `watch_seen`: caminho, tamanho, mtime em ns e hash do objeto;
+`src/watch_registry.rs`) e é carregado no boot. Arquivo inalterado não é lido de
+novo; se só o mtime mudou, o motor relê o arquivo, confere o BLAKE3 e, sendo igual,
+só atualiza o registro (nenhuma referência nem evento novo); conteúdo diferente vira
+objeto novo (a versão anterior mantém a sua referência); arquivo que sumiu sai do
+registro. No M2 isso valia só dentro do processo: depois de um reinício `references`
+foi de 1 para 2 e o ledger ganhou um segundo evento `compress`. Hoje o smoke
+confere 1 referência e nenhum evento novo depois de `docker restart`. Limites:
+[docs/seguranca.md](docs/seguranca.md#6-o-que-ainda-não-está-coberto).
 
 ### Encerramento
 
@@ -775,7 +809,7 @@ perdas**:
 ## Desenvolvimento
 
 ```bash
-cargo test              # roundtrip, classificação, integridade, API ponta a ponta
+cargo test              # roundtrip, classificação, integridade, robustez, API ponta a ponta
 cargo build --release
 cargo clippy --all-targets
 ```
@@ -802,7 +836,14 @@ Cobertura relevante:
 - **Escopos e chaves** — escopo exigido por rota, revogação com efeito imediato,
   segredo nunca recuperável, expiração respeitada.
 - **Cobrança** — as duas fórmulas sobre o mesmo ledger, idempotência que não
-  cobra duas vezes, leitura registrada sem entrar na fatura.
+  cobra duas vezes, leitura registrada sem entrar na fatura, e `bytes_in`,
+  `bytes_out` e `cpu_ms` preenchidos em `analyze`, `decompress` e leitura.
+- **Robustez diante de entrada hostil** — fuzz determinístico (mais de 20.000
+  casos por transform e por mutação do corpus dourado), bombas reais de 1 GiB em
+  todos os codecs, envelopes forjados e `413`/`422` em JSON. Detalhes em
+  [docs/testes.md](docs/testes.md).
+- **Ingestão por diretório** — o registro persistido evita reingestão depois de
+  reiniciar o motor.
 
 Para medir com dados próprios, use `POST /api/v1/analyze` — ele devolve o
 tamanho e o tempo de cada candidato sem gravar nada.
@@ -825,7 +866,9 @@ tamanho e o tempo de cada candidato sem gravar nada.
 | `src/service.rs` | Orquestração compartilhada por HTTP e ingestão |
 | `src/sql.rs` | Macros que servem SQLite e Postgres sem duplicar cada query |
 | `src/api/` | Router, middlewares, DTOs, erros, OpenAPI, rotas legadas |
-| `src/watcher.rs` | Ingestão automática por diretório |
+| `src/watcher.rs` | Ingestão automática por diretório, com registro persistido |
+| `src/watch_registry.rs` | Tabela `watch_seen` (o que a ingestão já arquivou) |
+| `src/blockfile.rs`, `src/probe.rs` | Formato v4 em blocos e *probe* de incompressibilidade, isolados (M1), fora da API |
 | `src/metrics.rs` | Contadores Prometheus e JSON |
 | `src/db_monitor.rs` | Auditoria em SQLite/Postgres |
 | `proto/engine.proto` | Formato do envelope |
@@ -850,11 +893,14 @@ correspondente aqui. A convenção vale para os scripts: `scripts/*.sh` e
 
 ## Estado e roadmap
 
-**Hoje (2026-11-04):** motor v0.3.0, envelope `version 3`, `cargo test` com 122
-testes verdes (resultado da tarefa T1.1 do plano; não reexecutado no M2), ciclo de uso verificado de ponta a ponta por `scripts/smoke.sh`
-(SQLite e Postgres) e operável pela [CLI](#cli). Os limites que importam para
-quem vai operar (arquivo inteiro em RAM, limite de corpo, envelope único,
-reingestão a cada reinício) estão em [docs/uso.md](docs/uso.md#9-limites-conhecidos).
+**Hoje (2026-11-04, fechamento do M2b):** motor v0.3.0, envelope `version 3`,
+`cargo test` com **224 testes verdes** (2 ignorados) e `cargo clippy
+--all-targets` sem avisos, ciclo de uso verificado de ponta a ponta por
+`scripts/smoke.sh` (SQLite e Postgres) e operável pela [CLI](#cli). Os limites que
+importam para quem vai operar (arquivo inteiro em RAM, limite de corpo, teto de
+descompressão, envelope único) estão em [docs/uso.md](docs/uso.md#9-limites-conhecidos);
+o que ainda **não** está coberto em segurança, em
+[docs/seguranca.md](docs/seguranca.md#6-o-que-ainda-não-está-coberto).
 
 **Para onde vai:** levar o motor a uma linha de vazão de **5 PB/mês**, com
 planejamento por bloco, recompressão assíncrona, referência entre versões e
@@ -866,8 +912,9 @@ completo (condições V1 a V6, decisões, tarefas, riscos) está em
 
 | Marco | Entrega | Estado no plano |
 |---|---|---|
-| M1 | Formato v4 em blocos como módulo isolado, corpus dourado v2/v3, *probe* de incompressibilidade ([ADR 001](docs/adr-001-envelope-v4-blocos.md)) | em execução |
-| M2 | Utilizabilidade: teste de fumaça, CLI, índice de documentação, README alinhado ao que foi medido | em execução (este conjunto de entregas) |
+| M1 | Formato v4 em blocos como módulo isolado, corpus dourado v2/v3, *probe* de incompressibilidade ([ADR 001](docs/adr-001-envelope-v4-blocos.md)) | feito |
+| M2 | Utilizabilidade: teste de fumaça, CLI, índice de documentação, README alinhado ao que foi medido | feito |
+| M2b | Correção dos defeitos achados no smoke e no M1: ingestão que reingeria a cada reinício (B1), `413` em JSON (B2), ledger de leitura (B3), compose em loopback e `./watch_in` sem root (B4), pânico em `csv_invert` (B6), bomba de descompressão (B7) | feito |
 | M3 | Integração do v4 à API atrás de flag, fluxo (*streaming*) com janela limitada, `Range`, erro `block_corrupted` | pendente (depende do M1) |
 | M4 | Planejador por bloco simples, `/analyze` econômico, uso offline (`engine pack/unpack`) | pendente |
 | M5 | Recompressão assíncrona guiada por M\*, *scrubbing*, injeção de falhas | pendente |

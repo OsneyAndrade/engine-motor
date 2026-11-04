@@ -1,0 +1,236 @@
+{
+ "data": "2026-11-04 19:51:38",
+ "metodo": "emulacao em Python das transformadas Delta, ByteSplit e CsvColumnar de src/transform.rs (semantica lida do codigo; INFERENCIA PROPRIA de que equivalem em bytes) seguidas de zstd-19, zstd-22 ou xz-9e; mesma fatia de teste; sha256 do original conferido apos inverter",
+ "itens": [
+  {
+   "id": "sint_vendas.csv",
+   "teste_bytes": 16777231,
+   "candidatas": {
+    "zstd-19": {
+     "aplicavel": true,
+     "bytes_comp": 2239605,
+     "razao": 7.491156252999971,
+     "bit_exato": true
+    },
+    "zstd-19+csv": {
+     "aplicavel": true,
+     "bytes_comp": 2005739,
+     "razao": 8.364613242301216,
+     "bit_exato": true
+    },
+    "zstd-22+csv": {
+     "aplicavel": true,
+     "bytes_comp": 2005709,
+     "razao": 8.364738354367459,
+     "bit_exato": true
+    },
+    "zstd-19+csv>delta1": {
+     "aplicavel": true,
+     "bytes_comp": 2210153,
+     "razao": 7.590981710315982,
+     "bit_exato": true
+    },
+    "xz-9e+csv": {
+     "aplicavel": true,
+     "bytes_comp": 2027540,
+     "razao": 8.274673249356363,
+     "bit_exato": true
+    }
+   },
+   "melhor": {
+    "config": "zstd-22+csv",
+    "razao": 8.364738354367459,
+    "bytes_comp": 2005709
+   }
+  },
+  {
+   "id": "sint_telemetria_f32.bin",
+   "teste_bytes": 16777216,
+   "candidatas": {
+    "zstd-19": {
+     "aplicavel": true,
+     "bytes_comp": 2926262,
+     "razao": 5.733326680932876,
+     "bit_exato": true
+    },
+    "zstd-19+split": {
+     "aplicavel": true,
+     "bytes_comp": 3842599,
+     "razao": 4.366111582291048,
+     "bit_exato": true
+    },
+    "zstd-19+delta": {
+     "aplicavel": true,
+     "bytes_comp": 2244549,
+     "razao": 7.474649027488373,
+     "bit_exato": true
+    },
+    "zstd-19+delta>split": {
+     "aplicavel": true,
+     "bytes_comp": 4022726,
+     "razao": 4.1706086867462515,
+     "bit_exato": true
+    },
+    "xz-9e+split": {
+     "aplicavel": true,
+     "bytes_comp": 3660196,
+     "razao": 4.583693332269638,
+     "bit_exato": true
+    },
+    "xz-9e+delta>split": {
+     "aplicavel": true,
+     "bytes_comp": 3934900,
+     "razao": 4.263695646649216,
+     "bit_exato": true
+    }
+   },
+   "melhor": {
+    "config": "zstd-19+delta",
+    "razao": 7.474649027488373,
+    "bytes_comp": 2244549
+   }
+  },
+  {
+   "id": "sint_timestamps_i64.bin",
+   "teste_bytes": 8388608,
+   "candidatas": {
+    "zstd-19": {
+     "aplicavel": true,
+     "bytes_comp": 1383201,
+     "razao": 6.064634134879891,
+     "bit_exato": true
+    },
+    "zstd-19+split": {
+     "aplicavel": true,
+     "bytes_comp": 1180359,
+     "razao": 7.106827668531354,
+     "bit_exato": true
+    },
+    "zstd-19+delta": {
+     "aplicavel": true,
+     "bytes_comp": 1104318,
+     "razao": 7.596188778956786,
+     "bit_exato": true
+    },
+    "zstd-19+delta>split": {
+     "aplicavel": true,
+     "bytes_comp": 899628,
+     "razao": 9.324529694495947,
+     "bit_exato": true
+    },
+    "xz-9e+split": {
+     "aplicavel": true,
+     "bytes_comp": 1051576,
+     "razao": 7.977177113209126,
+     "bit_exato": true
+    },
+    "xz-9e+delta>split": {
+     "aplicavel": true,
+     "bytes_comp": 904928,
+     "razao": 9.269917606704622,
+     "bit_exato": true
+    }
+   },
+   "melhor": {
+    "config": "zstd-19+delta>split",
+    "razao": 9.324529694495947,
+    "bytes_comp": 899628
+   }
+  },
+  {
+   "id": "mr",
+   "teste_bytes": 4985282,
+   "candidatas": {
+    "zstd-19": {
+     "aplicavel": true,
+     "bytes_comp": 1661680,
+     "razao": 3.0001456357421405,
+     "bit_exato": true
+    },
+    "zstd-19+split": {
+     "aplicavel": true,
+     "bytes_comp": 1494317,
+     "razao": 3.3361609350626407,
+     "bit_exato": true
+    },
+    "zstd-19+delta": {
+     "aplicavel": true,
+     "bytes_comp": 1506873,
+     "razao": 3.3083624167398313,
+     "bit_exato": true
+    },
+    "zstd-19+delta>split": {
+     "aplicavel": true,
+     "bytes_comp": 1530971,
+     "razao": 3.256287676252522,
+     "bit_exato": true
+    },
+    "xz-9e+split": {
+     "aplicavel": true,
+     "bytes_comp": 1356696,
+     "razao": 3.674575586572084,
+     "bit_exato": true
+    },
+    "xz-9e+delta>split": {
+     "aplicavel": true,
+     "bytes_comp": 1444620,
+     "razao": 3.45092965624178,
+     "bit_exato": true
+    }
+   },
+   "melhor": {
+    "config": "xz-9e+split",
+    "razao": 3.674575586572084,
+    "bytes_comp": 1356696
+   }
+  },
+  {
+   "id": "x-ray",
+   "teste_bytes": 4237120,
+   "candidatas": {
+    "zstd-19": {
+     "aplicavel": true,
+     "bytes_comp": 2602009,
+     "razao": 1.6284032837703482,
+     "bit_exato": true
+    },
+    "zstd-19+split": {
+     "aplicavel": true,
+     "bytes_comp": 2270896,
+     "razao": 1.865836216189557,
+     "bit_exato": true
+    },
+    "zstd-19+delta": {
+     "aplicavel": true,
+     "bytes_comp": 2210795,
+     "razao": 1.9165594277171787,
+     "bit_exato": true
+    },
+    "zstd-19+delta>split": {
+     "aplicavel": true,
+     "bytes_comp": 2161101,
+     "razao": 1.960630252820206,
+     "bit_exato": true
+    },
+    "xz-9e+split": {
+     "aplicavel": true,
+     "bytes_comp": 2035672,
+     "razao": 2.08143551613423,
+     "bit_exato": true
+    },
+    "xz-9e+delta>split": {
+     "aplicavel": true,
+     "bytes_comp": 2137164,
+     "razao": 1.9825900118100437,
+     "bit_exato": true
+    }
+   },
+   "melhor": {
+    "config": "xz-9e+split",
+    "razao": 2.08143551613423,
+    "bytes_comp": 2035672
+   }
+  }
+ ],
+ "violacoes_bit_exatidao": []
+}
