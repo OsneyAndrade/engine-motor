@@ -1,0 +1,3086 @@
+{
+ "dados": {
+  "versoes_kernel": {
+   "6.12.115": {
+    "versao": "6.12.115",
+    "arquivo_xz": "linux-6.12.115.tar.xz",
+    "bytes_xz": 148760708,
+    "sha256_esperado": "0ec90fe4b20422b1b664b77e6d2dde22b40bd41e7eb2cad8ac8739a4749cb1bb",
+    "sha256_obtido": "0ec90fe4b20422b1b664b77e6d2dde22b40bd41e7eb2cad8ac8739a4749cb1bb",
+    "sha256_confere": true,
+    "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.115.tar.xz",
+    "offsets_no_tar_conferem_com_sha256_dos_arquivos": true,
+    "arvore_extraida_apagada_apos_gerar_tar": true,
+    "bytes_alocados_arvore_tmpfs": 1687085056,
+    "n_arquivos": 86649,
+    "n_arquivos_vazios": 23,
+    "n_diretorios": 5761,
+    "n_symlinks": 62,
+    "n_outros_ignorados": 0,
+    "bytes_dados_arvore": 1480853219,
+    "bytes_tar": 1550510080,
+    "sha256_tar": "b18178c9854d588c6bbc576cf8491cdc196db478e441cafae19ddbff18e65faf",
+    "tempo_preparo_s": 13.513756275177002
+   },
+   "6.12.114": {
+    "versao": "6.12.114",
+    "arquivo_xz": "linux-6.12.114.tar.xz",
+    "bytes_xz": 148721296,
+    "sha256_esperado": "7a8589912bd7a8adb07fed074283652cf482a35facef8954554654f0154b4af3",
+    "sha256_obtido": "7a8589912bd7a8adb07fed074283652cf482a35facef8954554654f0154b4af3",
+    "sha256_confere": true,
+    "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.114.tar.xz",
+    "offsets_no_tar_conferem_com_sha256_dos_arquivos": true,
+    "arvore_extraida_apagada_apos_gerar_tar": true,
+    "bytes_alocados_arvore_tmpfs": 1687023616,
+    "n_arquivos": 86648,
+    "n_arquivos_vazios": 23,
+    "n_diretorios": 5761,
+    "n_symlinks": 62,
+    "n_outros_ignorados": 0,
+    "bytes_dados_arvore": 1480791965,
+    "bytes_tar": 1550448640,
+    "sha256_tar": "45cb93a77b69b48808eac04cbde9d4642268be613c77c3010f8fa8c965ab8117",
+    "tempo_preparo_s": 13.543240785598755
+   },
+   "6.13.12": {
+    "versao": "6.13.12",
+    "arquivo_xz": "linux-6.13.12.tar.xz",
+    "bytes_xz": 148611164,
+    "sha256_esperado": "611fbb669cf5539da48137a9c052becd499f3f862afaf21ab84cea3966221242",
+    "sha256_obtido": "611fbb669cf5539da48137a9c052becd499f3f862afaf21ab84cea3966221242",
+    "sha256_confere": true,
+    "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.13.12.tar.xz",
+    "offsets_no_tar_conferem_com_sha256_dos_arquivos": true,
+    "arvore_extraida_apagada_apos_gerar_tar": true,
+    "bytes_alocados_arvore_tmpfs": 1690607616,
+    "n_arquivos": 87188,
+    "n_arquivos_vazios": 28,
+    "n_diretorios": 5796,
+    "n_symlinks": 62,
+    "n_outros_ignorados": 0,
+    "bytes_dados_arvore": 1482692583,
+    "bytes_tar": 1552783360,
+    "sha256_tar": "416f5bb9b0950b9b194efe1a74f50857acff4fcb5c5a254f6a19b1e7f60ee0f9",
+    "tempo_preparo_s": 13.563029050827026
+   }
+  },
+  "sintetico": {
+   "rotulo": "SINTETICO",
+   "silesia_arquivos_em_ordem": [
+    "dickens",
+    "mozilla",
+    "mr",
+    "nci",
+    "ooffice",
+    "osdb",
+    "reymont",
+    "samba",
+    "sao",
+    "webster",
+    "x-ray",
+    "xml"
+   ],
+   "semente": 20261103,
+   "edicoes_in_place": {
+    "n": 835,
+    "bytes": 2120332,
+    "fracao": 0.010004464500988918,
+    "tamanho_min_max": [
+     1024,
+     4096
+    ],
+    "conteudo": "bytes aleatorios (incompressiveis)"
+   },
+   "insercoes": {
+    "n": 40,
+    "bytes": 44155,
+    "tamanho_min_max": [
+     20,
+     2000
+    ],
+    "conteudo": "bytes aleatorios"
+   },
+   "anexo_novo": {
+    "bytes": 2119385,
+    "fracao": 0.009999996225321505,
+    "conteudo": "bytes aleatorios"
+   },
+   "arquivos": {
+    "backup1": {
+     "caminho": "/tmp/claude-1000/-home-osney-Desktop-GELADO-engine-motor/d78b0ca7-1790-4780-8a99-a5f97d57f242/scratchpad/bench-data-f1/sint/backup1.bin",
+     "bytes": 211938580,
+     "sha256": "8df8cf2a9456a3765834b7cd8b7c1114df9dca708dd505e4d37bc12e536395b0"
+    },
+    "backup2": {
+     "caminho": "/tmp/claude-1000/-home-osney-Desktop-GELADO-engine-motor/d78b0ca7-1790-4780-8a99-a5f97d57f242/scratchpad/bench-data-f1/sint/backup2.bin",
+     "bytes": 214102120,
+     "sha256": "f53694d86054ad3c7ce91852e4b0ec87e9a6dcefe1224f6343d6fa74ee9fbdd4"
+    }
+   },
+   "tempo_preparo_s": 0.7399272918701172
+  },
+  "diretorio_listagem": "https://cdn.kernel.org/pub/linux/kernel/v6.x/"
+ },
+ "sanidade": {
+  "semente": 424242,
+  "media_a": {
+   "fixo_4K": {
+    "alvo": 4096,
+    "n_chunks": 65536,
+    "media": 4096.0,
+    "media_sobre_alvo": 1.0,
+    "min": 4096,
+    "max": 4096,
+    "dentro_dos_limites": true,
+    "aprovado": true
+   },
+   "fixo_8K": {
+    "alvo": 8192,
+    "n_chunks": 32768,
+    "media": 8192.0,
+    "media_sobre_alvo": 1.0,
+    "min": 8192,
+    "max": 8192,
+    "dentro_dos_limites": true,
+    "aprovado": true
+   },
+   "fixo_64K": {
+    "alvo": 65536,
+    "n_chunks": 4096,
+    "media": 65536.0,
+    "media_sobre_alvo": 1.0,
+    "min": 65536,
+    "max": 65536,
+    "dentro_dos_limites": true,
+    "aprovado": true
+   },
+   "fixo_1M": {
+    "alvo": 1048576,
+    "n_chunks": 256,
+    "media": 1048576.0,
+    "media_sobre_alvo": 1.0,
+    "min": 1048576,
+    "max": 1048576,
+    "dentro_dos_limites": true,
+    "aprovado": true
+   },
+   "cdc_8K": {
+    "alvo": 8192,
+    "n_chunks": 28697,
+    "media": 9354.129560581245,
+    "media_sobre_alvo": 1.1418615186256402,
+    "min": 1464,
+    "max": 29687,
+    "dentro_dos_limites": true,
+    "media_teorica_sobre_alvo_paper": 1.14,
+    "aprovado": true,
+    "aprovado_criterio_25pct_do_alvo": true
+   },
+   "cdc_64K": {
+    "alvo": 65536,
+    "n_chunks": 3569,
+    "media": 75213.07256934716,
+    "media_sobre_alvo": 1.1476604090781732,
+    "min": 1464,
+    "max": 210435,
+    "dentro_dos_limites": true,
+    "media_teorica_sobre_alvo_paper": 1.14,
+    "aprovado": true,
+    "aprovado_criterio_25pct_do_alvo": true
+   },
+   "cdc_1M": {
+    "alvo": 1048576,
+    "n_chunks": 219,
+    "media": 1225732.6757990867,
+    "media_sobre_alvo": 1.1689497716894977,
+    "min": 274417,
+    "max": 2343654,
+    "dentro_dos_limites": true,
+    "media_teorica_sobre_alvo_paper": 1.14,
+    "aprovado": true,
+    "aprovado_criterio_25pct_do_alvo": true
+   }
+  },
+  "insercao_b": {
+   "fixo_4K": {
+    "chunks_original": 16384,
+    "reaparecem": 0,
+    "fracao_reaparecem": 0.0,
+    "aprovado": true,
+    "criterio": "~0% (<= 2%)"
+   },
+   "fixo_8K": {
+    "chunks_original": 8192,
+    "reaparecem": 0,
+    "fracao_reaparecem": 0.0,
+    "aprovado": true,
+    "criterio": "~0% (<= 2%)"
+   },
+   "fixo_64K": {
+    "chunks_original": 1024,
+    "reaparecem": 0,
+    "fracao_reaparecem": 0.0,
+    "aprovado": true,
+    "criterio": "~0% (<= 2%)"
+   },
+   "fixo_1M": {
+    "chunks_original": 64,
+    "reaparecem": 0,
+    "fracao_reaparecem": 0.0,
+    "aprovado": true,
+    "criterio": "~0% (<= 2%)"
+   },
+   "cdc_8K": {
+    "chunks_original": 7172,
+    "reaparecem": 7165,
+    "fracao_reaparecem": 0.9990239821528165,
+    "aprovado": true,
+    "criterio": ">= 95%"
+   },
+   "cdc_64K": {
+    "chunks_original": 895,
+    "reaparecem": 894,
+    "fracao_reaparecem": 0.9988826815642458,
+    "aprovado": true,
+    "criterio": ">= 95%"
+   },
+   "cdc_1M": {
+    "chunks_original": 54,
+    "reaparecem": 53,
+    "fracao_reaparecem": 0.9814814814814815,
+    "aprovado": true,
+    "criterio": ">= 95%"
+   }
+  },
+  "roundtrip_c": {
+   "fixo_4K": {
+    "aprovado": true
+   },
+   "fixo_8K": {
+    "aprovado": true
+   },
+   "fixo_64K": {
+    "aprovado": true
+   },
+   "fixo_1M": {
+    "aprovado": true
+   },
+   "cdc_8K": {
+    "aprovado": true
+   },
+   "cdc_64K": {
+    "aprovado": true
+   },
+   "cdc_1M": {
+    "aprovado": true
+   }
+  },
+  "determinismo": {
+   "fixo_4K": {
+    "aprovado": true
+   },
+   "fixo_8K": {
+    "aprovado": true
+   },
+   "fixo_64K": {
+    "aprovado": true
+   },
+   "fixo_1M": {
+    "aprovado": true
+   },
+   "cdc_8K": {
+    "aprovado": true
+   },
+   "cdc_64K": {
+    "aprovado": true
+   },
+   "cdc_1M": {
+    "aprovado": true
+   }
+  },
+  "aprovado_tudo": true
+ },
+ "conjuntos": {
+  "A_arvore": {
+   "tipo": "arvore",
+   "versoes": [
+    "6.12.114",
+    "6.12.115"
+   ],
+   "estrategias": {
+    "fixo_64K": {
+     "conjunto": "A_arvore",
+     "chunker": "fixo_64K",
+     "logico_v1": 1480791965,
+     "logico_v2": 1480853219,
+     "n_chunks_v1": 97493,
+     "n_chunks_v2": 97494,
+     "n_chunks_unicos": 97244,
+     "n_chunks_unicos_v1": 96943,
+     "bytes_unicos": 1487432368,
+     "bytes_v2_ja_em_v1": 1470164743,
+     "pct_v2_ja_em_v1": 99.27822178033162,
+     "bytes_v2_duplicados_total": 1470164743,
+     "pct_v2_duplicados_total": 99.27822178033162,
+     "armazenado_bruto": 1487432368,
+     "armazenado_z3": 303384649,
+     "razao_bruta": 1.9911125021315927,
+     "razao_z3": 9.7620139771805,
+     "referencias_v1": 97493,
+     "referencias_v2": 97494,
+     "media_chunk_v1": 15188.700368231566,
+     "media_chunk_unico": 15295.878079881535,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 10.001823425292969,
+     "tempo_total_s": 10.730638027191162,
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 86402,
+       "alterado": 223,
+       "novo": 1
+      },
+      "bytes_logicos": {
+       "igual": 1468536520,
+       "alterado": 12316019,
+       "novo": 680
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 3034290,
+       "novo": 348
+      }
+     }
+    },
+    "fixo_8K": {
+     "conjunto": "A_arvore",
+     "chunker": "fixo_8K",
+     "logico_v1": 1480791965,
+     "logico_v2": 1480853219,
+     "n_chunks_v1": 236344,
+     "n_chunks_v2": 236353,
+     "n_chunks_unicos": 236246,
+     "n_chunks_unicos_v1": 235174,
+     "bytes_unicos": 1482695083,
+     "bytes_v2_ja_em_v1": 1472975238,
+     "pct_v2_ja_em_v1": 99.46801067797118,
+     "bytes_v2_duplicados_total": 1472975238,
+     "pct_v2_duplicados_total": 99.46801067797118,
+     "armazenado_bruto": 1482695083,
+     "armazenado_z3": 349372047,
+     "razao_bruta": 1.9974742062323276,
+     "razao_z3": 8.477052498707774,
+     "referencias_v1": 236344,
+     "referencias_v2": 236353,
+     "media_chunk_v1": 6265.409593643164,
+     "media_chunk_unico": 6276.064284686302,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 11.529752731323242,
+     "tempo_total_s": 12.291163682937622,
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 86402,
+       "alterado": 223,
+       "novo": 1
+      },
+      "bytes_logicos": {
+       "igual": 1468536520,
+       "alterado": 12316019,
+       "novo": 680
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 2668770,
+       "novo": 348
+      }
+     }
+    },
+    "fixo_4K": {
+     "conjunto": "A_arvore",
+     "chunker": "fixo_4K",
+     "logico_v1": 1480791965,
+     "logico_v2": 1480853219,
+     "n_chunks_v1": 411871,
+     "n_chunks_v2": 411886,
+     "n_chunks_unicos": 411702,
+     "n_chunks_unicos_v1": 409766,
+     "bytes_unicos": 1481504795,
+     "bytes_v2_ja_em_v1": 1473380742,
+     "pct_v2_ja_em_v1": 99.49539381053269,
+     "bytes_v2_duplicados_total": 1473380742,
+     "pct_v2_duplicados_total": 99.49539381053269,
+     "armazenado_bruto": 1481504795,
+     "armazenado_z3": 388228327,
+     "razao_bruta": 1.9990790404427952,
+     "razao_z3": 7.628616919547965,
+     "referencias_v1": 411871,
+     "referencias_v2": 411886,
+     "media_chunk_v1": 3595.2809617574435,
+     "media_chunk_unico": 3598.4882147767075,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 14.715261220932007,
+     "tempo_total_s": 15.5180184841156,
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 86402,
+       "alterado": 223,
+       "novo": 1
+      },
+      "bytes_logicos": {
+       "igual": 1468536520,
+       "alterado": 12316019,
+       "novo": 680
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 2813125,
+       "novo": 348
+      }
+     }
+    },
+    "fixo_1M": {
+     "conjunto": "A_arvore",
+     "chunker": "fixo_1M",
+     "logico_v1": 1480791965,
+     "logico_v2": 1480853219,
+     "n_chunks_v1": 86982,
+     "n_chunks_v2": 86983,
+     "n_chunks_unicos": 86682,
+     "n_chunks_unicos_v1": 86458,
+     "bytes_unicos": 1489650415,
+     "bytes_v2_ja_em_v1": 1468536520,
+     "pct_v2_ja_em_v1": 99.16827009983358,
+     "bytes_v2_duplicados_total": 1468536520,
+     "pct_v2_duplicados_total": 99.16827009983358,
+     "armazenado_bruto": 1489650415,
+     "armazenado_z3": 287798767,
+     "razao_bruta": 1.9881477923798652,
+     "razao_z3": 10.290680585160395,
+     "referencias_v1": 86982,
+     "referencias_v2": 86983,
+     "media_chunk_v1": 17024.11953047757,
+     "media_chunk_unico": 17185.23355483261,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 9.720420122146606,
+     "tempo_total_s": 10.440397500991821,
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 86402,
+       "alterado": 223,
+       "novo": 1
+      },
+      "bytes_logicos": {
+       "igual": 1468536520,
+       "alterado": 12316019,
+       "novo": 680
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 3328136,
+       "novo": 348
+      }
+     }
+    },
+    "cdc_8K": {
+     "conjunto": "A_arvore",
+     "chunker": "cdc_8K",
+     "logico_v1": 1480791965,
+     "logico_v2": 1480853219,
+     "n_chunks_v1": 208234,
+     "n_chunks_v2": 208242,
+     "n_chunks_unicos": 193357,
+     "n_chunks_unicos_v1": 193008,
+     "bytes_unicos": 1330569335,
+     "bytes_v2_ja_em_v1": 1477750700,
+     "pct_v2_ja_em_v1": 99.79049111956584,
+     "bytes_v2_duplicados_total": 1477750700,
+     "pct_v2_duplicados_total": 99.79049111956584,
+     "armazenado_bruto": 1330569335,
+     "armazenado_z3": 327143950,
+     "razao_bruta": 2.2258480682631996,
+     "razao_z3": 9.05303363855575,
+     "referencias_v1": 208234,
+     "referencias_v2": 208242,
+     "media_chunk_v1": 7111.192048368662,
+     "media_chunk_unico": 6881.412801191578,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 12.159382343292236,
+     "tempo_total_s": 12.916635274887085,
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 86402,
+       "alterado": 223,
+       "novo": 1
+      },
+      "bytes_logicos": {
+       "igual": 1468536520,
+       "alterado": 12316019,
+       "novo": 680
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 1038651,
+       "novo": 348
+      }
+     }
+    },
+    "cdc_1M": {
+     "conjunto": "A_arvore",
+     "chunker": "cdc_1M",
+     "logico_v1": 1480791965,
+     "logico_v2": 1480853219,
+     "n_chunks_v1": 86845,
+     "n_chunks_v2": 86846,
+     "n_chunks_unicos": 86541,
+     "n_chunks_unicos_v1": 86317,
+     "bytes_unicos": 1485426020,
+     "bytes_v2_ja_em_v1": 1468536520,
+     "pct_v2_ja_em_v1": 99.16827009983358,
+     "bytes_v2_duplicados_total": 1468536520,
+     "pct_v2_duplicados_total": 99.16827009983358,
+     "armazenado_bruto": 1485426020,
+     "armazenado_z3": 286343231,
+     "razao_bruta": 1.9938018751011242,
+     "razao_z3": 10.342990032126863,
+     "referencias_v1": 86845,
+     "referencias_v2": 86846,
+     "media_chunk_v1": 17050.975473544822,
+     "media_chunk_unico": 17164.419408141806,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 99.19957256317139,
+     "tempo_total_s": 99.92557764053345,
+     "z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 21617,
+      "bytes_amostra_z3": 71818214,
+      "bytes_amostra_z19": 62144214,
+      "razao_z19_sobre_z3_na_amostra": 0.8652987945369959,
+      "armazenado_z19_estimado": 247772452.60812855,
+      "razao_z19_estimada": 11.953084989169772
+     },
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 86402,
+       "alterado": 223,
+       "novo": 1
+      },
+      "bytes_logicos": {
+       "igual": 1468536520,
+       "alterado": 12316019,
+       "novo": 680
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 3328136,
+       "novo": 348
+      }
+     }
+    },
+    "cdc_64K": {
+     "conjunto": "A_arvore",
+     "chunker": "cdc_64K",
+     "logico_v1": 1480791965,
+     "logico_v2": 1480853219,
+     "n_chunks_v1": 95111,
+     "n_chunks_v2": 95113,
+     "n_chunks_unicos": 94206,
+     "n_chunks_unicos_v1": 93959,
+     "bytes_unicos": 1434382016,
+     "bytes_v2_ja_em_v1": 1471587317,
+     "pct_v2_ja_em_v1": 99.37428626408652,
+     "bytes_v2_duplicados_total": 1471587317,
+     "pct_v2_duplicados_total": 99.37428626408652,
+     "armazenado_bruto": 1434382016,
+     "armazenado_z3": 298080654,
+     "razao_bruta": 2.0647534275834087,
+     "razao_z3": 9.93571754576196,
+     "referencias_v1": 95111,
+     "referencias_v2": 95113,
+     "media_chunk_v1": 15569.09258655676,
+     "media_chunk_unico": 15226.015497951299,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 122.9621057510376,
+     "tempo_total_s": 123.74091362953186,
+     "z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 23479,
+      "bytes_amostra_z3": 73720931,
+      "bytes_amostra_z19": 64070226,
+      "razao_z19_sobre_z3_na_amostra": 0.8690913846435282,
+      "armazenado_z19_estimado": 259059328.32030845,
+      "razao_z19_estimada": 11.432304728043363
+     },
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 86402,
+       "alterado": 223,
+       "novo": 1
+      },
+      "bytes_logicos": {
+       "igual": 1468536520,
+       "alterado": 12316019,
+       "novo": 680
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 2624735,
+       "novo": 348
+      }
+     }
+    }
+   },
+   "logico_v1": 1480791965,
+   "logico_v2": 1480853219,
+   "arquivo_inteiro": {
+    "conjunto": "A_arvore",
+    "chunker": "arquivo_inteiro",
+    "logico_v1": 1480791965,
+    "logico_v2": 1480853219,
+    "n_arquivos_v1": 86625,
+    "n_arquivos_v2": 86626,
+    "n_arquivos_vazios_ignorados": [
+     23,
+     23
+    ],
+    "n_unicos": 86325,
+    "bytes_unicos": 1489650415,
+    "bytes_v2_ja_em_v1": 1468536520,
+    "pct_v2_ja_em_v1": 99.16827009983358,
+    "bytes_v2_duplicados_total": 1468536520,
+    "pct_v2_duplicados_total": 99.16827009983358,
+    "armazenado_bruto_sem_dedup": 2961645184,
+    "armazenado_bruto_com_dedup": 1489650415,
+    "armazenado_z3_sem_dedup": 563250174,
+    "armazenado_z3_com_dedup": 284353242,
+    "razao_z3_sem_dedup": 5.258134521233188,
+    "razao_z3_com_dedup": 10.41537336859342,
+    "razao_bruta_com_dedup": 1.9881477923798652,
+    "referencias_v1": 86625,
+    "referencias_v2": 86626,
+    "bit_exato": true,
+    "reconstrucao_v2_ok": true,
+    "codec_roundtrip_ok": true,
+    "v2_por_categoria": {
+     "arquivos": {
+      "igual": 86402,
+      "alterado": 223,
+      "novo": 1
+     },
+     "bytes_logicos": {
+      "igual": 1468536520,
+      "alterado": 12316019,
+      "novo": 680
+     },
+     "custo_marginal_z3": {
+      "igual": 0,
+      "alterado": 3328136,
+      "novo": 348
+     }
+    },
+    "tempo_total_s": 10.603650331497192
+   }
+  },
+  "A_tar": {
+   "tipo": "tar",
+   "versoes": [
+    "6.12.114",
+    "6.12.115"
+   ],
+   "estrategias": {
+    "fixo_4K": {
+     "conjunto": "A_tar",
+     "chunker": "fixo_4K",
+     "logico_v1": 1550448640,
+     "logico_v2": 1550510080,
+     "n_chunks_v1": 378528,
+     "n_chunks_v2": 378543,
+     "n_chunks_unicos": 586278,
+     "n_chunks_unicos_v1": 378188,
+     "bytes_unicos": 2401390592,
+     "bytes_v2_ja_em_v1": 697708544,
+     "pct_v2_ja_em_v1": 44.998646122958455,
+     "bytes_v2_duplicados_total": 698175488,
+     "pct_v2_duplicados_total": 45.02876163178507,
+     "armazenado_bruto": 2401390592,
+     "armazenado_z3": 657332177,
+     "razao_bruta": 1.2913179265091417,
+     "razao_z3": 4.7174911384263485,
+     "referencias_v1": 378528,
+     "referencias_v2": 378543,
+     "media_chunk_v1": 4095.9945895680107,
+     "media_chunk_unico": 4095.9930135532973,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 29.84919810295105,
+     "tempo_total_s": 30.675765991210938
+    },
+    "fixo_64K": {
+     "conjunto": "A_tar",
+     "chunker": "fixo_64K",
+     "logico_v1": 1550448640,
+     "logico_v2": 1550510080,
+     "n_chunks_v1": 23658,
+     "n_chunks_v2": 23659,
+     "n_chunks_unicos": 44853,
+     "n_chunks_unicos_v1": 23658,
+     "bytes_unicos": 2939478016,
+     "bytes_v2_ja_em_v1": 161480704,
+     "pct_v2_ja_em_v1": 10.414682631408626,
+     "bytes_v2_duplicados_total": 161480704,
+     "pct_v2_duplicados_total": 10.414682631408626,
+     "armazenado_bruto": 2939478016,
+     "armazenado_z3": 519693284,
+     "razao_bruta": 1.054935163019093,
+     "razao_z3": 5.966901661942585,
+     "referencias_v1": 23658,
+     "referencias_v2": 23659,
+     "media_chunk_v1": 65535.91343308817,
+     "media_chunk_unico": 65535.817358928056,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 14.381023168563843,
+     "tempo_total_s": 15.073619604110718
+    },
+    "fixo_8K": {
+     "conjunto": "A_tar",
+     "chunker": "fixo_8K",
+     "logico_v1": 1550448640,
+     "logico_v2": 1550510080,
+     "n_chunks_v1": 189264,
+     "n_chunks_v2": 189272,
+     "n_chunks_unicos": 356907,
+     "n_chunks_unicos_v1": 189195,
+     "bytes_unicos": 2923773952,
+     "bytes_v2_ja_em_v1": 176119808,
+     "pct_v2_ja_em_v1": 11.358830250236103,
+     "bytes_v2_duplicados_total": 176619520,
+     "pct_v2_duplicados_total": 11.391059128103185,
+     "armazenado_bruto": 2923773952,
+     "armazenado_z3": 643774444,
+     "razao_bruta": 1.0606013908424068,
+     "razao_z3": 4.8168403528612265,
+     "referencias_v1": 189264,
+     "referencias_v2": 189272,
+     "media_chunk_v1": 8191.989179136021,
+     "media_chunk_unico": 8191.977047241999,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 18.00924038887024,
+     "tempo_total_s": 18.743645668029785
+    },
+    "fixo_1M": {
+     "conjunto": "A_tar",
+     "chunker": "fixo_1M",
+     "logico_v1": 1550448640,
+     "logico_v2": 1550510080,
+     "n_chunks_v1": 1479,
+     "n_chunks_v2": 1479,
+     "n_chunks_unicos": 2807,
+     "n_chunks_unicos_v1": 1479,
+     "bytes_unicos": 2942623744,
+     "bytes_v2_ja_em_v1": 158334976,
+     "pct_v2_ja_em_v1": 10.211799203524043,
+     "bytes_v2_duplicados_total": 158334976,
+     "pct_v2_duplicados_total": 10.211799203524043,
+     "armazenado_bruto": 2942623744,
+     "armazenado_z3": 435469140,
+     "razao_bruta": 1.0538074146661953,
+     "razao_z3": 7.120960902074485,
+     "referencias_v1": 1479,
+     "referencias_v2": 1479,
+     "media_chunk_v1": 1048308.7491548343,
+     "media_chunk_unico": 1048316.2607766299,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 13.940104484558105,
+     "tempo_total_s": 14.628571510314941
+    },
+    "cdc_8K": {
+     "conjunto": "A_tar",
+     "chunker": "cdc_8K",
+     "logico_v1": 1550448640,
+     "logico_v2": 1550510080,
+     "n_chunks_v1": 153475,
+     "n_chunks_v2": 153485,
+     "n_chunks_unicos": 139623,
+     "n_chunks_unicos_v1": 139001,
+     "bytes_unicos": 1405505132,
+     "bytes_v2_ja_em_v1": 1544071699,
+     "pct_v2_ja_em_v1": 99.58475723034319,
+     "bytes_v2_duplicados_total": 1544071699,
+     "pct_v2_duplicados_total": 99.58475723034319,
+     "armazenado_bruto": 1405505132,
+     "armazenado_z3": 324301441,
+     "razao_bruta": 2.206294839768682,
+     "razao_z3": 9.561964049367267,
+     "referencias_v1": 153475,
+     "referencias_v2": 153485,
+     "media_chunk_v1": 10102.287929630233,
+     "media_chunk_unico": 10066.429828896386,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 14.282145023345947,
+     "tempo_total_s": 15.007933855056763
+    },
+    "cdc_1M": {
+     "conjunto": "A_tar",
+     "chunker": "cdc_1M",
+     "logico_v1": 1550448640,
+     "logico_v2": 1550510080,
+     "n_chunks_v1": 1135,
+     "n_chunks_v2": 1135,
+     "n_chunks_unicos": 1247,
+     "n_chunks_unicos_v1": 1131,
+     "bytes_unicos": 1706563437,
+     "bytes_v2_ja_em_v1": 1390170888,
+     "pct_v2_ja_em_v1": 89.65893907635866,
+     "bytes_v2_duplicados_total": 1390170888,
+     "pct_v2_duplicados_total": 89.65893907635866,
+     "armazenado_bruto": 1706563437,
+     "armazenado_z3": 264618239,
+     "razao_bruta": 1.817077908015675,
+     "razao_z3": 11.718612941113253,
+     "referencias_v1": 1135,
+     "referencias_v2": 1135,
+     "media_chunk_v1": 1366034.0440528635,
+     "media_chunk_unico": 1368535.2341619888,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 114.10070776939392,
+     "tempo_total_s": 114.83026838302612,
+     "z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 303,
+      "bytes_amostra_z3": 64846680,
+      "bytes_amostra_z19": 50263550,
+      "razao_z19_sobre_z3_na_amostra": 0.7751136989588364,
+      "armazenado_z19_estimado": 205109222.04326344,
+      "razao_z19_estimada": 15.118572871120922
+     }
+    },
+    "cdc_64K": {
+     "conjunto": "A_tar",
+     "chunker": "cdc_64K",
+     "logico_v1": 1550448640,
+     "logico_v2": 1550510080,
+     "n_chunks_v1": 18872,
+     "n_chunks_v2": 18873,
+     "n_chunks_unicos": 18573,
+     "n_chunks_unicos_v1": 18271,
+     "bytes_unicos": 1522924796,
+     "bytes_v2_ja_em_v1": 1525362175,
+     "pct_v2_ja_em_v1": 98.37808826112243,
+     "bytes_v2_duplicados_total": 1525362175,
+     "pct_v2_duplicados_total": 98.37808826112243,
+     "armazenado_bruto": 1522924796,
+     "armazenado_z3": 275536022,
+     "razao_bruta": 2.036186375154404,
+     "razao_z3": 11.254277017906574,
+     "referencias_v1": 18872,
+     "referencias_v2": 18873,
+     "media_chunk_v1": 82156.03221704112,
+     "media_chunk_unico": 81996.70467883487,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 120.00965309143066,
+     "tempo_total_s": 120.73371577262878,
+     "z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 4584,
+      "bytes_amostra_z3": 68106949,
+      "bytes_amostra_z19": 56986430,
+      "razao_z19_sobre_z3_na_amostra": 0.836719759682672,
+      "armazenado_z19_estimado": 230546434.11175942,
+      "razao_z19_estimada": 13.450473575734348
+     }
+    }
+   },
+   "logico_v1": 1550448640,
+   "logico_v2": 1550510080,
+   "fluxo_sem_dedup_z3": {
+    "z3_v1": 222762075,
+    "z3_v2": 222751192,
+    "armazenado_z3": 445513267,
+    "razao_z3": 6.960418352704186,
+    "bit_exato": true
+   },
+   "fluxo_z3_long31_concatenado": {
+    "armazenado": 206965655,
+    "razao": 14.982962849560716,
+    "bit_exato": true,
+    "tempo_s": 9.292112350463867,
+    "nota": "referencia extra: zstd-3 com janela 2 GiB e long-distance matching sobre v1+v2 concatenados; sem indice por chunk"
+   }
+  },
+  "B_arvore": {
+   "tipo": "arvore",
+   "versoes": [
+    "6.12.115",
+    "6.13.12"
+   ],
+   "estrategias": {
+    "fixo_4K": {
+     "conjunto": "B_arvore",
+     "chunker": "fixo_4K",
+     "logico_v1": 1480853219,
+     "logico_v2": 1482692583,
+     "n_chunks_v1": 411886,
+     "n_chunks_v2": 412746,
+     "n_chunks_unicos": 511318,
+     "n_chunks_unicos_v1": 409782,
+     "bytes_unicos": 1847286343,
+     "bytes_v2_ja_em_v1": 1109021684,
+     "pct_v2_ja_em_v1": 74.79781693896825,
+     "bytes_v2_duplicados_total": 1109499827,
+     "pct_v2_duplicados_total": 74.8300652287002,
+     "armazenado_bruto": 1847286343,
+     "armazenado_z3": 510465525,
+     "razao_bruta": 1.6042698595320044,
+     "razao_z3": 5.805574827016967,
+     "referencias_v1": 411886,
+     "referencias_v2": 412746,
+     "media_chunk_v1": 3595.2987452838893,
+     "media_chunk_unico": 3612.7934925036866,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 16.755208492279053,
+     "tempo_total_s": 17.56835675239563,
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 66686,
+       "alterado": 19227,
+       "novo": 1247
+      },
+      "bytes_logicos": {
+       "igual": 980938405,
+       "alterado": 492693123,
+       "novo": 9061055
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 122522900,
+       "novo": 2500855
+      }
+     }
+    },
+    "fixo_64K": {
+     "conjunto": "B_arvore",
+     "chunker": "fixo_64K",
+     "logico_v1": 1480853219,
+     "logico_v2": 1482692583,
+     "n_chunks_v1": 97494,
+     "n_chunks_v2": 98020,
+     "n_chunks_unicos": 119587,
+     "n_chunks_unicos_v1": 96944,
+     "bytes_unicos": 1960738011,
+     "bytes_v2_ja_em_v1": 998110182,
+     "pct_v2_ja_em_v1": 67.31740574168637,
+     "bytes_v2_duplicados_total": 998759718,
+     "pct_v2_duplicados_total": 67.36121360903847,
+     "armazenado_bruto": 1960738011,
+     "armazenado_z3": 425551089,
+     "razao_bruta": 1.51144405084928,
+     "razao_z3": 6.9640188419303986,
+     "referencias_v1": 97494,
+     "referencias_v2": 98020,
+     "media_chunk_v1": 15189.172861919707,
+     "media_chunk_unico": 16395.912691178808,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 13.906023502349854,
+     "tempo_total_s": 14.664854049682617,
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 66686,
+       "alterado": 19227,
+       "novo": 1247
+      },
+      "bytes_logicos": {
+       "igual": 980938405,
+       "alterado": 492693123,
+       "novo": 9061055
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 123101339,
+       "novo": 2078072
+      }
+     }
+    },
+    "cdc_8K": {
+     "conjunto": "B_arvore",
+     "chunker": "cdc_8K",
+     "logico_v1": 1480853219,
+     "logico_v2": 1482692583,
+     "n_chunks_v1": 208242,
+     "n_chunks_v2": 208831,
+     "n_chunks_unicos": 230421,
+     "n_chunks_unicos_v1": 193016,
+     "bytes_unicos": 1607355109,
+     "bytes_v2_ja_em_v1": 1202528453,
+     "pct_v2_ja_em_v1": 81.10436828158059,
+     "bytes_v2_duplicados_total": 1202865544,
+     "pct_v2_duplicados_total": 81.12710333831892,
+     "armazenado_bruto": 1607355109,
+     "armazenado_z3": 413657945,
+     "razao_bruta": 1.8437405557778335,
+     "razao_z3": 7.164242432234682,
+     "referencias_v1": 208242,
+     "referencias_v2": 208831,
+     "media_chunk_v1": 7111.213006982261,
+     "media_chunk_unico": 6975.731851697545,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 15.851266860961914,
+     "tempo_total_s": 16.65168833732605,
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 66686,
+       "alterado": 19227,
+       "novo": 1247
+      },
+      "bytes_logicos": {
+       "igual": 980938405,
+       "alterado": 492693123,
+       "novo": 9061055
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 85322997,
+       "novo": 2202697
+      }
+     }
+    },
+    "fixo_8K": {
+     "conjunto": "B_arvore",
+     "chunker": "fixo_8K",
+     "logico_v1": 1480853219,
+     "logico_v2": 1482692583,
+     "n_chunks_v1": 236353,
+     "n_chunks_v2": 237030,
+     "n_chunks_unicos": 294460,
+     "n_chunks_unicos_v1": 235183,
+     "bytes_unicos": 1870116088,
+     "bytes_v2_ja_em_v1": 1086935732,
+     "pct_v2_ja_em_v1": 73.30823290427156,
+     "bytes_v2_duplicados_total": 1087454851,
+     "pct_v2_duplicados_total": 73.34324481476145,
+     "armazenado_bruto": 1870116088,
+     "armazenado_z3": 466404147,
+     "razao_bruta": 1.584685475418465,
+     "razao_z3": 6.354029699482925,
+     "referencias_v1": 236353,
+     "referencias_v2": 237030,
+     "media_chunk_v1": 6265.430178588806,
+     "media_chunk_unico": 6351.002132717516,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 23.533684015274048,
+     "tempo_total_s": 24.439761638641357,
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 66686,
+       "alterado": 19227,
+       "novo": 1247
+      },
+      "bytes_logicos": {
+       "igual": 980938405,
+       "alterado": 492693123,
+       "novo": 9061055
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 117392744,
+       "novo": 2283164
+      }
+     }
+    },
+    "fixo_1M": {
+     "conjunto": "B_arvore",
+     "chunker": "fixo_1M",
+     "logico_v1": 1480853219,
+     "logico_v2": 1482692583,
+     "n_chunks_v1": 86983,
+     "n_chunks_v2": 87517,
+     "n_chunks_unicos": 106782,
+     "n_chunks_unicos_v1": 86459,
+     "bytes_unicos": 1977520013,
+     "bytes_v2_ja_em_v1": 981918004,
+     "pct_v2_ja_em_v1": 66.22532649439982,
+     "bytes_v2_duplicados_total": 982567540,
+     "pct_v2_duplicados_total": 66.26913436175191,
+     "armazenado_bruto": 1977520013,
+     "armazenado_z3": 409718127,
+     "razao_bruta": 1.4986173502760904,
+     "razao_z3": 7.233133236499444,
+     "referencias_v1": 86983,
+     "referencias_v2": 87517,
+     "media_chunk_v1": 17024.628019268133,
+     "media_chunk_unico": 18519.22620853702,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 20.680744647979736,
+     "tempo_total_s": 21.527984380722046,
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 66686,
+       "alterado": 19227,
+       "novo": 1247
+      },
+      "bytes_logicos": {
+       "igual": 980938405,
+       "alterado": 492693123,
+       "novo": 9061055
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 123153672,
+       "novo": 2072694
+      }
+     }
+    },
+    "cdc_1M": {
+     "conjunto": "B_arvore",
+     "chunker": "cdc_1M",
+     "logico_v1": 1480853219,
+     "logico_v2": 1482692583,
+     "n_chunks_v1": 86846,
+     "n_chunks_v2": 87380,
+     "n_chunks_unicos": 106625,
+     "n_chunks_unicos_v1": 86318,
+     "bytes_unicos": 1958680152,
+     "bytes_v2_ja_em_v1": 996533470,
+     "pct_v2_ja_em_v1": 67.21106461486899,
+     "bytes_v2_duplicados_total": 997183006,
+     "pct_v2_duplicados_total": 67.25487248222109,
+     "armazenado_bruto": 1958680152,
+     "armazenado_z3": 407582055,
+     "razao_bruta": 1.513032027701887,
+     "razao_z3": 7.271040924507827,
+     "referencias_v1": 86846,
+     "referencias_v2": 87380,
+     "media_chunk_v1": 17051.484455242615,
+     "media_chunk_unico": 18369.802128956624,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 146.35923051834106,
+     "tempo_total_s": 147.05447006225586,
+     "z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 26596,
+      "bytes_amostra_z3": 102699044,
+      "bytes_amostra_z19": 88786276,
+      "razao_z19_sobre_z3_na_amostra": 0.8645287486804648,
+      "armazenado_z19_estimado": 352366403.9937624,
+      "razao_z19_estimada": 8.410409642947858
+     },
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 66686,
+       "alterado": 19227,
+       "novo": 1247
+      },
+      "bytes_logicos": {
+       "igual": 980938405,
+       "alterado": 492693123,
+       "novo": 9061055
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 122473136,
+       "novo": 2072694
+      }
+     }
+    },
+    "cdc_64K": {
+     "conjunto": "B_arvore",
+     "chunker": "cdc_64K",
+     "logico_v1": 1480853219,
+     "logico_v2": 1482692583,
+     "n_chunks_v1": 95113,
+     "n_chunks_v2": 95647,
+     "n_chunks_unicos": 115542,
+     "n_chunks_unicos_v1": 93961,
+     "bytes_unicos": 1876864670,
+     "bytes_v2_ja_em_v1": 1030438771,
+     "pct_v2_ja_em_v1": 69.49780303851429,
+     "bytes_v2_duplicados_total": 1031005281,
+     "pct_v2_duplicados_total": 69.53601122856632,
+     "armazenado_bruto": 1876864670,
+     "armazenado_z3": 415772450,
+     "razao_bruta": 1.578987472762221,
+     "razao_z3": 7.127807054074891,
+     "referencias_v1": 95113,
+     "referencias_v2": 95647,
+     "media_chunk_v1": 15569.40921850851,
+     "media_chunk_unico": 16244.003652351526,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 148.77733182907104,
+     "tempo_total_s": 149.45517706871033,
+     "z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 28788,
+      "bytes_amostra_z3": 103786639,
+      "bytes_amostra_z19": 90277032,
+      "razao_z19_sobre_z3_na_amostra": 0.8698328886052471,
+      "armazenado_z19_estimado": 361652551.1859807,
+      "razao_z19_estimada": 8.194455679301955
+     },
+     "v2_por_categoria": {
+      "arquivos": {
+       "igual": 66686,
+       "alterado": 19227,
+       "novo": 1247
+      },
+      "bytes_logicos": {
+       "igual": 980938405,
+       "alterado": 492693123,
+       "novo": 9061055
+      },
+      "custo_marginal_z3": {
+       "igual": 0,
+       "alterado": 118214546,
+       "novo": 2080329
+      }
+     }
+    }
+   },
+   "logico_v1": 1480853219,
+   "logico_v2": 1482692583,
+   "arquivo_inteiro": {
+    "conjunto": "B_arvore",
+    "chunker": "arquivo_inteiro",
+    "logico_v1": 1480853219,
+    "logico_v2": 1482692583,
+    "n_arquivos_v1": 86626,
+    "n_arquivos_v2": 87160,
+    "n_arquivos_vazios_ignorados": [
+     23,
+     28
+    ],
+    "n_unicos": 106405,
+    "bytes_unicos": 1977520013,
+    "bytes_v2_ja_em_v1": 981918004,
+    "pct_v2_ja_em_v1": 66.22532649439982,
+    "bytes_v2_duplicados_total": 982567540,
+    "pct_v2_duplicados_total": 66.26913436175191,
+    "armazenado_bruto_sem_dedup": 2963545802,
+    "armazenado_bruto_com_dedup": 1977520013,
+    "armazenado_z3_sem_dedup": 563412899,
+    "armazenado_z3_com_dedup": 406026793,
+    "razao_z3_sem_dedup": 5.259989267657857,
+    "razao_z3_com_dedup": 7.298892223597668,
+    "razao_bruta_com_dedup": 1.4986173502760904,
+    "referencias_v1": 86626,
+    "referencias_v2": 87160,
+    "bit_exato": true,
+    "reconstrucao_v2_ok": true,
+    "codec_roundtrip_ok": true,
+    "v2_por_categoria": {
+     "arquivos": {
+      "igual": 66686,
+      "alterado": 19227,
+      "novo": 1247
+     },
+     "bytes_logicos": {
+      "igual": 980938405,
+      "alterado": 492693123,
+      "novo": 9061055
+     },
+     "custo_marginal_z3": {
+      "igual": 0,
+      "alterado": 122907863,
+      "novo": 2072694
+     }
+    },
+    "tempo_total_s": 13.166045904159546
+   }
+  },
+  "B_tar": {
+   "tipo": "tar",
+   "versoes": [
+    "6.12.115",
+    "6.13.12"
+   ],
+   "estrategias": {
+    "fixo_4K": {
+     "conjunto": "B_tar",
+     "chunker": "fixo_4K",
+     "logico_v1": 1550510080,
+     "logico_v2": 1552783360,
+     "n_chunks_v1": 378543,
+     "n_chunks_v2": 379098,
+     "n_chunks_unicos": 698945,
+     "n_chunks_unicos_v1": 378260,
+     "bytes_unicos": 2862874624,
+     "bytes_v2_ja_em_v1": 238333952,
+     "pct_v2_ja_em_v1": 15.34882187300101,
+     "bytes_v2_duplicados_total": 239259648,
+     "pct_v2_duplicados_total": 15.40843714347892,
+     "armazenado_bruto": 2862874624,
+     "armazenado_z3": 735481578,
+     "razao_bruta": 1.0839781155571835,
+     "razao_z3": 4.219403358053925,
+     "referencias_v1": 378543,
+     "referencias_v2": 379098,
+     "media_chunk_v1": 4095.9945897824027,
+     "media_chunk_unico": 4095.9941397391785,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 20.799322605133057,
+     "tempo_total_s": 21.57176899909973
+    },
+    "fixo_64K": {
+     "conjunto": "B_tar",
+     "chunker": "fixo_64K",
+     "logico_v1": 1550510080,
+     "logico_v2": 1552783360,
+     "n_chunks_v1": 23659,
+     "n_chunks_v2": 23694,
+     "n_chunks_unicos": 47328,
+     "n_chunks_unicos_v1": 23659,
+     "bytes_unicos": 3101655040,
+     "bytes_v2_ja_em_v1": 1638400,
+     "pct_v2_ja_em_v1": 0.10551375305825018,
+     "bytes_v2_duplicados_total": 1638400,
+     "pct_v2_duplicados_total": 0.10551375305825018,
+     "armazenado_bruto": 3101655040,
+     "armazenado_z3": 554412125,
+     "razao_bruta": 1.000528234113359,
+     "razao_z3": 5.597448721021388,
+     "referencias_v1": 23659,
+     "referencias_v2": 23694,
+     "media_chunk_v1": 65535.740310241345,
+     "media_chunk_unico": 65535.3076402975,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 15.624415636062622,
+     "tempo_total_s": 16.34050989151001
+    },
+    "fixo_8K": {
+     "conjunto": "B_tar",
+     "chunker": "fixo_8K",
+     "logico_v1": 1550510080,
+     "logico_v2": 1552783360,
+     "n_chunks_v1": 189272,
+     "n_chunks_v2": 189549,
+     "n_chunks_unicos": 356322,
+     "n_chunks_unicos_v1": 189211,
+     "bytes_unicos": 2918981632,
+     "bytes_v2_ja_em_v1": 183410688,
+     "pct_v2_ja_em_v1": 11.811737086105817,
+     "bytes_v2_duplicados_total": 183812096,
+     "pct_v2_duplicados_total": 11.837587955605088,
+     "armazenado_bruto": 2918981632,
+     "armazenado_z3": 668066986,
+     "razao_bruta": 1.0631425035291213,
+     "razao_z3": 4.645183050551162,
+     "referencias_v1": 189272,
+     "referencias_v2": 189549,
+     "media_chunk_v1": 8191.967538780168,
+     "media_chunk_unico": 8191.97700955877,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 18.831732273101807,
+     "tempo_total_s": 19.589314460754395
+    },
+    "cdc_8K": {
+     "conjunto": "B_tar",
+     "chunker": "cdc_8K",
+     "logico_v1": 1550510080,
+     "logico_v2": 1552783360,
+     "n_chunks_v1": 153485,
+     "n_chunks_v2": 153682,
+     "n_chunks_unicos": 182355,
+     "n_chunks_unicos_v1": 139011,
+     "bytes_unicos": 1837790384,
+     "bytes_v2_ja_em_v1": 1113915503,
+     "pct_v2_ja_em_v1": 71.73669757769686,
+     "bytes_v2_duplicados_total": 1114121167,
+     "pct_v2_duplicados_total": 71.74994243884736,
+     "armazenado_bruto": 1837790384,
+     "armazenado_z3": 450367587,
+     "razao_bruta": 1.6886003251609134,
+     "razao_z3": 6.89057900607754,
+     "referencias_v1": 153485,
+     "referencias_v2": 153682,
+     "media_chunk_v1": 10102.030035508356,
+     "media_chunk_unico": 10078.091546708343,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 17.061068773269653,
+     "tempo_total_s": 17.816550493240356
+    },
+    "fixo_1M": {
+     "conjunto": "B_tar",
+     "chunker": "fixo_1M",
+     "logico_v1": 1550510080,
+     "logico_v2": 1552783360,
+     "n_chunks_v1": 1479,
+     "n_chunks_v2": 1481,
+     "n_chunks_unicos": 2960,
+     "n_chunks_unicos_v1": 1479,
+     "bytes_unicos": 3103293440,
+     "bytes_v2_ja_em_v1": 0,
+     "pct_v2_ja_em_v1": 0.0,
+     "bytes_v2_duplicados_total": 0,
+     "pct_v2_duplicados_total": 0.0,
+     "armazenado_bruto": 3103293440,
+     "armazenado_z3": 464736986,
+     "razao_bruta": 1.0,
+     "razao_z3": 6.6775262858032995,
+     "referencias_v1": 1479,
+     "referencias_v2": 1481,
+     "media_chunk_v1": 1048350.2907369845,
+     "media_chunk_unico": 1048409.9459459459,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 23.59630584716797,
+     "tempo_total_s": 24.295490026474
+    },
+    "cdc_1M": {
+     "conjunto": "B_tar",
+     "chunker": "cdc_1M",
+     "logico_v1": 1550510080,
+     "logico_v2": 1552783360,
+     "n_chunks_v1": 1135,
+     "n_chunks_v2": 1141,
+     "n_chunks_unicos": 1966,
+     "n_chunks_unicos_v1": 1131,
+     "bytes_unicos": 2612038966,
+     "bytes_v2_ja_em_v1": 487030079,
+     "pct_v2_ja_em_v1": 31.364972831754198,
+     "bytes_v2_duplicados_total": 487030079,
+     "pct_v2_duplicados_total": 31.364972831754198,
+     "armazenado_bruto": 2612038966,
+     "armazenado_z3": 436379228,
+     "razao_bruta": 1.1880731797628168,
+     "razao_z3": 7.111460034940068,
+     "referencias_v1": 1135,
+     "referencias_v2": 1141,
+     "media_chunk_v1": 1366088.1762114537,
+     "media_chunk_unico": 1328605.7812817905,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 141.0571961402893,
+     "tempo_total_s": 141.71491146087646,
+     "z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 478,
+      "bytes_amostra_z3": 105179059,
+      "bytes_amostra_z19": 81735598,
+      "razao_z19_sobre_z3_na_amostra": 0.7771090441111477,
+      "armazenado_z19_estimado": 339114244.7410405,
+      "razao_z19_estimada": 9.151173942485912
+     }
+    },
+    "cdc_64K": {
+     "conjunto": "B_tar",
+     "chunker": "cdc_64K",
+     "logico_v1": 1550510080,
+     "logico_v2": 1552783360,
+     "n_chunks_v1": 18873,
+     "n_chunks_v2": 18912,
+     "n_chunks_unicos": 28392,
+     "n_chunks_unicos_v1": 18272,
+     "bytes_unicos": 2304622852,
+     "bytes_v2_ja_em_v1": 745929894,
+     "pct_v2_ja_em_v1": 48.03824623674483,
+     "bytes_v2_duplicados_total": 745998839,
+     "pct_v2_duplicados_total": 48.04268632811727,
+     "armazenado_bruto": 2304622852,
+     "armazenado_z3": 456715498,
+     "razao_bruta": 1.3465515354527084,
+     "razao_z3": 6.7948065121276,
+     "referencias_v1": 18873,
+     "referencias_v2": 18912,
+     "media_chunk_v1": 82154.93456260266,
+     "media_chunk_unico": 81171.55719921105,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 158.2840301990509,
+     "tempo_total_s": 158.85507202148438,
+     "z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 7075,
+      "bytes_amostra_z3": 114073539,
+      "bytes_amostra_z19": 96188246,
+      "razao_z19_sobre_z3_na_amostra": 0.8432126051599048,
+      "armazenado_z19_estimado": 385108264.88548326,
+      "razao_z19_estimada": 8.058236405086769
+     }
+    }
+   },
+   "logico_v1": 1550510080,
+   "logico_v2": 1552783360,
+   "fluxo_sem_dedup_z3": {
+    "z3_v1": 222751192,
+    "z3_v2": 222787261,
+    "armazenado_z3": 445538453,
+    "razao_z3": 6.965265105860571,
+    "bit_exato": true
+   },
+   "fluxo_z3_long31_concatenado": {
+    "armazenado": 213069478,
+    "razao": 14.564701941964676,
+    "bit_exato": true,
+    "tempo_s": 9.618574619293213,
+    "nota": "referencia extra: zstd-3 com janela 2 GiB e long-distance matching sobre v1+v2 concatenados; sem indice por chunk"
+   }
+  },
+  "sintetico": {
+   "tipo": "sintetico",
+   "versoes": [
+    "backup1",
+    "backup2"
+   ],
+   "estrategias": {
+    "cdc_64K": {
+     "conjunto": "sintetico",
+     "chunker": "cdc_64K",
+     "logico_v1": 211938580,
+     "logico_v2": 214102120,
+     "n_chunks_v1": 2887,
+     "n_chunks_v2": 2916,
+     "n_chunks_unicos": 3723,
+     "n_chunks_unicos_v1": 2887,
+     "bytes_unicos": 278378294,
+     "bytes_v2_ja_em_v1": 147662406,
+     "pct_v2_ja_em_v1": 68.96821292568238,
+     "bytes_v2_duplicados_total": 147662406,
+     "pct_v2_duplicados_total": 68.96821292568238,
+     "armazenado_bruto": 278378294,
+     "armazenado_z3": 98862660,
+     "razao_bruta": 1.530437929905555,
+     "razao_z3": 4.309419754637393,
+     "referencias_v1": 2887,
+     "referencias_v2": 2916,
+     "media_chunk_v1": 73411.35434707308,
+     "media_chunk_unico": 74772.57426806338,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 25.112351179122925,
+     "tempo_total_s": 25.20145344734192,
+     "z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 944,
+      "bytes_amostra_z3": 23870750,
+      "bytes_amostra_z19": 21085056,
+      "razao_z19_sobre_z3_na_amostra": 0.8833009436234722,
+      "armazenado_z19_estimado": 87325480.86712651,
+      "razao_z19_estimada": 4.878767294144751
+     }
+    },
+    "cdc_1M": {
+     "conjunto": "sintetico",
+     "chunker": "cdc_1M",
+     "logico_v1": 211938580,
+     "logico_v2": 214102120,
+     "n_chunks_v1": 175,
+     "n_chunks_v2": 177,
+     "n_chunks_unicos": 350,
+     "n_chunks_unicos_v1": 175,
+     "bytes_unicos": 425239725,
+     "bytes_v2_ja_em_v1": 800975,
+     "pct_v2_ja_em_v1": 0.37410885982819786,
+     "bytes_v2_duplicados_total": 800975,
+     "pct_v2_duplicados_total": 0.37410885982819786,
+     "armazenado_bruto": 425239725,
+     "armazenado_z3": 138223041,
+     "razao_bruta": 1.0018835846063066,
+     "razao_z3": 3.0822697642717904,
+     "referencias_v1": 175,
+     "referencias_v2": 177,
+     "media_chunk_v1": 1211077.6,
+     "media_chunk_unico": 1214970.642857143,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 36.466315269470215,
+     "tempo_total_s": 36.55327129364014,
+     "z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 95,
+      "bytes_amostra_z3": 36896317,
+      "bytes_amostra_z19": 31437637,
+      "razao_z19_sobre_z3_na_amostra": 0.8520535261012637,
+      "armazenado_z19_estimado": 117773429.47248955,
+      "razao_z19_estimada": 3.6174602532018305
+     }
+    },
+    "fixo_64K": {
+     "conjunto": "sintetico",
+     "chunker": "fixo_64K",
+     "logico_v1": 211938580,
+     "logico_v2": 214102120,
+     "n_chunks_v1": 3234,
+     "n_chunks_v2": 3267,
+     "n_chunks_unicos": 6478,
+     "n_chunks_unicos_v1": 3234,
+     "bytes_unicos": 424533372,
+     "bytes_v2_ja_em_v1": 1507328,
+     "pct_v2_ja_em_v1": 0.7040229213984429,
+     "bytes_v2_duplicados_total": 1507328,
+     "pct_v2_duplicados_total": 0.7040229213984429,
+     "armazenado_bruto": 424533372,
+     "armazenado_z3": 150479277,
+     "razao_bruta": 1.0035505524404333,
+     "razao_z3": 2.8312250596472497,
+     "referencias_v1": 3234,
+     "referencias_v2": 3267,
+     "media_chunk_v1": 65534.50216450216,
+     "media_chunk_unico": 65534.63599876505,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 2.5328612327575684,
+     "tempo_total_s": 2.631443738937378
+    },
+    "fixo_8K": {
+     "conjunto": "sintetico",
+     "chunker": "fixo_8K",
+     "logico_v1": 211938580,
+     "logico_v2": 214102120,
+     "n_chunks_v1": 25872,
+     "n_chunks_v2": 26136,
+     "n_chunks_unicos": 51804,
+     "n_chunks_unicos_v1": 25871,
+     "bytes_unicos": 424369532,
+     "bytes_v2_ja_em_v1": 1654784,
+     "pct_v2_ja_em_v1": 0.7728947289265515,
+     "bytes_v2_duplicados_total": 1662976,
+     "pct_v2_duplicados_total": 0.7767209404558909,
+     "armazenado_bruto": 424369532,
+     "armazenado_z3": 170823936,
+     "razao_bruta": 1.0039380018450523,
+     "razao_z3": 2.494033974255224,
+     "referencias_v1": 25872,
+     "referencias_v2": 26136,
+     "media_chunk_v1": 8191.81277056277,
+     "media_chunk_unico": 8191.829434020539,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 3.1006486415863037,
+     "tempo_total_s": 3.2057106494903564
+    },
+    "fixo_4K": {
+     "conjunto": "sintetico",
+     "chunker": "fixo_4K",
+     "logico_v1": 211938580,
+     "logico_v2": 214102120,
+     "n_chunks_v1": 51743,
+     "n_chunks_v2": 52272,
+     "n_chunks_unicos": 103430,
+     "n_chunks_unicos_v1": 51644,
+     "bytes_unicos": 423644540,
+     "bytes_v2_ja_em_v1": 1982464,
+     "pct_v2_ja_em_v1": 0.925943190100126,
+     "bytes_v2_duplicados_total": 1990656,
+     "pct_v2_duplicados_total": 0.9297694016294654,
+     "armazenado_bruto": 423644540,
+     "armazenado_z3": 182719916,
+     "razao_bruta": 1.0056560625093858,
+     "razao_z3": 2.3316598941518776,
+     "referencias_v1": 51743,
+     "referencias_v2": 52272,
+     "media_chunk_v1": 4095.9855439383105,
+     "media_chunk_unico": 4095.954171903703,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 3.5292513370513916,
+     "tempo_total_s": 3.6415085792541504
+    },
+    "cdc_8K": {
+     "conjunto": "sintetico",
+     "chunker": "cdc_8K",
+     "logico_v1": 211938580,
+     "logico_v2": 214102120,
+     "n_chunks_v1": 24076,
+     "n_chunks_v2": 24291,
+     "n_chunks_unicos": 25699,
+     "n_chunks_unicos_v1": 24051,
+     "bytes_unicos": 227653861,
+     "bytes_v2_ja_em_v1": 198225403,
+     "pct_v2_ja_em_v1": 92.58451200763449,
+     "bytes_v2_duplicados_total": 198225403,
+     "pct_v2_duplicados_total": 92.58451200763449,
+     "armazenado_bruto": 227653861,
+     "armazenado_z3": 92090720,
+     "razao_bruta": 1.8714406956620868,
+     "razao_z3": 4.626315224813097,
+     "referencias_v1": 24076,
+     "referencias_v2": 24291,
+     "media_chunk_v1": 8802.898321980396,
+     "media_chunk_unico": 8858.471574769446,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 2.051903247833252,
+     "tempo_total_s": 2.156742572784424
+    },
+    "fixo_1M": {
+     "conjunto": "sintetico",
+     "chunker": "fixo_1M",
+     "logico_v1": 211938580,
+     "logico_v2": 214102120,
+     "n_chunks_v1": 203,
+     "n_chunks_v2": 205,
+     "n_chunks_unicos": 408,
+     "n_chunks_unicos_v1": 203,
+     "bytes_unicos": 426040700,
+     "bytes_v2_ja_em_v1": 0,
+     "pct_v2_ja_em_v1": 0.0,
+     "bytes_v2_duplicados_total": 0,
+     "pct_v2_duplicados_total": 0.0,
+     "armazenado_bruto": 426040700,
+     "armazenado_z3": 138718425,
+     "razao_bruta": 1.0,
+     "razao_z3": 3.071262523345403,
+     "referencias_v1": 203,
+     "referencias_v2": 205,
+     "media_chunk_v1": 1044032.4137931034,
+     "media_chunk_unico": 1044217.4019607843,
+     "bit_exato": true,
+     "reconstrucao_v2_ok": true,
+     "codec_roundtrip_ok": true,
+     "falhas_reconstrucao": [],
+     "tempo_varredura_s": 3.0077688694000244,
+     "tempo_total_s": 3.104233980178833
+    }
+   },
+   "logico_v1": 211938580,
+   "logico_v2": 214102120,
+   "fluxo_sem_dedup_z3": {
+    "z3_v1": 66491416,
+    "z3_v2": 70473712,
+    "armazenado_z3": 136965128,
+    "razao_z3": 3.1105778983392036,
+    "bit_exato": true
+   },
+   "fluxo_z3_long31_concatenado": {
+    "armazenado": 69727540,
+    "razao": 6.110077883143447,
+    "bit_exato": true,
+    "tempo_s": 1.6181449890136719,
+    "nota": "referencia extra: zstd-3 com janela 2 GiB e long-distance matching sobre v1+v2 concatenados; sem indice por chunk"
+   }
+  }
+ },
+ "analise": {
+  "workers": 16,
+  "amostra_z19_1_em": 4,
+  "tempo_s": 159.0146062374115,
+  "data": "2026-11-03 22:00:03"
+ },
+ "bit_exatidao_violada": [],
+ "delta": {
+  "A_arvore": {
+   "rotulo": "limite superior de dedup por similaridade (delta por caminho)",
+   "arquivos_alterados": 223,
+   "bytes_logicos_alterados_v2": 12316019,
+   "patch_from_z3_total": 42562,
+   "z3_sozinho_dos_alterados": 3328136,
+   "roundtrip_ok": true,
+   "armazenado_v1_arquivo_inteiro_z3": 281024758,
+   "custo_marginal_novos_arquivo_inteiro_z3": 348,
+   "armazenado_total_delta_por_caminho": 281067668,
+   "razao_total_delta_por_caminho": 10.537125116788602,
+   "armazenado_total_arquivo_inteiro_z3": 284353242,
+   "conferencia_cli_patch_from": {
+    "n": 40,
+    "dif_relativa_media": 0.01576359767698882,
+    "dif_relativa_max": 0.1348314606741573,
+    "soma_cli_bytes": 9453,
+    "soma_api_bytes": 9341,
+    "nota": "CLI zstd --patch-from=ref -3 --no-check contra compression.zstd com prefixo, window_log ajustado e long-distance matching ligado"
+   },
+   "por_chunker": {
+    "cdc_8K": {
+     "cdc_z3_custo_marginal_alterados": 1038651,
+     "razao_cdc_sobre_patch_from": 24.40324702786523,
+     "cdc_z3_custo_marginal_novos": 348,
+     "armazenado_total_cdc_z3": 327143950
+    },
+    "cdc_1M": {
+     "cdc_z3_custo_marginal_alterados": 3328136,
+     "razao_cdc_sobre_patch_from": 78.19500963300597,
+     "cdc_z3_custo_marginal_novos": 348,
+     "armazenado_total_cdc_z3": 286343231
+    },
+    "cdc_64K": {
+     "cdc_z3_custo_marginal_alterados": 2624735,
+     "razao_cdc_sobre_patch_from": 61.66850711902636,
+     "cdc_z3_custo_marginal_novos": 348,
+     "armazenado_total_cdc_z3": 298080654
+    }
+   },
+   "tempo_s": 0.37531113624572754
+  },
+  "B_arvore": {
+   "rotulo": "limite superior de dedup por similaridade (delta por caminho)",
+   "arquivos_alterados": 19227,
+   "bytes_logicos_alterados_v2": 492693123,
+   "patch_from_z3_total": 3395051,
+   "z3_sozinho_dos_alterados": 123125774,
+   "roundtrip_ok": true,
+   "armazenado_v1_arquivo_inteiro_z3": 281046236,
+   "custo_marginal_novos_arquivo_inteiro_z3": 2072694,
+   "armazenado_total_delta_por_caminho": 286513981,
+   "razao_total_delta_por_caminho": 10.343459651276145,
+   "armazenado_total_arquivo_inteiro_z3": 406026793,
+   "conferencia_cli_patch_from": {
+    "n": 40,
+    "dif_relativa_media": 0.0685556426496996,
+    "dif_relativa_max": 0.39655172413793105,
+    "soma_cli_bytes": 4232,
+    "soma_api_bytes": 4067,
+    "nota": "CLI zstd --patch-from=ref -3 --no-check contra compression.zstd com prefixo, window_log ajustado e long-distance matching ligado"
+   },
+   "por_chunker": {
+    "cdc_8K": {
+     "cdc_z3_custo_marginal_alterados": 85322997,
+     "razao_cdc_sobre_patch_from": 25.131580350339362,
+     "cdc_z3_custo_marginal_novos": 2202697,
+     "armazenado_total_cdc_z3": 413657945
+    },
+    "cdc_1M": {
+     "cdc_z3_custo_marginal_alterados": 122473136,
+     "razao_cdc_sobre_patch_from": 36.074019506628915,
+     "cdc_z3_custo_marginal_novos": 2072694,
+     "armazenado_total_cdc_z3": 407582055
+    },
+    "cdc_64K": {
+     "cdc_z3_custo_marginal_alterados": 118214546,
+     "razao_cdc_sobre_patch_from": 34.81966721560295,
+     "cdc_z3_custo_marginal_novos": 2080329,
+     "armazenado_total_cdc_z3": 415772450
+    }
+   },
+   "tempo_s": 0.5927605628967285
+  }
+ },
+ "vazao": {
+  "cpu": 0,
+  "taskset_equivalente": "os.sched_setaffinity(0, {0})",
+  "repeticoes": 3,
+  "fatia_bytes": 268435456,
+  "fonte": "primeiros 256 MiB do tar de 6.12.115 (lookup preenchido com os primeiros 256 MiB do tar de 6.12.114)",
+  "hash": "hashlib.blake2b(digest_size=32), SUBSTITUTO de BLAKE3 (import blake3 inexistente)",
+  "indice_lookup": "dict do Python (NAO representa indice de producao)",
+  "chunkers": {
+   "fixo_4K": {
+    "n_chunks": 65536,
+    "media_chunk_bytes": 4096.0,
+    "chunker_MBps": 6314345.502446367,
+    "hash_por_chunk_MBps": 1162.3153743633995,
+    "chunker_hash_lookup_MBps": 1119.9569412573683,
+    "tempos_s": {
+     "chunker": [
+      0.000152311,
+      4.2512e-05,
+      3.7725e-05
+     ],
+     "hash": [
+      0.230948899,
+      0.23062349,
+      0.23135248
+     ],
+     "tudo": [
+      0.240324241,
+      0.239683729,
+      0.238421411
+     ]
+    },
+    "lookup_acertos_na_ultima_repeticao": 39487,
+    "lookup_novos_na_ultima_repeticao": 26049
+   },
+   "fixo_8K": {
+    "n_chunks": 32768,
+    "media_chunk_bytes": 8192.0,
+    "chunker_MBps": 13159245.845384577,
+    "hash_por_chunk_MBps": 1198.3344654625112,
+    "chunker_hash_lookup_MBps": 1178.2677571279537,
+    "tempos_s": {
+     "chunker": [
+      5.4052e-05,
+      2.0399e-05,
+      1.8365e-05
+     ],
+     "hash": [
+      0.224007123,
+      0.225174524,
+      0.223297144
+     ],
+     "tudo": [
+      0.227822118,
+      0.227433304,
+      0.228400815
+     ]
+    },
+    "lookup_acertos_na_ultima_repeticao": 19736,
+    "lookup_novos_na_ultima_repeticao": 13032
+   },
+   "fixo_64K": {
+    "n_chunks": 4096,
+    "media_chunk_bytes": 65536.0,
+    "chunker_MBps": 64652084.77842003,
+    "hash_por_chunk_MBps": 1234.5695101350932,
+    "chunker_hash_lookup_MBps": 1235.6022490551031,
+    "tempos_s": {
+     "chunker": [
+      1.6429e-05,
+      4.152e-06,
+      3.569e-06
+     ],
+     "hash": [
+      0.218355517,
+      0.216440694,
+      0.217432436
+     ],
+     "tudo": [
+      0.218728614,
+      0.217250702,
+      0.216753085
+     ]
+    },
+    "lookup_acertos_na_ultima_repeticao": 2464,
+    "lookup_novos_na_ultima_repeticao": 1632
+   },
+   "fixo_1M": {
+    "n_chunks": 256,
+    "media_chunk_bytes": 1048576.0,
+    "chunker_MBps": 177536677.24867722,
+    "hash_por_chunk_MBps": 1247.0337547611327,
+    "chunker_hash_lookup_MBps": 1244.7995028285677,
+    "tempos_s": {
+     "chunker": [
+      4.652e-06,
+      1.512e-06,
+      1.284e-06
+     ],
+     "hash": [
+      0.215259174,
+      0.223441584,
+      0.215241575
+     ],
+     "tudo": [
+      0.215325603,
+      0.21609129,
+      0.215645536
+     ]
+    },
+    "lookup_acertos_na_ultima_repeticao": 151,
+    "lookup_novos_na_ultima_repeticao": 105
+   },
+   "cdc_8K": {
+    "n_chunks": 27020,
+    "media_chunk_bytes": 9934.694892672094,
+    "chunker_MBps": 3417.4058514785092,
+    "hash_por_chunk_MBps": 1198.3912855924866,
+    "chunker_hash_lookup_MBps": 882.5340539422795,
+    "tempos_s": {
+     "chunker": [
+      0.078473849,
+      0.078680481,
+      0.078549481
+     ],
+     "hash": [
+      0.223996502,
+      0.224124117,
+      0.22350194
+     ],
+     "tudo": [
+      0.304164417,
+      0.30514423,
+      0.304132321
+     ]
+    },
+    "lookup_acertos_na_ultima_repeticao": 26983,
+    "lookup_novos_na_ultima_repeticao": 37
+   },
+   "cdc_64K": {
+    "n_chunks": 3341,
+    "media_chunk_bytes": 80345.84136486083,
+    "chunker_MBps": 3468.4951129298925,
+    "hash_por_chunk_MBps": 1241.0193137015585,
+    "chunker_hash_lookup_MBps": 913.1567886947453,
+    "tempos_s": {
+     "chunker": [
+      0.077392485,
+      0.07841703,
+      0.077385874
+     ],
+     "hash": [
+      0.216721121,
+      0.2163024,
+      0.216096123
+     ],
+     "tudo": [
+      0.293964256,
+      0.293927928,
+      0.293969327
+     ]
+    },
+    "lookup_acertos_na_ultima_repeticao": 3321,
+    "lookup_novos_na_ultima_repeticao": 20
+   },
+   "cdc_1M": {
+    "n_chunks": 195,
+    "media_chunk_bytes": 1376592.082051282,
+    "chunker_MBps": 3426.7655858368375,
+    "hash_por_chunk_MBps": 1248.2449501675662,
+    "chunker_hash_lookup_MBps": 914.8127544355393,
+    "tempos_s": {
+     "chunker": [
+      0.078334934,
+      0.078282573,
+      0.078399146
+     ],
+     "hash": [
+      0.215043776,
+      0.215054722,
+      0.215050304
+     ],
+     "tudo": [
+      0.294387174,
+      0.293432131,
+      0.293330122
+     ]
+    },
+    "lookup_acertos_na_ultima_repeticao": 184,
+    "lookup_novos_na_ultima_repeticao": 11
+   }
+  },
+  "blake2b_buffer_unico_MBps": 1246.8308934494876
+ },
+ "gate_F1": {
+  "A_arvore": {
+   "baseline": "arquivo inteiro + zstd-3",
+   "baseline_armazenado_z3": 284353242,
+   "baseline_razao_z3": 10.41537336859342,
+   "chunkers": {
+    "fixo_4K": {
+     "pct_v2_ja_em_v1": 99.49539381053269,
+     "razao_total_z3": 7.628616919547965,
+     "ganho_extra_sobre_baseline": -0.365302974108521,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.4616397577207716,
+     "atende_5pct": false,
+     "n_chunks_unicos": 411702,
+     "indice_teorico_bytes_32B": 13174464,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 22.24180004946872,
+       "meses_em_1TB_ram": 0.044960389796503304,
+       "meses_em_4TB_ram": 0.17984155918601322
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 27.8022500618359,
+       "meses_em_1TB_ram": 0.03596831183720264,
+       "meses_em_4TB_ram": 0.14387324734881057
+      },
+      "chunks_unicos_por_mes": 695056251545.8975,
+      "pior_caso_sem_dedup_TB_por_mes": 44.50267058054176
+     },
+     "referencia_z19": null
+    },
+    "fixo_8K": {
+     "pct_v2_ja_em_v1": 99.46801067797118,
+     "razao_total_z3": 8.477052498707774,
+     "ganho_extra_sobre_baseline": -0.2286550508187981,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.27129992976073636,
+     "atende_5pct": false,
+     "n_chunks_unicos": 236246,
+     "indice_teorico_bytes_32B": 7559872,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 12.762960331712716,
+       "meses_em_1TB_ram": 0.07835172828323018,
+       "meses_em_4TB_ram": 0.31340691313292074
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 15.953700414640895,
+       "meses_em_1TB_ram": 0.06268138262658414,
+       "meses_em_4TB_ram": 0.25072553050633656
+      },
+      "chunks_unicos_por_mes": 398842510366.02234,
+      "pior_caso_sem_dedup_TB_por_mes": 25.53699558900301
+     },
+     "referencia_z19": null
+    },
+    "fixo_64K": {
+     "pct_v2_ja_em_v1": 99.27822178033162,
+     "razao_total_z3": 9.7620139771805,
+     "ganho_extra_sobre_baseline": -0.06692874983996139,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.06859970396878116,
+     "atende_5pct": false,
+     "n_chunks_unicos": 97244,
+     "indice_teorico_bytes_32B": 3111808,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 5.253512501786576,
+       "meses_em_1TB_ram": 0.19034883797457938,
+       "meses_em_4TB_ram": 0.7613953518983175
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 6.566890627233219,
+       "meses_em_1TB_ram": 0.1522790703796635,
+       "meses_em_4TB_ram": 0.609116281518654
+      },
+      "chunks_unicos_por_mes": 164172265680.83047,
+      "pior_caso_sem_dedup_TB_por_mes": 10.533982993149795
+     },
+     "referencia_z19": null
+    },
+    "fixo_1M": {
+     "pct_v2_ja_em_v1": 99.16827009983358,
+     "razao_total_z3": 10.290680585160395,
+     "ganho_extra_sobre_baseline": -0.012117058964286399,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.01189025106342461,
+     "atende_5pct": false,
+     "n_chunks_unicos": 86682,
+     "indice_teorico_bytes_32B": 2773824,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 4.682910726418739,
+       "meses_em_1TB_ram": 0.21354240095983018,
+       "meses_em_4TB_ram": 0.8541696038393207
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 5.853638408023424,
+       "meses_em_1TB_ram": 0.17083392076786413,
+       "meses_em_4TB_ram": 0.6833356830714565
+      },
+      "chunks_unicos_por_mes": 146340960200.5856,
+      "pior_caso_sem_dedup_TB_por_mes": 9.398289893189313
+     },
+     "referencia_z19": null
+    },
+    "cdc_8K": {
+     "pct_v2_ja_em_v1": 99.79049111956584,
+     "razao_total_z3": 9.05303363855575,
+     "ganho_extra_sobre_baseline": -0.15048433314503937,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.18451100987695354,
+     "atende_5pct": false,
+     "n_chunks_unicos": 193357,
+     "indice_teorico_bytes_32B": 6187424,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 10.445923828801229,
+       "meses_em_1TB_ram": 0.09573112119033704,
+       "meses_em_4TB_ram": 0.38292448476134816
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 13.057404786001536,
+       "meses_em_1TB_ram": 0.07658489695226964,
+       "meses_em_4TB_ram": 0.30633958780907855
+      },
+      "chunks_unicos_por_mes": 326435119650.0384,
+      "pior_caso_sem_dedup_TB_por_mes": 22.499710755358333
+     },
+     "referencia_z19": null
+    },
+    "cdc_64K": {
+     "pct_v2_ja_em_v1": 99.37428626408652,
+     "razao_total_z3": 9.93571754576196,
+     "ganho_extra_sobre_baseline": -0.04827591169155722,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.049623304097577856,
+     "atende_5pct": false,
+     "n_chunks_unicos": 94206,
+     "indice_teorico_bytes_32B": 3014592,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 5.089387507129552,
+       "meses_em_1TB_ram": 0.1964872980489565,
+       "meses_em_4TB_ram": 0.785949192195826
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 6.36173438391194,
+       "meses_em_1TB_ram": 0.1571898384391652,
+       "meses_em_4TB_ram": 0.6287593537566608
+      },
+      "chunks_unicos_por_mes": 159043359597.7985,
+      "pior_caso_sem_dedup_TB_por_mes": 10.276666551559472
+     },
+     "referencia_z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 23479,
+      "bytes_amostra_z3": 73720931,
+      "bytes_amostra_z19": 64070226,
+      "razao_z19_sobre_z3_na_amostra": 0.8690913846435282,
+      "armazenado_z19_estimado": 259059328.32030845,
+      "razao_z19_estimada": 11.432304728043363
+     }
+    },
+    "cdc_1M": {
+     "pct_v2_ja_em_v1": 99.16827009983358,
+     "razao_total_z3": 10.342990032126863,
+     "ganho_extra_sobre_baseline": -0.006998298967873206,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.006871397663075371,
+     "atende_5pct": false,
+     "n_chunks_unicos": 86541,
+     "indice_teorico_bytes_32B": 2769312,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 4.675293338582452,
+       "meses_em_1TB_ram": 0.21389032250609538,
+       "meses_em_4TB_ram": 0.8555612900243815
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 5.844116673228066,
+       "meses_em_1TB_ram": 0.17111225800487628,
+       "meses_em_4TB_ram": 0.6844490320195051
+      },
+      "chunks_unicos_por_mes": 146102916830.70163,
+      "pior_caso_sem_dedup_TB_por_mes": 9.3834873097344
+     },
+     "referencia_z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 21617,
+      "bytes_amostra_z3": 71818214,
+      "bytes_amostra_z19": 62144214,
+      "razao_z19_sobre_z3_na_amostra": 0.8652987945369959,
+      "armazenado_z19_estimado": 247772452.60812855,
+      "razao_z19_estimada": 11.953084989169772
+     }
+    }
+   }
+  },
+  "A_tar": {
+   "baseline": "zstd-3 do fluxo inteiro, sem dedup",
+   "baseline_armazenado_z3": 445513267,
+   "baseline_razao_z3": 6.960418352704186,
+   "chunkers": {
+    "fixo_4K": {
+     "pct_v2_ja_em_v1": 44.998646122958455,
+     "razao_total_z3": 4.7174911384263485,
+     "ganho_extra_sobre_baseline": -0.4754491632232357,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.571938249372044,
+     "atende_5pct": false,
+     "n_chunks_unicos": 586278,
+     "indice_teorico_bytes_32B": 18760896,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 30.250154378062792,
+       "meses_em_1TB_ram": 0.03305768253285984,
+       "meses_em_4TB_ram": 0.13223073013143935
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 37.81269297257849,
+       "meses_em_1TB_ram": 0.026446146026287875,
+       "meses_em_4TB_ram": 0.1057845841051515
+      },
+      "chunks_unicos_por_mes": 945317324314.4623,
+      "pior_caso_sem_dedup_TB_por_mes": 39.06255159694612
+     },
+     "referencia_z19": null
+    },
+    "fixo_8K": {
+     "pct_v2_ja_em_v1": 11.358830250236103,
+     "razao_total_z3": 4.8168403528612265,
+     "ganho_extra_sobre_baseline": -0.44501744770711843,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.49784230780269895,
+     "atende_5pct": false,
+     "n_chunks_unicos": 356907,
+     "indice_teorico_bytes_32B": 11421024,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 18.415311249290028,
+       "meses_em_1TB_ram": 0.05430263906283709,
+       "meses_em_4TB_ram": 0.21721055625134836
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 23.019139061612535,
+       "meses_em_1TB_ram": 0.04344211125026967,
+       "meses_em_4TB_ram": 0.1737684450010787
+      },
+      "chunks_unicos_por_mes": 575478476540.3134,
+      "pior_caso_sem_dedup_TB_por_mes": 19.531301596946122
+     },
+     "referencia_z19": null
+    },
+    "fixo_64K": {
+     "pct_v2_ja_em_v1": 10.414682631408626,
+     "razao_total_z3": 5.966901661942585,
+     "ganho_extra_sobre_baseline": -0.16650461949093875,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.17312493861153636,
+     "atende_5pct": false,
+     "n_chunks_unicos": 44853,
+     "indice_teorico_bytes_32B": 1435296,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 2.3142778243755533,
+       "meses_em_1TB_ram": 0.43210023855706414,
+       "meses_em_4TB_ram": 1.7284009542282566
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 2.8928472804694416,
+       "meses_em_1TB_ram": 0.3456801908456513,
+       "meses_em_4TB_ram": 1.3827207633826053
+      },
+      "chunks_unicos_por_mes": 72321182011.73604,
+      "pior_caso_sem_dedup_TB_por_mes": 2.4414126996182652
+     },
+     "referencia_z19": null
+    },
+    "fixo_1M": {
+     "pct_v2_ja_em_v1": 10.211799203524043,
+     "razao_total_z3": 7.120960902074485,
+     "ganho_extra_sobre_baseline": 0.02254506822576846,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": 0.022130984036441724,
+     "atende_5pct": false,
+     "n_chunks_unicos": 2807,
+     "indice_teorico_bytes_32B": 89824,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 0.1448326277622941,
+       "meses_em_1TB_ram": 6.904521553259708,
+       "meses_em_4TB_ram": 27.618086213038833
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 0.1810407847028676,
+       "meses_em_1TB_ram": 5.523617242607767,
+       "meses_em_4TB_ram": 22.09446897043107
+      },
+      "chunks_unicos_por_mes": 4526019617.571691,
+      "pior_caso_sem_dedup_TB_por_mes": 0.1526237666265999
+     },
+     "referencia_z19": null
+    },
+    "cdc_8K": {
+     "pct_v2_ja_em_v1": 99.58475723034319,
+     "razao_total_z3": 9.561964049367267,
+     "ganho_extra_sobre_baseline": 0.27207231518876407,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": 0.23999547919186884,
+     "atende_5pct": true,
+     "n_chunks_unicos": 139623,
+     "indice_teorico_bytes_32B": 4467936,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 7.20412040828457,
+       "meses_em_1TB_ram": 0.1388094511649227,
+       "meses_em_4TB_ram": 0.5552378046596907
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 9.005150510355714,
+       "meses_em_1TB_ram": 0.11104756093193814,
+       "meses_em_4TB_ram": 0.44419024372775257
+      },
+      "chunks_unicos_por_mes": 225128762758.89282,
+      "pior_caso_sem_dedup_TB_por_mes": 15.838198581372925
+     },
+     "referencia_z19": null
+    },
+    "cdc_64K": {
+     "pct_v2_ja_em_v1": 98.37808826112243,
+     "razao_total_z3": 11.254277017906574,
+     "ganho_extra_sobre_baseline": 0.381531275476023,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": 0.377486107501261,
+     "atende_5pct": true,
+     "n_chunks_unicos": 18573,
+     "indice_teorico_bytes_32B": 594336,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 0.9583100803096147,
+       "meses_em_1TB_ram": 1.0435035804662682,
+       "meses_em_4TB_ram": 4.174014321865073
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 1.1978876003870185,
+       "meses_em_1TB_ram": 0.8348028643730145,
+       "meses_em_4TB_ram": 3.339211457492058
+      },
+      "chunks_unicos_por_mes": 29947190009.67546,
+      "pior_caso_sem_dedup_TB_por_mes": 1.9475267313458466
+     },
+     "referencia_z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 4584,
+      "bytes_amostra_z3": 68106949,
+      "bytes_amostra_z19": 56986430,
+      "razao_z19_sobre_z3_na_amostra": 0.836719759682672,
+      "armazenado_z19_estimado": 230546434.11175942,
+      "razao_z19_estimada": 13.450473575734348
+     }
+    },
+    "cdc_1M": {
+     "pct_v2_ja_em_v1": 89.65893907635866,
+     "razao_total_z3": 11.718612941113253,
+     "ganho_extra_sobre_baseline": 0.40603735376526956,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": 0.4057847372702371,
+     "atende_5pct": true,
+     "n_chunks_unicos": 1247,
+     "indice_teorico_bytes_32B": 39904,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 0.06434139181317447,
+       "meses_em_1TB_ram": 15.542094627105053,
+       "meses_em_4TB_ram": 62.16837850842021
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 0.0804267397664681,
+       "meses_em_1TB_ram": 12.433675701684042,
+       "meses_em_4TB_ram": 49.734702806736166
+      },
+      "chunks_unicos_por_mes": 2010668494.1617024,
+      "pior_caso_sem_dedup_TB_por_mes": 0.11712506769519332
+     },
+     "referencia_z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 303,
+      "bytes_amostra_z3": 64846680,
+      "bytes_amostra_z19": 50263550,
+      "razao_z19_sobre_z3_na_amostra": 0.7751136989588364,
+      "armazenado_z19_estimado": 205109222.04326344,
+      "razao_z19_estimada": 15.118572871120922
+     }
+    }
+   }
+  },
+  "B_arvore": {
+   "baseline": "arquivo inteiro + zstd-3",
+   "baseline_armazenado_z3": 406026793,
+   "baseline_razao_z3": 7.298892223597668,
+   "chunkers": {
+    "fixo_4K": {
+     "pct_v2_ja_em_v1": 74.79781693896825,
+     "razao_total_z3": 5.805574827016967,
+     "ganho_extra_sobre_baseline": -0.25722128145370937,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.3330732124203425,
+     "atende_5pct": false,
+     "n_chunks_unicos": 511318,
+     "indice_teorico_bytes_32B": 16362176,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 27.605741724925764,
+       "meses_em_1TB_ram": 0.03622434817960644,
+       "meses_em_4TB_ram": 0.14489739271842575
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 34.507177156157205,
+       "meses_em_1TB_ram": 0.02897947854368515,
+       "meses_em_4TB_ram": 0.1159179141747406
+      },
+      "chunks_unicos_por_mes": 862679428903.9302,
+      "pior_caso_sem_dedup_TB_por_mes": 44.521370282503234
+     },
+     "referencia_z19": null
+    },
+    "fixo_8K": {
+     "pct_v2_ja_em_v1": 73.30823290427156,
+     "razao_total_z3": 6.354029699482925,
+     "ganho_extra_sobre_baseline": -0.14870288128990541,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.1830928121530174,
+     "atende_5pct": false,
+     "n_chunks_unicos": 294460,
+     "indice_teorico_bytes_32B": 9422720,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 15.897712789930418,
+       "meses_em_1TB_ram": 0.06290213021293214,
+       "meses_em_4TB_ram": 0.2516085208517286
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 19.872140987413022,
+       "meses_em_1TB_ram": 0.05032170417034572,
+       "meses_em_4TB_ram": 0.20128681668138287
+      },
+      "chunks_unicos_por_mes": 496803524685.32556,
+      "pior_caso_sem_dedup_TB_por_mes": 25.557654600406273
+     },
+     "referencia_z19": null
+    },
+    "fixo_64K": {
+     "pct_v2_ja_em_v1": 67.31740574168637,
+     "razao_total_z3": 6.9640188419303986,
+     "ganho_extra_sobre_baseline": -0.048086225679200435,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.04973920216780574,
+     "atende_5pct": false,
+     "n_chunks_unicos": 119587,
+     "indice_teorico_bytes_32B": 3826784,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 6.456427967837428,
+       "meses_em_1TB_ram": 0.1548844043457901,
+       "meses_em_4TB_ram": 0.6195376173831604
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 8.070534959796785,
+       "meses_em_1TB_ram": 0.12390752347663207,
+       "meses_em_4TB_ram": 0.4956300939065283
+      },
+      "chunks_unicos_por_mes": 201763373994.91962,
+      "pior_caso_sem_dedup_TB_por_mes": 10.555679611527731
+     },
+     "referencia_z19": null
+    },
+    "fixo_1M": {
+     "pct_v2_ja_em_v1": 66.22532649439982,
+     "razao_total_z3": 7.233133236499444,
+     "ganho_extra_sobre_baseline": -0.009091355702725757,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.008979059533559977,
+     "atende_5pct": false,
+     "n_chunks_unicos": 106782,
+     "indice_teorico_bytes_32B": 3417024,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 5.765093958888643,
+       "meses_em_1TB_ram": 0.17345771068625798,
+       "meses_em_4TB_ram": 0.6938308427450319
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 7.206367448610805,
+       "meses_em_1TB_ram": 0.1387661685490064,
+       "meses_em_4TB_ram": 0.5550646741960256
+      },
+      "chunks_unicos_por_mes": 180159186215.2701,
+      "pior_caso_sem_dedup_TB_por_mes": 9.421146783409828
+     },
+     "referencia_z19": null
+    },
+    "cdc_8K": {
+     "pct_v2_ja_em_v1": 81.10436828158059,
+     "razao_total_z3": 7.164242432234682,
+     "ganho_extra_sobre_baseline": -0.018794700575338632,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.04671127570241231,
+     "atende_5pct": false,
+     "n_chunks_unicos": 230421,
+     "indice_teorico_bytes_32B": 7373472,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 12.440286893868631,
+       "meses_em_1TB_ram": 0.08038399825753728,
+       "meses_em_4TB_ram": 0.3215359930301491
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 15.550358617335789,
+       "meses_em_1TB_ram": 0.06430719860602983,
+       "meses_em_4TB_ram": 0.25722879442411933
+      },
+      "chunks_unicos_por_mes": 388758965433.3947,
+      "pior_caso_sem_dedup_TB_por_mes": 22.517512621186746
+     },
+     "referencia_z19": null
+    },
+    "cdc_64K": {
+     "pct_v2_ja_em_v1": 69.49780303851429,
+     "razao_total_z3": 7.127807054074891,
+     "ganho_extra_sobre_baseline": -0.02400249729332517,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.025497325068726175,
+     "atende_5pct": false,
+     "n_chunks_unicos": 115542,
+     "indice_teorico_bytes_32B": 3697344,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 6.2380409263538015,
+       "meses_em_1TB_ram": 0.16030673921604266,
+       "meses_em_4TB_ram": 0.6412269568641706
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 7.797551157942252,
+       "meses_em_1TB_ram": 0.12824539137283414,
+       "meses_em_4TB_ram": 0.5129815654913366
+      },
+      "chunks_unicos_por_mes": 194938778948.5563,
+      "pior_caso_sem_dedup_TB_por_mes": 10.299014099732142
+     },
+     "referencia_z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 28788,
+      "bytes_amostra_z3": 103786639,
+      "bytes_amostra_z19": 90277032,
+      "razao_z19_sobre_z3_na_amostra": 0.8698328886052471,
+      "armazenado_z19_estimado": 361652551.1859807,
+      "razao_z19_estimada": 8.194455679301955
+     }
+    },
+    "cdc_1M": {
+     "pct_v2_ja_em_v1": 67.21106461486899,
+     "razao_total_z3": 7.271040924507827,
+     "ganho_extra_sobre_baseline": -0.0038304418004257174,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.0037985757852896304,
+     "atende_5pct": false,
+     "n_chunks_unicos": 106625,
+     "indice_teorico_bytes_32B": 3412000,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 5.756617626252567,
+       "meses_em_1TB_ram": 0.1737131185228605,
+       "meses_em_4TB_ram": 0.694852474091442
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 7.195772032815708,
+       "meses_em_1TB_ram": 0.1389704948182884,
+       "meses_em_4TB_ram": 0.5558819792731536
+      },
+      "chunks_unicos_por_mes": 179894300820.3927,
+      "pior_caso_sem_dedup_TB_por_mes": 9.40635369333158
+     },
+     "referencia_z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 26596,
+      "bytes_amostra_z3": 102699044,
+      "bytes_amostra_z19": 88786276,
+      "razao_z19_sobre_z3_na_amostra": 0.8645287486804648,
+      "armazenado_z19_estimado": 352366403.9937624,
+      "razao_z19_estimada": 8.410409642947858
+     }
+    }
+   }
+  },
+  "B_tar": {
+   "baseline": "zstd-3 do fluxo inteiro, sem dedup",
+   "baseline_armazenado_z3": 445538453,
+   "baseline_razao_z3": 6.965265105860571,
+   "chunkers": {
+    "fixo_4K": {
+     "pct_v2_ja_em_v1": 15.34882187300101,
+     "razao_total_z3": 4.219403358053925,
+     "ganho_extra_sobre_baseline": -0.6507701480033644,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.7553868240414257,
+     "atende_5pct": false,
+     "n_chunks_unicos": 698945,
+     "indice_teorico_bytes_32B": 22366240,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 36.03629568462595,
+       "meses_em_1TB_ram": 0.027749800055798378,
+       "meses_em_4TB_ram": 0.11099920022319351
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 45.04536960578243,
+       "meses_em_1TB_ram": 0.022199840044638704,
+       "meses_em_4TB_ram": 0.08879936017855482
+      },
+      "chunks_unicos_por_mes": 1126134240144.5608,
+      "pior_caso_sem_dedup_TB_por_mes": 39.06255155812787
+     },
+     "referencia_z19": null
+    },
+    "fixo_8K": {
+     "pct_v2_ja_em_v1": 11.811737086105817,
+     "razao_total_z3": 4.645183050551162,
+     "ganho_extra_sobre_baseline": -0.49945976941298936,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.5522600963917249,
+     "atende_5pct": false,
+     "n_chunks_unicos": 356322,
+     "indice_teorico_bytes_32B": 11402304,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 18.371295239163718,
+       "meses_em_1TB_ram": 0.054432743417470716,
+       "meses_em_4TB_ram": 0.21773097366988287
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 22.964119048954647,
+       "meses_em_1TB_ram": 0.04354619473397658,
+       "meses_em_4TB_ram": 0.1741847789359063
+      },
+      "chunks_unicos_por_mes": 574102976223.8662,
+      "pior_caso_sem_dedup_TB_por_mes": 19.531301558127872
+     },
+     "referencia_z19": null
+    },
+    "fixo_64K": {
+     "pct_v2_ja_em_v1": 0.10551375305825018,
+     "razao_total_z3": 5.597448721021388,
+     "ganho_extra_sobre_baseline": -0.24436425468308567,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.25116454763108853,
+     "atende_5pct": false,
+     "n_chunks_unicos": 47328,
+     "indice_teorico_bytes_32B": 1514496,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 2.4401430758671667,
+       "meses_em_1TB_ram": 0.4098120351588911,
+       "meses_em_4TB_ram": 1.6392481406355643
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 3.050178844833958,
+       "meses_em_1TB_ram": 0.3278496281271129,
+       "meses_em_4TB_ram": 1.3113985125084515
+      },
+      "chunks_unicos_por_mes": 76254471120.84895,
+      "pior_caso_sem_dedup_TB_por_mes": 2.4414320290639355
+     },
+     "referencia_z19": null
+    },
+    "fixo_1M": {
+     "pct_v2_ja_em_v1": 0.0,
+     "razao_total_z3": 6.6775262858032995,
+     "ganho_extra_sobre_baseline": -0.04309063083271064,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.04351582421102495,
+     "atende_5pct": false,
+     "n_chunks_unicos": 2960,
+     "indice_teorico_bytes_32B": 94720,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 0.15261205849743942,
+       "meses_em_1TB_ram": 6.552562162162162,
+       "meses_em_4TB_ram": 26.210248648648648
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 0.19076507312179927,
+       "meses_em_1TB_ram": 5.24204972972973,
+       "meses_em_4TB_ram": 20.96819891891892
+      },
+      "chunks_unicos_por_mes": 4769126828.044982,
+      "pior_caso_sem_dedup_TB_por_mes": 0.15261205849743942
+     },
+     "referencia_z19": null
+    },
+    "cdc_8K": {
+     "pct_v2_ja_em_v1": 71.73669757769686,
+     "razao_total_z3": 6.89057900607754,
+     "ganho_extra_sobre_baseline": -0.010838871409377542,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.045997910757211345,
+     "atende_5pct": false,
+     "n_chunks_unicos": 182355,
+     "indice_teorico_bytes_32B": 5835360,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 9.401882407871813,
+       "meses_em_1TB_ram": 0.10636167914233226,
+       "meses_em_4TB_ram": 0.42544671656932903
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 11.752353009839766,
+       "meses_em_1TB_ram": 0.0850893433138658,
+       "meses_em_4TB_ram": 0.3403573732554632
+      },
+      "chunks_unicos_por_mes": 293808825245.99414,
+      "pior_caso_sem_dedup_TB_por_mes": 15.836955463676682
+     },
+     "referencia_z19": null
+    },
+    "cdc_64K": {
+     "pct_v2_ja_em_v1": 48.03824623674483,
+     "razao_total_z3": 6.7948065121276,
+     "ganho_extra_sobre_baseline": -0.025086600100934497,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.029839644390918598,
+     "atende_5pct": false,
+     "n_chunks_unicos": 28392,
+     "indice_teorico_bytes_32B": 908544,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 1.4638383665065202,
+       "meses_em_1TB_ram": 0.6831355311355312,
+       "meses_em_4TB_ram": 2.7325421245421246
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 1.8297979581331505,
+       "meses_em_1TB_ram": 0.5465084249084249,
+       "meses_em_4TB_ram": 2.1860336996336995
+      },
+      "chunks_unicos_por_mes": 45744948953.32876,
+      "pior_caso_sem_dedup_TB_por_mes": 1.9481238615965366
+     },
+     "referencia_z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 7075,
+      "bytes_amostra_z3": 114073539,
+      "bytes_amostra_z19": 96188246,
+      "razao_z19_sobre_z3_na_amostra": 0.8432126051599048,
+      "armazenado_z19_estimado": 385108264.88548326,
+      "razao_z19_estimada": 8.058236405086769
+     }
+    },
+    "cdc_1M": {
+     "pct_v2_ja_em_v1": 31.364972831754198,
+     "razao_total_z3": 7.111460034940068,
+     "ganho_extra_sobre_baseline": 0.02055765319093569,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": 0.020252979151947632,
+     "atende_5pct": false,
+     "n_chunks_unicos": 1966,
+     "indice_teorico_bytes_32B": 62912,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 0.1013632793939074,
+       "meses_em_1TB_ram": 9.86550559511699,
+       "meses_em_4TB_ram": 39.46202238046796
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 0.12670409924238424,
+       "meses_em_1TB_ram": 7.892404476093591,
+       "meses_em_4TB_ram": 31.569617904374365
+      },
+      "chunks_unicos_por_mes": 3167602481.059606,
+      "pior_caso_sem_dedup_TB_por_mes": 0.11734629903384193
+     },
+     "referencia_z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 478,
+      "bytes_amostra_z3": 105179059,
+      "bytes_amostra_z19": 81735598,
+      "razao_z19_sobre_z3_na_amostra": 0.7771090441111477,
+      "armazenado_z19_estimado": 339114244.7410405,
+      "razao_z19_estimada": 9.151173942485912
+     }
+    }
+   }
+  },
+  "sintetico": {
+   "baseline": "zstd-3 do fluxo inteiro, sem dedup",
+   "baseline_armazenado_z3": 136965128,
+   "baseline_razao_z3": 3.1105778983392036,
+   "chunkers": {
+    "fixo_4K": {
+     "pct_v2_ja_em_v1": 0.925943190100126,
+     "razao_total_z3": 2.3316598941518776,
+     "ganho_extra_sobre_baseline": -0.3340615868296053,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.38252823010540316,
+     "atende_5pct": false,
+     "n_chunks_unicos": 103430,
+     "indice_teorico_bytes_32B": 3309760,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 38.843237277565265,
+       "meses_em_1TB_ram": 0.025744507154597314,
+       "meses_em_4TB_ram": 0.10297802861838926
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 48.55404659695658,
+       "meses_em_1TB_ram": 0.02059560572367785,
+       "meses_em_4TB_ram": 0.0823824228947114
+      },
+      "chunks_unicos_por_mes": 1213851164923.9146,
+      "pior_caso_sem_dedup_TB_por_mes": 39.06293459756309
+     },
+     "referencia_z19": null
+    },
+    "fixo_8K": {
+     "pct_v2_ja_em_v1": 0.7728947289265515,
+     "razao_total_z3": 2.494033974255224,
+     "ganho_extra_sobre_baseline": -0.24720750817682585,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.2714617402467583,
+     "atende_5pct": false,
+     "n_chunks_unicos": 51804,
+     "indice_teorico_bytes_32B": 1657728,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 19.45504267550025,
+       "meses_em_1TB_ram": 0.05140055545903792,
+       "meses_em_4TB_ram": 0.20560222183615168
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 24.31880334437531,
+       "meses_em_1TB_ram": 0.041120444367230335,
+       "meses_em_4TB_ram": 0.16448177746892134
+      },
+      "chunks_unicos_por_mes": 607970083609.3828,
+      "pior_caso_sem_dedup_TB_por_mes": 19.531655074268723
+     },
+     "referencia_z19": null
+    },
+    "fixo_64K": {
+     "pct_v2_ja_em_v1": 0.7040229213984429,
+     "razao_total_z3": 2.8312250596472497,
+     "ganho_extra_sobre_baseline": -0.09866853846184848,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.10170090156087029,
+     "atende_5pct": false,
+     "n_chunks_unicos": 6478,
+     "indice_teorico_bytes_32B": 207296,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 2.4328192118734195,
+       "meses_em_1TB_ram": 0.41104575100339613,
+       "meses_em_4TB_ram": 1.6441830040135845
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 3.041024014841774,
+       "meses_em_1TB_ram": 0.3288366008027169,
+       "meses_em_4TB_ram": 1.3153464032108677
+      },
+      "chunks_unicos_por_mes": 76025600371.04436,
+      "pior_caso_sem_dedup_TB_por_mes": 2.4414568842835904
+     },
+     "referencia_z19": null
+    },
+    "fixo_1M": {
+     "pct_v2_ja_em_v1": 0.0,
+     "razao_total_z3": 3.071262523345403,
+     "ganho_extra_sobre_baseline": -0.01280104670146404,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.012991693768942414,
+     "atende_5pct": false,
+     "n_chunks_unicos": 408,
+     "indice_teorico_bytes_32B": 13056,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 0.15322479753694895,
+       "meses_em_1TB_ram": 6.526358762254901,
+       "meses_em_4TB_ram": 26.105435049019604
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 0.1915309969211862,
+       "meses_em_1TB_ram": 5.221087009803921,
+       "meses_em_4TB_ram": 20.884348039215684
+      },
+      "chunks_unicos_por_mes": 4788274923.0296545,
+      "pior_caso_sem_dedup_TB_por_mes": 0.15322479753694895
+     },
+     "referencia_z19": null
+    },
+    "cdc_8K": {
+     "pct_v2_ja_em_v1": 92.58451200763449,
+     "razao_total_z3": 4.626315224813097,
+     "ganho_extra_sobre_baseline": 0.3276338193178632,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": 0.3103293270386313,
+     "atende_5pct": true,
+     "n_chunks_unicos": 25699,
+     "indice_teorico_bytes_32B": 822368,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 9.651284489956005,
+       "meses_em_1TB_ram": 0.10361315128993348,
+       "meses_em_4TB_ram": 0.4144526051597339
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 12.064105612445008,
+       "meses_em_1TB_ram": 0.08289052103194677,
+       "meses_em_4TB_ram": 0.3315620841277871
+      },
+      "chunks_unicos_por_mes": 301602640311.1252,
+      "pior_caso_sem_dedup_TB_por_mes": 18.164273976641198
+     },
+     "referencia_z19": null
+    },
+    "cdc_64K": {
+     "pct_v2_ja_em_v1": 68.96821292568238,
+     "razao_total_z3": 4.309419754637393,
+     "ganho_extra_sobre_baseline": 0.278191015161173,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": 0.2759653975572527,
+     "atende_5pct": true,
+     "n_chunks_unicos": 3723,
+     "indice_teorico_bytes_32B": 119136,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 1.398176277524659,
+       "meses_em_1TB_ram": 0.715217398603277,
+       "meses_em_4TB_ram": 2.860869594413108
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 1.7477203469058238,
+       "meses_em_1TB_ram": 0.5721739188826216,
+       "meses_em_4TB_ram": 2.2886956755304864
+      },
+      "chunks_unicos_por_mes": 43693008672.64559,
+      "pior_caso_sem_dedup_TB_por_mes": 2.1793223041836147
+     },
+     "referencia_z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 944,
+      "bytes_amostra_z3": 23870750,
+      "bytes_amostra_z19": 21085056,
+      "razao_z19_sobre_z3_na_amostra": 0.8833009436234722,
+      "armazenado_z19_estimado": 87325480.86712651,
+      "razao_z19_estimada": 4.878767294144751
+     }
+    },
+    "cdc_1M": {
+     "pct_v2_ja_em_v1": 0.37410885982819786,
+     "razao_total_z3": 3.0822697642717904,
+     "ganho_extra_sobre_baseline": -0.009184184458981413,
+     "ganho_extra_com_metadados_32B_por_ref_e_indice": -0.00934819700967972,
+     "atende_5pct": false,
+     "n_chunks_unicos": 350,
+     "indice_teorico_bytes_32B": 11200,
+     "indice_5PB_mes": {
+      "so_hash_32B": {
+       "TB_por_mes": 0.13144284102434345,
+       "meses_em_1TB_ram": 7.607869642857143,
+       "meses_em_4TB_ram": 30.43147857142857
+      },
+      "hash_mais_local_40B": {
+       "TB_por_mes": 0.1643035512804293,
+       "meses_em_1TB_ram": 6.086295714285714,
+       "meses_em_4TB_ram": 24.345182857142856
+      },
+      "chunks_unicos_por_mes": 4107588782.010733,
+      "pior_caso_sem_dedup_TB_por_mes": 0.13219394297305398
+     },
+     "referencia_z19": {
+      "amostra_1_em": 4,
+      "n_chunks_amostrados": 95,
+      "bytes_amostra_z3": 36896317,
+      "bytes_amostra_z19": 31437637,
+      "razao_z19_sobre_z3_na_amostra": 0.8520535261012637,
+      "armazenado_z19_estimado": 117773429.47248955,
+      "razao_z19_estimada": 3.6174602532018305
+     }
+    }
+   }
+  }
+ }
+}

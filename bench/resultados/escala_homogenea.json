@@ -1,0 +1,1656 @@
+{
+ "falhas": [],
+ "meta": {
+  "cpu_modelo": "Intel(R) Core(TM) i9-14900HX",
+  "kernel": "7.0.0-42-generic",
+  "python": "3.14.4",
+  "libzstd_python": "1.5.7",
+  "zstd_cli": "*** Zstandard CLI (64-bit) v1.5.7, by Yann Collet ***",
+  "xz_cli": "xz (XZ Utils) 5.8.3",
+  "liblzma_python": "lzma (liblzma do sistema)",
+  "bzip2_cli": "bzip2, a block-sorting file compressor.  Version 1.0.8, 13-Jul-2019.",
+  "zlib_runtime": "1.3.1",
+  "governor_cpu0": "powersave",
+  "intel_no_turbo": "0",
+  "topologia": {
+   "P_threads": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "E_threads": [
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+   ],
+   "P_nucleos_fisicos": 8,
+   "E_nucleos_fisicos": 16
+  }
+ },
+ "energia": {
+  "medida": false,
+  "motivo": "energia nao medida: energy_uj sem permissao de leitura sem sudo ([Errno 13] Permission denied: '/sys/class/powercap/intel-rapl-mmio:0/energy_uj')"
+ },
+ "protocolo": {
+  "repeticoes": 3,
+  "cap_bytes": 8388608,
+  "cpus_principal": [
+   0
+  ],
+  "cpu_ecore": 16,
+  "mediana_de_repeticoes": true,
+  "aquecimento": "compressao e descompressao de 1 MiB antes das repeticoes",
+  "origem_dados": {
+   "silesia": "existente:/tmp/claude-1000/-home-osney-Desktop-GELADO-engine-motor/d78b0ca7-1790-4780-8a99-a5f97d57f242/scratchpad/dl/silesia.zip",
+   "canterbury": "existente:/tmp/claude-1000/-home-osney-Desktop-GELADO-engine-motor/d78b0ca7-1790-4780-8a99-a5f97d57f242/scratchpad/dl/large.zip"
+  },
+  "avisos_dados": [],
+  "data_execucao": "2026-11-03 22:01:30"
+ },
+ "arquivos": [
+  {
+   "nome": "dickens",
+   "classe": "texto",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/dickens",
+   "tamanho_bytes": 10192446,
+   "sha256_arquivo": "b24c37886142e11d0ee687db6ab06f936207aa7f2ea1fd1d9a36763c7a507e6a",
+   "tamanho_fatia_bytes": 8388608,
+   "sha256_fatia": "3812ea503d30ec1b32554565eb82ecf931b1c4c59b528ca5248e4f3b13dd3ed0",
+   "truncado_na_fatia": true
+  },
+  {
+   "nome": "mozilla",
+   "classe": "binario",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/mozilla",
+   "tamanho_bytes": 51220480,
+   "sha256_arquivo": "657fc3764b0c75ac9de9623125705831ebbfbe08fed248df73bc2dc66e2a963b",
+   "tamanho_fatia_bytes": 8388608,
+   "sha256_fatia": "73b17755b519e309861705ee26ae8f59b04872fef8404dd08ec135669e3bc27f",
+   "truncado_na_fatia": true
+  },
+  {
+   "nome": "mr",
+   "classe": "cientifico",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/mr",
+   "tamanho_bytes": 9970564,
+   "sha256_arquivo": "68637ed52e3e4860174ed2dc0840ac77d5f1a60abbcb13770d5754e3774d53e6",
+   "tamanho_fatia_bytes": 8388608,
+   "sha256_fatia": "554ff938f8d286dd7b7f007324234f4d585a1fd59c8ada2fe14832110af3e1c9",
+   "truncado_na_fatia": true
+  },
+  {
+   "nome": "nci",
+   "classe": "cientifico",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/nci",
+   "tamanho_bytes": 33553445,
+   "sha256_arquivo": "fc63a31770947b8c2062d3b19ca94c00485a232bb91b502021948fee983e1635",
+   "tamanho_fatia_bytes": 8388608,
+   "sha256_fatia": "1b314e436e2a3f3d5294bfe6e07f3bfa2c9fe08a445128056e779ebe4b8b7bee",
+   "truncado_na_fatia": true
+  },
+  {
+   "nome": "ooffice",
+   "classe": "binario",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/ooffice",
+   "tamanho_bytes": 6152192,
+   "sha256_arquivo": "e7ee013880d34dd5208283d0d3d91b07f442e067454276095ded14f322a656eb",
+   "tamanho_fatia_bytes": 6152192,
+   "sha256_fatia": "e7ee013880d34dd5208283d0d3d91b07f442e067454276095ded14f322a656eb",
+   "truncado_na_fatia": false
+  },
+  {
+   "nome": "osdb",
+   "classe": "banco_de_dados",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/osdb",
+   "tamanho_bytes": 10085684,
+   "sha256_arquivo": "60f027179302ca3ad87c58ac90b6be72ec23588aaa7a3b7fe8ecc0f11def3fa3",
+   "tamanho_fatia_bytes": 8388608,
+   "sha256_fatia": "0f6c12f9865ceb3c5b9764bb3d977780e234437268de7c3c9b1e60c265f4e27a",
+   "truncado_na_fatia": true
+  },
+  {
+   "nome": "reymont",
+   "classe": "texto",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/reymont",
+   "tamanho_bytes": 6627202,
+   "sha256_arquivo": "0eac0114a3dfe6e2ee1f345a0f79d653cb26c3bc9f0ed79238af4933422b7578",
+   "tamanho_fatia_bytes": 6627202,
+   "sha256_fatia": "0eac0114a3dfe6e2ee1f345a0f79d653cb26c3bc9f0ed79238af4933422b7578",
+   "truncado_na_fatia": false
+  },
+  {
+   "nome": "samba",
+   "classe": "codigo",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/samba",
+   "tamanho_bytes": 21606400,
+   "sha256_arquivo": "93ba07bc44d8267789c1d911992f40b089ffa2140b4a160fac11ccae9a40e7b2",
+   "tamanho_fatia_bytes": 8388608,
+   "sha256_fatia": "b9bac868334538000e49f7f9e680fb78740bc488fdc34004e05e2b9878acc189",
+   "truncado_na_fatia": true
+  },
+  {
+   "nome": "sao",
+   "classe": "cientifico",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/sao",
+   "tamanho_bytes": 7251944,
+   "sha256_arquivo": "c2d0ea2cc59d4c21b7fe43a71499342a00cbe530a1d5548770e91ecd6214adcc",
+   "tamanho_fatia_bytes": 7251944,
+   "sha256_fatia": "c2d0ea2cc59d4c21b7fe43a71499342a00cbe530a1d5548770e91ecd6214adcc",
+   "truncado_na_fatia": false
+  },
+  {
+   "nome": "webster",
+   "classe": "texto",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/webster",
+   "tamanho_bytes": 41458703,
+   "sha256_arquivo": "6a68f69b26daf09f9dd84f7470368553194a0b294fcfa80f1604efb11143a383",
+   "tamanho_fatia_bytes": 8388608,
+   "sha256_fatia": "005e9b7e6646ed1654cc89ae45c50afcc1ff33e05fdeed13f8ed0ea20f2886cd",
+   "truncado_na_fatia": true
+  },
+  {
+   "nome": "x-ray",
+   "classe": "cientifico",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/x-ray",
+   "tamanho_bytes": 8474240,
+   "sha256_arquivo": "7de9fce1405dc44ae5e6813ed21cd5751e761bd4265655a005d39b9685d1c9ad",
+   "tamanho_fatia_bytes": 8388608,
+   "sha256_fatia": "4c3f3254a8063d6726c50cf5cb24c3fd25f815f1e8d0ecd2d58fcf4044b3e72b",
+   "truncado_na_fatia": true
+  },
+  {
+   "nome": "xml",
+   "classe": "xml",
+   "sintetico": false,
+   "origem": "silesia",
+   "caminho": "silesia/xml",
+   "tamanho_bytes": 5345280,
+   "sha256_arquivo": "0e82e54e695c1938e4193448022543845b33020c8be6bf3bf3ead2224903e08c",
+   "tamanho_fatia_bytes": 5345280,
+   "sha256_fatia": "0e82e54e695c1938e4193448022543845b33020c8be6bf3bf3ead2224903e08c",
+   "truncado_na_fatia": false
+  },
+  {
+   "nome": "bible.txt",
+   "classe": "texto",
+   "sintetico": false,
+   "origem": "canterbury_large",
+   "caminho": "canterbury/bible.txt",
+   "tamanho_bytes": 4047392,
+   "sha256_arquivo": "4e0a7e8dff7d9c82dbded57305c0ca3cdd3c4ca014db27121782fe9710f4723f",
+   "tamanho_fatia_bytes": 4047392,
+   "sha256_fatia": "4e0a7e8dff7d9c82dbded57305c0ca3cdd3c4ca014db27121782fe9710f4723f",
+   "truncado_na_fatia": false
+  },
+  {
+   "nome": "E.coli",
+   "classe": "dna",
+   "sintetico": false,
+   "origem": "canterbury_large",
+   "caminho": "canterbury/E.coli",
+   "tamanho_bytes": 4638690,
+   "sha256_arquivo": "9125dfd87315961ef4286f3856098069e050cc3a2abe65735fe43e69d1996f40",
+   "tamanho_fatia_bytes": 4638690,
+   "sha256_fatia": "9125dfd87315961ef4286f3856098069e050cc3a2abe65735fe43e69d1996f40",
+   "truncado_na_fatia": false
+  },
+  {
+   "nome": "world192.txt",
+   "classe": "texto",
+   "sintetico": false,
+   "origem": "canterbury_large",
+   "caminho": "canterbury/world192.txt",
+   "tamanho_bytes": 2473400,
+   "sha256_arquivo": "1aebdc97d29904b25791da9aa32be90b69d7da6dc0ac9b95512ed27ed40d2112",
+   "tamanho_fatia_bytes": 2473400,
+   "sha256_fatia": "1aebdc97d29904b25791da9aa32be90b69d7da6dc0ac9b95512ed27ed40d2112",
+   "truncado_na_fatia": false
+  },
+  {
+   "nome": "aleatorio.bin",
+   "classe": "sint_incompressivel",
+   "sintetico": true,
+   "origem": "sintetico: random.Random(semente).randbytes(32 MiB)",
+   "caminho": "sinteticos/aleatorio.bin",
+   "tamanho_bytes": 33554432,
+   "sha256_arquivo": "d6049af107717c5feb59e8f7e459cd902084c33f42a4425cb8fd55235bb6666a",
+   "tamanho_fatia_bytes": 8388608,
+   "sha256_fatia": "3c21b31a2b923633d6eda49e944ee6d1abf817dbef2697234d8205b197f3051c",
+   "truncado_na_fatia": true
+  },
+  {
+   "nome": "logs.log",
+   "classe": "sint_logs",
+   "sintetico": true,
+   "origem": "sintetico: gerar_logs(semente=1, 64 MiB)",
+   "caminho": "sinteticos/logs.log",
+   "tamanho_bytes": 67108864,
+   "sha256_arquivo": "6674e2b8fe54f124cedc805d63772b577ff23222e91d2303619f6f042e802905",
+   "tamanho_fatia_bytes": 8388608,
+   "sha256_fatia": "6b301935ce06c1ba8308d3e50fa48926c6bd16f6134e297cac6aa13ca6c97986",
+   "truncado_na_fatia": true
+  },
+  {
+   "nome": "ja_comprimido.xz",
+   "classe": "sint_ja_comprimido",
+   "sintetico": true,
+   "origem": "sintetico: xz -9 de webster",
+   "caminho": "sinteticos/ja_comprimido.xz",
+   "tamanho_bytes": 8385868,
+   "sha256_arquivo": "872fb8ea4ebddf9e7bd27cb71d694ce8a7618b84f50577aea2beb0add14fc395",
+   "tamanho_fatia_bytes": 8385868,
+   "sha256_fatia": "872fb8ea4ebddf9e7bd27cb71d694ce8a7618b84f50577aea2beb0add14fc395",
+   "truncado_na_fatia": false
+  }
+ ],
+ "escala_cpus": {
+  "duracao_s": 1.5,
+  "n_blocos_pool": 204,
+  "bloco_bytes": 1048576,
+  "stride_distribuicao_dados": 32,
+  "cpu_referencia_P_isolado": 0,
+  "cpu_referencia_E_isolado": 16,
+  "grupos": {
+   "E": {
+    "cpus": [
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31
+    ],
+    "ns": [
+     1,
+     2,
+     4,
+     8,
+     12,
+     16
+    ],
+    "configs": {
+     "zstd-3_bloco_1MiB": {
+      "por_n": [
+       {
+        "n": 1,
+        "cpus": [
+         16
+        ],
+        "n_E": 1,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          298.87119753290875,
+          299.02268821162534,
+          299.10222964283264
+         ],
+         "agregado_MBps_mediana": 299.02268821162534,
+         "agregado_MBps_min": 298.87119753290875,
+         "agregado_MBps_max": 299.10222964283264,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 295.4188147156566,
+         "ideal_MBps_P_core_isolado": 497.4168321327162,
+         "eficiencia_vs_mesmo_tipo": 1.0121992009866991,
+         "eficiencia_vs_P_core": 0.6011511249620175,
+         "por_nucleo_MBps_mediana": 299.02268821162534
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          1301.3390359971665,
+          1290.0875540933157,
+          1243.4739169992226
+         ],
+         "agregado_MBps_mediana": 1290.0875540933157,
+         "agregado_MBps_min": 1243.4739169992226,
+         "agregado_MBps_max": 1301.3390359971665,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 1279.8875098868264,
+         "ideal_MBps_P_core_isolado": 2065.3392839606845,
+         "eficiencia_vs_mesmo_tipo": 1.0079694849177732,
+         "eficiencia_vs_P_core": 0.6246371064125238,
+         "por_nucleo_MBps_mediana": 1290.0875540933157
+        }
+       },
+       {
+        "n": 2,
+        "cpus": [
+         16,
+         17
+        ],
+        "n_E": 2,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          535.7231156472853,
+          535.8547968021387,
+          535.4256140601194
+         ],
+         "agregado_MBps_mediana": 535.7231156472853,
+         "agregado_MBps_min": 535.4256140601194,
+         "agregado_MBps_max": 535.8547968021387,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 553.4680979060374,
+         "ideal_MBps_P_core_isolado": 932.0187633673852,
+         "eficiencia_vs_mesmo_tipo": 0.9679385635307842,
+         "eficiencia_vs_P_core": 0.5747986378640242,
+         "por_nucleo_MBps_mediana": 267.86155782364267
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          2248.8868334575222,
+          2285.409993122894,
+          2297.3536877641736
+         ],
+         "agregado_MBps_mediana": 2285.409993122894,
+         "agregado_MBps_min": 2248.8868334575222,
+         "agregado_MBps_max": 2297.3536877641736,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 2447.6373897713884,
+         "ideal_MBps_P_core_isolado": 3911.862665398174,
+         "eficiencia_vs_mesmo_tipo": 0.9337208210144041,
+         "eficiencia_vs_P_core": 0.5842255182775621,
+         "por_nucleo_MBps_mediana": 1142.704996561447
+        }
+       },
+       {
+        "n": 4,
+        "cpus": [
+         16,
+         17,
+         18,
+         19
+        ],
+        "n_E": 4,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          806.4456472901404,
+          805.6036914238305,
+          806.5549121461329
+         ],
+         "agregado_MBps_mediana": 806.4456472901404,
+         "agregado_MBps_min": 805.6036914238305,
+         "agregado_MBps_max": 806.5549121461329,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 1083.478970694065,
+         "ideal_MBps_P_core_isolado": 1815.2385226915906,
+         "eficiencia_vs_mesmo_tipo": 0.7443113056209479,
+         "eficiencia_vs_P_core": 0.4442642865987456,
+         "por_nucleo_MBps_mediana": 201.6114118225351
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          4011.3759054684597,
+          4007.3317343712592,
+          3988.3742720039736
+         ],
+         "agregado_MBps_mediana": 4007.3317343712592,
+         "agregado_MBps_min": 3988.3742720039736,
+         "agregado_MBps_max": 4011.3759054684597,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 4747.476494287107,
+         "ideal_MBps_P_core_isolado": 7604.646392205244,
+         "eficiencia_vs_mesmo_tipo": 0.8440972249559311,
+         "eficiencia_vs_P_core": 0.5269583262252365,
+         "por_nucleo_MBps_mediana": 1001.8329335928148
+        }
+       },
+       {
+        "n": 8,
+        "cpus": [
+         16,
+         17,
+         18,
+         19,
+         20,
+         21,
+         22,
+         23
+        ],
+        "n_E": 8,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          1626.6111199863867,
+          1626.5204715600385,
+          1627.2471879241525
+         ],
+         "agregado_MBps_mediana": 1626.6111199863867,
+         "agregado_MBps_min": 1626.5204715600385,
+         "agregado_MBps_max": 1627.2471879241525,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 2150.9187919115766,
+         "ideal_MBps_P_core_isolado": 3606.874167830296,
+         "eficiencia_vs_mesmo_tipo": 0.7562401361237705,
+         "eficiencia_vs_P_core": 0.45097528893414923,
+         "por_nucleo_MBps_mediana": 203.32638999829834
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          7896.096281722884,
+          7862.172429654136,
+          7854.852348881906
+         ],
+         "agregado_MBps_mediana": 7862.172429654136,
+         "agregado_MBps_min": 7854.852348881906,
+         "agregado_MBps_max": 7896.096281722884,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 9468.956333528957,
+         "ideal_MBps_P_core_isolado": 15249.419701092555,
+         "eficiencia_vs_mesmo_tipo": 0.8303103481230235,
+         "eficiencia_vs_P_core": 0.5155719092111318,
+         "por_nucleo_MBps_mediana": 982.771553706767
+        }
+       },
+       {
+        "n": 12,
+        "cpus": [
+         16,
+         17,
+         18,
+         19,
+         20,
+         21,
+         22,
+         23,
+         24,
+         25,
+         26,
+         27
+        ],
+        "n_E": 12,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          2387.5792362801794,
+          2381.4857305974706,
+          2385.746957545148
+         ],
+         "agregado_MBps_mediana": 2385.746957545148,
+         "agregado_MBps_min": 2381.4857305974706,
+         "agregado_MBps_max": 2387.5792362801794,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 3255.814810204958,
+         "ideal_MBps_P_core_isolado": 5488.1721678755475,
+         "eficiencia_vs_mesmo_tipo": 0.7327649441446461,
+         "eficiencia_vs_P_core": 0.43470701803231915,
+         "por_nucleo_MBps_mediana": 198.81224646209566
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          11559.843092952897,
+          11542.212998441195,
+          11537.286455841937
+         ],
+         "agregado_MBps_mediana": 11542.212998441195,
+         "agregado_MBps_min": 11537.286455841937,
+         "agregado_MBps_max": 11559.843092952897,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 14509.03323310443,
+         "ideal_MBps_P_core_isolado": 23200.34852462834,
+         "eficiencia_vs_mesmo_tipo": 0.7955190957937838,
+         "eficiencia_vs_P_core": 0.49750170719153436,
+         "por_nucleo_MBps_mediana": 961.851083203433
+        }
+       },
+       {
+        "n": 16,
+        "cpus": [
+         16,
+         17,
+         18,
+         19,
+         20,
+         21,
+         22,
+         23,
+         24,
+         25,
+         26,
+         27,
+         28,
+         29,
+         30,
+         31
+        ],
+        "n_E": 16,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          3127.0805254669126,
+          3127.7395584486508,
+          3129.567471868811
+         ],
+         "agregado_MBps_mediana": 3127.7395584486508,
+         "agregado_MBps_min": 3127.0805254669126,
+         "agregado_MBps_max": 3129.567471868811,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 4345.143494938637,
+         "ideal_MBps_P_core_isolado": 7336.809286717096,
+         "eficiencia_vs_mesmo_tipo": 0.7198242272302268,
+         "eficiencia_vs_P_core": 0.42630787256679237,
+         "por_nucleo_MBps_mediana": 195.48372240304067
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          13811.33403522288,
+          13892.30082997778,
+          13890.030289509752
+         ],
+         "agregado_MBps_mediana": 13890.030289509752,
+         "agregado_MBps_min": 13811.33403522288,
+         "agregado_MBps_max": 13892.30082997778,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 19227.075613621815,
+         "ideal_MBps_P_core_isolado": 30451.115834765376,
+         "eficiencia_vs_mesmo_tipo": 0.7224203289484686,
+         "eficiencia_vs_P_core": 0.45614191495905076,
+         "por_nucleo_MBps_mediana": 868.1268930943595
+        }
+       }
+      ]
+     },
+     "zstd-1_bloco_1MiB": {
+      "por_n": [
+       {
+        "n": 1,
+        "cpus": [
+         16
+        ],
+        "n_E": 1,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          436.65240309951776,
+          435.4083760310302,
+          435.55247596743703
+         ],
+         "agregado_MBps_mediana": 435.55247596743703,
+         "agregado_MBps_min": 435.4083760310302,
+         "agregado_MBps_max": 436.65240309951776,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 436.1922720021346,
+         "ideal_MBps_P_core_isolado": 712.4119182694327,
+         "eficiencia_vs_mesmo_tipo": 0.9985332247365115,
+         "eficiencia_vs_P_core": 0.6113773012465409,
+         "por_nucleo_MBps_mediana": 435.55247596743703
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          1415.3250069462795,
+          1412.1341729416058,
+          1400.653121100066
+         ],
+         "agregado_MBps_mediana": 1412.1341729416058,
+         "agregado_MBps_min": 1400.653121100066,
+         "agregado_MBps_max": 1415.3250069462795,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 1359.0819608023216,
+         "ideal_MBps_P_core_isolado": 2087.2536468484595,
+         "eficiencia_vs_mesmo_tipo": 1.0390353294866523,
+         "eficiencia_vs_P_core": 0.6765513022692689,
+         "por_nucleo_MBps_mediana": 1412.1341729416058
+        }
+       },
+       {
+        "n": 2,
+        "cpus": [
+         16,
+         17
+        ],
+        "n_E": 2,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          819.2976340891007,
+          819.6074704378032,
+          818.9335115925032
+         ],
+         "agregado_MBps_mediana": 819.2976340891007,
+         "agregado_MBps_min": 818.9335115925032,
+         "agregado_MBps_max": 819.6074704378032,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 836.1344059674536,
+         "ideal_MBps_P_core_isolado": 1369.8825162945573,
+         "eficiencia_vs_mesmo_tipo": 0.9798635581095699,
+         "eficiencia_vs_P_core": 0.5980787581005467,
+         "por_nucleo_MBps_mediana": 409.64881704455036
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          2594.4427087681443,
+          2570.567764735367,
+          2573.4549923706477
+         ],
+         "agregado_MBps_mediana": 2573.4549923706477,
+         "agregado_MBps_min": 2570.567764735367,
+         "agregado_MBps_max": 2594.4427087681443,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 2646.8760072897294,
+         "ideal_MBps_P_core_isolado": 3987.79713777431,
+         "eficiencia_vs_mesmo_tipo": 0.9722612563955116,
+         "eficiencia_vs_P_core": 0.6453324739098834,
+         "por_nucleo_MBps_mediana": 1286.7274961853238
+        }
+       },
+       {
+        "n": 4,
+        "cpus": [
+         16,
+         17,
+         18,
+         19
+        ],
+        "n_E": 4,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          1417.9352437404334,
+          1418.3753269597914,
+          1418.318089877048
+         ],
+         "agregado_MBps_mediana": 1418.318089877048,
+         "agregado_MBps_min": 1417.9352437404334,
+         "agregado_MBps_max": 1418.3753269597914,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 1594.03640293374,
+         "ideal_MBps_P_core_isolado": 2585.0111074781285,
+         "eficiencia_vs_mesmo_tipo": 0.8897651818156149,
+         "eficiencia_vs_P_core": 0.548670017615794,
+         "por_nucleo_MBps_mediana": 354.579522469262
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          4500.167407202066,
+          4502.446052815424,
+          4498.895602731896
+         ],
+         "agregado_MBps_mediana": 4500.167407202066,
+         "agregado_MBps_min": 4498.895602731896,
+         "agregado_MBps_max": 4502.446052815424,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 5148.318919764456,
+         "ideal_MBps_P_core_isolado": 7754.680780027876,
+         "eficiencia_vs_mesmo_tipo": 0.8741042420518805,
+         "eficiencia_vs_P_core": 0.5803162676653583,
+         "por_nucleo_MBps_mediana": 1125.0418518005165
+        }
+       },
+       {
+        "n": 8,
+        "cpus": [
+         16,
+         17,
+         18,
+         19,
+         20,
+         21,
+         22,
+         23
+        ],
+        "n_E": 8,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          2767.0001876286924,
+          2766.459971738992,
+          2767.461604254352
+         ],
+         "agregado_MBps_mediana": 2767.0001876286924,
+         "agregado_MBps_min": 2766.459971738992,
+         "agregado_MBps_max": 2767.461604254352,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 3077.253323543565,
+         "ideal_MBps_P_core_isolado": 4977.138983263837,
+         "eficiencia_vs_mesmo_tipo": 0.8991785520089698,
+         "eficiencia_vs_P_core": 0.5559419170196024,
+         "por_nucleo_MBps_mediana": 345.87502345358655
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          8832.95911189927,
+          8791.110346942916,
+          8828.37687431247
+         ],
+         "agregado_MBps_mediana": 8828.37687431247,
+         "agregado_MBps_min": 8791.110346942916,
+         "agregado_MBps_max": 8832.95911189927,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 10101.436568167237,
+         "ideal_MBps_P_core_isolado": 15544.37422220636,
+         "eficiencia_vs_mesmo_tipo": 0.8739724112245011,
+         "eficiencia_vs_P_core": 0.5679467534756362,
+         "por_nucleo_MBps_mediana": 1103.5471092890587
+        }
+       },
+       {
+        "n": 12,
+        "cpus": [
+         16,
+         17,
+         18,
+         19,
+         20,
+         21,
+         22,
+         23,
+         24,
+         25,
+         26,
+         27
+        ],
+        "n_E": 12,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          4163.753786146783,
+          4164.449988670389,
+          4164.800761820034
+         ],
+         "agregado_MBps_mediana": 4164.449988670389,
+         "agregado_MBps_min": 4163.753786146783,
+         "agregado_MBps_max": 4164.800761820034,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 4679.86669647445,
+         "ideal_MBps_P_core_isolado": 7611.707719600967,
+         "eficiencia_vs_mesmo_tipo": 0.8898650877828749,
+         "eficiencia_vs_P_core": 0.5471111269743689,
+         "por_nucleo_MBps_mediana": 347.03749905586574
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          12954.291477023957,
+          12943.976716287965,
+          12936.28998821335
+         ],
+         "agregado_MBps_mediana": 12943.976716287965,
+         "agregado_MBps_min": 12936.28998821335,
+         "agregado_MBps_max": 12954.291477023957,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 15432.513207108355,
+         "ideal_MBps_P_core_isolado": 23581.32407183587,
+         "eficiencia_vs_mesmo_tipo": 0.838747165972024,
+         "eficiencia_vs_P_core": 0.548907969580363,
+         "por_nucleo_MBps_mediana": 1078.6647263573304
+        }
+       },
+       {
+        "n": 16,
+        "cpus": [
+         16,
+         17,
+         18,
+         19,
+         20,
+         21,
+         22,
+         23,
+         24,
+         25,
+         26,
+         27,
+         28,
+         29,
+         30,
+         31
+        ],
+        "n_E": 16,
+        "n_P_threads": 0,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          5542.287156610395,
+          5535.696008526218,
+          5522.3093967492805
+         ],
+         "agregado_MBps_mediana": 5535.696008526218,
+         "agregado_MBps_min": 5522.3093967492805,
+         "agregado_MBps_max": 5542.287156610395,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 6299.882758889369,
+         "ideal_MBps_P_core_isolado": 10277.168356864768,
+         "eficiencia_vs_mesmo_tipo": 0.8786982584263405,
+         "eficiencia_vs_P_core": 0.5386401989638107,
+         "por_nucleo_MBps_mediana": 345.98100053288863
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          15813.719058479512,
+          15788.416699114841,
+          15806.842334117606
+         ],
+         "agregado_MBps_mediana": 15806.842334117606,
+         "agregado_MBps_min": 15788.416699114841,
+         "agregado_MBps_max": 15813.719058479512,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 20528.29115741157,
+         "ideal_MBps_P_core_isolado": 31083.218401622813,
+         "eficiencia_vs_mesmo_tipo": 0.7700028323307697,
+         "eficiencia_vs_P_core": 0.5085330009871936,
+         "por_nucleo_MBps_mediana": 987.9276458823504
+        }
+       }
+      ]
+     }
+    }
+   },
+   "P": {
+    "cpus": [
+     0,
+     2,
+     4,
+     6,
+     8,
+     10,
+     12,
+     14
+    ],
+    "ns": [
+     1,
+     2,
+     4,
+     8
+    ],
+    "configs": {
+     "zstd-3_bloco_1MiB": {
+      "por_n": [
+       {
+        "n": 1,
+        "cpus": [
+         0
+        ],
+        "n_E": 0,
+        "n_P_threads": 1,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          499.79381669149365,
+          499.8047611688353,
+          499.7576934728301
+         ],
+         "agregado_MBps_mediana": 499.79381669149365,
+         "agregado_MBps_min": 499.7576934728301,
+         "agregado_MBps_max": 499.8047611688353,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 497.4168321327162,
+         "ideal_MBps_P_core_isolado": 497.4168321327162,
+         "eficiencia_vs_mesmo_tipo": 1.004778657265348,
+         "eficiencia_vs_P_core": 1.004778657265348,
+         "por_nucleo_MBps_mediana": 499.79381669149365
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          2070.5578127536633,
+          2074.704485694466,
+          2066.3337976974476
+         ],
+         "agregado_MBps_mediana": 2070.5578127536633,
+         "agregado_MBps_min": 2066.3337976974476,
+         "agregado_MBps_max": 2074.704485694466,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 2065.3392839606845,
+         "ideal_MBps_P_core_isolado": 2065.3392839606845,
+         "eficiencia_vs_mesmo_tipo": 1.0025267174422652,
+         "eficiencia_vs_P_core": 1.0025267174422652,
+         "por_nucleo_MBps_mediana": 2070.5578127536633
+        }
+       },
+       {
+        "n": 2,
+        "cpus": [
+         0,
+         2
+        ],
+        "n_E": 0,
+        "n_P_threads": 2,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          911.6061968173478,
+          912.2603959708497,
+          911.196929625504
+         ],
+         "agregado_MBps_mediana": 911.6061968173478,
+         "agregado_MBps_min": 911.196929625504,
+         "agregado_MBps_max": 912.2603959708497,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 932.0187633673852,
+         "ideal_MBps_P_core_isolado": 932.0187633673852,
+         "eficiencia_vs_mesmo_tipo": 0.9780985454881973,
+         "eficiencia_vs_P_core": 0.9780985454881973,
+         "por_nucleo_MBps_mediana": 455.8030984086739
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          3824.2813968663763,
+          3842.684263014457,
+          3846.5051181476124
+         ],
+         "agregado_MBps_mediana": 3842.684263014457,
+         "agregado_MBps_min": 3824.2813968663763,
+         "agregado_MBps_max": 3846.5051181476124,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 3911.862665398174,
+         "ideal_MBps_P_core_isolado": 3911.862665398174,
+         "eficiencia_vs_mesmo_tipo": 0.9823157384854982,
+         "eficiencia_vs_P_core": 0.9823157384854982,
+         "por_nucleo_MBps_mediana": 1921.3421315072285
+        }
+       },
+       {
+        "n": 4,
+        "cpus": [
+         0,
+         2,
+         4,
+         6
+        ],
+        "n_E": 0,
+        "n_P_threads": 4,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          1650.7964239213893,
+          1652.6960745935148,
+          1649.8214889830763
+         ],
+         "agregado_MBps_mediana": 1650.7964239213893,
+         "agregado_MBps_min": 1649.8214889830763,
+         "agregado_MBps_max": 1652.6960745935148,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 1815.2385226915906,
+         "ideal_MBps_P_core_isolado": 1815.2385226915906,
+         "eficiencia_vs_mesmo_tipo": 0.9094101977703897,
+         "eficiencia_vs_P_core": 0.9094101977703897,
+         "por_nucleo_MBps_mediana": 412.6991059803473
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          6876.773124877628,
+          6869.110616503749,
+          6866.65279096994
+         ],
+         "agregado_MBps_mediana": 6869.110616503749,
+         "agregado_MBps_min": 6866.65279096994,
+         "agregado_MBps_max": 6876.773124877628,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 7604.646392205244,
+         "ideal_MBps_P_core_isolado": 7604.646392205244,
+         "eficiencia_vs_mesmo_tipo": 0.903278109491663,
+         "eficiencia_vs_P_core": 0.903278109491663,
+         "por_nucleo_MBps_mediana": 1717.2776541259373
+        }
+       },
+       {
+        "n": 8,
+        "cpus": [
+         0,
+         2,
+         4,
+         6,
+         8,
+         10,
+         12,
+         14
+        ],
+        "n_E": 0,
+        "n_P_threads": 8,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          3209.184662852007,
+          3195.6830740180158,
+          3186.4475254594317
+         ],
+         "agregado_MBps_mediana": 3195.6830740180158,
+         "agregado_MBps_min": 3186.4475254594317,
+         "agregado_MBps_max": 3209.184662852007,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 3606.874167830296,
+         "ideal_MBps_P_core_isolado": 3606.874167830296,
+         "eficiencia_vs_mesmo_tipo": 0.8859979376381653,
+         "eficiencia_vs_P_core": 0.8859979376381653,
+         "por_nucleo_MBps_mediana": 399.46038425225197
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          13276.119797638561,
+          13257.017961377398,
+          13225.026071120508
+         ],
+         "agregado_MBps_mediana": 13257.017961377398,
+         "agregado_MBps_min": 13225.026071120508,
+         "agregado_MBps_max": 13276.119797638561,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 15249.419701092555,
+         "ideal_MBps_P_core_isolado": 15249.419701092555,
+         "eficiencia_vs_mesmo_tipo": 0.8693457338857026,
+         "eficiencia_vs_P_core": 0.8693457338857026,
+         "por_nucleo_MBps_mediana": 1657.1272451721748
+        }
+       }
+      ]
+     },
+     "zstd-1_bloco_1MiB": {
+      "por_n": [
+       {
+        "n": 1,
+        "cpus": [
+         0
+        ],
+        "n_E": 0,
+        "n_P_threads": 1,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          727.4889429897743,
+          724.9489284271577,
+          729.0506716365147
+         ],
+         "agregado_MBps_mediana": 727.4889429897743,
+         "agregado_MBps_min": 724.9489284271577,
+         "agregado_MBps_max": 729.0506716365147,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 712.4119182694327,
+         "ideal_MBps_P_core_isolado": 712.4119182694327,
+         "eficiencia_vs_mesmo_tipo": 1.0211633527369477,
+         "eficiencia_vs_P_core": 1.0211633527369477,
+         "por_nucleo_MBps_mediana": 727.4889429897743
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          2124.57363003523,
+          2124.9938809314144,
+          2127.0619241557706
+         ],
+         "agregado_MBps_mediana": 2124.9938809314144,
+         "agregado_MBps_min": 2124.57363003523,
+         "agregado_MBps_max": 2127.0619241557706,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 2087.2536468484595,
+         "ideal_MBps_P_core_isolado": 2087.2536468484595,
+         "eficiencia_vs_mesmo_tipo": 1.0180812878875256,
+         "eficiencia_vs_P_core": 1.0180812878875256,
+         "por_nucleo_MBps_mediana": 2124.9938809314144
+        }
+       },
+       {
+        "n": 2,
+        "cpus": [
+         0,
+         2
+        ],
+        "n_E": 0,
+        "n_P_threads": 2,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          1358.9340101617931,
+          1360.4163776182172,
+          1361.7714374149512
+         ],
+         "agregado_MBps_mediana": 1360.4163776182172,
+         "agregado_MBps_min": 1358.9340101617931,
+         "agregado_MBps_max": 1361.7714374149512,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 1369.8825162945573,
+         "ideal_MBps_P_core_isolado": 1369.8825162945573,
+         "eficiencia_vs_mesmo_tipo": 0.9930898171458197,
+         "eficiencia_vs_P_core": 0.9930898171458197,
+         "por_nucleo_MBps_mediana": 680.2081888091086
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          4019.653115281769,
+          4012.415294835885,
+          4011.5574845286183
+         ],
+         "agregado_MBps_mediana": 4012.415294835885,
+         "agregado_MBps_min": 4011.5574845286183,
+         "agregado_MBps_max": 4019.653115281769,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 3987.79713777431,
+         "ideal_MBps_P_core_isolado": 3987.79713777431,
+         "eficiencia_vs_mesmo_tipo": 1.00617337246882,
+         "eficiencia_vs_P_core": 1.00617337246882,
+         "por_nucleo_MBps_mediana": 2006.2076474179426
+        }
+       },
+       {
+        "n": 4,
+        "cpus": [
+         0,
+         2,
+         4,
+         6
+        ],
+        "n_E": 0,
+        "n_P_threads": 4,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          2404.592027836958,
+          2416.846680752571,
+          2413.7573023611385
+         ],
+         "agregado_MBps_mediana": 2413.7573023611385,
+         "agregado_MBps_min": 2404.592027836958,
+         "agregado_MBps_max": 2416.846680752571,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 2585.0111074781285,
+         "ideal_MBps_P_core_isolado": 2585.0111074781285,
+         "eficiencia_vs_mesmo_tipo": 0.9337512304602587,
+         "eficiencia_vs_P_core": 0.9337512304602587,
+         "por_nucleo_MBps_mediana": 603.4393255902846
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          7150.871345224443,
+          7158.365527475598,
+          7132.583892365352
+         ],
+         "agregado_MBps_mediana": 7150.871345224443,
+         "agregado_MBps_min": 7132.583892365352,
+         "agregado_MBps_max": 7158.365527475598,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 7754.680780027876,
+         "ideal_MBps_P_core_isolado": 7754.680780027876,
+         "eficiencia_vs_mesmo_tipo": 0.9221361327524223,
+         "eficiencia_vs_P_core": 0.9221361327524223,
+         "por_nucleo_MBps_mediana": 1787.7178363061107
+        }
+       },
+       {
+        "n": 8,
+        "cpus": [
+         0,
+         2,
+         4,
+         6,
+         8,
+         10,
+         12,
+         14
+        ],
+        "n_E": 0,
+        "n_P_threads": 8,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          4558.592194415223,
+          4544.320916443222,
+          4526.32759148773
+         ],
+         "agregado_MBps_mediana": 4544.320916443222,
+         "agregado_MBps_min": 4526.32759148773,
+         "agregado_MBps_max": 4558.592194415223,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 4977.138983263837,
+         "ideal_MBps_P_core_isolado": 4977.138983263837,
+         "eficiencia_vs_mesmo_tipo": 0.91303878226507,
+         "eficiencia_vs_P_core": 0.91303878226507,
+         "por_nucleo_MBps_mediana": 568.0401145554027
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          13810.895814773274,
+          13774.225009163238,
+          13717.926003674764
+         ],
+         "agregado_MBps_mediana": 13774.225009163238,
+         "agregado_MBps_min": 13717.926003674764,
+         "agregado_MBps_max": 13810.895814773274,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 15544.37422220636,
+         "ideal_MBps_P_core_isolado": 15544.37422220636,
+         "eficiencia_vs_mesmo_tipo": 0.8861228385434569,
+         "eficiencia_vs_P_core": 0.8861228385434569,
+         "por_nucleo_MBps_mediana": 1721.7781261454047
+        }
+       }
+      ]
+     }
+    }
+   },
+   "PSMT": {
+    "cpus": [
+     0,
+     2,
+     4,
+     6,
+     8,
+     10,
+     12,
+     14,
+     1,
+     3,
+     5,
+     7,
+     9,
+     11,
+     13,
+     15
+    ],
+    "ns": [
+     8,
+     16
+    ],
+    "configs": {
+     "zstd-3_bloco_1MiB": {
+      "por_n": [
+       {
+        "n": 8,
+        "cpus": [
+         0,
+         2,
+         4,
+         6,
+         8,
+         10,
+         12,
+         14
+        ],
+        "n_E": 0,
+        "n_P_threads": 8,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          3114.101940984186,
+          3128.1818173292186,
+          3122.399379708269
+         ],
+         "agregado_MBps_mediana": 3122.399379708269,
+         "agregado_MBps_min": 3114.101940984186,
+         "agregado_MBps_max": 3128.1818173292186,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 3606.874167830296,
+         "ideal_MBps_P_core_isolado": 3606.874167830296,
+         "eficiencia_vs_mesmo_tipo": 0.865680152514591,
+         "eficiencia_vs_P_core": 0.865680152514591,
+         "por_nucleo_MBps_mediana": 390.2999224635336
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          13080.178217041162,
+          13051.853480123067,
+          13050.443633432016
+         ],
+         "agregado_MBps_mediana": 13051.853480123067,
+         "agregado_MBps_min": 13050.443633432016,
+         "agregado_MBps_max": 13080.178217041162,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 15249.419701092555,
+         "ideal_MBps_P_core_isolado": 15249.419701092555,
+         "eficiencia_vs_mesmo_tipo": 0.8558918133250644,
+         "eficiencia_vs_P_core": 0.8558918133250644,
+         "por_nucleo_MBps_mediana": 1631.4816850153834
+        }
+       },
+       {
+        "n": 16,
+        "cpus": [
+         0,
+         2,
+         4,
+         6,
+         8,
+         10,
+         12,
+         14,
+         1,
+         3,
+         5,
+         7,
+         9,
+         11,
+         13,
+         15
+        ],
+        "n_E": 0,
+        "n_P_threads": 16,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          3736.5907661339197,
+          3729.4410224085545,
+          3719.5770185305487
+         ],
+         "agregado_MBps_mediana": 3729.4410224085545,
+         "agregado_MBps_min": 3719.5770185305487,
+         "agregado_MBps_max": 3736.5907661339197,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 7336.809286717096,
+         "ideal_MBps_P_core_isolado": 7336.809286717096,
+         "eficiencia_vs_mesmo_tipo": 0.5083191993501194,
+         "eficiencia_vs_P_core": 0.5083191993501194,
+         "por_nucleo_MBps_mediana": 233.09006390053466
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          14693.326439390852,
+          14639.046913123324,
+          14594.420204287646
+         ],
+         "agregado_MBps_mediana": 14639.046913123324,
+         "agregado_MBps_min": 14594.420204287646,
+         "agregado_MBps_max": 14693.326439390852,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 30451.115834765376,
+         "ideal_MBps_P_core_isolado": 30451.115834765376,
+         "eficiencia_vs_mesmo_tipo": 0.48073926067465295,
+         "eficiencia_vs_P_core": 0.48073926067465295,
+         "por_nucleo_MBps_mediana": 914.9404320702077
+        }
+       }
+      ]
+     },
+     "zstd-1_bloco_1MiB": {
+      "por_n": [
+       {
+        "n": 8,
+        "cpus": [
+         0,
+         2,
+         4,
+         6,
+         8,
+         10,
+         12,
+         14
+        ],
+        "n_E": 0,
+        "n_P_threads": 8,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          4456.1223380871625,
+          4451.748951883565,
+          4447.946475266249
+         ],
+         "agregado_MBps_mediana": 4451.748951883565,
+         "agregado_MBps_min": 4447.946475266249,
+         "agregado_MBps_max": 4456.1223380871625,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 4977.138983263837,
+         "ideal_MBps_P_core_isolado": 4977.138983263837,
+         "eficiencia_vs_mesmo_tipo": 0.8944393489619332,
+         "eficiencia_vs_P_core": 0.8944393489619332,
+         "por_nucleo_MBps_mediana": 556.4686189854456
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          13644.621145706122,
+          13603.580951828193,
+          13592.159855739297
+         ],
+         "agregado_MBps_mediana": 13603.580951828193,
+         "agregado_MBps_min": 13592.159855739297,
+         "agregado_MBps_max": 13644.621145706122,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 15544.37422220636,
+         "ideal_MBps_P_core_isolado": 15544.37422220636,
+         "eficiencia_vs_mesmo_tipo": 0.8751449725389658,
+         "eficiencia_vs_P_core": 0.8751449725389658,
+         "por_nucleo_MBps_mediana": 1700.4476189785241
+        }
+       },
+       {
+        "n": 16,
+        "cpus": [
+         0,
+         2,
+         4,
+         6,
+         8,
+         10,
+         12,
+         14,
+         1,
+         3,
+         5,
+         7,
+         9,
+         11,
+         13,
+         15
+        ],
+        "n_E": 0,
+        "n_P_threads": 16,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          5551.514551713143,
+          5541.484305561302,
+          5541.657763807055
+         ],
+         "agregado_MBps_mediana": 5541.657763807055,
+         "agregado_MBps_min": 5541.484305561302,
+         "agregado_MBps_max": 5551.514551713143,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 10277.168356864768,
+         "ideal_MBps_P_core_isolado": 10277.168356864768,
+         "eficiencia_vs_mesmo_tipo": 0.5392202960366445,
+         "eficiencia_vs_P_core": 0.5392202960366445,
+         "por_nucleo_MBps_mediana": 346.3536102379409
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          16414.16133438151,
+          16390.95274200273,
+          16394.945960598052
+         ],
+         "agregado_MBps_mediana": 16394.945960598052,
+         "agregado_MBps_min": 16390.95274200273,
+         "agregado_MBps_max": 16414.16133438151,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 31083.218401622813,
+         "ideal_MBps_P_core_isolado": 31083.218401622813,
+         "eficiencia_vs_mesmo_tipo": 0.527453294853859,
+         "eficiencia_vs_P_core": 0.527453294853859,
+         "por_nucleo_MBps_mediana": 1024.6841225373782
+        }
+       }
+      ]
+     }
+    }
+   },
+   "PE": {
+    "cpus": [
+     0,
+     2,
+     4,
+     6,
+     8,
+     10,
+     12,
+     14,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23
+    ],
+    "ns": [
+     16
+    ],
+    "configs": {
+     "zstd-3_bloco_1MiB": {
+      "por_n": [
+       {
+        "n": 16,
+        "cpus": [
+         0,
+         2,
+         4,
+         6,
+         8,
+         10,
+         12,
+         14,
+         16,
+         17,
+         18,
+         19,
+         20,
+         21,
+         22,
+         23
+        ],
+        "n_E": 8,
+        "n_P_threads": 8,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          4289.028082635203,
+          4317.784728416077,
+          4310.44358634826
+         ],
+         "agregado_MBps_mediana": 4310.44358634826,
+         "agregado_MBps_min": 4289.028082635203,
+         "agregado_MBps_max": 4317.784728416077,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 5801.098870857357,
+         "ideal_MBps_P_core_isolado": 7336.809286717096,
+         "eficiencia_vs_mesmo_tipo": 0.743039152116918,
+         "eficiencia_vs_P_core": 0.587509286107803,
+         "por_nucleo_MBps_mediana": 269.4027241467663
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          19245.82749872619,
+          19195.106686703344,
+          19183.410384966042
+         ],
+         "agregado_MBps_mediana": 19195.106686703344,
+         "agregado_MBps_min": 19183.410384966042,
+         "agregado_MBps_max": 19245.82749872619,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 25007.538981185415,
+         "ideal_MBps_P_core_isolado": 30451.115834765376,
+         "eficiencia_vs_mesmo_tipo": 0.7675727987925924,
+         "eficiencia_vs_P_core": 0.6303580726190897,
+         "por_nucleo_MBps_mediana": 1199.694167918959
+        }
+       }
+      ]
+     },
+     "zstd-1_bloco_1MiB": {
+      "por_n": [
+       {
+        "n": 16,
+        "cpus": [
+         0,
+         2,
+         4,
+         6,
+         8,
+         10,
+         12,
+         14,
+         16,
+         17,
+         18,
+         19,
+         20,
+         21,
+         22,
+         23
+        ],
+        "n_E": 8,
+        "n_P_threads": 8,
+        "bit_exato": true,
+        "comp": {
+         "agregado_MBps_por_repeticao": [
+          6795.385755930101,
+          6768.754462219678,
+          6723.390990734805
+         ],
+         "agregado_MBps_mediana": 6768.754462219678,
+         "agregado_MBps_min": 6723.390990734805,
+         "agregado_MBps_max": 6795.385755930101,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 8199.768418609641,
+         "ideal_MBps_P_core_isolado": 10277.168356864768,
+         "eficiencia_vs_mesmo_tipo": 0.8254811741826477,
+         "eficiencia_vs_P_core": 0.6586205681546903,
+         "por_nucleo_MBps_mediana": 423.0471538887299
+        },
+        "decomp": {
+         "agregado_MBps_por_repeticao": [
+          20669.899511431853,
+          20618.53661342743,
+          20504.882842416668
+         ],
+         "agregado_MBps_mediana": 20618.53661342743,
+         "agregado_MBps_min": 20504.882842416668,
+         "agregado_MBps_max": 20669.899511431853,
+         "ideal_MBps_mesmo_tipo_de_nucleo_isolado": 25971.228811450696,
+         "ideal_MBps_P_core_isolado": 31083.218401622813,
+         "eficiencia_vs_mesmo_tipo": 0.7938991552196688,
+         "eficiencia_vs_P_core": 0.6633333893233837,
+         "por_nucleo_MBps_mediana": 1288.6585383392144
+        }
+       }
+      ]
+     }
+    }
+   }
+  },
+  "isolado": {
+   "zstd-3_bloco_1MiB": {
+    "P": {
+     "cpu": 0,
+     "comp_MBps": 463.0708056083631,
+     "decomp_MBps": 1904.321234587735,
+     "pool_razao_fracao_economizada": 0.6853029587689567
+    },
+    "E": {
+     "cpu": 16,
+     "comp_MBps": 274.5495975877263,
+     "decomp_MBps": 1204.537122497227,
+     "pool_razao_fracao_economizada": 0.6853029587689567
+    },
+    "razao_E_sobre_P_comp": 0.5928890231528081,
+    "razao_E_sobre_P_decomp": 0.6325283259040045
+   },
+   "zstd-1_bloco_1MiB": {
+    "P": {
+     "cpu": 0,
+     "comp_MBps": 665.3977141067221,
+     "decomp_MBps": 1967.0918590347678,
+     "pool_razao_fracao_economizada": 0.6563255412905824
+    },
+    "E": {
+     "cpu": 16,
+     "comp_MBps": 411.1782326602074,
+     "decomp_MBps": 1300.4597787394266,
+     "pool_razao_fracao_economizada": 0.6563255412905824
+    },
+    "razao_E_sobre_P_comp": 0.6179435605849695,
+    "razao_E_sobre_P_decomp": 0.6611078037695449
+   }
+  }
+ },
+ "tempo_total_s": 327.20267486572266
+}

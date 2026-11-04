@@ -1,0 +1,165 @@
+{
+  "_descricao": "Parametros do modelo economico. Cada parametro tem valor, unidade, fonte e tipo (verificado | inferencia_propria). 'verificado' = valor vindo de fonte externa citada no pedido ou em tabela publica de preco; nao foi reverificado pelo benchmark (sem consulta online nesta execucao).",
+  "data_referencia": {
+    "valor": "2026-11-03",
+    "unidade": "data",
+    "fonte": "data da execucao",
+    "tipo": "verificado"
+  },
+  "volume_mensal_bytes": {
+    "valor": 5e15,
+    "unidade": "B/mes",
+    "fonte": "requisito do pedido: 5 PB/mes (PB = 10^15 B)",
+    "tipo": "inferencia_propria",
+    "observacao": "requisito de projeto, nao medido"
+  },
+  "dias_mes_vazao": {
+    "valor": 30,
+    "unidade": "dias",
+    "fonte": "pedido: mes de 30 dias para a vazao media (5e15 B / 2.592e6 s = 1,929 GB/s)",
+    "tipo": "inferencia_propria"
+  },
+  "k_pico": {
+    "valor": 4,
+    "unidade": "adimensional",
+    "fonte": "pedido: fator de pico k=4 sobre a vazao media (7,7 GB/s)",
+    "tipo": "inferencia_propria"
+  },
+  "horas_mes_cobranca": {
+    "valor": 730,
+    "unidade": "h/mes",
+    "fonte": "convencao de cobranca mensal de nuvem (8760/12)",
+    "tipo": "verificado"
+  },
+  "retencao_meses": {
+    "valor": 60,
+    "unidade": "meses",
+    "fonte": "pedido: retencao T=60 meses por coorte mensal",
+    "tipo": "inferencia_propria"
+  },
+  "redundancia_erasure": {
+    "valor": 1.0,
+    "unidade": "fator",
+    "fonte": "pedido: precos ja sao por GB logico, fator 1,0",
+    "tipo": "inferencia_propria"
+  },
+  "fator_vazao_servidor_vs_notebook": {
+    "valor": 1.0,
+    "unidade": "fator multiplicativo sobre theta",
+    "fonte": "premissa neutra: o nucleo de servidor tem a mesma vazao que o P-core do i9-14900HX medido. Provavelmente otimista (c7i vCPU roda a clock menor); ver sensibilidade no README",
+    "tipo": "inferencia_propria"
+  },
+  "nucleos_por_servidor": {
+    "valor": 64,
+    "unidade": "nucleos",
+    "fonte": "pedido: servidor de 64 nucleos",
+    "tipo": "inferencia_propria"
+  },
+  "servidores_por_rack": {
+    "valor": 20,
+    "unidade": "servidores",
+    "fonte": "rack 42U com ~20 servidores 2U de 64 nucleos (limite pratico de potencia/espaco)",
+    "tipo": "inferencia_propria"
+  },
+  "escala_config_referencia": {
+    "valor": "zstd-3_bloco_1MiB",
+    "unidade": "chave em medicoes.json -> escala.configs",
+    "fonte": "eficiencia de escala medida so para zstd-3 e zstd-1 em blocos de 1 MiB; aplicada a todas as configuracoes, extrapolada com valor constante acima de N=32",
+    "tipo": "inferencia_propria"
+  },
+  "preco_nucleo_hora": {
+    "nuvem": {
+      "valor": 0.0446,
+      "unidade": "USD/vCPU-h",
+      "fonte": "AWS c7i, preco por vCPU, Vantage 2026-11-03 (informado no pedido)",
+      "tipo": "verificado"
+    },
+    "onprem": {
+      "valor": 0.0135,
+      "unidade": "USD/nucleo-h",
+      "fonte": "INFERENCIA PROPRIA: servidor ~US$15k/64 nucleos amortizado em 3 anos a 70% de uso + 5 W/nucleo x PUE 1,5 x US$0,10/kWh",
+      "tipo": "inferencia_propria"
+    }
+  },
+  "onprem_derivacao": {
+    "capex_servidor_usd": {"valor": 15000, "unidade": "USD", "fonte": "INFERENCIA PROPRIA", "tipo": "inferencia_propria"},
+    "nucleos_servidor": {"valor": 64, "unidade": "nucleos", "fonte": "INFERENCIA PROPRIA", "tipo": "inferencia_propria"},
+    "vida_util_anos": {"valor": 3, "unidade": "anos", "fonte": "INFERENCIA PROPRIA", "tipo": "inferencia_propria"},
+    "utilizacao": {"valor": 0.7, "unidade": "fracao", "fonte": "INFERENCIA PROPRIA", "tipo": "inferencia_propria"},
+    "watts_por_nucleo": {"valor": 5, "unidade": "W", "fonte": "INFERENCIA PROPRIA", "tipo": "inferencia_propria"},
+    "pue": {"valor": 1.5, "unidade": "adimensional", "fonte": "INFERENCIA PROPRIA", "tipo": "inferencia_propria"},
+    "usd_por_kwh": {"valor": 0.10, "unidade": "USD/kWh", "fonte": "INFERENCIA PROPRIA", "tipo": "inferencia_propria"}
+  },
+  "preco_gb_mes": {
+    "s3_standard": {
+      "valor": 0.023,
+      "unidade": "USD/GB-mes",
+      "fonte": "AWS S3 Standard, tabela publica (informado no pedido)",
+      "tipo": "verificado"
+    },
+    "b2": {
+      "valor": 0.00695,
+      "unidade": "USD/GB-mes",
+      "fonte": "Backblaze B2, tabela publica US$6,95/TB-mes (informado no pedido)",
+      "tipo": "verificado"
+    },
+    "glacier_ir": {
+      "valor": 0.004,
+      "unidade": "USD/GB-mes",
+      "fonte": "AWS S3 Glacier Instant Retrieval, tabela publica (informado no pedido); ignora cobranca por recuperacao",
+      "tipo": "verificado"
+    },
+    "onprem": {
+      "valor": 0.002,
+      "unidade": "USD/GB-mes",
+      "fonte": "INFERENCIA PROPRIA: armazenamento on-prem tudo incluido (disco, rack, energia, operacao)",
+      "tipo": "inferencia_propria"
+    }
+  },
+  "camadas_leitura": {
+    "quente": {
+      "valor": 100,
+      "unidade": "leituras por coorte durante a vida",
+      "fonte": "pedido: n=100",
+      "tipo": "inferencia_propria"
+    },
+    "morno": {
+      "valor": 5,
+      "unidade": "leituras por coorte durante a vida",
+      "fonte": "pedido: n=5",
+      "tipo": "inferencia_propria"
+    },
+    "frio": {
+      "valor": 0.1,
+      "unidade": "leituras por coorte durante a vida",
+      "fonte": "pedido: n=0,1",
+      "tipo": "inferencia_propria"
+    }
+  },
+  "recompressao": {
+    "origens": {
+      "valor": ["zstd-1", "zstd-3"],
+      "unidade": "configuracoes de ingestao",
+      "fonte": "pedido: dado ja em zstd-1/3 na ingestao",
+      "tipo": "inferencia_propria"
+    },
+    "destinos": {
+      "valor": ["zstd-9", "zstd-19", "zstd-22", "xz-9e"],
+      "unidade": "configuracoes de reempacotamento",
+      "fonte": "pedido: zstd-19 / xz-9e (e vizinhos)",
+      "tipo": "inferencia_propria"
+    },
+    "vidas_restantes_meses": {
+      "valor": [60, 36, 12],
+      "unidade": "meses",
+      "fonte": "pontos para o limite n<= de leituras",
+      "tipo": "inferencia_propria"
+    }
+  },
+  "modo_principal": {
+    "valor": "bloco_1MiB",
+    "unidade": "modo de empacotamento usado nas tabelas de destaque",
+    "fonte": "armazenamento com acesso aleatorio em blocos independentes de 1 MiB",
+    "tipo": "inferencia_propria"
+  }
+}
