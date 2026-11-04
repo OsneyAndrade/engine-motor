@@ -10,6 +10,8 @@ POST /api/v1/decompress    .syntra ──▶  bytes originais
 POST /api/v1/analyze       bytes  ──▶  comparativo de planos, sem gravar
 ```
 
+Guia de operação: [docs/uso.md](docs/uso.md) · Índice da documentação: [docs/README.md](docs/README.md) · Plano e marcos: [docs/plano-de-trabalho.md](docs/plano-de-trabalho.md)
+
 ---
 
 ## Índice
@@ -19,7 +21,10 @@ POST /api/v1/analyze       bytes  ──▶  comparativo de planos, sem gravar
 - [Medição de consumo e cobrança](#medição-de-consumo-e-cobrança)
 - [Como o plano é escolhido](#como-o-plano-é-escolhido)
 - [Resultados medidos](#resultados-medidos)
+- [Desempenho medido](#desempenho-medido)
 - [Início rápido](#início-rápido)
+- [Verificação rápida](#verificação-rápida)
+- [CLI](#cli)
 - [Referência da API](#referência-da-api)
 - [Modos de esforço](#modos-de-esforço)
 - [Configuração](#configuração)
@@ -27,6 +32,8 @@ POST /api/v1/analyze       bytes  ──▶  comparativo de planos, sem gravar
 - [Cobertura de algoritmos](#cobertura-de-algoritmos)
 - [Desenvolvimento](#desenvolvimento)
 - [Arquitetura do código](#arquitetura-do-código)
+- [Estado e roadmap](#estado-e-roadmap)
+- [Compatibilidade](#compatibilidade)
 
 ---
 
@@ -36,7 +43,7 @@ POST /api/v1/analyze       bytes  ──▶  comparativo de planos, sem gravar
 |---|---|
 | **Reconstrução bit a bit** | O BLAKE3 do original fica no envelope e é conferido em **toda** descompressão. Divergência devolve `422`, não dado adulterado. |
 | **Verificação antes de gravar** | Com `SYNTRA_VERIFY_ON_WRITE=true` (default), o motor descomprime a essência e compara com o original *antes* de persistir. Se não bater, nada é gravado e o cliente recebe erro. |
-| **A essência nunca é maior** | Todo conjunto de candidatos inclui um piso `stored`. Se nenhum codec reduzir, grava-se sem compressão. O *payload* nunca excede o original; o container adiciona ~300–400 bytes de metadados (nome, hash, plano, timestamps). |
+| **A essência nunca é maior** | Todo conjunto de candidatos inclui um piso `stored`. Se nenhum codec reduzir, grava-se sem compressão. O *payload* nunca excede o original; o container adiciona de ~200 a ~430 bytes de metadados (nome, hash, plano, timestamps), de modo que um arquivo de poucos bytes gera um `.syntra` **maior** que ele (medido no `scripts/smoke.sh`: +200 B em arquivo vazio, +339 B em 1 byte, +411 B em um CSV de 5 MB). |
 | **Auto-suficiência** | O envelope guarda a receita completa de reconstrução: pilha de transforms, codec, nível e id do dicionário. Reconstruir não depende de estado do processo. |
 | **Dicionário nunca invalida o passado** | Dicionários treinados são endereçados por conteúdo (`<classe>.<digest>`). Retreinar gera um id novo; essências antigas continuam resolvendo o dicionário original. |
 | **Deduplicação global** | O vault é endereçado pelo hash do conteúdo. Um blob por conteúdo único, compartilhado entre tenants; cada tenant vê apenas o que lhe pertence. |
@@ -124,6 +131,13 @@ política contra política.
 
 Todas as reconstruções conferidas por SHA-256 contra o original: idênticas.
 
+> **Procedência desta tabela.** Ela vem de uma medição anterior do motor Rust
+> (corpus sintético de 85,0 MB). Os arquivos de entrada e a saída bruta **não
+> estão versionados** em `bench/`, e a tabela **não foi reproduzida** na
+> verificação do marco M2. Os números **verificáveis** a partir de arquivos do
+> repositório estão em [Desempenho medido](#desempenho-medido). O que o M2
+> reexecutou é o ciclo funcional (`scripts/smoke.sh`), não esta medição.
+
 Dois casos merecem destaque:
 
 - **`telemetria.f32`**: a política anterior escolhia LZ4 e *expandia* o arquivo.
@@ -136,12 +150,49 @@ Dois casos merecem destaque:
 
 ---
 
+## Desempenho medido
+
+Fonte única destes números: [`bench/resultados/resumo.md`](bench/resultados/resumo.md)
+(gerado por `bench/economia.py` a partir de `medicoes.json`, 2026-11-03;
+metodologia em [`bench/README.md`](bench/README.md)). Mix real = arquivos do
+Silesia e do Canterbury; blocos independentes de 1 MiB; **1 núcleo**; zstd 1.5.7.
+
+- **zstd -3**: razão **2,57** a **378 MB/s** na compressão e **1.611 MB/s** na
+  descompressão, por núcleo (seções 4 e 5 do resumo).
+- **zstd -1**: razão **2,35** a **596 MB/s** na compressão e **1.707 MB/s** na
+  descompressão (seções 4 e 5).
+- **Níveis altos custam CPU, não descompressão**: xz -9e razão **3,16** a **5 MB/s**
+  por núcleo; zstd -19 razão **2,95** a **7 MB/s** (seções 4 e 5).
+- **Escala do zstd -3** (processos independentes): **3.170 MB/s** com 8 núcleos
+  físicos (eficiência 0,95) e **5.846 MB/s** com 32 threads (eficiência 0,42)
+  (seção 3).
+- **Dado incompressível**: zstd -3 percorre **5.539 MB/s** por núcleo e devolve
+  razão **1,00**, o que sustenta o piso `stored` (seções 4 e 5).
+- **Custo do bloco**: o tamanho comprimido em blocos de 1 MiB é **1,3%** maior que
+  o do arquivo inteiro (zstd -3, mix real); em blocos de 64 KiB, **10,3%**
+  (seção 6).
+- **Bit-exatidão**: **0 violações** e **0 células com falha** em todas as medições
+  (seções 1 e 15).
+
+**O que esses números são e não são.** São medições de **bibliotecas e CLIs de
+compressão** num **notebook híbrido** (Intel i9-14900HX: 8 núcleos de desempenho
+e 16 de eficiência, governor `powersave`), com um *harness* em Python, dados em
+tmpfs e fatia máxima de 8 MiB por arquivo. **Não há medição do servidor HTTP em
+Rust sob carga**, nem em hardware de servidor, nem com I/O real de rede e disco;
+acima de 16 núcleos homogêneos não há dado de escala. As razões do motor
+(planejador com transforms) podem diferir das razões de um codec isolado.
+Detalhes e limites: seção 10.3 de
+[`docs/pesquisa-compressao-neural.md`](docs/pesquisa-compressao-neural.md).
+
+---
+
 ## Início rápido
 
 ### Docker
 
 ```bash
 # desenvolvimento (Postgres + engine, esforço max, API aberta)
+mkdir -p watch_in          # sem isto o Docker cria o diretório como root
 docker compose up --build
 
 # produção
@@ -151,6 +202,21 @@ docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 Dashboard: <http://localhost:3002/> · Contrato: <http://localhost:3002/api/v1/openapi.json>
+
+O compose publica a porta `3002` em **todas** as interfaces e, no de
+desenvolvimento, a API é **aberta**: em máquina exposta, troque para
+`"127.0.0.1:3002:3002"`. Sem Postgres (nó único), use SQLite:
+
+```bash
+docker build -t syntra-engine .
+docker run -d --name syntra -p 127.0.0.1:3002:3002 -v syntra-data:/data \
+  -e SYNTRA_DB_URL=sqlite:/data/syntra.db \
+  -e SYNTRA_API_KEYS="$(openssl rand -hex 32)" syntra-engine
+```
+
+A imagem aponta por padrão para um Postgres em `postgres:5432`; sem
+`SYNTRA_DB_URL` o contêiner encerra com `conectando no PostgreSQL`. Passo a passo
+completo, backup e limites em [docs/uso.md](docs/uso.md).
 
 ### Local
 
@@ -179,6 +245,66 @@ curl -sS -X POST http://localhost:3002/api/v1/decompress \
 cmp vendas.csv reconstruido.csv && echo "idêntico"
 ```
 
+Os valores comentados acima são ilustrativos (do arquivo de 29,3 MB da tabela de
+resultados). Com `SYNTRA_API_KEYS` definido, acrescente `-H "x-api-key: $CHAVE"` a
+cada chamada. O mesmo ciclo pela [CLI](#cli): `scripts/syntra.sh compress vendas.csv`
+e `scripts/syntra.sh decompress vendas.csv.syntra --out reconstruido.csv`.
+
+---
+
+## Verificação rápida
+
+```bash
+scripts/smoke.sh
+```
+
+Teste de fumaça ponta a ponta, em Docker, que prova que o ciclo de uso funciona
+na sua máquina. Constrói a imagem do `Dockerfile` (`syntra-engine:smoke`), sobe um
+contêiner **descartável** (SQLite, chave aleatória, volume próprio, porta alta só
+em `127.0.0.1`) e confere, passo a passo, com `PASS` ou `FAIL`:
+
+- comprimir, restaurar e comparar byte a byte (`cmp`) um CSV de 5 MB, um NDJSON,
+  2 MB aleatórios, um arquivo vazio e 1 byte; reenvio deduplicado; dado aleatório
+  vira `stored` sem expandir;
+- `objects`, `analyze`, `codecs`, `health`, `ready`, `metrics`
+  (`syntra_verify_failures_total 0`), OpenAPI e `stats`;
+- `401` sem chave, `400` com id malformado, `404`, `422` com container adulterado;
+- tenant e chave pelas rotas `admin`, `/usage`, idempotência, isolamento entre
+  tenants, escopos e revogação;
+- a [CLI](#cli) contra o próprio serviço, a ingestão por diretório, o reinício do
+  contêiner (os dados persistem) e o encerramento por `SIGTERM`.
+
+Ao final imprime a tabela `arquivo, tamanho, essência, economia, plano, ok`, remove
+contêiner, volume e rede (inclusive se falhar ou for interrompido) e sai com
+código diferente de zero em qualquer `FAIL`. `SYNTRA_SMOKE_DB=postgres` repete o
+teste com um Postgres descartável. Pré-requisitos, variáveis e o tempo medido
+estão em [docs/uso.md](docs/uso.md#1-verificação-rápida).
+
+---
+
+## CLI
+
+`scripts/syntra.sh` é um cliente fino sobre `curl` (só `curl` e `python3`, sem
+dependências).
+
+```bash
+export SYNTRA_URL=http://127.0.0.1:3002     # padrão
+export SYNTRA_API_KEY=<chave>               # nunca é impressa
+
+scripts/syntra.sh compress vendas.csv --effort max      # grava vendas.csv.syntra
+scripts/syntra.sh decompress vendas.csv.syntra --out reconstruido.csv
+scripts/syntra.sh analyze vendas.csv
+scripts/syntra.sh list --search vendas
+scripts/syntra.sh get <id> --out original.csv
+scripts/syntra.sh usage
+```
+
+Comandos: `compress`, `decompress`, `get`, `analyze`, `inspect`, `list`, `stats`,
+`usage`, `codecs`, `health`; `--help` lista as opções. Erros da API saem legíveis
+(`error.code`, `message`, `hint`) com código de saída 1; uso incorreto sai com 2 e
+falha de conexão com 3. Nunca sobrescreve arquivo sem `--force`. Detalhes em
+[docs/uso.md](docs/uso.md#5-cli).
+
 ---
 
 ## Referência da API
@@ -199,7 +325,7 @@ Postman/Insomnia e utilizável com `openapi-generator`.
 
 | Método | Rota | O que faz |
 |---|---|---|
-| `GET` | `/api/v1/objects` | Lista processamentos (`?type=name\|mime\|id&search=&limit=`). |
+| `GET` | `/api/v1/objects` | Lista os objetos do tenant (`?search=&limit=`). `search` casa um trecho do **nome do primeiro envio** daquele conteúdo; `limit` vai de 1 a 1000 (padrão 100). Não existe filtro por MIME nem por id. |
 | `GET` | `/api/v1/objects/:id` | Metadados: plano, economia, referências. |
 | `GET` | `/api/v1/objects/:id/content` | Original reconstruído. |
 | `GET` | `/api/v1/objects/:id/essence` | Container `.syntra` cru (para replicar sem descomprimir). |
@@ -265,6 +391,7 @@ enumerados no OpenAPI.
 | `404` | Objeto inexistente |
 | `409` | Dicionário necessário indisponível neste nó |
 | `422` | Essência corrompida, infiel ao original ou irreconstruível |
+| `413` | Corpo acima de `SYNTRA_MAX_BODY_MB`. A resposta é **texto puro** (`Failed to buffer the request body: length limit exceeded`), fora do formato JSON acima: trate pelo status |
 | `503` | Motor encerrando (requisições não são rejeitadas por fila: elas aguardam o permit de CPU) |
 
 ### Autenticação
@@ -388,6 +515,11 @@ append-only. Remover um objeto não apaga o histórico de consumo.
 Todas as dimensões são gravadas sempre, independentemente do plano. Trocar de
 plano recalcula faturas antigas sem reprocessar nada.
 
+Ressalva verificada no M2: nos eventos de `decompress`, `read` e `analyze`,
+`bytes_in` e `cpu_ms` são gravados como **0** (`bytes_out` traz os bytes
+servidos; em `analyze`, 0). Só a compressão preenche todas as dimensões
+(`src/service.rs`, `record_read`).
+
 ### As duas fórmulas
 
 O plano do tenant escolhe qual se aplica:
@@ -426,6 +558,8 @@ sobre `amount_micro_cents`; `amount_cents` existe só para exibição.
 ```bash
 curl -sS 'http://localhost:3002/api/v1/usage?days=30&events=20' \
   -H "x-api-key: $CHAVE" | jq '{totals: .totals, quote: .quote}'
+
+scripts/syntra.sh usage --days 30 --events 20      # sem jq
 ```
 
 ```json
@@ -495,7 +629,7 @@ curl -sS -X POST 'http://localhost:3002/api/v1/analyze?filename=vendas.csv&effor
 | Variável | Default | Descrição |
 |---|---|---|
 | `SYNTRA_BIND_ADDR` | `0.0.0.0:3002` | Endereço de escuta |
-| `SYNTRA_MAX_BODY_MB` | `4096` | Corpo máximo aceito |
+| `SYNTRA_MAX_BODY_MB` | `4096` | Corpo máximo aceito (o compose de produção usa `10240`). O corpo é lido **inteiro em memória** (pico medido de ~3,5x o arquivo na compressão): veja [docs/uso.md](docs/uso.md#9-limites-conhecidos). Acima do limite: `413` em texto puro |
 | `SYNTRA_API_KEYS` | — | Chaves estáticas de bootstrap; operam no tenant `default` com todos os escopos |
 | `SYNTRA_CORS_ORIGINS` | — | Origens permitidas (vazio = liberado) |
 | `SYNTRA_VAULT_PATH` | `essence_vault` | Raiz das essências |
@@ -540,19 +674,24 @@ bytes antes de virar caminho.
 
 ### O que precisa de backup
 
-Três diretórios, juntos:
+Três diretórios e o banco, juntos:
 
 1. `SYNTRA_VAULT_PATH` — as essências.
 2. `SYNTRA_DICT_PATH` — **indispensável**. Uma essência comprimida com
    dicionário só reconstrói com aquele dicionário. Sem ele, a descompressão
    devolve `409 dictionary_unavailable`. Em cluster, aponte `SYNTRA_REDIS_URL`
    para que os dicionários sejam replicados.
-3. `SYNTRA_SLED_INDEX` — reconstruível a partir do vault no boot.
+3. `SYNTRA_SLED_INDEX` — reconstruível a partir do vault no boot (verificado no
+   M2: apagado o diretório e reiniciado, o log registra `índice do vault
+   reconciliado ... reindexadas=1` e o objeto segue legível).
 4. **O banco** — aqui isto mudou de status. Ele deixou de ser só auditoria:
    `tenants`, `api_keys`, `object_grants` e `usage_events` vivem nele. Perder o
    banco significa perder quem pode acessar o quê e o histórico de consumo que
    sustenta a fatura. As essências continuam íntegras e reconstruíveis, mas o
-   produto para de funcionar. Trate o banco como dado crítico.
+   produto para de funcionar. Trate o banco como dado crítico. Verificado no M2
+   (SQLite apagado e motor reiniciado): `GET /objects` lista 0, `/objects/:id/content`
+   devolve `404`, mas `POST /decompress` com o `.syntra` guardado reconstrói o
+   arquivo, e reenviar o original recria o acesso. Chaves e tenants não voltam.
 
 ### Ingestão por diretório
 
@@ -560,6 +699,20 @@ Arquivos colocados em `SYNTRA_WATCH_DIR` são arquivados automaticamente pela
 mesma camada de serviço da API. O motor espera o tamanho estabilizar antes de
 ler (não arquiva cópia em andamento) e só remove o original se
 `SYNTRA_WATCH_DELETE_SOURCE=true` **e** o arquivamento tiver confirmado sucesso.
+
+Regras (lidas em `src/watcher.rs`; o arquivamento foi verificado no
+`scripts/smoke.sh`): o diretório **não é recursivo**; arquivos vazios, nomes que
+começam com `.` ou `~` e extensões `.tmp`, `.part`, `.crdownload`, `.swp` e
+`.syntra` são ignorados; tudo é arquivado no tenant `default`, com o esforço de
+`SYNTRA_DEFAULT_EFFORT`; cada arquivo é lido inteiro em memória. A essência vai
+para o vault, não de volta ao diretório: recupere o original por
+`GET /api/v1/objects` e `/content`.
+
+**Reingestão a cada reinício.** O registro do que já foi visto fica só em memória
+(`src/watcher.rs:39`): depois de cada reinício o motor reingere o que ainda estiver
+no diretório. Verificado no M2: `references` passou de 1 para 2 e o ledger do tenant
+`default` ganhou um segundo evento `compress`. Com `SYNTRA_WATCH_DELETE_SOURCE=false`
+(padrão), isso se repete a cada boot.
 
 ### Encerramento
 
@@ -570,12 +723,12 @@ O binário trata `SIGTERM`/`SIGINT`, drena as conexões em curso e sincroniza o
 
 ```
 syntra_bytes_in_total / syntra_essence_bytes_total / syntra_distillation_ratio
-syntra_items_total / syntra_reconstructions_total
+syntra_items_total / syntra_reconstructions_total / syntra_errors_total
 syntra_verify_failures_total        # deve ser sempre 0 — alerte se subir
 syntra_dedup_hits_total / syntra_dedup_bytes_saved_total
 syntra_codec_usage_total{codec="…"}
 syntra_processing_latency_ms_bucket{le="…"}
-syntra_system_cpu_usage / syntra_system_memory_used_bytes
+syntra_uptime_seconds / syntra_system_cpu_usage / syntra_system_memory_used_bytes
 ```
 
 `syntra_verify_failures_total > 0` significa que uma essência não reproduziu o
@@ -690,7 +843,40 @@ leitura do corpo HTTP.
 O código-fonte não leva comentários, por convenção do projeto. O "porquê" das
 decisões — política de compressão, garantias de integridade, trade-offs
 operacionais — mora neste README. Ao alterar comportamento, atualize a seção
-correspondente aqui.
+correspondente aqui. A convenção vale para os scripts: `scripts/*.sh` e
+`bench/*.py` também não têm comentários.
+
+---
+
+## Estado e roadmap
+
+**Hoje (2026-11-04):** motor v0.3.0, envelope `version 3`, `cargo test` com 122
+testes verdes (resultado da tarefa T1.1 do plano; não reexecutado no M2), ciclo de uso verificado de ponta a ponta por `scripts/smoke.sh`
+(SQLite e Postgres) e operável pela [CLI](#cli). Os limites que importam para
+quem vai operar (arquivo inteiro em RAM, limite de corpo, envelope único,
+reingestão a cada reinício) estão em [docs/uso.md](docs/uso.md#9-limites-conhecidos).
+
+**Para onde vai:** levar o motor a uma linha de vazão de **5 PB/mês**, com
+planejamento por bloco, recompressão assíncrona, referência entre versões e
+integridade provada; a rede neural fica fora do caminho de dados. O plano
+completo (condições V1 a V6, decisões, tarefas, riscos) está em
+[docs/plano-de-trabalho.md](docs/plano-de-trabalho.md); a evidência, em
+[docs/pesquisa-compressao-neural.md](docs/pesquisa-compressao-neural.md) e
+[bench/](bench/README.md). Marcos do motor, copiados do plano (a fonte é o plano):
+
+| Marco | Entrega | Estado no plano |
+|---|---|---|
+| M1 | Formato v4 em blocos como módulo isolado, corpus dourado v2/v3, *probe* de incompressibilidade ([ADR 001](docs/adr-001-envelope-v4-blocos.md)) | em execução |
+| M2 | Utilizabilidade: teste de fumaça, CLI, índice de documentação, README alinhado ao que foi medido | em execução (este conjunto de entregas) |
+| M3 | Integração do v4 à API atrás de flag, fluxo (*streaming*) com janela limitada, `Range`, erro `block_corrupted` | pendente (depende do M1) |
+| M4 | Planejador por bloco simples, `/analyze` econômico, uso offline (`engine pack/unpack`) | pendente |
+| M5 | Recompressão assíncrona guiada por M\*, *scrubbing*, injeção de falhas | pendente |
+
+Fora do escopo por ora: faixa neural (congelada até um piloto mostrar nicho com
+ponto de equilíbrio), energia por GB e avaliação do OpenZL. Duas decisões estão
+adiadas a pedido do Osney (análise de liberdade de operação de uma patente sobre
+seleção de compressão por custo financeiro e posicionamento de mercado); até lá,
+não comercialize a seleção por custo. Isso **não é parecer jurídico**.
 
 ---
 

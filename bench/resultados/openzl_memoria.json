@@ -1,0 +1,15 @@
+{
+ "metodo": "pico de RSS (VmHWM de /proc/PID/status) do processo zli, amostrado a cada 10 ms (limite inferior), dentro de conteiner novo, --network none, --memory=4g, dados :ro; inclui os buffers de entrada e de saida que o proprio CLI mantem; nao e medicao de tempo",
+ "imagem": "syntra-openzl:pinned",
+ "commit_openzl": "32246b48faee46807f84183dac4db479089f5445",
+ "medicoes": [
+  {"operacao": "compress --profile serial", "entrada": "samba, teste, 8388605 B", "VmHWM_kB": 33992},
+  {"operacao": "decompress", "entrada": "quadro do anterior", "VmHWM_kB": 23944},
+  {"operacao": "compress --profile csv", "entrada": "sint_vendas.csv, teste, 16777231 B", "VmHWM_kB": 217160},
+  {"operacao": "decompress", "entrada": "quadro do anterior", "VmHWM_kB": 100832},
+  {"operacao": "compress --profile le-u32 --level 7", "entrada": "sint_telemetria_f32.bin, teste, 16777216 B", "VmHWM_kB": 88796},
+  {"operacao": "decompress", "entrada": "quadro do anterior", "VmHWM_kB": 55476},
+  {"operacao": "compress --profile sao", "entrada": "sao, teste, 3625972 B", "VmHWM_kB": 27472}
+ ],
+ "referencia_do_repositorio": "doc/mkdocs/doc/getting-started/library-limitations.md:8-9: uso de memoria tipicamente ~10x o payload"
+}

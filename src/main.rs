@@ -17,14 +17,20 @@ pub mod proto {
 mod sql;
 
 mod api;
+#[allow(dead_code)]
+mod blockfile;
 mod codec;
 mod config;
 mod container;
 mod content;
 mod db_monitor;
 mod dict_store;
+#[cfg(test)]
+mod golden;
 mod metrics;
 mod planner;
+#[allow(dead_code)]
+mod probe;
 mod service;
 mod tenancy;
 mod transform;

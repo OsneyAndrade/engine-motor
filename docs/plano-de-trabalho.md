@@ -27,9 +27,9 @@ O trabalho está **pronto** quando as seis condições abaixo forem cumpridas em
 | D4 | Dataset real para validar CDC/delta/classificador/OpenZL e definir SLA | Osney | **O Osney disponibilizará o dataset quando o Claude avisar que tudo está pronto** (critérios na Seção 10). Até lá: dados públicos e sintéticos | **aguardando o aviso do Claude** |
 | D5 | Camada neural fria (F2–F4) | Osney | **congelada** até o piloto mostrar nicho de texto/código frio com break-even | assumida |
 | D6 | Retirar a rede neural do caminho de dados | Osney | **Confirmado (2026-11-04): sim.** Rede neural só no plano de controle e numa camada fria opcional congelada (D5) | **resolvida** |
-| D7 | Leitura do RAPL (`energy_uj`) para medir Wh/GB | Osney | **Autorizada (2026-11-04), ainda não aplicada:** `sudo` exige senha interativa no ambiente do Claude. Comando na Seção 11 | **autorizada; falta aplicar** |
-| D8 | Análise de liberdade de operação da patente US11990923 (seleção de compressão por modelo de custo financeiro, [pesquisa 10.5](pesquisa-compressao-neural.md)) | Osney (jurídico) | não comercializar a seleção por custo sem parecer; **não é parecer jurídico** | **aberta** |
-| D9 | Posicionamento após a varredura: OpenZL como baseline obrigatório e possível codec; diferenciar pela decisão econômica do cliente, integridade verificável, on-prem + API e cobrança por economia | Osney | OpenZL entra como baseline (T1.9) | **aberta** |
+| D7 | Leitura do RAPL (`energy_uj`) para medir Wh/GB | Osney | **Resolvida (2026-11-04):** o Osney aplicou o comando corrigido (Seção 11); verificado pelo Claude: 4 contadores `-r--r--r--`, leitura de potência funcionando (package-0 ~58 W sob carga de build). **Vale até reiniciar a máquina** (o reinício restaura `-r--------`) | **resolvida** |
+| D8 | Análise de liberdade de operação da patente US11990923 (seleção de compressão por modelo de custo financeiro, [pesquisa 10.5](pesquisa-compressao-neural.md)) | Osney (jurídico) | **Adiada a pedido do Osney (2026-11-04).** Até lá, não comercializar a seleção por custo; **não é parecer jurídico** | **adiada** |
+| D9 | Posicionamento após a varredura (OpenZL como baseline/codec; diferenciar pela decisão econômica do cliente, integridade verificável, on-prem + API, cobrança por economia) | Osney | **Adiada a pedido do Osney (2026-11-04):** foco em execução e estruturação do produto | **adiada** |
 
 ## 3. Frentes de trabalho
 
@@ -57,10 +57,10 @@ Estados: **feito**, **em execução**, **pendente**, **bloqueado** (por D#).
 | T1.5 | Microbenchmarks em Rust (no contêiner): BLAKE3 vs blake2b, `zstd` crate vs CLI, chunk+hash+lookup | MB/s por núcleo; confirma ~0,9 GB/s de chunk+hash+lookup ou melhor | D2 | pendente |
 | T1.6 | Memória e custo de `zstd --long=31` e de `--patch-from` em escala | RSS de compressão e de descompressão; limite de janela por tenant | — | pendente |
 | T1.7 | Escala sustentada e fator de calibração na máquina local (substitui o servidor, D3) | ver T1.11 | D3 | **substituída por T1.11** |
-| T1.8 | Energia (J/GB) por configuração | RAPL legível | D7 | **aguardando o comando da Seção 11** |
+| T1.8 | Energia (J/GB) por configuração | RAPL lido durante os testes sustentados, com tratamento de *wrap* do contador (`max_energy_range_uj`) | D7 | **desbloqueada**; roda junto com T1.11 na janela exclusiva |
 | T1.9 | **Avaliar o Meta OpenZL** como baseline e candidato a codec: build no contêiner; medir nos corpora do benchmark (classes reais, kernel) com e sem perfil treinado contra zstd-1/3/19 e xz-9e; razão, MB/s por núcleo, bit-exatidão; o que o *trainer* exige de dados; licença BSD; formato do frame (versão, checksums, digest do grafo) | **decisão: adotar, reservar ou descartar**, com números | D9 | pendente (logo após T1.11) |
 | T1.10 | **Modelo do cliente** (processamento + armazenamento): parametrizar em `bench/economia.py` retenção, custo por GB movido, passagens, leituras e preço por camada; lista de perguntas sobre o pipeline do cliente | sensibilidade reproduzível; perguntas ao cliente | D1 | **modelo inicial feito** ([9.7](pesquisa-compressao-neural.md), [modelo_cliente.py](anexos/modelo_cliente.py)); parametrização no `economia.py` pendente |
-| T1.11 | **Capacidade da máquina local e ajuste dos testes** ([capacidade-local.md](capacidade-local.md)): inventário, I/O do NVMe, largura de banda de memória, vazão **sustentada** (≥10 min, com frequência e temperatura) em 8 P-cores, 16 e 32 threads, calibração de 1 núcleo contra a referência pública, e quanto de 5 PB/mês a máquina sustenta | relatório com limites e fatores de correção; testes futuros usam esse perfil | D3 | **em execução** (inventário feito; medições após liberar os P-cores) |
+| T1.11 | **Capacidade da máquina local e ajuste dos testes** ([capacidade-local.md](capacidade-local.md)): inventário, I/O do NVMe, largura de banda de memória, vazão **sustentada** (≥10 min, com frequência e temperatura) em 8 P-cores, 16 e 32 threads, calibração de 1 núcleo contra a referência pública, e quanto de 5 PB/mês a máquina sustenta | relatório com limites e fatores de correção; testes futuros usam esse perfil | D3 | **interrompida a pedido do Osney em 2026-11-04**; `bench/capacidade_local.py` e `bench/membw.c` foram criados e **não foram validados**; `resultados/capacidade_local.json` é parcial. Medido antes: inventário e I/O do NVMe (leitura 3,4 GB/s, escrita 2,1 GB/s, fila 1). Retomar só quando o Osney pedir |
 
 ### Fase 2: caminho síncrono no motor (semanas 3–6)
 
@@ -178,16 +178,32 @@ O Claude avisará quando **todos** os itens abaixo estiverem prontos. Até lá, 
 
 ## 11. Comando para liberar a leitura do RAPL (D7)
 
-O Claude não consegue aplicar (o `sudo` exige senha). No terminal do Osney:
+O Claude não consegue aplicar (o `sudo` exige senha). No terminal do Osney (**comando corrigido em 2026-11-04**: a primeira versão usava `/sys/class/powercap`, cujas entradas são links simbólicos que o `find` não segue, e não tinha efeito; o caminho real é `/sys/devices/virtual/powercap`, que contém 4 arquivos `energy_uj`):
 
 ```
-sudo find /sys/class/powercap -name energy_uj -exec chmod a+r {} +
+sudo find /sys/devices/virtual/powercap -name energy_uj -exec chmod a+r {} +
 ```
 
 Efeito temporário: some ao reiniciar. Para reverter antes disso:
 
 ```
-sudo find /sys/class/powercap -name energy_uj -exec chmod 400 {} +
+sudo find /sys/devices/virtual/powercap -name energy_uj -exec chmod 400 {} +
 ```
 
 Aviso (de memória, confira): contadores de energia legíveis por usuários comuns são uma fonte conhecida de canal lateral (família Platypus, CVE-2020-8694), por isso vêm restritos ao root; reverter após as medições.
+
+## 12. Foco de execução (2026-11-04): estruturar e tornar o motor utilizável
+
+Por decisão do Osney, D8 e D9 ficam adiadas; o foco é **executar o plano, estruturar o projeto e entregar o máximo de demanda utilizável**. Marcos de entrega do motor (cada um verde em `cargo test` no contêiner antes de seguir; ver Seção 8):
+
+| Marco | Entrega | Tarefas | Aceite | Estado |
+|---|---|---|---|---|
+| **M1** | Formato v4 em blocos como módulo isolado, **corpus dourado v2/v3**, *probe* de incompressibilidade e testes (round-trip, corrupção, fuzz determinístico); especificação em `docs/` | T2.1 (parte), T2.3, T2.5 (parte), T2.6 (parte) | A1–A5 e A7 do [ADR 001](adr-001-envelope-v4-blocos.md); **0 regressões** nos 122 testes | **feito e verificado** (2026-11-04): `cargo test --locked` com **174 passam, 0 falham, 2 ignorados** (122 antigos + 3 corpus dourado + 41 formato v4 + 8 probe); `git diff` vazio em `container`, `planner`, `service`, `codec`, `transform`, `Cargo.*`; `proto` só com acréscimos; 0 comentários. Fuzz de 24.977 entradas sem pânico; 10⁴ *bit flips* detectados 100% com o índice certo; probe a 1,02% do `zstd-3` em E-core (não medido em P-core). Detalhes: [blockfile-v4.md](blockfile-v4.md) |
+| **M2** | **Utilizabilidade:** teste de fumaça ponta a ponta em Docker, cliente de linha de comando, índice de documentação e README alinhado ao que foi medido | (novo) | `scripts/smoke.sh` termina com PASS; o cliente compacta e restaura um arquivo contra o serviço | **feito e verificado** (2026-11-04): `scripts/smoke.sh` com 81 PASS e 0 FAIL, rodado pelo agente (SQLite e Postgres) e por mim (SQLite, 8 s, sem sobras no Docker) |
+| **M3** | Integração do v4 ao serviço e à API (atrás de flag), fluxo (*streaming*) com janela limitada, `Range` e erro `block_corrupted` | T2.2, T2.4, T2.5 | A6 e A8 do ADR; v≤3 intacto | pendente (depende de M1) |
+| **M4** | Planejador por bloco simples (*probe* + `zstd-3` + transform em blocos numéricos), `/analyze` econômico e modo de uso offline (`engine pack/unpack`) | T3.1, T3.5 | ≥ `zstd-3` fixo em bytes; ≥9% em dado numérico | pendente |
+| **M5** | Recompressão assíncrona guiada por M\*, *scrubbing* e injeção de falhas | T3.2, T4.1, T4.4 | simulação reproduz os M\* do benchmark; detecção 100% | pendente |
+| **M2b** | **Correções de defeitos do motor achados no smoke** (após M1, que ocupa `src/`): **B1** reingestão do `watch_in` após reinício (`src/watcher.rs:39`, registro `seen` só em memória; infla referências e consumo faturável); **B2** `413` devolvido em texto puro e não no corpo JSON de erro (`src/api/mod.rs:89`, `src/api/compress.rs:25`); **B3** eventos de `analyze`/`decompress`/`read` gravam `bytes_in=0` e `cpu_ms=0` (`src/service.rs:635-650`, `src/api/compress.rs:144,163`; confirmado por mim); **B4** `./watch_in` criado como `root:root` e porta 3002 publicada em todas as interfaces (`docker-compose.yml:44,47`, `docker-compose.prod.yml:51`); **B6 (segurança, achado do M1)** `transform::csv_invert` com `p + len > data.len()` sem soma verificada: um varint hostil num envelope enviado a `POST /decompress` causa pânico e, com `panic = "abort"`, **derruba o processo** (`src/transform.rs`, ~linha 381; vale também para v≤3); **B7 (segurança, achado do M1)** bomba de descompressão em brotli, xz, bzip2 e deflate: `codec::decode` só limita a saída em 64 GiB e o lz4 aloca pelo prefixo declarado (`src/codec.rs`, `decode`) | T4.6 (parte), robustez | cada defeito com teste que falha antes e passa depois; os 122 testes e o smoke seguem verdes | pendente |
+| **B5** (limite, não defeito) | Pico de RSS ~3,5x o arquivo na compressão (302 MB → 1.054 MB; medição única), resolvido pelo fluxo do M3 | T2.2 | A6 do ADR | no M3 |
+
+**Retomada (2026-11-04, a pedido do Osney):** T1.9 (OpenZL) em **fase A**, que não mede tempo (build em contêiner, funcionalidade, bit-exatidão e razão de compressão), enquanto M1 e M2 rodam; as medições de **tempo** (fase B do T1.9) e a **calibração sustentada com energia** (T1.11 + T1.8) exigem a máquina **exclusiva** (sem builds Rust em Docker, Chrome/VS Code ociosos, ~2 h) e entram numa janela própria depois de M1 e M2. T1.8 depende de o RAPL estar legível: o primeiro comando passado ao Osney **não tinha efeito** e foi corrigido (Seção 11). Faixa neural (D5) segue congelada; D8 e D9 seguem adiadas.

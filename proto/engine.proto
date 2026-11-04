@@ -96,3 +96,35 @@ message FileMetrics {
   uint32 candidates_tried    = 7;
   double reconstruct_ms      = 8;
 }
+
+message BlockPlanV4 {
+  repeated TransformStep transforms  = 1;
+  int32                  codec       = 2;
+  int32                  codec_level = 3;
+  DictionaryRef          dictionary  = 4;
+}
+
+message FooterV4 {
+  uint32 header_flags    = 1;
+  uint32 block_size_log2 = 2;
+  uint64 original_size   = 3;
+  bytes  file_hash       = 4;
+
+  repeated BlockPlanV4 plans = 5;
+
+  uint32 block_count    = 6;
+  bytes  stored_lens    = 7;
+  bytes  original_lens  = 8;
+  bytes  plan_indices   = 9;
+  bytes  payload_hashes = 10;
+
+  string          original_name  = 11;
+  repeated string original_names = 12;
+  string          original_mime  = 13;
+  string          content_class  = 14;
+  string          plan_reason    = 15;
+  bool            verified       = 16;
+  int64           created_at     = 17;
+  int64           updated_at     = 18;
+  FileMetrics     file_metrics   = 19;
+}
