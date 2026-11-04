@@ -61,6 +61,7 @@ Estados: **feito**, **em execução**, **pendente**, **bloqueado** (por D#).
 | T1.9 | **Avaliar o Meta OpenZL** como baseline e candidato a codec: build no contêiner; medir nos corpora do benchmark (classes reais, kernel) com e sem perfil treinado contra zstd-1/3/19 e xz-9e; razão, MB/s por núcleo, bit-exatidão; o que o *trainer* exige de dados; licença BSD; formato do frame (versão, checksums, digest do grafo) | **decisão: adotar, reservar ou descartar**, com números | D9 | pendente (logo após T1.11) |
 | T1.10 | **Modelo do cliente** (processamento + armazenamento): parametrizar em `bench/economia.py` retenção, custo por GB movido, passagens, leituras e preço por camada; lista de perguntas sobre o pipeline do cliente | sensibilidade reproduzível; perguntas ao cliente | D1 | **modelo inicial feito** ([9.7](pesquisa-compressao-neural.md), [modelo_cliente.py](anexos/modelo_cliente.py)); parametrização no `economia.py` pendente |
 | T1.11 | **Capacidade da máquina local e ajuste dos testes** ([capacidade-local.md](capacidade-local.md)): inventário, I/O do NVMe, largura de banda de memória, vazão **sustentada** (≥10 min, com frequência e temperatura) em 8 P-cores, 16 e 32 threads, calibração de 1 núcleo contra a referência pública, e quanto de 5 PB/mês a máquina sustenta | relatório com limites e fatores de correção; testes futuros usam esse perfil | D3 | **interrompida a pedido do Osney em 2026-11-04**; `bench/capacidade_local.py` e `bench/membw.c` foram criados e **não foram validados**; `resultados/capacidade_local.json` é parcial. Medido antes: inventário e I/O do NVMe (leitura 3,4 GB/s, escrita 2,1 GB/s, fila 1). Retomar só quando o Osney pedir |
+| T1.12 | **Ferramenta de perfil de dataset** (`bench/perfil_dataset.py`): somente leitura, saída anonimizada, sem rede; inventário, classificação, dedup, famílias de versões (delta), compressibilidade por classe com IC e estimativa econômica com os parâmetros do cliente (cobre o T1.10) | `autoteste` ≥25 testes; erro da amostra vs medido inteiro; nenhuma vazão de nome na saída; registro do que foi lido para o procedimento de manuseio | D1 | **em execução** |
 
 ### Fase 2: caminho síncrono no motor (semanas 3–6)
 
@@ -165,8 +166,8 @@ O Claude avisará quando **todos** os itens abaixo estiverem prontos. Até lá, 
 
 | # | Item | Verificação |
 |---|---|---|
-| 1 | Harness que roda sobre um diretório arbitrário e classifica o dado automaticamente (extensão, MIME, entropia), com relatório por classe | `bench/syntrabench.py` aceita `--corpus-dir`; falta a classificação automática para dado desconhecido |
-| 2 | Modelo econômico parametrizável com preços, retenção, leituras e custo de movimento do cliente (T1.10) | sensibilidade reproduzível em `bench/economia.py` |
+| 1 | Perfilamento de um diretório arbitrário e classificação automática (extensão, *magic bytes*, entropia), com relatório por classe, somente leitura e anonimizado | `bench/perfil_dataset.py` (T1.12, em execução) |
+| 2 | Modelo econômico parametrizável com preços, retenção, leituras e custo de movimento do cliente (T1.10) | estimativa econômica de `bench/perfil_dataset.py` (T1.12), conferida contra `docs/anexos/modelo_cliente.py` |
 | 3 | Capacidade da máquina local calibrada (T1.11) | [capacidade-local.md](capacidade-local.md) |
 | 4 | OpenZL avaliado e incluído no harness (T1.9) | decisão adotar/reservar/descartar |
 | 5 | Pipeline de dedup/delta (F1) pronto para versões arbitrárias | `bench/dedup.py` parametrizado por pares |

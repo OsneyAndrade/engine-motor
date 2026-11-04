@@ -475,4 +475,182 @@ mod tests {
     async fn arquivo_inexistente_nao_estabiliza() {
         assert!(wait_until_stable(Path::new("/tmp/syntra-nao-existe-jamais")).await.is_none());
     }
+
+    fn csv_de(linhas: usize) -> Vec<u8> {
+        let mut s = String::from("id,data,regiao,valor\n");
+        for i in 0..linhas {
+            s.push_str(&format!("{},2026-03-{:02},sudeste,{}.{:02}\n", i, (i % 28) + 1, i * 7, i % 100));
+        }
+        s.into_bytes()
+    }
+
+    fn raiz_de_teste(nome: &str) -> PathBuf {
+        let raiz = std::env::temp_dir().join(format!(
+            "syntra-watch-{}-{}-{}",
+            nome,
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&raiz).unwrap();
+        raiz
+    }
+
+    async fn motor_em(raiz: &Path) -> Arc<EngineState> {
+        let config = crate::config::Config {
+            vault_path: raiz.join("vault").to_string_lossy().to_string(),
+            sled_index_path: raiz.join("index.sled").to_string_lossy().to_string(),
+            dict_path: raiz.join("dicts").to_string_lossy().to_string(),
+            db_url: format!("sqlite:{}", raiz.join("syntra.db").display()),
+            watch_dir: raiz.join("watch").to_string_lossy().to_string(),
+            bind_addr: "127.0.0.1:0".to_string(),
+            max_body_size_mb: 64,
+            max_decompressed_mb: 64,
+            cors_origins: vec![],
+            api_keys: vec![],
+            compress_multiplier: 2,
+            default_effort: crate::planner::Effort::Fast,
+            verify_on_write: true,
+            dictionaries_enabled: false,
+            redis_url: None,
+            limits: Default::default(),
+            watch_enabled: false,
+            watch_delete_source: false,
+        };
+        Arc::new(EngineState::new(config).await.expect("motor não subiu"))
+    }
+
+    async fn referencias(state: &Arc<EngineState>, conteudo: &[u8]) -> i64 {
+        let id = hex::encode(blake3::hash(conteudo).as_bytes());
+        crate::tenancy::TenancyStore::find_grant(&state.db, &state.default_tenant.id, &id)
+            .await
+            .unwrap()
+            .map(|g| g.refs)
+            .unwrap_or(0)
+    }
+
+    async fn eventos(state: &Arc<EngineState>) -> i64 {
+        crate::usage::totals(&state.db, &state.default_tenant.id, 0, i64::MAX)
+            .await
+            .unwrap()
+            .events
+    }
+
+    #[tokio::test]
+    async fn reinicio_nao_reingere_arquivo_inalterado_mas_reingere_o_modificado() {
+        let raiz = raiz_de_teste("reinicio");
+        let dir = raiz.join("watch");
+        std::fs::create_dir_all(&dir).unwrap();
+        let arquivo = dir.join("vendas.csv");
+        let v1 = csv_de(2000);
+        std::fs::write(&arquivo, &v1).unwrap();
+
+        let state = motor_em(&raiz).await;
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        ingest(&state, &arquivo, &seen).await.unwrap();
+        assert_eq!(referencias(&state, &v1).await, 1);
+        assert_eq!(eventos(&state).await, 1);
+
+        ingest(&state, &arquivo, &seen).await.unwrap();
+        assert_eq!(eventos(&state).await, 1, "mesmo processo: arquivo inalterado");
+
+        drop(seen);
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        ingest(&state, &arquivo, &seen).await.unwrap();
+        assert_eq!(referencias(&state, &v1).await, 1, "reinício do watcher: sem nova referência");
+        assert_eq!(eventos(&state).await, 1, "reinício do watcher: sem novo evento");
+
+        drop(seen);
+        drop(state);
+        let state = motor_em(&raiz).await;
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        ingest(&state, &arquivo, &seen).await.unwrap();
+        assert_eq!(referencias(&state, &v1).await, 1, "reinício do motor: sem nova referência");
+        assert_eq!(eventos(&state).await, 1, "reinício do motor: sem novo evento");
+
+        let v2 = csv_de(2600);
+        std::fs::write(&arquivo, &v2).unwrap();
+        ingest(&state, &arquivo, &seen).await.unwrap();
+        assert_eq!(referencias(&state, &v2).await, 1, "arquivo modificado vira novo objeto");
+        assert_eq!(referencias(&state, &v1).await, 1);
+        assert_eq!(eventos(&state).await, 2);
+
+        drop(seen);
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        ingest(&state, &arquivo, &seen).await.unwrap();
+        assert_eq!(eventos(&state).await, 2, "versão modificada também sobrevive ao reinício");
+
+        let novo = dir.join("outro.csv");
+        let v3 = csv_de(900);
+        std::fs::write(&novo, &v3).unwrap();
+        ingest(&state, &novo, &seen).await.unwrap();
+        assert_eq!(referencias(&state, &v3).await, 1, "arquivo novo é ingerido");
+        assert_eq!(eventos(&state).await, 3);
+
+        let _ = std::fs::remove_dir_all(&raiz);
+    }
+
+    #[tokio::test]
+    async fn so_a_data_de_modificacao_mudar_nao_gera_nova_referencia() {
+        let raiz = raiz_de_teste("mtime");
+        let dir = raiz.join("watch");
+        std::fs::create_dir_all(&dir).unwrap();
+        let arquivo = dir.join("dados.csv");
+        let conteudo = csv_de(1500);
+        std::fs::write(&arquivo, &conteudo).unwrap();
+
+        let state = motor_em(&raiz).await;
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        ingest(&state, &arquivo, &seen).await.unwrap();
+        assert_eq!(eventos(&state).await, 1);
+
+        let futuro = std::time::SystemTime::now() + Duration::from_secs(3600);
+        std::fs::File::options()
+            .write(true)
+            .open(&arquivo)
+            .unwrap()
+            .set_modified(futuro)
+            .unwrap();
+
+        ingest(&state, &arquivo, &seen).await.unwrap();
+        assert_eq!(referencias(&state, &conteudo).await, 1);
+        assert_eq!(eventos(&state).await, 1, "conteúdo idêntico não pode gerar evento");
+
+        drop(seen);
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        assert_eq!(
+            seen.get(&arquivo).map(|r| r.stamp),
+            Some(stamp_of(&std::fs::metadata(&arquivo).unwrap())),
+            "o novo mtime deve ter sido persistido"
+        );
+        ingest(&state, &arquivo, &seen).await.unwrap();
+        assert_eq!(eventos(&state).await, 1);
+
+        let _ = std::fs::remove_dir_all(&raiz);
+    }
+
+    #[tokio::test]
+    async fn arquivo_removido_sai_do_registro_persistido() {
+        let raiz = raiz_de_teste("removido");
+        let dir = raiz.join("watch");
+        std::fs::create_dir_all(&dir).unwrap();
+        let arquivo = dir.join("efemero.csv");
+        std::fs::write(&arquivo, csv_de(300)).unwrap();
+
+        let state = motor_em(&raiz).await;
+        let seen = SeenStore::load(state.clone(), &dir).await;
+        ingest(&state, &arquivo, &seen).await.unwrap();
+        assert!(seen.get(&arquivo).is_some());
+
+        std::fs::remove_file(&arquivo).unwrap();
+        seen.retain_present(&HashSet::new()).await;
+        assert!(seen.get(&arquivo).is_none());
+
+        let recarregado = SeenStore::load(state.clone(), &dir).await;
+        assert!(recarregado.get(&arquivo).is_none(), "o registro removido não pode voltar");
+
+        let _ = std::fs::remove_dir_all(&raiz);
+    }
 }

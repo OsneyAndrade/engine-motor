@@ -154,7 +154,8 @@ pub async fn document() -> Json<serde_json::Value> {
                       "envelope_invalid", "envelope_malformed",
                       "envelope_corrupted", "dictionary_unavailable",
                       "dictionary_mismatch", "restore_failed",
-                      "fidelity_mismatch", "io_error", "internal_error",
+                      "fidelity_mismatch", "decompressed_too_large",
+                      "payload_too_large", "io_error", "internal_error",
                       "overloaded"
                     ]
                   },
@@ -317,7 +318,24 @@ pub async fn document() -> Json<serde_json::Value> {
                 }
               },
               "quote": { "$ref": "#/components/schemas/Quote" },
-              "recent": { "type": "array", "items": { "type": "object" } }
+              "recent": { "type": "array", "items": { "$ref": "#/components/schemas/UsageEvent" } }
+            }
+          },
+          "UsageEvent": {
+            "type": "object",
+            "description": "Uma linha do ledger. `bytes_in` são os bytes recebidos pelo motor, `bytes_out` os devolvidos e `cpu_ms` o tempo decorrido do trabalho (não é tempo de CPU de thread). Em `compress`: original recebido e essência gerada. Em `decompress`: container recebido e original devolvido. Em `analyze`: conteúdo recebido e JSON devolvido. Em `read`: essência lida do vault (`/content`: bytes do payload gravado; `/essence`: container inteiro) e bytes servidos. `delete` grava zeros.",
+            "properties": {
+              "id": { "type": "string" },
+              "operation": { "type": "string", "enum": ["compress", "decompress", "read", "analyze", "delete"] },
+              "object_id": { "type": "string", "nullable": true },
+              "bytes_in": { "type": "integer", "format": "int64" },
+              "bytes_out": { "type": "integer", "format": "int64" },
+              "bytes_saved": { "type": "integer", "format": "int64" },
+              "cpu_ms": { "type": "number" },
+              "effort": { "type": "string" },
+              "plan": { "type": "string" },
+              "dedup_scope": { "type": "string", "enum": ["none", "tenant", "global"] },
+              "occurred_at_ms": { "type": "integer", "format": "int64" }
             }
           },
           "PriceConfig": {
@@ -397,7 +415,11 @@ pub async fn document() -> Json<serde_json::Value> {
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "Unprocessable": {
-            "description": "Essência corrompida, infiel ao original ou irreconstruível.",
+            "description": "Essência corrompida, infiel ao original, irreconstruível ou cuja reconstrução passaria do teto de descompressão (`decompressed_too_large`: o menor entre o tamanho declarado no envelope e SYNTRA_MAX_DECOMPRESSED_MB).",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+          },
+          "PayloadTooLarge": {
+            "description": "O corpo passou do limite SYNTRA_MAX_BODY_MB. A resposta usa o mesmo formato de erro JSON das demais, com `code` igual a `payload_too_large` e `hint` que cita a variável.",
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "Forbidden": {
@@ -453,6 +475,7 @@ pub async fn document() -> Json<serde_json::Value> {
               "400": { "$ref": "#/components/responses/BadRequest" },
               "401": { "$ref": "#/components/responses/Unauthorized" },
               "403": { "$ref": "#/components/responses/Forbidden" },
+              "413": { "$ref": "#/components/responses/PayloadTooLarge" },
               "422": { "$ref": "#/components/responses/Unprocessable" },
               "503": { "description": "Motor encerrando." }
             }
@@ -483,6 +506,7 @@ pub async fn document() -> Json<serde_json::Value> {
               },
               "400": { "$ref": "#/components/responses/BadRequest" },
               "409": { "description": "Dicionário necessário indisponível neste nó." },
+              "413": { "$ref": "#/components/responses/PayloadTooLarge" },
               "422": { "$ref": "#/components/responses/Unprocessable" }
             }
           }
@@ -508,7 +532,8 @@ pub async fn document() -> Json<serde_json::Value> {
                 "description": "Comparativo ordenado do menor para o maior resultado.",
                 "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AnalyzeResponse" } } }
               },
-              "400": { "$ref": "#/components/responses/BadRequest" }
+              "400": { "$ref": "#/components/responses/BadRequest" },
+              "413": { "$ref": "#/components/responses/PayloadTooLarge" }
             }
           }
         },
@@ -524,6 +549,7 @@ pub async fn document() -> Json<serde_json::Value> {
             "responses": {
               "200": { "description": "Metadados do container.", "content": { "application/json": { "schema": { "type": "object" } } } },
               "400": { "$ref": "#/components/responses/BadRequest" },
+              "413": { "$ref": "#/components/responses/PayloadTooLarge" },
               "422": { "$ref": "#/components/responses/Unprocessable" }
             }
           }
@@ -636,7 +662,8 @@ pub async fn document() -> Json<serde_json::Value> {
             "responses": {
               "200": { "description": "Tenant.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Tenant" } } } },
               "400": { "$ref": "#/components/responses/BadRequest" },
-              "403": { "$ref": "#/components/responses/Forbidden" }
+              "403": { "$ref": "#/components/responses/Forbidden" },
+              "413": { "$ref": "#/components/responses/PayloadTooLarge" }
             }
           }
         },
@@ -681,7 +708,8 @@ pub async fn document() -> Json<serde_json::Value> {
             "responses": {
               "200": { "description": "Chave emitida.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/IssuedKey" } } } },
               "400": { "$ref": "#/components/responses/BadRequest" },
-              "404": { "$ref": "#/components/responses/NotFound" }
+              "404": { "$ref": "#/components/responses/NotFound" },
+              "413": { "$ref": "#/components/responses/PayloadTooLarge" }
             }
           }
         },

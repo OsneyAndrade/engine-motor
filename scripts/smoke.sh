@@ -14,12 +14,17 @@ RUN_ID="$$"
 NAME="syntra-smoke-$RUN_ID"
 PG_NAME="syntra-smoke-pg-$RUN_ID"
 VOLUME="syntra-smoke-data-$RUN_ID"
+SMALL_NAME="syntra-smoke-small-$RUN_ID"
+SMALL_VOLUME="syntra-smoke-small-data-$RUN_ID"
 NETWORK="syntra-smoke-net-$RUN_ID"
 LOG_FILE="${TMPDIR:-/tmp}/syntra-smoke-$RUN_ID.log"
 
 WORK=""
 PORT=""
 BASE=""
+SMALL_BASE=""
+WATCH_ID=""
+COMPRESS_EVENTS_BEFORE=""
 ADMIN_KEY=""
 PASSED=0
 FAILED=0
@@ -147,6 +152,49 @@ except (KeyError, IndexError, ValueError, TypeError, OSError):
 PY
 }
 
+usage_compress_events() {
+  python3 -I - "$WORK/resp.body" <<'PY'
+import json
+import sys
+
+try:
+    with open(sys.argv[1], "rb") as handle:
+        value = json.loads(handle.read())
+    total = 0
+    for bucket in value["totals"]["by_operation"]:
+        if bucket["operation"] == "compress":
+            total += bucket["events"]
+    print(total)
+except (KeyError, ValueError, TypeError, OSError):
+    print(-1)
+PY
+}
+
+ledger_violations() {
+  python3 -I - "$WORK/resp.body" <<'PY'
+import json
+import sys
+
+try:
+    with open(sys.argv[1], "rb") as handle:
+        value = json.loads(handle.read())
+    checked = 0
+    bad = 0
+    for event in value["recent"]:
+        operation = event["operation"]
+        if operation not in ("decompress", "analyze", "read") or event["bytes_out"] <= 0:
+            continue
+        checked += 1
+        if event["bytes_in"] <= 0:
+            bad += 1
+        if operation != "read" and event["bytes_out"] >= 100000 and event["cpu_ms"] <= 0:
+            bad += 1
+    print("%d %d" % (checked, bad))
+except (KeyError, ValueError, TypeError, OSError):
+    print("-1 -1")
+PY
+}
+
 hdr() {
   awk -v want="$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')" '
     {
@@ -212,8 +260,10 @@ cleanup() {
     fi
   fi
   docker rm -f "$NAME" >/dev/null 2>&1 || true
+  docker rm -f "$SMALL_NAME" >/dev/null 2>&1 || true
   docker rm -f -v "$PG_NAME" >/dev/null 2>&1 || true
   docker volume rm -f "$VOLUME" >/dev/null 2>&1 || true
+  docker volume rm -f "$SMALL_VOLUME" >/dev/null 2>&1 || true
   docker network rm "$NETWORK" >/dev/null 2>&1 || true
   if [ -n "$WORK" ] && [ -d "$WORK" ]; then
     rm -rf "$WORK"
@@ -286,6 +336,34 @@ start_postgres() {
     sleep 1
   done
   sleep 2
+}
+
+start_small_engine() {
+  local port=$1
+  docker volume create "$SMALL_VOLUME" >/dev/null
+  docker run -d --name "$SMALL_NAME" --label "syntra-smoke=$RUN_ID" \
+    -p "127.0.0.1:$port:3002" \
+    -v "$SMALL_VOLUME:/data" \
+    -e SYNTRA_DB_URL="sqlite:/data/small.db" \
+    -e SYNTRA_API_KEYS="$ADMIN_KEY" \
+    -e SYNTRA_MAX_BODY_MB=1 \
+    -e SYNTRA_WATCH_ENABLED=false \
+    -e RUST_LOG=engine=info \
+    "$IMAGE" >/dev/null
+}
+
+wait_small_ready() {
+  local deadline=$((SECONDS + READY_TIMEOUT))
+  while [ "$SECONDS" -lt "$deadline" ]; do
+    if [ "$(docker inspect -f '{{.State.Running}}' "$SMALL_NAME" 2>/dev/null || echo false)" != "true" ]; then
+      return 1
+    fi
+    if curl -fsS --max-time 2 -o /dev/null "$SMALL_BASE/ready" 2>/dev/null; then
+      return 0
+    fi
+    sleep 1
+  done
+  return 1
 }
 
 start_engine() {
@@ -605,6 +683,68 @@ PY
   step_end "POST /inspect: checksum_ok, file_hash igual ao id"
 }
 
+phase_ledger() {
+  auth_http GET "/api/v1/usage?events=500"
+  local verdict
+  verdict=$(ledger_violations)
+  local checked=${verdict% *} bad=${verdict#* }
+  step_begin
+  eq "$HTTP_STATUS" 200 "status de /usage"
+  chk "poucos eventos de decompress/analyze/read com saída ($checked)" test "$checked" -ge 5
+  eq "$bad" 0 "eventos de decompress, analyze e read com bytes_in ou cpu_ms zerados"
+  step_end "ledger: $checked eventos de decompress, analyze e read com bytes_in > 0 e cpu_ms > 0 (leitura só bytes_in)"
+}
+
+phase_limits() {
+  local port essence_size
+  port=$(free_port)
+  SMALL_BASE="http://127.0.0.1:$port"
+  start_small_engine "$port"
+  if ! wait_small_ready; then
+    fatal "o contêiner de limites pequenos não ficou pronto em ${READY_TIMEOUT} s"
+  fi
+
+  local saved=$BASE
+  BASE=$SMALL_BASE
+
+  head -c 2097152 /dev/zero >"$WORK/dois-mib.bin"
+  auth_upload "/api/v1/compress?filename=dois-mib.bin&persist=false" "$WORK/dois-mib.bin"
+  step_begin
+  eq "$HTTP_STATUS" 413 "corpo de 2 MiB com SYNTRA_MAX_BODY_MB=1"
+  eq "$(hdr content-type | cut -d';' -f1)" application/json "content-type do 413"
+  eq "$(jget "$WORK/resp.body" error.code)" payload_too_large "error.code"
+  chk "mensagem do 413 vazia" test -n "$(jget "$WORK/resp.body" error.message)"
+  match "$(jget "$WORK/resp.body" error.hint)" 'SYNTRA_MAX_BODY_MB' "hint do 413"
+  step_end "corpo acima do limite: 413 em JSON padrão (payload_too_large, mensagem e hint com SYNTRA_MAX_BODY_MB)"
+
+  auth_upload "/api/v1/decompress" "$WORK/dois-mib.bin"
+  local decompress_status=$HTTP_STATUS
+  auth_upload "/api/v1/analyze" "$WORK/dois-mib.bin"
+  step_begin
+  eq "$decompress_status" 413 "decompress com corpo grande"
+  eq "$HTTP_STATUS" 413 "analyze com corpo grande"
+  eq "$(jget "$WORK/resp.body" error.code)" payload_too_large "error.code do analyze"
+  step_end "413 em JSON também em /decompress e /analyze"
+
+  auth_upload "/api/v1/compress?filename=um-byte.bin&persist=false" "$WORK/um-byte.bin"
+  step_begin
+  eq "$HTTP_STATUS" 200 "corpo pequeno com limite de 1 MiB"
+  step_end "corpo abaixo do limite continua aceito (200)"
+
+  essence_size=$(fsize "$WORK/vendas.csv.syntra")
+  auth_upload "/api/v1/decompress" "$WORK/vendas.csv.syntra"
+  step_begin
+  chk "a essência do CSV ($essence_size B) deveria caber no corpo de 1 MiB" test "$essence_size" -lt 1000000
+  eq "$HTTP_STATUS" 422 "essência de 5 MB descomprimidos com teto de 1 MiB"
+  eq "$(jget "$WORK/resp.body" error.code)" decompressed_too_large "error.code"
+  match "$(jget "$WORK/resp.body" error.hint)" 'SYNTRA_MAX_DECOMPRESSED_MB' "hint do teto de descompressão"
+  step_end "teto de descompressão (padrão = SYNTRA_MAX_BODY_MB = 1): envelope legítimo de 5 MB devolve 422 decompressed_too_large"
+
+  BASE=$saved
+  docker rm -f "$SMALL_NAME" >/dev/null 2>&1 || true
+  docker volume rm -f "$SMALL_VOLUME" >/dev/null 2>&1 || true
+}
+
 phase_tenants() {
   local csv_id=${OBJ_ID[vendas.csv]}
   local nd_id=${OBJ_ID[eventos.ndjson]}
@@ -831,6 +971,7 @@ phase_watch() {
   if wait_for_object "watch-smoke" 40; then
     local wid
     wid=$(jget "$WORK/resp.body" items.0.id)
+    WATCH_ID=$wid
     HTTP_OUT="$WORK/watch.content" auth_http GET "/api/v1/objects/$wid/content"
     eq "$HTTP_STATUS" 200 "status de /content do objeto ingerido"
     chk "conteúdo ingerido difere do arquivo colocado no diretório" same_file "$WORK/watch-smoke.csv" "$WORK/watch.content"
@@ -867,6 +1008,12 @@ phase_restart() {
   local um_id=${OBJ_ID[um-byte.bin]}
   local start=$SECONDS
 
+  auth_http GET "/api/v1/objects/$WATCH_ID"
+  local refs_before
+  refs_before=$(jget "$WORK/resp.body" references)
+  auth_http GET "/api/v1/usage?days=1"
+  COMPRESS_EVENTS_BEFORE=$(usage_compress_events)
+
   docker restart -t 30 "$NAME" >/dev/null
   step_begin
   if wait_ready; then
@@ -881,6 +1028,19 @@ phase_restart() {
     STEP_ERRS+=("o serviço não voltou a responder /ready após docker restart")
   fi
   step_end "reinício do contêiner ($((SECONDS - start)) s): vault, índice e banco persistidos no volume; conteúdo idêntico, remoção preservada"
+
+  sleep 8
+  auth_http GET "/api/v1/objects/$WATCH_ID"
+  local refs_after
+  refs_after=$(jget "$WORK/resp.body" references)
+  auth_http GET "/api/v1/usage?days=1"
+  local events_after
+  events_after=$(usage_compress_events)
+  step_begin
+  eq "$refs_before" 1 "referências do objeto ingerido por diretório antes do reinício"
+  eq "$refs_after" 1 "referências do objeto ingerido por diretório depois do reinício e de uma varredura"
+  eq "$events_after" "$COMPRESS_EVENTS_BEFORE" "eventos compress no ledger do tenant default depois do reinício"
+  step_end "ingestão por diretório: o arquivo inalterado em /data/watch_in não foi reingerido após o reinício (1 referência, sem novo evento compress)"
 }
 
 phase_shutdown() {
@@ -947,6 +1107,8 @@ main() {
 
   phase_api
   phase_errors
+  phase_ledger
+  phase_limits
   phase_tenants
   phase_cli
   phase_watch

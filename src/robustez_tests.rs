@@ -783,6 +783,39 @@ fn mutar_envelope_serializado(rng: &mut Rng, bytes: &mut Vec<u8>) {
     }
 }
 
+fn mutar_camada_de_transform(rng: &mut Rng, env: &mut ProcessedFile) -> bool {
+    if env.version < 3 || env.dictionary.is_some() || env.transforms.is_empty() {
+        return false;
+    }
+    let Ok(codec_id) = Codec::try_from(env.codec) else {
+        return false;
+    };
+    let Ok(mut staged) = codec::decode_limited(&env.data, codec_id, None, None, 64 << 20) else {
+        return false;
+    };
+    for _ in 0..1 + rng.abaixo(3) {
+        if rng.abaixo(2) == 0 && staged.len() > 16 {
+            let i = rng.abaixo(staged.len().min(24) as u64) as usize;
+            let mut sujo = Vec::new();
+            varint_sujo(rng, &mut sujo);
+            for (k, b) in sujo.into_iter().enumerate() {
+                if i + k < staged.len() {
+                    staged[i + k] = b;
+                }
+            }
+        } else {
+            mutar(rng, &mut staged);
+        }
+    }
+    match codec::encode(&staged, codec_id, codec::clamp_level(codec_id, 1), None) {
+        Ok(enc) => {
+            env.data = enc;
+            true
+        }
+        Err(_) => false,
+    }
+}
+
 fn mutar_envelope_estruturado(rng: &mut Rng, env: &mut ProcessedFile) {
     for _ in 0..1 + rng.abaixo(4) {
         match rng.abaixo(9) {
@@ -832,7 +865,7 @@ fn fuzz_de_mutacao_do_corpus_dourado_nao_causa_panico() {
 
     for (_, original) in &envelopes {
         for caso in 0..por_envelope {
-            let bytes = if caso % 2 == 0 {
+            let bytes = if caso % 3 == 0 {
                 let mut b = original.clone();
                 mutar_envelope_serializado(&mut rng, &mut b);
                 b
@@ -841,7 +874,9 @@ fn fuzz_de_mutacao_do_corpus_dourado_nao_causa_panico() {
                     Ok(e) => e,
                     Err(_) => continue,
                 };
-                mutar_envelope_estruturado(&mut rng, &mut env);
+                if caso % 3 == 1 || !mutar_camada_de_transform(&mut rng, &mut env) {
+                    mutar_envelope_estruturado(&mut rng, &mut env);
+                }
                 match container::seal(env) {
                     Ok(s) => s.bytes,
                     Err(_) => continue,

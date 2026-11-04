@@ -655,4 +655,112 @@ mod tests {
         assert!(rle_invert(&[5, 1, 2]).is_err());
         assert!(rle_invert(&[200]).is_err());
     }
+
+    fn csv_forjado(rows: u64, cols: u64, lens: &[u64], cauda: &[u8]) -> Vec<u8> {
+        let mut out = vec![CSV_MAGIC, b',', 1];
+        put_varint(&mut out, rows);
+        put_varint(&mut out, cols);
+        for l in lens {
+            put_varint(&mut out, *l);
+        }
+        out.extend_from_slice(cauda);
+        out
+    }
+
+    #[test]
+    fn csv_com_varint_de_comprimento_gigante_devolve_erro_em_vez_de_panico() {
+        let passo_csv = step(Transform::CsvColumnar, 1, 0);
+        for len in [
+            u64::MAX,
+            u64::MAX - 1,
+            usize::MAX as u64,
+            (usize::MAX - 1) as u64,
+            (usize::MAX / 2 + 1) as u64,
+            1 << 63,
+            (1 << 63) - 1,
+            1 << 62,
+            1 << 40,
+        ] {
+            let dados = csv_forjado(1, 2, &[len, 0], b"abc");
+            let r = std::panic::catch_unwind(|| invert(&dados, &passo_csv));
+            let r = r.unwrap_or_else(|_| panic!("pânico com len {len}"));
+            assert!(r.is_err(), "len {len} deveria ser recusado");
+        }
+    }
+
+    #[test]
+    fn csv_com_soma_de_comprimentos_que_estoura_devolve_erro() {
+        let passo_csv = step(Transform::CsvColumnar, 1, 0);
+        let dados = csv_forjado(1, 3, &[usize::MAX as u64, usize::MAX as u64, 5], b"abcdef");
+        let r = std::panic::catch_unwind(|| invert(&dados, &passo_csv));
+        assert!(r.expect("pânico na soma").is_err());
+    }
+
+    #[test]
+    fn csv_com_dimensoes_hostis_devolve_erro_sem_travar_nem_alocar() {
+        let passo_csv = step(Transform::CsvColumnar, 1, 0);
+        for (rows, cols) in [
+            (0, u64::MAX),
+            (u64::MAX, 0),
+            (1 << 40, 1 << 40),
+            (u64::MAX, u64::MAX),
+            (1, 1 << 40),
+            (1 << 40, 1),
+        ] {
+            let dados = csv_forjado(rows, cols, &[], b"");
+            assert!(invert(&dados, &passo_csv).is_err(), "{rows}x{cols}");
+        }
+    }
+
+    #[test]
+    fn invert_limited_barra_a_saida_acima_do_teto_em_todos_os_transforms() {
+        let rle: Vec<u8> = (0..1000).flat_map(|_| [129u8, 7]).collect();
+        let s_rle = step(Transform::Rle, 1, 0);
+        assert_eq!(invert(&rle, &s_rle).unwrap().len(), 128_000);
+        let e = invert_limited(&rle, &s_rle, 127_999).unwrap_err();
+        assert_eq!(crate::codec::too_large_limit(&e), Some(127_999));
+        assert_eq!(invert_limited(&rle, &s_rle, 128_000).unwrap().len(), 128_000);
+
+        let dados = vec![9u8; 4096];
+        for t in [Transform::Delta, Transform::ByteSplit] {
+            let s = step(t, 4, 0);
+            assert!(invert_limited(&dados, &s, 4096).is_ok());
+            let e = invert_limited(&dados, &s, 4095).unwrap_err();
+            assert_eq!(crate::codec::too_large_limit(&e), Some(4095));
+        }
+
+        let csv = csv_sample(true);
+        let s_csv = step(Transform::CsvColumnar, 1, 0);
+        let colunar = apply(&csv, &s_csv).unwrap();
+        assert_eq!(invert_limited(&colunar, &s_csv, csv.len()).unwrap(), csv);
+        let e = invert_limited(&colunar, &s_csv, csv.len() - 1).unwrap_err();
+        assert_eq!(crate::codec::too_large_limit(&e), Some(csv.len() as u64 - 1));
+    }
+
+    #[test]
+    fn input_len_declarado_menor_que_a_saida_e_erro_comum_e_nao_de_teto() {
+        let rle: Vec<u8> = vec![129u8, 7];
+        let s = step(Transform::Rle, 1, 100);
+        let e = invert_limited(&rle, &s, 1 << 20).unwrap_err();
+        assert_eq!(crate::codec::too_large_limit(&e), None, "{e}");
+    }
+
+    #[test]
+    fn cadeia_acima_do_maximo_e_recusada_e_a_do_maximo_passa() {
+        let dados = vec![1u8, 2, 3, 4];
+        let longa: Vec<TransformStep> = (0..MAX_CHAIN + 1).map(|_| step(Transform::Delta, 1, 0)).collect();
+        assert!(invert_chain(&dados, &longa).is_err());
+        let justa: Vec<TransformStep> = (0..MAX_CHAIN).map(|_| step(Transform::Delta, 1, 0)).collect();
+        assert!(invert_chain(&dados, &justa).is_ok());
+    }
+
+    #[test]
+    fn cadeia_limitada_aplica_o_teto_de_estagio_e_o_final() {
+        let mut steps = vec![step(Transform::Rle, 1, 0), step(Transform::Delta, 1, 0)];
+        let original = vec![5u8; 600];
+        let enc = apply_chain(&original, &mut steps).unwrap();
+        assert_eq!(invert_chain_limited(&enc, &steps, 700, 600).unwrap(), original);
+        assert!(invert_chain_limited(&enc, &steps, 700, 599).is_err());
+        assert!(invert_chain_limited(&enc, &steps, 9, 600).is_err());
+    }
 }

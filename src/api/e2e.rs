@@ -9,6 +9,14 @@ use crate::planner::Effort;
 use crate::service::EngineState;
 
 async fn motor(nome: &str, api_keys: Vec<String>) -> (Arc<EngineState>, std::path::PathBuf) {
+    motor_com(nome, api_keys, |_| {}).await
+}
+
+async fn motor_com(
+    nome: &str,
+    api_keys: Vec<String>,
+    ajuste: impl FnOnce(&mut Config),
+) -> (Arc<EngineState>, std::path::PathBuf) {
     let raiz = std::env::temp_dir().join(format!(
         "syntra-e2e-{}-{}-{}",
         nome,
@@ -21,7 +29,7 @@ async fn motor(nome: &str, api_keys: Vec<String>) -> (Arc<EngineState>, std::pat
     let _ = std::fs::remove_dir_all(&raiz);
     std::fs::create_dir_all(&raiz).unwrap();
 
-    let config = Config {
+    let mut config = Config {
         vault_path: raiz.join("vault").to_string_lossy().to_string(),
         sled_index_path: raiz.join("index.sled").to_string_lossy().to_string(),
         dict_path: raiz.join("dicts").to_string_lossy().to_string(),
@@ -41,6 +49,7 @@ async fn motor(nome: &str, api_keys: Vec<String>) -> (Arc<EngineState>, std::pat
         watch_enabled: false,
         watch_delete_source: false,
     };
+    ajuste(&mut config);
 
     let state = Arc::new(EngineState::new(config).await.expect("motor não subiu"));
     (state, raiz)
@@ -1290,5 +1299,309 @@ async fn escopo_invalido_na_emissao_e_recusado() {
     assert_eq!(status, StatusCode::BAD_REQUEST);
     assert_eq!(json(&corpo)["error"]["code"], "invalid_plan");
 
+    limpar(&raiz);
+}
+
+fn post_tipado(uri: &str, tipo: &str, corpo: Vec<u8>) -> Request<Body> {
+    Request::builder()
+        .method("POST")
+        .uri(uri)
+        .header("content-type", tipo)
+        .body(Body::from(corpo))
+        .unwrap()
+}
+
+#[tokio::test]
+async fn corpo_acima_do_limite_devolve_o_json_de_erro_padrao_em_todas_as_rotas_com_corpo() {
+    let (state, raiz) = motor_com("limite", vec![], |c| c.max_body_size_mb = 1).await;
+    let grande = vec![b'a'; (1 << 20) + 1024];
+
+    let octeto = "application/octet-stream";
+    let rotas = [
+        ("/api/v1/compress", octeto),
+        ("/api/v1/decompress", octeto),
+        ("/api/v1/analyze", octeto),
+        ("/api/v1/inspect", octeto),
+        ("/process", octeto),
+        ("/compress", octeto),
+        ("/reconstruct", octeto),
+        ("/decompress", octeto),
+        ("/api/sim/process", octeto),
+        ("/api/v1/admin/tenants", "application/json"),
+        ("/api/v1/admin/tenants/qualquer/keys", "application/json"),
+    ];
+
+    for (rota, tipo) in rotas {
+        let (status, headers, corpo) =
+            enviar_completo(&state, post_tipado(rota, tipo, grande.clone())).await;
+        assert_eq!(status, StatusCode::PAYLOAD_TOO_LARGE, "rota {rota}");
+        let content_type = headers["content-type"].to_str().unwrap().to_string();
+        assert!(
+            content_type.starts_with("application/json"),
+            "rota {rota}: content-type {content_type}"
+        );
+        assert!(headers.contains_key("x-request-id"), "rota {rota}");
+
+        let j = json(&corpo);
+        assert_eq!(j["error"]["code"], "payload_too_large", "rota {rota}");
+        assert!(
+            j["error"]["message"].as_str().unwrap().contains("1 MB"),
+            "rota {rota}: {}",
+            j["error"]["message"]
+        );
+        assert!(
+            j["error"]["hint"].as_str().unwrap().contains("SYNTRA_MAX_BODY_MB"),
+            "rota {rota}: {}",
+            j["error"]["hint"]
+        );
+    }
+
+    let (status, _) = enviar(
+        &state,
+        post("/api/v1/compress?filename=v.csv&persist=false", csv(100)),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK, "corpo abaixo do limite deve passar");
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn corpo_acima_do_limite_respeita_a_autenticacao_e_o_cors() {
+    let (state, raiz) = motor_com("limite-auth", vec!["segredo".to_string()], |c| {
+        c.max_body_size_mb = 1;
+    })
+    .await;
+    let grande = vec![b'a'; (1 << 20) + 1024];
+
+    let (status, corpo) = enviar(&state, post("/api/v1/compress", grande.clone())).await;
+    assert_eq!(status, StatusCode::UNAUTHORIZED);
+    assert_eq!(json(&corpo)["error"]["code"], "unauthorized");
+
+    let req = Request::builder()
+        .method("POST")
+        .uri("/api/v1/compress")
+        .header("x-api-key", "segredo")
+        .header("origin", "https://exemplo.test")
+        .body(Body::from(grande))
+        .unwrap();
+    let (status, headers, corpo) = enviar_completo(&state, req).await;
+    assert_eq!(status, StatusCode::PAYLOAD_TOO_LARGE);
+    assert_eq!(json(&corpo)["error"]["code"], "payload_too_large");
+    assert!(headers.contains_key("access-control-allow-origin"));
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn ledger_registra_bytes_e_cpu_de_analyze_decompress_e_leitura() {
+    use crate::tenancy::{PlanKind, Scope};
+
+    let (state, raiz) = motor("ledger", vec![]).await;
+    let chave = cria_tenant(
+        &state,
+        "empresa",
+        PlanKind::SavingsShare,
+        vec![Scope::Compress, Scope::Read],
+    )
+    .await;
+
+    let original = csv(30_000);
+    let (status, headers, essencia) = enviar_completo(
+        &state,
+        post_com_chave(
+            "/api/v1/compress?filename=v.csv&effort=balanced",
+            &chave,
+            original.clone(),
+        ),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    let id = headers["x-syntra-id"].to_str().unwrap().to_string();
+    let payload_gravado: i64 = headers["x-syntra-essence-size"].to_str().unwrap().parse().unwrap();
+
+    let fatura_antes = {
+        let (_, u) = enviar(&state, get_com_chave("/api/v1/usage", &chave)).await;
+        json(&u)["quote"]["amount_micro_cents"].as_i64().unwrap()
+    };
+
+    let (status, _) = enviar(
+        &state,
+        post_com_chave("/api/v1/analyze?filename=v.csv&effort=balanced", &chave, original.clone()),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+
+    let (status, _, devolvido) = enviar_completo(
+        &state,
+        post_com_chave("/api/v1/decompress", &chave, essencia.clone()),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(devolvido, original);
+
+    let (status, _, _) = enviar_completo(
+        &state,
+        get_com_chave(&format!("/api/v1/objects/{id}/content"), &chave),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+
+    let (status, _, _) = enviar_completo(
+        &state,
+        get_com_chave(&format!("/api/v1/objects/{id}/essence"), &chave),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+
+    let (_, corpo) = enviar(&state, get_com_chave("/api/v1/usage?events=50", &chave)).await;
+    let u = json(&corpo);
+    let eventos = u["recent"].as_array().unwrap();
+    let achar = |operacao: &str, n: usize| -> Vec<&serde_json::Value> {
+        let v: Vec<_> = eventos.iter().filter(|e| e["operation"] == operacao).collect();
+        assert_eq!(v.len(), n, "eventos de {operacao}: {eventos:?}");
+        v
+    };
+
+    let analyze = achar("analyze", 1)[0];
+    assert_eq!(analyze["bytes_in"].as_i64().unwrap(), original.len() as i64);
+    assert!(analyze["bytes_out"].as_i64().unwrap() > 0, "analyze sem bytes_out: {analyze}");
+    assert!(analyze["cpu_ms"].as_f64().unwrap() > 0.0, "analyze sem cpu_ms: {analyze}");
+
+    let decompress = achar("decompress", 1)[0];
+    assert_eq!(decompress["bytes_in"].as_i64().unwrap(), essencia.len() as i64);
+    assert_eq!(decompress["bytes_out"].as_i64().unwrap(), original.len() as i64);
+    assert!(decompress["cpu_ms"].as_f64().unwrap() > 0.0, "decompress sem cpu_ms: {decompress}");
+
+    let leituras = achar("read", 2);
+    let conteudo = leituras
+        .iter()
+        .find(|e| e["bytes_out"].as_i64().unwrap() == original.len() as i64)
+        .expect("leitura de /content");
+    assert_eq!(conteudo["bytes_in"].as_i64().unwrap(), payload_gravado);
+    assert!(conteudo["cpu_ms"].as_f64().unwrap() > 0.0, "leitura sem cpu_ms: {conteudo}");
+
+    let essencia_lida = leituras
+        .iter()
+        .find(|e| e["bytes_out"].as_i64().unwrap() == essencia.len() as i64)
+        .expect("leitura de /essence");
+    assert_eq!(essencia_lida["bytes_in"].as_i64().unwrap(), essencia.len() as i64);
+    assert!(essencia_lida["cpu_ms"].as_f64().unwrap() >= 0.0);
+
+    assert_eq!(
+        u["quote"]["amount_micro_cents"].as_i64().unwrap(),
+        fatura_antes,
+        "analyze, decompress e leitura não podem alterar a fatura"
+    );
+    let compress = u["totals"]["by_operation"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|b| b["operation"] == "compress")
+        .unwrap();
+    assert_eq!(compress["bytes_in"].as_i64().unwrap(), original.len() as i64);
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn teto_de_descompressao_da_configuracao_devolve_422_com_codigo_estavel() {
+    let (state, raiz) = motor_com("teto", vec![], |c| c.max_decompressed_mb = 1).await;
+
+    let grande = csv(60_000);
+    assert!(grande.len() > 2 << 20, "o CSV de teste deveria passar de 2 MiB");
+    let (status, headers, essencia) = enviar_completo(
+        &state,
+        post("/api/v1/compress?filename=grande.csv&effort=fast", grande.clone()),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK, "{}", String::from_utf8_lossy(&essencia));
+    let id = headers["x-syntra-id"].to_str().unwrap().to_string();
+
+    let (status, corpo) = enviar(&state, post("/api/v1/decompress", essencia.clone())).await;
+    assert_eq!(status, StatusCode::UNPROCESSABLE_ENTITY);
+    let j = json(&corpo);
+    assert_eq!(j["error"]["code"], "decompressed_too_large");
+    assert!(j["error"]["hint"].as_str().unwrap().contains("SYNTRA_MAX_DECOMPRESSED_MB"));
+
+    let (status, corpo) = enviar(&state, get(&format!("/api/v1/objects/{id}/content"))).await;
+    assert_eq!(status, StatusCode::UNPROCESSABLE_ENTITY);
+    assert_eq!(json(&corpo)["error"]["code"], "decompressed_too_large");
+
+    let (status, _) = enviar(&state, get(&format!("/api/v1/objects/{id}/essence"))).await;
+    assert_eq!(status, StatusCode::OK, "ler a essência crua não descomprime e não tem teto");
+
+    let pequeno = csv(1_000);
+    let (status, _, essencia) = enviar_completo(
+        &state,
+        post("/api/v1/compress?filename=pequeno.csv&persist=false", pequeno.clone()),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    let (status, _, volta) = enviar_completo(&state, post("/api/v1/decompress", essencia)).await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(volta, pequeno, "dentro do teto a reconstrução continua idêntica");
+
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn envelope_forjado_com_bomba_vira_422_sem_derrubar_o_servico() {
+    use crate::proto::ProcessedFile;
+
+    let (state, raiz) = motor_com("bomba", vec![], |c| c.max_decompressed_mb = 8).await;
+
+    let mut zeros = Vec::new();
+    {
+        use std::io::Write;
+        let mut enc = xz2::write::XzEncoder::new(Vec::new(), 1);
+        let bloco = vec![0u8; 1 << 20];
+        for _ in 0..256 {
+            enc.write_all(&bloco).unwrap();
+        }
+        zeros.extend_from_slice(&enc.finish().unwrap());
+    }
+    assert!(zeros.len() < 64 * 1024, "a bomba deveria ser minúscula: {}", zeros.len());
+
+    let forjado = ProcessedFile {
+        version: 3,
+        original_name: "bomba.bin".to_string(),
+        original_size: 1 << 20,
+        data: zeros,
+        codec: crate::codec::Codec::Xz as i32,
+        ..Default::default()
+    };
+    let bytes = crate::container::seal(forjado).unwrap().bytes;
+
+    let (status, corpo) = enviar(&state, post("/api/v1/decompress", bytes)).await;
+    assert_eq!(status, StatusCode::UNPROCESSABLE_ENTITY);
+    assert_eq!(json(&corpo)["error"]["code"], "decompressed_too_large");
+
+    let (status, _) = enviar(&state, get("/health")).await;
+    assert_eq!(status, StatusCode::OK);
+    limpar(&raiz);
+}
+
+#[tokio::test]
+async fn contrato_documenta_o_413_e_o_codigo_de_teto() {
+    let (state, raiz) = motor("openapi-413", vec![]).await;
+    let (_, corpo) = enviar(&state, get("/api/v1/openapi.json")).await;
+    let doc = json(&corpo);
+
+    let codigos: Vec<&str> = doc["components"]["schemas"]["Error"]["properties"]["error"]
+        ["properties"]["code"]["enum"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|c| c.as_str().unwrap())
+        .collect();
+    assert!(codigos.contains(&"payload_too_large"));
+    assert!(codigos.contains(&"decompressed_too_large"));
+
+    for rota in ["/api/v1/compress", "/api/v1/decompress", "/api/v1/analyze", "/api/v1/inspect"] {
+        let resposta = &doc["paths"][rota]["post"]["responses"]["413"];
+        assert!(resposta.is_object(), "rota {rota} sem resposta 413 documentada");
+    }
+    assert!(doc["components"]["responses"]["PayloadTooLarge"].is_object());
     limpar(&raiz);
 }

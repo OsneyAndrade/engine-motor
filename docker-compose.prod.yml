@@ -48,7 +48,7 @@ services:
       SYNTRA_COMPRESS_MULTIPLIER: 4
       RUST_LOG: engine=info,tower_http=warn
     ports:
-      - "3002:3002"
+      - "${SYNTRA_PUBLISH_HOST:-127.0.0.1}:${SYNTRA_PUBLISH_PORT:-3002}:3002"
     volumes:
       - syntra_data_prod:/data
     depends_on:

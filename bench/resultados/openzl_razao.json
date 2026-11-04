@@ -1,0 +1,4204 @@
+{
+ "data": "2026-11-04 16:27:34",
+ "protocolo": {
+  "cpus_conteiner": "16-31",
+  "memoria": "12g",
+  "rede": "none",
+  "dados": "somente leitura",
+  "saida": "tmpfs",
+  "tempo_medido": false,
+  "nivel_openzl_padrao": 6,
+  "treino": "primeira metade da fatia; teste: segunda metade; sem sobreposicao",
+  "treino_max_time_secs": 360,
+  "treino_threads": 16,
+  "baselines": "zstd 1/3/19 via compression.zstd (sem checksum), xz -9e via lzma (CRC64), mesma fatia de teste",
+  "openzl_checksums": "conteudo e comprimido, ligados por padrao na biblioteca"
+ },
+ "itens": [
+  {
+   "id": "dickens",
+   "classe": "texto",
+   "sintetico": false,
+   "teste_bytes": 5096179,
+   "treino_bytes": 5096267,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:5096267], teste = fatia[5096267:10192446]",
+   "sha256_teste": "6266723ecc8b3ae7008dd9da976db33a6556353a17993fd5ecf45a5c0ab6df48",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 2144056,
+     "razao": 2.376887077576332,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 1845097,
+     "razao": 2.762011428125459,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 1467781,
+     "razao": 3.472029546642176,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 1454884,
+     "razao": 3.5028077839882767,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/dickens/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1751300,
+     "razao": 2.9099406155427396,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "9d36708ace8a5188483a6ab7d2009d9ed24783a7c76e21166d01b1afcb0bac93",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 25,
+       "zl.private.bitpack_int": 26,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 54
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "1\\n Header size: 0\"];\nS109 -> T111[label=\"#0\"];\nT112 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 112\\n Header size: 0\"];\nS112 -> T112[label=\"#0\"];\nT113 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 113\\n Header size: 0\"];\nS113 -> T113[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 5096179\\nCSize: 5096179\\nShare: 290.99%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/dickens/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1703383,
+     "razao": 2.991798673580751,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "dc57a17eb5c37418f4cd82f0564c16de516ec051d3bbbad7569b73d487ce3baa",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 23,
+       "zl.private.bitpack_int": 24,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 50
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "3\\n Header size: 0\"];\nS101 -> T103[label=\"#0\"];\nT104 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 104\\n Header size: 0\"];\nS104 -> T104[label=\"#0\"];\nT105 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 105\\n Header size: 0\"];\nS105 -> T105[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 5096179\\nCSize: 5096179\\nShare: 299.18%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:serial": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/dickens__serial.zlc",
+      "--strict",
+      "/dados/dickens/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1659012,
+     "razao": 3.0718156348477286,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "f18d6b0c5131e0ea273c02393f828e5aa16d6b35d8a9f31b3481e0c14191035c",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.private.zstd": 1,
+       "zl.store": 1
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "record, label=\"zl.private.zstd(ID: 22)\\n Standard transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (100, 9)\"];\nT1 -> S1[label=\"#0\"];\nS0 -> T1[label=\"#0\"];\n}\nT2 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 2\\n Header size: 0\"];\nS1 -> T2[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 5096179\\nCSize: 5096179\\nShare: 307.18%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "serial"
+    }
+   },
+   "treinos": {
+    "treinado:serial": {
+     "perfil": "serial",
+     "rc": 0,
+     "tamanho_compressor_bytes": 564,
+     "sha256_compressor": "d1e80172e43969cd6da7c8529dd57e48e243ba56a70d0c0d18f1835f2520b98e",
+     "tempo_relogio_s": 77.6,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/dickens__serial.zlc",
+     "log": "=========--] Training ACE graph 1 / 1: ACE progress\n[=================================================-] Training ACE graph 1 / 1: ACE progress\n[==================================================] Training ACE graph 1 / 1: ACE progress\n[==================================================] Benchmarking candidates: 1 / 1\nTrained 1 compressors in 1.250506 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 1274037 -> 432948 (2.94),  44.43 MB/s  1103.06 MB/s\n2 files: 2548127 -> 855928 (2.98),  44.45 MB/s  1109.00 MB/s\n3 files: 3822233 -> 1272574 (3.00),  44.75 MB/s  1114.65 MB/s\n4 files: 5096267 -> 1699452 (3.00),  44.56 MB/s  1112.95 MB/s\nTraining improved compression ratio by 4.39%",
+     "ganho_in_sample_pct": 4.39,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 1274037,
+       "bytes_comp": 432948,
+       "razao": 2.94
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 2548127,
+       "bytes_comp": 855928,
+       "razao": 2.98
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 3822233,
+       "bytes_comp": 1272574,
+       "razao": 3.0
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 5096267,
+       "bytes_comp": 1699452,
+       "razao": 3.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "webster",
+   "classe": "texto",
+   "sintetico": false,
+   "teste_bytes": 8388544,
+   "treino_bytes": 8388672,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:8388672], teste = fatia[8388672:16777216]",
+   "sha256_teste": "7c51f84cac0683cd328cd9eb7a69485106fbbfaf93c299e3d6d85191178a9f4f",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 2767371,
+     "razao": 3.03123216944891,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 2454091,
+     "razao": 3.418187834110471,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 1826961,
+     "razao": 4.59152877373956,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 1812040,
+     "razao": 4.629337100726254,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/webster/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2253444,
+     "razao": 3.722543804061694,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "f05a3ce4cdebb23e390392d841caebf2a78a46fa22ec088b9cdaaf6fdfdb6920",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 32,
+       "zl.private.bitpack_int": 33,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 68
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "9\\n Header size: 0\"];\nS137 -> T139[label=\"#0\"];\nT140 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 140\\n Header size: 0\"];\nS140 -> T140[label=\"#0\"];\nT141 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 141\\n Header size: 0\"];\nS141 -> T141[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388544\\nCSize: 8388544\\nShare: 372.25%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/webster/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2183635,
+     "razao": 3.841550442267137,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "d29b68359f9e91f0819dcdce3944e8fd1e82abb7581f9c29cbecf3f48af11ca9",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 29,
+       "zl.private.bitpack_int": 30,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 62
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "7\\n Header size: 0\"];\nS125 -> T127[label=\"#0\"];\nT128 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 128\\n Header size: 0\"];\nS128 -> T128[label=\"#0\"];\nT129 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 129\\n Header size: 0\"];\nS129 -> T129[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388544\\nCSize: 8388544\\nShare: 384.16%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    }
+   },
+   "treinos": {}
+  },
+  {
+   "id": "reymont",
+   "classe": "texto",
+   "sintetico": false,
+   "teste_bytes": 3309722,
+   "treino_bytes": 3317480,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:3317480], teste = fatia[3317480:6627202]",
+   "sha256_teste": "06a63bf565e6a71e600e2781759efcd9720ebc8edd07c8186890fbebac8955ac",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 1075652,
+     "razao": 3.0769449598940923,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 978368,
+     "razao": 3.382900912540067,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 703309,
+     "razao": 4.705928688528086,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 686016,
+     "razao": 4.824555112417203,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/reymont/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 916718,
+     "razao": 3.610403635578226,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "c8484b5d87502bea4877cb79c9532fe650309c98e83345ae484baa9cc7cc0c23",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 14,
+       "zl.private.bitpack_int": 15,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 33
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ransform 68\\n Header size: 0\"];\nS66 -> T68[label=\"#0\"];\nT69 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 69\\n Header size: 0\"];\nS69 -> T69[label=\"#0\"];\nT70 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 70\\n Header size: 0\"];\nS70 -> T70[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 3309722\\nCSize: 3309722\\nShare: 361.04%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/reymont/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 885568,
+     "razao": 3.737400177061502,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "429c03334cda517511e32efb4348307aded67a4bc360ffdcde004b05ed6550a3",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 13,
+       "zl.private.bitpack_int": 14,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 31
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ransform 64\\n Header size: 0\"];\nS62 -> T64[label=\"#0\"];\nT65 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 65\\n Header size: 0\"];\nS65 -> T65[label=\"#0\"];\nT66 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 66\\n Header size: 0\"];\nS66 -> T66[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 3309722\\nCSize: 3309722\\nShare: 373.74%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    }
+   },
+   "treinos": {}
+  },
+  {
+   "id": "bible.txt",
+   "classe": "texto",
+   "sintetico": false,
+   "teste_bytes": 2023622,
+   "treino_bytes": 2023770,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:2023770], teste = fatia[2023770:4047392]",
+   "sha256_teste": "713467f32f76486bdd9362cf99c46f3eba5a628b203409eabadbe3828b83b87a",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 672785,
+     "razao": 3.0078286525413023,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 608406,
+     "razao": 3.3261046077783587,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 478976,
+     "razao": 4.224892270176376,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 476300,
+     "razao": 4.2486290153264745,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/bible.txt/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 570395,
+     "razao": 3.5477555027656273,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "f3a73845a2181a101217255feb96463302783c4d30fc166224e91e4b73c98af6",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 8,
+       "zl.private.bitpack_int": 9,
+       "zl.private.splitN": 1,
+       "zl.sentinel_byte": 1,
+       "zl.store": 20
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ransform 42\\n Header size: 0\"];\nS40 -> T42[label=\"#0\"];\nT43 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 43\\n Header size: 0\"];\nS43 -> T43[label=\"#0\"];\nT44 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 44\\n Header size: 0\"];\nS44 -> T44[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 2023622\\nCSize: 2023622\\nShare: 354.78%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/bible.txt/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 557358,
+     "razao": 3.630740027056219,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "4305c08cc459894273cc417e5ab264c0e44acda3013082ce189f2e7416f0b275",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 7,
+       "zl.private.bitpack_int": 8,
+       "zl.private.splitN": 1,
+       "zl.sentinel_byte": 1,
+       "zl.store": 18
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ransform 38\\n Header size: 0\"];\nS36 -> T38[label=\"#0\"];\nT39 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 39\\n Header size: 0\"];\nS39 -> T39[label=\"#0\"];\nT40 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 40\\n Header size: 0\"];\nS40 -> T40[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 2023622\\nCSize: 2023622\\nShare: 363.07%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    }
+   },
+   "treinos": {}
+  },
+  {
+   "id": "world192.txt",
+   "classe": "texto",
+   "sintetico": false,
+   "teste_bytes": 1236657,
+   "treino_bytes": 1236743,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:1236743], teste = fatia[1236743:2473400]",
+   "sha256_teste": "170fba5b31e357b66b42e67486ea6e31e76783b29b1592fa34146454bf5ba78e",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 377959,
+     "razao": 3.2719342574194554,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 331036,
+     "razao": 3.7357175654611585,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 266776,
+     "razao": 4.635563169100669,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 255636,
+     "razao": 4.837569825846125,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/world192.txt/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 311949,
+     "razao": 3.964292240077705,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "cd2a1efc20ecc33122a149b7566046d6e30443e30878de5cc75b41f36704edf8",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 2,
+       "zl.private.bitpack_int": 3,
+       "zl.sentinel_byte": 1,
+       "zl.store": 8
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ransform 17\\n Header size: 0\"];\nS15 -> T17[label=\"#0\"];\nT18 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 18\\n Header size: 0\"];\nS18 -> T18[label=\"#0\"];\nT19 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 19\\n Header size: 0\"];\nS19 -> T19[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 1236657\\nCSize: 1236657\\nShare: 396.43%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/world192.txt/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 303954,
+     "razao": 4.068566296215875,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "be281aad7c7f7e7200fd16199b34899b391e1d2997f96c08c6aa7461c50c6c0e",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 2,
+       "zl.private.bitpack_int": 3,
+       "zl.sentinel_byte": 1,
+       "zl.store": 8
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ransform 17\\n Header size: 0\"];\nS15 -> T17[label=\"#0\"];\nT18 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 18\\n Header size: 0\"];\nS18 -> T18[label=\"#0\"];\nT19 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 19\\n Header size: 0\"];\nS19 -> T19[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 1236657\\nCSize: 1236657\\nShare: 406.86%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    }
+   },
+   "treinos": {}
+  },
+  {
+   "id": "samba",
+   "classe": "codigo",
+   "sintetico": false,
+   "teste_bytes": 8388605,
+   "treino_bytes": 8388611,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:8388611], teste = fatia[8388611:16777216]",
+   "sha256_teste": "824c4395fa44321ec4353c05ad63d509fed061341d8b2ff4b0ad639430047324",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 1557624,
+     "razao": 5.385513448688515,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 1427685,
+     "razao": 5.875669352833433,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 1026693,
+     "razao": 8.17050958757876,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 941236,
+     "razao": 8.91232910768394,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/samba/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1456725,
+     "razao": 5.7585371295199845,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "1421a7a0f3af5f7adb837b840467ba5de449bb633d0125cbb51431b086b1e525",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 26,
+       "zl.private.bitpack_int": 28,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 57
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "7\\n Header size: 0\"];\nS116 -> T117[label=\"#0\"];\nT118 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 118\\n Header size: 0\"];\nS118 -> T118[label=\"#0\"];\nT119 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 119\\n Header size: 0\"];\nS119 -> T119[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388605\\nCSize: 8388605\\nShare: 575.85%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/samba/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1426599,
+     "razao": 5.880142212352595,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "f8c5453806f047058eaf7074e7c030ae70ed337a941eecb266a531ad4af95049",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 24,
+       "zl.private.bitpack_int": 26,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 53
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "9\\n Header size: 0\"];\nS108 -> T109[label=\"#0\"];\nT110 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 110\\n Header size: 0\"];\nS110 -> T110[label=\"#0\"];\nT111 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 111\\n Header size: 0\"];\nS111 -> T111[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388605\\nCSize: 8388605\\nShare: 588.01%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:serial": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/samba__serial.zlc",
+      "--strict",
+      "/dados/samba/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1203536,
+     "razao": 6.969966000186118,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "6208f15249bd150286a72003a0149a5f7b26055ca06e663ff30b7499d6027146",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.private.zstd": 1,
+       "zl.store": 1
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "record, label=\"zl.private.zstd(ID: 22)\\n Standard transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (100, 9)\"];\nT1 -> S1[label=\"#0\"];\nS0 -> T1[label=\"#0\"];\n}\nT2 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 2\\n Header size: 0\"];\nS1 -> T2[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388605\\nCSize: 8388605\\nShare: 697.00%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "serial"
+    }
+   },
+   "treinos": {
+    "treinado:serial": {
+     "perfil": "serial",
+     "rc": 0,
+     "tamanho_compressor_bytes": 564,
+     "sha256_compressor": "d1e80172e43969cd6da7c8529dd57e48e243ba56a70d0c0d18f1835f2520b98e",
+     "tempo_relogio_s": 297.8,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/samba__serial.zlc",
+     "log": "========--] Training ACE graph 1 / 1: ACE progress\n[=================================================-] Training ACE graph 1 / 1: ACE progress\n[==================================================] Training ACE graph 1 / 1: ACE progress\n[==================================================] Benchmarking candidates: 1 / 1\nTrained 1 compressors in 4.924449 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 2097127 -> 350920 (5.98),  77.86 MB/s  1680.88 MB/s\n2 files: 4194334 -> 1488452 (2.82),  82.21 MB/s  1919.75 MB/s\n3 files: 6291517 -> 1997751 (3.15),  79.49 MB/s  1751.09 MB/s\n4 files: 8388611 -> 2590003 (3.24),  82.78 MB/s  1769.09 MB/s\nTraining improved compression ratio by 3.96%",
+     "ganho_in_sample_pct": 3.96,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 2097127,
+       "bytes_comp": 350920,
+       "razao": 5.98
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 4194334,
+       "bytes_comp": 1488452,
+       "razao": 2.82
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 6291517,
+       "bytes_comp": 1997751,
+       "razao": 3.15
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 8388611,
+       "bytes_comp": 2590003,
+       "razao": 3.24
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "mozilla",
+   "classe": "binario",
+   "sintetico": false,
+   "teste_bytes": 8388608,
+   "treino_bytes": 8388608,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:8388608], teste = fatia[8388608:16777216]",
+   "sha256_teste": "19e47d35b617070a3c907723e423157d4b43fe8594a92cd2b886749ee7d9a4a9",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 2740855,
+     "razao": 3.0605807311951927,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 2457785,
+     "razao": 3.413076408229361,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 1979494,
+     "razao": 4.237753688568897,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 1719224,
+     "razao": 4.879299032586795,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/mozilla/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2577899,
+     "razao": 3.2540483548812422,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "15671f77cc9d905a44fefdb207ae3f5afccec765a8ed4efb35a360d82b2a605e",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 58,
+       "zl.private.bitpack_int": 60,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 121
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "5\\n Header size: 0\"];\nS244 -> T245[label=\"#0\"];\nT246 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 246\\n Header size: 0\"];\nS246 -> T246[label=\"#0\"];\nT247 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 247\\n Header size: 0\"];\nS247 -> T247[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388608\\nCSize: 8388608\\nShare: 325.40%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/mozilla/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2531870,
+     "razao": 3.3132064442487175,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "f72e2fc6eba7e2a052b22b6789e949ad507ceb4033776ad3cef3388a51a7b7b0",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 54,
+       "zl.private.bitpack_int": 56,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 114
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "0\\n Header size: 0\"];\nS229 -> T230[label=\"#0\"];\nT231 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 231\\n Header size: 0\"];\nS231 -> T231[label=\"#0\"];\nT232 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 232\\n Header size: 0\"];\nS232 -> T232[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388608\\nCSize: 8388608\\nShare: 331.32%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:serial": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/mozilla__serial.zlc",
+      "--strict",
+      "/dados/mozilla/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2217388,
+     "razao": 3.783103363055992,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "676355eed2debf4fede25604b06ff3c733a8d8eb0bd12775e5b0126fab111c5b",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.private.zstd": 1,
+       "zl.store": 1
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "record, label=\"zl.private.zstd(ID: 22)\\n Standard transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (100, 9)\"];\nT1 -> S1[label=\"#0\"];\nS0 -> T1[label=\"#0\"];\n}\nT2 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 2\\n Header size: 0\"];\nS1 -> T2[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388608\\nCSize: 8388608\\nShare: 378.31%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "serial"
+    }
+   },
+   "treinos": {
+    "treinado:serial": {
+     "perfil": "serial",
+     "rc": 0,
+     "tamanho_compressor_bytes": 564,
+     "sha256_compressor": "d1e80172e43969cd6da7c8529dd57e48e243ba56a70d0c0d18f1835f2520b98e",
+     "tempo_relogio_s": 139.0,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/mozilla__serial.zlc",
+     "log": "=====--] Training ACE graph 1 / 1: ACE progress\n[=================================================-] Training ACE graph 1 / 1: ACE progress\n[==================================================] Training ACE graph 1 / 1: ACE progress\n[==================================================] Benchmarking candidates: 1 / 1\nTrained 1 compressors in 2.283666 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 2097152 -> 1668098 (1.26),  123.51 MB/s  3743.45 MB/s\n2 files: 4194304 -> 2370061 (1.77),  94.89 MB/s  1722.92 MB/s\n3 files: 6291456 -> 3963496 (1.59),  103.93 MB/s  2078.71 MB/s\n4 files: 8388608 -> 4542068 (1.85),  92.59 MB/s  1687.12 MB/s\nTraining improved compression ratio by 4.49%",
+     "ganho_in_sample_pct": 4.49,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 2097152,
+       "bytes_comp": 1668098,
+       "razao": 1.26
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 4194304,
+       "bytes_comp": 2370061,
+       "razao": 1.77
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 6291456,
+       "bytes_comp": 3963496,
+       "razao": 1.59
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 8388608,
+       "bytes_comp": 4542068,
+       "razao": 1.85
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "ooffice",
+   "classe": "binario",
+   "sintetico": false,
+   "teste_bytes": 3076096,
+   "treino_bytes": 3076096,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:3076096], teste = fatia[3076096:6152192]",
+   "sha256_teste": "1586566e427bd91ddb8a73f3e58f40adf9199521207975d7b0cf0d7d720fedce",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 1651854,
+     "razao": 1.8622081612539607,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 1437076,
+     "razao": 2.140524231147135,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 1206253,
+     "razao": 2.5501250566837967,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 1112672,
+     "razao": 2.7646026861465014,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/ooffice/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1454000,
+     "razao": 2.1156093535075655,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "93dd16f710ca1c7402d9a9ec17f4700835394215751462221fb76d2b49da1e71",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 36,
+       "zl.private.bitpack_int": 38,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 77
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "7\\n Header size: 0\"];\nS156 -> T157[label=\"#0\"];\nT158 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 158\\n Header size: 0\"];\nS158 -> T158[label=\"#0\"];\nT159 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 159\\n Header size: 0\"];\nS159 -> T159[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 3076096\\nCSize: 3076096\\nShare: 211.56%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/ooffice/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1442805,
+     "razao": 2.1320247711922264,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "84c0c652936ffa87a7bf1d15886b1dedf494237a92b7b4a5fb37ee228f936274",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 35,
+       "zl.private.bitpack_int": 37,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 75
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "3\\n Header size: 0\"];\nS152 -> T153[label=\"#0\"];\nT154 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 154\\n Header size: 0\"];\nS154 -> T154[label=\"#0\"];\nT155 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 155\\n Header size: 0\"];\nS155 -> T155[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 3076096\\nCSize: 3076096\\nShare: 213.20%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    }
+   },
+   "treinos": {}
+  },
+  {
+   "id": "sao",
+   "classe": "cientifico",
+   "sintetico": false,
+   "teste_bytes": 3625972,
+   "treino_bytes": 3625972,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:3625972], teste = fatia[3625972:7251944]",
+   "sha256_teste": "8bddeff6e12e501c489af88176b92926805cc21122d86ac88c8d1f85b6891409",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 3157399,
+     "razao": 1.148404747071878,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 2779563,
+     "razao": 1.3045115365257056,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 2511677,
+     "razao": 1.4436458191081099,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 2227188,
+     "razao": 1.628049360898137,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/sao/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2658292,
+     "razao": 1.3640232149064135,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "b284f56f53d3088fa3a3bca3ead1322fc58b98c2f0ec34b9fccbb93165c73ae2",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 70,
+       "zl.private.bitpack_int": 71,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 145
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "2\\n Header size: 0\"];\nS290 -> T292[label=\"#0\"];\nT293 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 293\\n Header size: 0\"];\nS293 -> T293[label=\"#0\"];\nT294 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 294\\n Header size: 0\"];\nS294 -> T294[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 3625972\\nCSize: 3625972\\nShare: 136.40%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/sao/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2637910,
+     "razao": 1.3745624376874117,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "4f2d16eb3067c4db23f02f023be9f7f90fadc042db9886cefe1a4a67ac624af4",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 69,
+       "zl.private.bitpack_int": 70,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 142
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "7\\n Header size: 0\"];\nS285 -> T287[label=\"#0\"];\nT288 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 288\\n Header size: 0\"];\nS288 -> T288[label=\"#0\"];\nT289 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 289\\n Header size: 0\"];\nS289 -> T289[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 3625972\\nCSize: 3625972\\nShare: 137.46%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "perfil:sao": {
+     "argumentos": [
+      "--profile",
+      "sao",
+      "--strict",
+      "/dados/sao/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1803064,
+     "razao": 2.011005710279835,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "49cc2fb0854729218017a7ab82ef1744a1b487389d5936bc101454b3bbffb085",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 1,
+      "codecs": {
+       "zl.#start": 1,
+       "zl.convert_num_to_serial_le": 23,
+       "zl.convert_num_to_struct_le": 5,
+       "zl.convert_serial_to_num8": 1,
+       "zl.convert_struct_to_num_le": 6,
+       "zl.convert_struct_to_serial": 4,
+       "zl.delta_int": 2,
+       "zl.field_lz": 5,
+       "zl.private.bitpack_int": 19,
+       "zl.private.fse_ncount": 4,
+       "zl.private.fse_v2": 4,
+       "zl.private.huffman_v2": 18,
+       "zl.private.splitN": 3,
+       "zl.private.zstd": 10,
+       "zl.quantize_lengths": 3,
+       "zl.quantize_offsets": 3,
+       "zl.split_by_struct": 1,
+       "zl.store": 90,
+       "zl.tokenize_numeric": 2,
+       "zl.tokenize_struct": 5,
+       "zl.transpose_split": 6
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "l=\"#0\"];\nT209 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 209\\n Header size: 0\"];\nS206 -> T209[label=\"#0\"];\nT210 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 210\\n Header size: 0\"];\nS207 -> T210[label=\"#0\"];\nT211 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 211\\n Header size: 0\"];\nS208 -> T211[label=\"#0\"];\nT212 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 212\\n Header size: 0\"];\nS211 -> T212[label=\"#0\"];\nT213 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 213\\n Header size: 0\"];\nS212 -> T213[label=\"#0\"];\nT214 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 214\\n Header size: 0\"];\nS213 -> T214[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:sao": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/sao__sao.zlc",
+      "--strict",
+      "/dados/sao/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1180487,
+     "razao": 3.0715899455055413,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "7788cd1053a5b7e66a89414e5949146577a259ed04a96fa08e7aa8f2f2702db1",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 1,
+      "codecs": {
+       "zl.#start": 1,
+       "zl.convert_num_to_serial_le": 28,
+       "zl.convert_num_to_struct_le": 8,
+       "zl.convert_struct_to_num_be": 1,
+       "zl.convert_struct_to_num_le": 5,
+       "zl.delta_int": 19,
+       "zl.private.bitpack_int": 5,
+       "zl.private.fse_ncount": 24,
+       "zl.private.fse_v2": 24,
+       "zl.private.huffman_struct_v2": 13,
+       "zl.private.splitN": 3,
+       "zl.private.splitN_struct": 3,
+       "zl.private.tokenize_sorted": 11,
+       "zl.private.zstd": 18,
+       "zl.sparse_num": 3,
+       "zl.split_by_struct": 1,
+       "zl.store": 89,
+       "zl.tokenize_numeric": 8,
+       "zl.transpose_split": 4
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "l=\"#0\"];\nT262 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 262\\n Header size: 0\"];\nS257 -> T262[label=\"#0\"];\nT263 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 263\\n Header size: 0\"];\nS258 -> T263[label=\"#0\"];\nT264 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 264\\n Header size: 0\"];\nS261 -> T264[label=\"#0\"];\nT265 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 265\\n Header size: 0\"];\nS262 -> T265[label=\"#0\"];\nT266 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 266\\n Header size: 0\"];\nS265 -> T266[label=\"#0\"];\nT267 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 267\\n Header size: 0\"];\nS266 -> T267[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "sao"
+    },
+    "perfil:sddl2(sao_silesia.sddl)": {
+     "argumentos": [
+      "--profile",
+      "sddl2",
+      "--profile-arg",
+      "/opt/openzl/examples/sddl2/sao_silesia.sddl",
+      "--strict",
+      "/dados/sao/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2004742,
+     "razao": 1.8086975780424612,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "d9526636dd68647c6670c42dc063dd251d6003ae9ae22c14815ca242985c47c9",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 28,
+       "zl.convert_num_to_struct_le": 5,
+       "zl.convert_serial_to_num8": 5,
+       "zl.convert_struct_to_num_le": 11,
+       "zl.delta_int": 5,
+       "zl.field_lz": 6,
+       "zl.private.bitpack_int": 21,
+       "zl.private.fse_ncount": 8,
+       "zl.private.fse_v2": 8,
+       "zl.private.huffman_v2": 15,
+       "zl.private.splitN": 2,
+       "zl.private.split_by_struct": 1,
+       "zl.private.zstd": 5,
+       "zl.quantize_lengths": 2,
+       "zl.quantize_offsets": 6,
+       "zl.store": 92,
+       "zl.tokenize_struct": 5,
+       "zl.transpose_split": 6
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "rm 229\\n Header size: 0\"];\nS226 -> T229[label=\"#0\"];\nT230 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 230\\n Header size: 0\"];\nS229 -> T230[label=\"#0\"];\nT231 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 231\\n Header size: 0\"];\nS230 -> T231[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 3625972\\nCSize: 3625972\\nShare: 180.87%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nCopyParams (paramId, paramSize): (7685, 212)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:sddl2(sao_silesia.sddl)": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/sao__sddl2_sao_silesia.sddl_.zlc",
+      "--strict",
+      "/dados/sao/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1186837,
+     "razao": 3.0551558470118474,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "af6341221865e0fda212255889a7c5836ac9316a53f5e1535683ade263facb1f",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.bitsplit_top8": 2,
+       "zl.convert_num_to_serial_le": 41,
+       "zl.convert_num_to_struct_le": 8,
+       "zl.convert_struct_to_num_be": 1,
+       "zl.convert_struct_to_num_le": 7,
+       "zl.convert_struct_to_serial": 1,
+       "zl.delta_int": 19,
+       "zl.field_lz": 3,
+       "zl.private.bitpack_int": 10,
+       "zl.private.flatpack": 1,
+       "zl.private.fse_ncount": 28,
+       "zl.private.fse_v2": 28,
+       "zl.private.huffman_struct_v2": 11,
+       "zl.private.huffman_v2": 5,
+       "zl.private.splitN": 4,
+       "zl.private.splitN_struct": 2,
+       "zl.private.split_by_struct": 1,
+       "zl.private.tokenize_sorted": 12,
+       "zl.private.zstd": 10,
+       "zl.quantize_lengths": 1,
+       "zl.quantize_offsets": 4,
+       "zl.range_pack": 1,
+       "zl.sparse_num": 7,
+       "zl.store": 119,
+       "zl.tokenize_numeric": 4,
+       "zl.tokenize_struct": 1,
+       "zl.transpose_split": 3,
+       "zl.zigzag": 4
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "rm 336\\n Header size: 0\"];\nS333 -> T336[label=\"#0\"];\nT337 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 337\\n Header size: 0\"];\nS336 -> T337[label=\"#0\"];\nT338 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 338\\n Header size: 0\"];\nS337 -> T338[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 3625972\\nCSize: 3625972\\nShare: 305.52%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nCopyParams (paramId, paramSize): (7685, 212)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "sddl2(sao_silesia.sddl)"
+    }
+   },
+   "treinos": {
+    "treinado:sao": {
+     "perfil": "sao",
+     "rc": 0,
+     "tamanho_compressor_bytes": 4997,
+     "sha256_compressor": "cd031f092c7f77803e69e242745845274abc30c2938b1e6027ecb492311376d9",
+     "tempo_relogio_s": 91.0,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/sao__sao.zlc",
+     "log": "mputing overall Pareto Frontier: 3 / 6\n[=================================-----------------] Computing overall Pareto Frontier: 4 / 6\n[=========================================---------] Computing overall Pareto Frontier: 5 / 6\n[==================================================] Computing overall Pareto Frontier: 6 / 6\nTrained 1 compressors in 1.501573 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 906500 -> 281889 (3.22),  73.33 MB/s  1062.61 MB/s\n2 files: 1813000 -> 564474 (3.21),  72.72 MB/s  1051.38 MB/s\n3 files: 2719472 -> 859368 (3.16),  71.39 MB/s  1034.21 MB/s\n4 files: 3625972 -> 1145093 (3.17),  70.85 MB/s  1029.77 MB/s\nTraining improved compression ratio by 65.09%",
+     "ganho_in_sample_pct": 65.09,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 906500,
+       "bytes_comp": 281889,
+       "razao": 3.22
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 1813000,
+       "bytes_comp": 564474,
+       "razao": 3.21
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 2719472,
+       "bytes_comp": 859368,
+       "razao": 3.16
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 3625972,
+       "bytes_comp": 1145093,
+       "razao": 3.17
+      }
+     ]
+    },
+    "treinado:sddl2(sao_silesia.sddl)": {
+     "perfil": "sddl2",
+     "perfil_arg": "/opt/openzl/examples/sddl2/sao_silesia.sddl",
+     "rc": 0,
+     "tamanho_compressor_bytes": 3495,
+     "sha256_compressor": "c38fa9e82516d493db36ff23b812bf40de4a4f71995712e26791bd0e27f8762c",
+     "tempo_relogio_s": 89.4,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/sao__sddl2_sao_silesia.sddl_.zlc",
+     "log": "uting overall Pareto Frontier: 3 / 5\n[========================================----------] Computing overall Pareto Frontier: 4 / 5\n[==================================================] Computing overall Pareto Frontier: 5 / 5\nTrained 1 compressors in 1.466126 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 906500 -> 283120 (3.20),  <velocidade descartada>  <velocidade descartada>\n2 files: 1813000 -> 567283 (3.20),  <velocidade descartada>  <velocidade descartada>\n3 files: 2719472 -> 862849 (3.15),  <velocidade descartada>  <velocidade descartada>\n4 files: 3625972 -> 1149224 (3.16),  <velocidade descartada>  <velocidade descartada>\nTraining improved compression ratio by 74.76%",
+     "ganho_in_sample_pct": 74.76,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 906500,
+       "bytes_comp": 283120,
+       "razao": 3.2
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 1813000,
+       "bytes_comp": 567283,
+       "razao": 3.2
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 2719472,
+       "bytes_comp": 862849,
+       "razao": 3.15
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 3625972,
+       "bytes_comp": 1149224,
+       "razao": 3.16
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "nci",
+   "classe": "cientifico",
+   "sintetico": false,
+   "teste_bytes": 8388583,
+   "treino_bytes": 8388633,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:8388633], teste = fatia[8388633:16777216]",
+   "sha256_teste": "c6918d50e13355069f5eecbba78bfac3b99c2a64f55696e7cb54ac78ad84d7e2",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 679719,
+     "razao": 12.3412513112036,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 680777,
+     "razao": 12.322071691611203,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 409607,
+     "razao": 20.479588971868157,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 372840,
+     "razao": 22.499149769338054,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/nci/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 651348,
+     "razao": 12.878803650276042,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "910b7e97b9ae61b880aec89331092a48f2e69fa25b727a4da55fbde4803d41aa",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 7,
+       "zl.private.bitpack_int": 9,
+       "zl.private.splitN": 1,
+       "zl.sentinel_byte": 1,
+       "zl.store": 19
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ansform 40\\n Header size: 0\"];\nS39 -> T40[label=\"#0\"];\nT41 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 41\\n Header size: 0\"];\nS41 -> T41[label=\"#0\"];\nT42 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 42\\n Header size: 0\"];\nS42 -> T42[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388583\\nCSize: 8388583\\nShare: 1287.88%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/nci/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 633696,
+     "razao": 13.23755081300813,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "704adf7133044822278ad3fcfd1e90cc92e6aee4a006a36e4b1b728532501ea5",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 4,
+       "zl.private.bitpack_int": 6,
+       "zl.private.splitN": 1,
+       "zl.sentinel_byte": 1,
+       "zl.store": 16
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ansform 31\\n Header size: 0\"];\nS30 -> T31[label=\"#0\"];\nT32 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 32\\n Header size: 0\"];\nS32 -> T32[label=\"#0\"];\nT33 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 33\\n Header size: 0\"];\nS33 -> T33[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388583\\nCSize: 8388583\\nShare: 1323.76%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:serial": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/nci__serial.zlc",
+      "--strict",
+      "/dados/nci/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 533404,
+     "razao": 15.726509362509468,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "46aac56fdf4a3b1ee7e45c890c5ff2d362f42ead226ac450bd7a6098d161dcd1",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.private.zstd": 1,
+       "zl.store": 1
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ecord, label=\"zl.private.zstd(ID: 22)\\n Standard transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (100, 9)\"];\nT1 -> S1[label=\"#0\"];\nS0 -> T1[label=\"#0\"];\n}\nT2 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 2\\n Header size: 0\"];\nS1 -> T2[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388583\\nCSize: 8388583\\nShare: 1572.65%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "serial"
+    }
+   },
+   "treinos": {
+    "treinado:serial": {
+     "perfil": "serial",
+     "rc": 0,
+     "tamanho_compressor_bytes": 564,
+     "sha256_compressor": "d1e80172e43969cd6da7c8529dd57e48e243ba56a70d0c0d18f1835f2520b98e",
+     "tempo_relogio_s": 62.8,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/nci__serial.zlc",
+     "log": "==--] Training ACE graph 1 / 1: ACE progress\n[=================================================-] Training ACE graph 1 / 1: ACE progress\n[==================================================] Training ACE graph 1 / 1: ACE progress\n[==================================================] Benchmarking candidates: 1 / 1\nTrained 1 compressors in 1.019910 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 2097115 -> 152900 (13.72),  125.10 MB/s  2295.05 MB/s\n2 files: 4194301 -> 315461 (13.30),  122.57 MB/s  2260.64 MB/s\n3 files: 6291506 -> 480176 (13.10),  121.37 MB/s  2265.04 MB/s\n4 files: 8388633 -> 626819 (13.38),  124.15 MB/s  2306.61 MB/s\nTraining improved compression ratio by 19.71%",
+     "ganho_in_sample_pct": 19.71,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 2097115,
+       "bytes_comp": 152900,
+       "razao": 13.72
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 4194301,
+       "bytes_comp": 315461,
+       "razao": 13.3
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 6291506,
+       "bytes_comp": 480176,
+       "razao": 13.1
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 8388633,
+       "bytes_comp": 626819,
+       "razao": 13.38
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "x-ray",
+   "classe": "cientifico",
+   "sintetico": false,
+   "teste_bytes": 4237120,
+   "treino_bytes": 4237120,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:4237120], teste = fatia[4237120:8474240]",
+   "sha256_teste": "b05040a11b533bfdb51da191e3db1f3352f5abe2b37ff963af85f21edd8d0c13",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 3436581,
+     "razao": 1.2329463498750648,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 3106666,
+     "razao": 1.3638801210043179,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 2602009,
+     "razao": 1.6284032837703482,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 2252792,
+     "razao": 1.8808305427220977,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/x-ray/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2919846,
+     "razao": 1.4511450261417898,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "d17f4ccc0b6c3a1ac3a9fc140911a51e5f02fdb5444c94edfed569baf9e362ae",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 74,
+       "zl.private.bitpack_int": 75,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 152
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "7\\n Header size: 0\"];\nS305 -> T307[label=\"#0\"];\nT308 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 308\\n Header size: 0\"];\nS308 -> T308[label=\"#0\"];\nT309 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 309\\n Header size: 0\"];\nS309 -> T309[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 4237120\\nCSize: 4237120\\nShare: 145.11%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/x-ray/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2842930,
+     "razao": 1.4904060247702196,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "ef48e4ea910cb57b7a84dc34efd84d7603aea6db9278566fa6595ae5a84e1377",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 65,
+       "zl.private.bitpack_int": 66,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 134
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "1\\n Header size: 0\"];\nS269 -> T271[label=\"#0\"];\nT272 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 272\\n Header size: 0\"];\nS272 -> T272[label=\"#0\"];\nT273 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 273\\n Header size: 0\"];\nS273 -> T273[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 4237120\\nCSize: 4237120\\nShare: 149.04%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "perfil:le-u16": {
+     "argumentos": [
+      "--profile",
+      "le-u16",
+      "--strict",
+      "/dados/x-ray/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2576709,
+     "razao": 1.6443921296506512,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "5422972e36833a625143921f4795bae7413e42df0a92072739e83d0e25ddf022",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 31,
+       "zl.convert_num_to_struct_le": 1,
+       "zl.convert_serial_to_num8": 1,
+       "zl.convert_serial_to_num_le16": 1,
+       "zl.convert_struct_to_num_le": 27,
+       "zl.delta_int": 1,
+       "zl.field_lz": 1,
+       "zl.private.bitpack_int": 64,
+       "zl.private.fse_ncount": 28,
+       "zl.private.fse_v2": 28,
+       "zl.private.huffman_v2": 37,
+       "zl.private.splitN": 2,
+       "zl.private.splitN_struct": 1,
+       "zl.quantize_lengths": 1,
+       "zl.quantize_offsets": 1,
+       "zl.store": 161,
+       "zl.tokenize_struct": 27,
+       "zl.transpose_split": 1
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "r size: 0\"];\nS409 -> T412[label=\"#0\"];\nT413 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 413\\n Header size: 0\"];\nS412 -> T413[label=\"#0\"];\nT414 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 414\\n Header size: 0\"];\nS413 -> T414[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 4237120\\nCSize: 4237120\\nShare: 164.44%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (301, 2), (300, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    }
+   },
+   "treinos": {}
+  },
+  {
+   "id": "mr",
+   "classe": "cientifico",
+   "sintetico": false,
+   "teste_bytes": 4985282,
+   "treino_bytes": 4985282,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:4985282], teste = fatia[4985282:9970564]",
+   "sha256_teste": "5af02596205b3141da5ac64d64b3366a647f6ad62a04e50b87623b30b33b863c",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 1992126,
+     "razao": 2.5024933161858236,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 1863304,
+     "razao": 2.67550651960174,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 1661680,
+     "razao": 3.0001456357421405,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 1462288,
+     "razao": 3.4092340222993007,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/mr/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1775962,
+     "razao": 2.807088214725315,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "1f0a548bdfe220e9400608823c22d9d40f249d66c47c4f6c51c3a46b52931931",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 34,
+       "zl.private.bitpack_int": 36,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 73
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "9\\n Header size: 0\"];\nS148 -> T149[label=\"#0\"];\nT150 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 150\\n Header size: 0\"];\nS150 -> T150[label=\"#0\"];\nT151 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 151\\n Header size: 0\"];\nS151 -> T151[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 4985282\\nCSize: 4985282\\nShare: 280.71%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/mr/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1751364,
+     "razao": 2.8465139171525737,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "8c184839a27a1cc1fea7b7bed0e9bbf012f86e535917946bb35b1669db90ad7c",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 32,
+       "zl.private.bitpack_int": 34,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 69
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "1\\n Header size: 0\"];\nS140 -> T141[label=\"#0\"];\nT142 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 142\\n Header size: 0\"];\nS142 -> T142[label=\"#0\"];\nT143 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 143\\n Header size: 0\"];\nS143 -> T143[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 4985282\\nCSize: 4985282\\nShare: 284.65%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "perfil:le-u16": {
+     "argumentos": [
+      "--profile",
+      "le-u16",
+      "--strict",
+      "/dados/mr/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1656099,
+     "razao": 3.010256029379886,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "73b04dd1b38b26b51711604dfaa99716b51a289270901ac302a94de9e6b40d12",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 23,
+       "zl.convert_num_to_struct_le": 1,
+       "zl.convert_serial_to_num8": 1,
+       "zl.convert_serial_to_num_le16": 1,
+       "zl.convert_struct_to_num_le": 19,
+       "zl.delta_int": 1,
+       "zl.field_lz": 1,
+       "zl.private.bitpack_int": 42,
+       "zl.private.fse_ncount": 20,
+       "zl.private.fse_v2": 20,
+       "zl.private.huffman_v2": 23,
+       "zl.private.splitN": 2,
+       "zl.private.splitN_struct": 1,
+       "zl.quantize_lengths": 2,
+       "zl.quantize_offsets": 1,
+       "zl.store": 109,
+       "zl.tokenize_struct": 19,
+       "zl.transpose_split": 1
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "r size: 0\"];\nS282 -> T285[label=\"#0\"];\nT286 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 286\\n Header size: 0\"];\nS285 -> T286[label=\"#0\"];\nT287 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 287\\n Header size: 0\"];\nS286 -> T287[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 4985282\\nCSize: 4985282\\nShare: 301.03%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (301, 2), (300, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:le-u16": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/mr__le-u16.zlc",
+      "--strict",
+      "/dados/mr/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1279529,
+     "razao": 3.896185236911395,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "dc429af2a8200a8951fcf0c750aa3cd9afa8dd4f9eca3761a442d316280d4983",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.bfloat16_deconstruct": 1,
+       "zl.convert_num_to_serial_le": 5,
+       "zl.convert_num_to_struct_le": 1,
+       "zl.convert_serial_to_num8": 1,
+       "zl.convert_serial_to_num_le16": 1,
+       "zl.delta_int": 2,
+       "zl.private.fse_ncount": 18,
+       "zl.private.fse_v2": 18,
+       "zl.private.huffman_struct_v2": 1,
+       "zl.private.splitN": 2,
+       "zl.private.tokenize_sorted": 1,
+       "zl.private.zstd": 2,
+       "zl.sparse_num": 3,
+       "zl.store": 39,
+       "zl.transpose_split": 1,
+       "zl.zigzag": 3
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "97\\n Header size: 0\"];\nS96 -> T97[label=\"#0\"];\nT98 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 98\\n Header size: 0\"];\nS97 -> T98[label=\"#0\"];\nT99 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 99\\n Header size: 0\"];\nS98 -> T99[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 4985282\\nCSize: 4985282\\nShare: 389.62%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (300, 16777216), (301, 2)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "le-u16"
+    }
+   },
+   "treinos": {
+    "treinado:le-u16": {
+     "perfil": "le-u16",
+     "rc": 0,
+     "tamanho_compressor_bytes": 1189,
+     "sha256_compressor": "4af28ebe4a44d669fa1d0ee646007811c01e134d6c19991afb61678239a66f21",
+     "tempo_relogio_s": 63.4,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/mr__le-u16.zlc",
+     "log": "=============--] Training ACE graph 1 / 1: ACE progress\n[=================================================-] Training ACE graph 1 / 1: ACE progress\n[==================================================] Training ACE graph 1 / 1: ACE progress\n[==================================================] Benchmarking candidates: 1 / 1\nTrained 1 compressors in 1.024236 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 1246320 -> 293631 (4.24),  72.00 MB/s  771.85 MB/s\n2 files: 2492640 -> 582155 (4.28),  72.67 MB/s  796.74 MB/s\n3 files: 3738960 -> 860917 (4.34),  73.01 MB/s  809.89 MB/s\n4 files: 4985282 -> 1167590 (4.27),  70.75 MB/s  790.30 MB/s\nTraining improved compression ratio by 28.47%",
+     "ganho_in_sample_pct": 28.47,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 1246320,
+       "bytes_comp": 293631,
+       "razao": 4.24
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 2492640,
+       "bytes_comp": 582155,
+       "razao": 4.28
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 3738960,
+       "bytes_comp": 860917,
+       "razao": 4.34
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 4985282,
+       "bytes_comp": 1167590,
+       "razao": 4.27
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "osdb",
+   "classe": "banco_de_dados",
+   "sintetico": false,
+   "teste_bytes": 5042844,
+   "treino_bytes": 5042840,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:5042840], teste = fatia[5042840:10085684]",
+   "sha256_teste": "2edf5b1fb0c8594dac855edfb9987669ff3879fd4e61e025749b16f67fb82f53",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 1866830,
+     "razao": 2.7012872087978015,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 1752358,
+     "razao": 2.8777475835417192,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 1572727,
+     "razao": 3.2064331571849407,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 1440252,
+     "razao": 3.5013622616042195,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/osdb/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1715482,
+     "razao": 2.9396076437992353,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "b20cdadee11a7b852700ff64f696d5eaddde644459124d39662428ce0412f28c",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 41,
+       "zl.private.bitpack_int": 46,
+       "zl.private.huffman_v2": 4,
+       "zl.private.splitN": 3,
+       "zl.sentinel_byte": 1,
+       "zl.store": 93
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "1\\n Header size: 0\"];\nS191 -> T191[label=\"#0\"];\nT192 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 192\\n Header size: 0\"];\nS192 -> T192[label=\"#0\"];\nT193 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 193\\n Header size: 0\"];\nS193 -> T193[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 5042844\\nCSize: 5042844\\nShare: 293.96%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/osdb/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1691894,
+     "razao": 2.9805909826502135,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "fef9cc2b5c7b64692c5dceb42970e918fc66e78771ebfbf711b1cdca20b36662",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 39,
+       "zl.private.bitpack_int": 44,
+       "zl.private.huffman_v2": 4,
+       "zl.private.splitN": 3,
+       "zl.sentinel_byte": 1,
+       "zl.store": 90
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "4\\n Header size: 0\"];\nS184 -> T184[label=\"#0\"];\nT185 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 185\\n Header size: 0\"];\nS185 -> T185[label=\"#0\"];\nT186 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 186\\n Header size: 0\"];\nS186 -> T186[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 5042844\\nCSize: 5042844\\nShare: 298.06%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:serial": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/osdb__serial.zlc",
+      "--strict",
+      "/dados/osdb/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1675145,
+     "razao": 3.0103925331836945,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "9af32bfd6f8365c2f1bcd34db3284bb582c268c8a54d6c405d6a9f26685182e1",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.private.zstd": 1,
+       "zl.store": 1
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "record, label=\"zl.private.zstd(ID: 22)\\n Standard transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (100, 9)\"];\nT1 -> S1[label=\"#0\"];\nS0 -> T1[label=\"#0\"];\n}\nT2 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 2\\n Header size: 0\"];\nS1 -> T2[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 5042844\\nCSize: 5042844\\nShare: 301.04%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "serial"
+    }
+   },
+   "treinos": {
+    "treinado:serial": {
+     "perfil": "serial",
+     "rc": 0,
+     "tamanho_compressor_bytes": 564,
+     "sha256_compressor": "d1e80172e43969cd6da7c8529dd57e48e243ba56a70d0c0d18f1835f2520b98e",
+     "tempo_relogio_s": 63.1,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/osdb__serial.zlc",
+     "log": "=========--] Training ACE graph 1 / 1: ACE progress\n[=================================================-] Training ACE graph 1 / 1: ACE progress\n[==================================================] Training ACE graph 1 / 1: ACE progress\n[==================================================] Benchmarking candidates: 1 / 1\nTrained 1 compressors in 1.024282 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 1260712 -> 425174 (2.97),  66.85 MB/s  1418.32 MB/s\n2 files: 2521424 -> 849695 (2.97),  66.92 MB/s  1411.34 MB/s\n3 files: 3782128 -> 1274203 (2.97),  66.88 MB/s  1416.78 MB/s\n4 files: 5042840 -> 1699389 (2.97),  66.83 MB/s  1415.48 MB/s\nTraining improved compression ratio by 2.23%",
+     "ganho_in_sample_pct": 2.23,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 1260712,
+       "bytes_comp": 425174,
+       "razao": 2.97
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 2521424,
+       "bytes_comp": 849695,
+       "razao": 2.97
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 3782128,
+       "bytes_comp": 1274203,
+       "razao": 2.97
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 5042840,
+       "bytes_comp": 1699389,
+       "razao": 2.97
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "xml",
+   "classe": "xml",
+   "sintetico": false,
+   "teste_bytes": 2050502,
+   "treino_bytes": 3294778,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:3294778], teste = fatia[3294778:5345280]",
+   "sha256_teste": "0f38ff14f115078795ea64c0a08bd712ea74699ecfdb7514e0000ba6e5cee8bb",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 303927,
+     "razao": 6.746692462334705,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 269856,
+     "razao": 7.598504387525199,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 201160,
+     "razao": 10.193388347584012,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 192900,
+     "razao": 10.629870399170555,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/xml/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 255892,
+     "razao": 8.013153986838198,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "980aa1e110db16a83a481eac4a692bfd24d8bacd25079b46dc7d824f0d7ff655",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 2,
+       "zl.private.bitpack_int": 4,
+       "zl.sentinel_byte": 1,
+       "zl.store": 9
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ransform 19\\n Header size: 0\"];\nS18 -> T19[label=\"#0\"];\nT20 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 20\\n Header size: 0\"];\nS20 -> T20[label=\"#0\"];\nT21 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 21\\n Header size: 0\"];\nS21 -> T21[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 2050502\\nCSize: 2050502\\nShare: 801.32%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/xml/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 246109,
+     "razao": 8.331682303369645,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "daf5fbaec0f822a999210b5fe1e81589e19373e0f0bfbd151c5e315ca1723b3b",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 2,
+       "zl.private.bitpack_int": 4,
+       "zl.sentinel_byte": 1,
+       "zl.store": 9
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ransform 19\\n Header size: 0\"];\nS18 -> T19[label=\"#0\"];\nT20 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 20\\n Header size: 0\"];\nS20 -> T20[label=\"#0\"];\nT21 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 21\\n Header size: 0\"];\nS21 -> T21[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 2050502\\nCSize: 2050502\\nShare: 833.17%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:serial": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/xml__serial.zlc",
+      "--strict",
+      "/dados/xml/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 224330,
+     "razao": 9.140560780992288,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "69bcf624367bf12e8d2c57684a8c8aa0b101e272381073d8081397ca290cffc6",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.private.zstd": 1,
+       "zl.store": 1
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "record, label=\"zl.private.zstd(ID: 22)\\n Standard transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (100, 9)\"];\nT1 -> S1[label=\"#0\"];\nS0 -> T1[label=\"#0\"];\n}\nT2 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 2\\n Header size: 0\"];\nS1 -> T2[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 2050502\\nCSize: 2050502\\nShare: 914.06%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "serial"
+    }
+   },
+   "treinos": {
+    "treinado:serial": {
+     "perfil": "serial",
+     "rc": 0,
+     "tamanho_compressor_bytes": 564,
+     "sha256_compressor": "d1e80172e43969cd6da7c8529dd57e48e243ba56a70d0c0d18f1835f2520b98e",
+     "tempo_relogio_s": 30.0,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/xml__serial.zlc",
+     "log": "========--] Training ACE graph 1 / 1: ACE progress\n[=================================================-] Training ACE graph 1 / 1: ACE progress\n[==================================================] Training ACE graph 1 / 1: ACE progress\n[==================================================] Benchmarking candidates: 1 / 1\nTrained 1 compressors in 0.488243 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 823836 -> 145986 (5.64),  77.30 MB/s  1540.51 MB/s\n2 files: 1745885 -> 209473 (8.33),  97.06 MB/s  1885.15 MB/s\n3 files: 2569581 -> 290876 (8.83),  105.18 MB/s  2012.80 MB/s\n4 files: 3294778 -> 308799 (10.67),  120.84 MB/s  2306.64 MB/s\nTraining improved compression ratio by 21.32%",
+     "ganho_in_sample_pct": 21.32,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 823836,
+       "bytes_comp": 145986,
+       "razao": 5.64
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 1745885,
+       "bytes_comp": 209473,
+       "razao": 8.33
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 2569581,
+       "bytes_comp": 290876,
+       "razao": 8.83
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 3294778,
+       "bytes_comp": 308799,
+       "razao": 10.67
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "E.coli",
+   "classe": "dna",
+   "sintetico": false,
+   "teste_bytes": 2319345,
+   "treino_bytes": 2319345,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:2319345], teste = fatia[2319345:4638690]",
+   "sha256_teste": "26d25229b83fada4da2392ed681352f0750425b15656cf0e77b19ec35395af00",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 704475,
+     "razao": 3.2923027786649635,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 695708,
+     "razao": 3.3337909007802122,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 575323,
+     "razao": 4.031378894985947,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 601064,
+     "razao": 3.8587321815979663,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/E.coli/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 673059,
+     "razao": 3.4459757614117037,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "cf7eb74d202575baac8a693bd0b82bf01f79a419f1d05bfb292451c273c29b01",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 10,
+       "zl.private.bitpack_int": 11,
+       "zl.private.flatpack": 1,
+       "zl.private.splitN": 1,
+       "zl.sentinel_byte": 1,
+       "zl.store": 26
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ransform 53\\n Header size: 0\"];\nS51 -> T53[label=\"#0\"];\nT54 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 54\\n Header size: 0\"];\nS54 -> T54[label=\"#0\"];\nT55 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 55\\n Header size: 0\"];\nS55 -> T55[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 2319345\\nCSize: 2319345\\nShare: 344.60%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/E.coli/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 665193,
+     "razao": 3.486724905403394,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "8e987bd96012c620893df980b8f3b0dec7b0df7ade95343496e5c0fb8482e68d",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 10,
+       "zl.private.bitpack_int": 11,
+       "zl.private.flatpack": 1,
+       "zl.private.splitN": 1,
+       "zl.sentinel_byte": 1,
+       "zl.store": 26
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "ransform 53\\n Header size: 0\"];\nS51 -> T53[label=\"#0\"];\nT54 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 54\\n Header size: 0\"];\nS54 -> T54[label=\"#0\"];\nT55 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 55\\n Header size: 0\"];\nS55 -> T55[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 2319345\\nCSize: 2319345\\nShare: 348.67%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "perfil:u8": {
+     "argumentos": [
+      "--profile",
+      "u8",
+      "--strict",
+      "/dados/E.coli/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 675542,
+     "razao": 3.4333098460199367,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "a72288ebf30e142faa5912cfdd0d378884bfedbadda035a038b41d4e217b39ff",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_struct_le": 1,
+       "zl.convert_serial_to_num8": 1,
+       "zl.convert_struct_to_serial": 1,
+       "zl.private.zstd": 1,
+       "zl.store": 1
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "tandard\";\ncolor=maroon\nT4 [shape=Mrecord, label=\"zl.private.zstd(ID: 22)\\n Standard transform 4\\n Header size: 0\"];\nT4 -> S4[label=\"#0\"];\nS3 -> T4[label=\"#0\"];\n}\nT5 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 5\\n Header size: 0\"];\nS4 -> T5[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 2319345\\nCSize: 2319345\\nShare: 343.33%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (301, 1), (300, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    }
+   },
+   "treinos": {}
+  },
+  {
+   "id": "aleatorio.bin",
+   "classe": "sint_incompressivel",
+   "sintetico": true,
+   "teste_bytes": 8388608,
+   "treino_bytes": 8388608,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:8388608], teste = fatia[8388608:16777216]",
+   "sha256_teste": "aa1470cf35ad007482213747e6a106cf1b0529dba10ef2f396e020814c878c36",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 8388810,
+     "razao": 0.9999759203033565,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 8388810,
+     "razao": 0.9999759203033565,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 8388809,
+     "razao": 0.9999760395069193,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 8389088,
+     "razao": 0.9999427828150093,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/aleatorio.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 8388634,
+     "razao": 0.9999969005680782,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "c088b614e8875662e2ef420ffec8ff95e89051e3749a447bf7a126d77745afef",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.private.splitN": 1,
+       "zl.store": 259
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "2\\n Header size: 0\"];\nS262 -> T262[label=\"#0\"];\nT263 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 263\\n Header size: 0\"];\nS263 -> T263[label=\"#0\"];\nT264 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 264\\n Header size: 0\"];\nS264 -> T264[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388608\\nCSize: 8388608\\nShare: 100.00%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/aleatorio.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 8388634,
+     "razao": 0.9999969005680782,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "c088b614e8875662e2ef420ffec8ff95e89051e3749a447bf7a126d77745afef",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.private.splitN": 1,
+       "zl.store": 259
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "2\\n Header size: 0\"];\nS262 -> T262[label=\"#0\"];\nT263 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 263\\n Header size: 0\"];\nS263 -> T263[label=\"#0\"];\nT264 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 264\\n Header size: 0\"];\nS264 -> T264[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388608\\nCSize: 8388608\\nShare: 100.00%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    }
+   },
+   "treinos": {}
+  },
+  {
+   "id": "logs.log",
+   "classe": "sint_logs",
+   "sintetico": true,
+   "teste_bytes": 8388602,
+   "treino_bytes": 8388614,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:8388614], teste = fatia[8388614:16777216]",
+   "sha256_teste": "d34f449f051cfbae0ff3cc1c5267821493cf18d46ae13a6fc16288863cd87d30",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 2048422,
+     "razao": 4.09515324479038,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 2058477,
+     "razao": 4.075149734488168,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 1469314,
+     "razao": 5.709196264379159,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 1457228,
+     "razao": 5.7565473625266605,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/logs.log/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1970110,
+     "razao": 4.257935851297643,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "cfed3d42539ebff2ff7b3e875d42c9fafb34362f39049b7ea36832c0ac287d6c",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 36,
+       "zl.private.bitpack_int": 37,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 76
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "5\\n Header size: 0\"];\nS153 -> T155[label=\"#0\"];\nT156 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 156\\n Header size: 0\"];\nS156 -> T156[label=\"#0\"];\nT157 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 157\\n Header size: 0\"];\nS157 -> T157[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388602\\nCSize: 8388602\\nShare: 425.79%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/logs.log/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1923083,
+     "razao": 4.362059255892752,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "a681cfbaac523aa76db03f6eb277eab509715bd1227f8cd78b6ad4e6cc117df1",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 33,
+       "zl.private.bitpack_int": 34,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 70
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "3\\n Header size: 0\"];\nS141 -> T143[label=\"#0\"];\nT144 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 144\\n Header size: 0\"];\nS144 -> T144[label=\"#0\"];\nT145 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 145\\n Header size: 0\"];\nS145 -> T145[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388602\\nCSize: 8388602\\nShare: 436.21%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:serial": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/logs.log__serial.zlc",
+      "--strict",
+      "/dados/logs.log/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1831028,
+     "razao": 4.5813619453115955,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "a690355c25f57f0709954d856243192ae67aaf091228a95dee75dd6c92f99344",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.private.zstd": 1,
+       "zl.store": 1
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "record, label=\"zl.private.zstd(ID: 22)\\n Standard transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (100, 9)\"];\nT1 -> S1[label=\"#0\"];\nS0 -> T1[label=\"#0\"];\n}\nT2 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 2\\n Header size: 0\"];\nS1 -> T2[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388602\\nCSize: 8388602\\nShare: 458.14%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "serial"
+    }
+   },
+   "treinos": {
+    "treinado:serial": {
+     "perfil": "serial",
+     "rc": 0,
+     "tamanho_compressor_bytes": 564,
+     "sha256_compressor": "d1e80172e43969cd6da7c8529dd57e48e243ba56a70d0c0d18f1835f2520b98e",
+     "tempo_relogio_s": 364.4,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": true,
+     "threads": 16,
+     "destino": "/saida/treinados/logs.log__serial.zlc",
+     "log": "=========--] Training ACE graph 1 / 1: ACE progress\n[=================================================-] Training ACE graph 1 / 1: ACE progress\n[==================================================] Training ACE graph 1 / 1: ACE progress\n[==================================================] Benchmarking candidates: 1 / 1\nTrained 1 compressors in 6.023419 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 2097132 -> 456556 (4.59),  62.60 MB/s  1337.46 MB/s\n2 files: 4194303 -> 913676 (4.59),  61.84 MB/s  1349.49 MB/s\n3 files: 6291588 -> 1369907 (4.59),  61.90 MB/s  1352.75 MB/s\n4 files: 8388614 -> 1826123 (4.59),  62.10 MB/s  1355.67 MB/s\nTraining improved compression ratio by 8.21%",
+     "ganho_in_sample_pct": 8.21,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 2097132,
+       "bytes_comp": 456556,
+       "razao": 4.59
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 4194303,
+       "bytes_comp": 913676,
+       "razao": 4.59
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 6291588,
+       "bytes_comp": 1369907,
+       "razao": 4.59
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 8388614,
+       "bytes_comp": 1826123,
+       "razao": 4.59
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "ja_comprimido.xz",
+   "classe": "sint_ja_comprimido",
+   "sintetico": true,
+   "teste_bytes": 4192940,
+   "treino_bytes": 4192928,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:4192928], teste = fatia[4192928:8385868]",
+   "sha256_teste": "df110586a8bee2b3f56d516510e824e211778f16be2bc0f545a86e7ac2522c1f",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 4193046,
+     "razao": 0.9999747200483848,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 4193046,
+     "razao": 0.9999747200483848,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 4193045,
+     "razao": 0.9999749585325223,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 4193212,
+     "razao": 0.9999351332582278,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/ja_comprimido.xz/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 4192966,
+     "razao": 0.9999937991388435,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "fb7ce650adb23e02f3b017dd03304d6ffc4575107572bf633fbfb47720938180",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.private.splitN": 1,
+       "zl.store": 131
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "4\\n Header size: 0\"];\nS134 -> T134[label=\"#0\"];\nT135 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 135\\n Header size: 0\"];\nS135 -> T135[label=\"#0\"];\nT136 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 136\\n Header size: 0\"];\nS136 -> T136[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 4192940\\nCSize: 4192940\\nShare: 100.00%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/ja_comprimido.xz/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 4192966,
+     "razao": 0.9999937991388435,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "fb7ce650adb23e02f3b017dd03304d6ffc4575107572bf633fbfb47720938180",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.private.splitN": 1,
+       "zl.store": 131
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "4\\n Header size: 0\"];\nS134 -> T134[label=\"#0\"];\nT135 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 135\\n Header size: 0\"];\nS135 -> T135[label=\"#0\"];\nT136 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 136\\n Header size: 0\"];\nS136 -> T136[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 4192940\\nCSize: 4192940\\nShare: 100.00%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    }
+   },
+   "treinos": {}
+  },
+  {
+   "id": "sint_vendas.csv",
+   "classe": "sint_csv_vendas",
+   "sintetico": true,
+   "teste_bytes": 16777231,
+   "treino_bytes": 16777356,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:16777218], teste = fatia[16777218:33554403] com cabecalho CSV repetido no teste e em cada amostra",
+   "sha256_teste": "1bc61212968fe956115c60be972c87d65ff9b279eed55f9442dd7ba9662aedec",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 3582067,
+     "razao": 4.6836731417921555,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 3373811,
+     "razao": 4.972783300546474,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 2239605,
+     "razao": 7.491156252999971,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 2110240,
+     "razao": 7.9503900030328305,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/sint_vendas.csv/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2925607,
+     "razao": 5.734615414852371,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "8077c120496d0fd2337d34e77603529ce44a48efa9921dd0b288acda0c1b5b70",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 3,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 3,
+       "zl.convert_num_to_serial_le": 4,
+       "zl.lz": 2,
+       "zl.mux_lengths": 2,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 40,
+       "zl.private.bitpack_int": 41,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 88
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "tandard transform 6\\n Header size: 0\"];\nS5 -> T6[label=\"#0\"];\nT7 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 7\\n Header size: 0\"];\nS7 -> T7[label=\"#0\"];\nT8 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 8\\n Header size: 0\"];\nS8 -> T8[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777231\\nCSize: 16777231\\nShare: 573.46%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/sint_vendas.csv/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2826693,
+     "razao": 5.935285862313311,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "80f4624cfa59482a4b04372177000210786899a0930a20c4e5490d32c7549e98",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 3,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 3,
+       "zl.convert_num_to_serial_le": 4,
+       "zl.lz": 2,
+       "zl.mux_lengths": 2,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 37,
+       "zl.private.bitpack_int": 38,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 82
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "tandard transform 6\\n Header size: 0\"];\nS5 -> T6[label=\"#0\"];\nT7 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 7\\n Header size: 0\"];\nS7 -> T7[label=\"#0\"];\nT8 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 8\\n Header size: 0\"];\nS8 -> T8[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777231\\nCSize: 16777231\\nShare: 593.53%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "perfil:csv": {
+     "argumentos": [
+      "--profile",
+      "csv",
+      "--strict",
+      "/dados/sint_vendas.csv/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2553905,
+     "razao": 6.569246311041327,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "a66022309b02d4072ad245970f0ea27dc765db776ccf6f110aeb57c1103633fb",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 3,
+       "zl.convert_num_to_struct_le": 10,
+       "zl.convert_struct_to_serial": 10,
+       "zl.dispatch_string": 1,
+       "zl.field_lz": 1,
+       "zl.private.constant_serial": 1,
+       "zl.private.set_string_lens": 1,
+       "zl.private.zstd": 18,
+       "zl.separate_string_components": 9,
+       "zl.store": 24,
+       "zl.transpose_split": 1
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "S72 -> T77[label=\"#0\"];\nT78 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 78\\n Header size: 0\"];\nS75 -> T78[label=\"#0\"];\nT79 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 79\\n Header size: 0\"];\nS78 -> T79[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777231\\nCSize: 16777231\\nShare: 656.92%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (225, 1), (226, 44), (227, 0), (100, 20000000)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:csv": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/sint_vendas.csv__csv.zlc",
+      "--strict",
+      "/dados/sint_vendas.csv/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 950453,
+     "razao": 17.651826024011708,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "026ccbbbc26def6cbe3eaa05d3c8c884d79ef1b124d030ef15fee49e119423de",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.bitsplit_top8": 2,
+       "zl.convert_num_to_serial_le": 37,
+       "zl.convert_num_to_struct_le": 12,
+       "zl.convert_serial_to_struct": 1,
+       "zl.convert_struct_to_num_be": 2,
+       "zl.convert_struct_to_num_le": 1,
+       "zl.convert_struct_to_serial": 8,
+       "zl.delta_int": 6,
+       "zl.dispatch_string": 1,
+       "zl.field_lz": 3,
+       "zl.interleave_string": 1,
+       "zl.parse_int": 2,
+       "zl.prefix": 3,
+       "zl.private.bitpack_int": 4,
+       "zl.private.constant_fixed": 2,
+       "zl.private.constant_serial": 2,
+       "zl.private.flatpack": 1,
+       "zl.private.fse_ncount": 38,
+       "zl.private.fse_v2": 38,
+       "zl.private.huffman_struct_v2": 18,
+       "zl.private.huffman_v2": 1,
+       "zl.private.set_string_lens": 1,
+       "zl.private.splitN": 2,
+       "zl.private.splitN_struct": 2,
+       "zl.private.tokenize_sorted": 3,
+       "zl.private.zstd": 14,
+       "zl.quantize_lengths": 1,
+       "zl.quantize_offsets": 1,
+       "zl.range_pack": 1,
+       "zl.separate_string_components": 6,
+       "zl.sparse_num": 1,
+       "zl.store": 135,
+       "zl.tokenize_numeric": 1,
+       "zl.tokenize_string": 5,
+       "zl.transpose_split": 3
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "7[label=\"#0\"];\nT358 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 358\\n Header size: 0\"];\nS356 -> T358[label=\"#0\"];\nT359 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 359\\n Header size: 0\"];\nS359 -> T359[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777231\\nCSize: 16777231\\nShare: 1765.18%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (100, 20000000), (225, 1), (226, 44), (227, 0)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "csv"
+    }
+   },
+   "treinos": {
+    "treinado:csv": {
+     "perfil": "csv",
+     "rc": 0,
+     "tamanho_compressor_bytes": 9567,
+     "sha256_compressor": "615b8a5c78455f392c28077761a7cfd8e8f50aad88d9b6ce58f0eeb8540e3e97",
+     "tempo_relogio_s": 188.3,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/sint_vendas.csv__csv.zlc",
+     "log": " overall Pareto Frontier: 3 / 6\n[=================================-----------------] Computing overall Pareto Frontier: 4 / 6\n[=========================================---------] Computing overall Pareto Frontier: 5 / 6\n[==================================================] Computing overall Pareto Frontier: 6 / 6\nTrained 1 compressors in 3.051669 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 4194347 -> 247090 (16.97),  105.22 MB/s  421.19 MB/s\n2 files: 8388730 -> 494451 (16.97),  105.91 MB/s  423.07 MB/s\n3 files: 12583051 -> 742038 (16.96),  105.98 MB/s  426.77 MB/s\n4 files: 16777356 -> 989873 (16.95),  106.42 MB/s  428.22 MB/s\nTraining improved compression ratio by 161.95%",
+     "ganho_in_sample_pct": 161.95,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 4194347,
+       "bytes_comp": 247090,
+       "razao": 16.97
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 8388730,
+       "bytes_comp": 494451,
+       "razao": 16.97
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 12583051,
+       "bytes_comp": 742038,
+       "razao": 16.96
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 16777356,
+       "bytes_comp": 989873,
+       "razao": 16.95
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sint_eventos.ndjson",
+   "classe": "sint_ndjson_eventos",
+   "sintetico": true,
+   "teste_bytes": 16777118,
+   "treino_bytes": 16777134,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:16777134], teste = fatia[16777134:33554252]",
+   "sha256_teste": "e2f6ed37e0df0657ad5876411273cbc1f1d8d130abb23c762ace3e879f893167",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 2696560,
+     "razao": 6.221674281306553,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 2855344,
+     "razao": 5.875690634823685,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 1937326,
+     "razao": 8.659935395488422,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 1904944,
+     "razao": 8.807144986939248,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/sint_eventos.ndjson/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2651358,
+     "razao": 6.3277452535644,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "1f7134e581da499218ff383de5ba365bf34211136d5334bb08ee9d9cd1e5a3d8",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 51,
+       "zl.private.bitpack_int": 52,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 106
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "n Header size: 0\"];\nS213 -> T215[label=\"#0\"];\nT216 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 216\\n Header size: 0\"];\nS216 -> T216[label=\"#0\"];\nT217 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 217\\n Header size: 0\"];\nS217 -> T217[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777118\\nCSize: 16777118\\nShare: 632.77%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/sint_eventos.ndjson/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2568065,
+     "razao": 6.532980278925962,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "d76eb5070a25932fd24a3483f7b47d422b47f8a1bb0da9b8d7a465850513b664",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 45,
+       "zl.private.bitpack_int": 46,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 94
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "n Header size: 0\"];\nS189 -> T191[label=\"#0\"];\nT192 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 192\\n Header size: 0\"];\nS192 -> T192[label=\"#0\"];\nT193 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 193\\n Header size: 0\"];\nS193 -> T193[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777118\\nCSize: 16777118\\nShare: 653.30%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:serial": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/sint_eventos.ndjson__serial.zlc",
+      "--strict",
+      "/dados/sint_eventos.ndjson/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2412736,
+     "razao": 6.953565578662564,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "fee15cbe7c4b77eded7700dc5214ccba203e87af8be43a3a3bb78531085b6ffe",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.private.zstd": 1,
+       "zl.store": 1
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "cord, label=\"zl.private.zstd(ID: 22)\\n Standard transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (100, 8)\"];\nT1 -> S1[label=\"#0\"];\nS0 -> T1[label=\"#0\"];\n}\nT2 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 2\\n Header size: 0\"];\nS1 -> T2[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777118\\nCSize: 16777118\\nShare: 695.36%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "serial"
+    }
+   },
+   "treinos": {
+    "treinado:serial": {
+     "perfil": "serial",
+     "rc": 0,
+     "tamanho_compressor_bytes": 564,
+     "sha256_compressor": "2914a4cbe9c3c02c1e757dace1b19977a32ebe04c0f0a1660e1a57a99d9c2fd5",
+     "tempo_relogio_s": 367.3,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": true,
+     "threads": 16,
+     "destino": "/saida/treinados/sint_eventos.ndjson__serial.zlc",
+     "log": "=====--] Training ACE graph 1 / 1: ACE progress\n[=================================================-] Training ACE graph 1 / 1: ACE progress\n[==================================================] Training ACE graph 1 / 1: ACE progress\n[==================================================] Benchmarking candidates: 1 / 1\nTrained 1 compressors in 6.048857 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 4194196 -> 600111 (6.99),  82.00 MB/s  1886.19 MB/s\n2 files: 8388530 -> 1200294 (6.99),  80.37 MB/s  1877.06 MB/s\n3 files: 12582940 -> 1801047 (6.99),  80.43 MB/s  1890.13 MB/s\n4 files: 16777134 -> 2401668 (6.99),  81.02 MB/s  1880.12 MB/s\nTraining improved compression ratio by 10.08%",
+     "ganho_in_sample_pct": 10.08,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 4194196,
+       "bytes_comp": 600111,
+       "razao": 6.99
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 8388530,
+       "bytes_comp": 1200294,
+       "razao": 6.99
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 12582940,
+       "bytes_comp": 1801047,
+       "razao": 6.99
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 16777134,
+       "bytes_comp": 2401668,
+       "razao": 6.99
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sint_telemetria_f32.bin",
+   "classe": "sint_float32_telemetria",
+   "sintetico": true,
+   "teste_bytes": 16777216,
+   "treino_bytes": 16777216,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:16777216], teste = fatia[16777216:33554432]",
+   "sha256_teste": "d8c0b4260432026ff09c534584f77505273cbe961f14ca8010b4471c24c03df9",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 4915196,
+     "razao": 3.4133361111133715,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 3828650,
+     "razao": 4.382018727227613,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 2926262,
+     "razao": 5.733326680932876,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 2386508,
+     "razao": 7.030027135882218,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/sint_telemetria_f32.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 3503951,
+     "razao": 4.788085221511374,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "19025981fe1ce6fda35ed234a8ee39fe92ae07630cf297d90e662d966777a1fe",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 57,
+       "zl.private.bitpack_int": 59,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 121
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "n Header size: 0\"];\nS242 -> T243[label=\"#0\"];\nT244 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 244\\n Header size: 0\"];\nS244 -> T244[label=\"#0\"];\nT245 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 245\\n Header size: 0\"];\nS245 -> T245[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777216\\nCSize: 16777216\\nShare: 478.81%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/sint_telemetria_f32.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 3426758,
+     "razao": 4.895944213160077,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "5a60b7fb21325df3a9e896db48b0cfecc529cbed9159e6ced86a26e8bb7f5a46",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 2,
+       "zl.pivco_huffman": 50,
+       "zl.private.bitpack_int": 52,
+       "zl.private.splitN": 2,
+       "zl.sentinel_byte": 1,
+       "zl.store": 108
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "n Header size: 0\"];\nS215 -> T216[label=\"#0\"];\nT217 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 217\\n Header size: 0\"];\nS217 -> T217[label=\"#0\"];\nT218 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 218\\n Header size: 0\"];\nS218 -> T218[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777216\\nCSize: 16777216\\nShare: 489.59%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "perfil:le-u32": {
+     "argumentos": [
+      "--profile",
+      "le-u32",
+      "--strict",
+      "/dados/sint_telemetria_f32.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2803080,
+     "razao": 5.985279050187651,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "0d2d462615a24ea4dbafff2079a04f90c8e9d7944103ea2774d9514eaf2424f9",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 49,
+       "zl.convert_num_to_struct_le": 1,
+       "zl.convert_serial_to_num8": 2,
+       "zl.convert_serial_to_num_le32": 1,
+       "zl.convert_struct_to_num_le": 44,
+       "zl.delta_int": 2,
+       "zl.field_lz": 1,
+       "zl.private.bitpack_int": 89,
+       "zl.private.fse_ncount": 41,
+       "zl.private.fse_v2": 41,
+       "zl.private.huffman_v2": 45,
+       "zl.private.splitN": 1,
+       "zl.private.splitN_struct": 1,
+       "zl.private.zstd": 3,
+       "zl.quantize_lengths": 1,
+       "zl.quantize_offsets": 1,
+       "zl.store": 222,
+       "zl.tokenize_struct": 44,
+       "zl.transpose_split": 1
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "size: 0\"];\nS585 -> T588[label=\"#0\"];\nT589 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 589\\n Header size: 0\"];\nS588 -> T589[label=\"#0\"];\nT590 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 590\\n Header size: 0\"];\nS589 -> T590[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777216\\nCSize: 16777216\\nShare: 598.53%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (301, 4), (300, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "perfil:le-u32@L7": {
+     "argumentos": [
+      "--profile",
+      "le-u32",
+      "--level",
+      "7",
+      "--strict",
+      "/dados/sint_telemetria_f32.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1702344,
+     "razao": 9.855361783517315,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "bb7ba91ab2a925d76e20838b206714e65c129bedd644274cc600387e73eaea94",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 21,
+       "zl.convert_num_to_struct_le": 1,
+       "zl.convert_serial_to_num_le32": 1,
+       "zl.convert_struct_to_num_le": 11,
+       "zl.delta_int": 3,
+       "zl.private.bitpack_int": 22,
+       "zl.private.fse_ncount": 4,
+       "zl.private.fse_v2": 4,
+       "zl.private.huffman_v2": 11,
+       "zl.private.splitN_struct": 1,
+       "zl.private.tokenize_sorted": 3,
+       "zl.private.zstd": 4,
+       "zl.sparse_num": 6,
+       "zl.store": 47,
+       "zl.tokenize_numeric": 1,
+       "zl.tokenize_struct": 11
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "size: 0\"];\nS146 -> T149[label=\"#0\"];\nT150 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 150\\n Header size: 0\"];\nS148 -> T150[label=\"#0\"];\nT151 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 151\\n Header size: 0\"];\nS150 -> T151[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777216\\nCSize: 16777216\\nShare: 985.54%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (301, 4), (300, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:le-u32": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/sint_telemetria_f32.bin__le-u32.zlc",
+      "--strict",
+      "/dados/sint_telemetria_f32.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1557923,
+     "razao": 10.768963549546415,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "58dee3eeba1e7b46fc2e5056cf36ed7a0a7cd6a384c5b4380c3351e18104a7ae",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 5,
+       "zl.convert_serial_to_num_le32": 1,
+       "zl.delta_int": 3,
+       "zl.private.bitpack_int": 96,
+       "zl.private.fse_ncount": 32,
+       "zl.private.fse_v2": 32,
+       "zl.private.huffman_v2": 96,
+       "zl.private.splitN": 1,
+       "zl.private.tokenize_sorted": 2,
+       "zl.private.zstd": 2,
+       "zl.store": 260,
+       "zl.tokenize_numeric": 2
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "ize: 0\"];\nS529 -> T530[label=\"#0\"];\nT531 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 531\\n Header size: 0\"];\nS530 -> T531[label=\"#0\"];\nT532 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 532\\n Header size: 0\"];\nS531 -> T532[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 16777216\\nCSize: 16777216\\nShare: 1076.90%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (300, 16777216), (301, 4)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "le-u32"
+    }
+   },
+   "treinos": {
+    "treinado:le-u32": {
+     "perfil": "le-u32",
+     "rc": 0,
+     "tamanho_compressor_bytes": 1051,
+     "sha256_compressor": "01df98befdcd22b6f071499ae6148a63e766863d625d3fdccf63d434e78c9967",
+     "tempo_relogio_s": 215.3,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/sint_telemetria_f32.bin__le-u32.zlc",
+     "log": "-] Training ACE graph 1 / 1: ACE progress\n[=================================================-] Training ACE graph 1 / 1: ACE progress\n[==================================================] Training ACE graph 1 / 1: ACE progress\n[==================================================] Benchmarking candidates: 1 / 1\nTrained 1 compressors in 3.523285 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 4194304 -> 160827 (26.08),  254.09 MB/s  1254.70 MB/s\n2 files: 8388608 -> 649873 (12.91),  234.76 MB/s  1298.76 MB/s\n3 files: 12582912 -> 1370444 (9.18),  223.97 MB/s  1344.19 MB/s\n4 files: 16777216 -> 1591241 (10.54),  257.44 MB/s  1343.90 MB/s\nTraining improved compression ratio by 71.03%",
+     "ganho_in_sample_pct": 71.03,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 4194304,
+       "bytes_comp": 160827,
+       "razao": 26.08
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 8388608,
+       "bytes_comp": 649873,
+       "razao": 12.91
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 12582912,
+       "bytes_comp": 1370444,
+       "razao": 9.18
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 16777216,
+       "bytes_comp": 1591241,
+       "razao": 10.54
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sint_timestamps_i64.bin",
+   "classe": "sint_int64_timestamps",
+   "sintetico": true,
+   "teste_bytes": 8388608,
+   "treino_bytes": 8388608,
+   "n_amostras_treino": 4,
+   "divisao": "treino = fatia[0:8388608], teste = fatia[8388608:16777216]",
+   "sha256_teste": "28d5106ea53865aef3ec01466eab9dd344eb130165fbc5148e8e965c9e971169",
+   "baselines": {
+    "zstd-1": {
+     "bytes_comp": 1381796,
+     "razao": 6.070800610220322,
+     "bit_exato": true
+    },
+    "zstd-3": {
+     "bytes_comp": 1381804,
+     "razao": 6.070765463119227,
+     "bit_exato": true
+    },
+    "zstd-19": {
+     "bytes_comp": 1383201,
+     "razao": 6.064634134879891,
+     "bit_exato": true
+    },
+    "xz-9e": {
+     "bytes_comp": 1222332,
+     "razao": 6.8627901421217805,
+     "bit_exato": true
+    }
+   },
+   "openzl": {
+    "generico:serial": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--strict",
+      "/dados/sint_timestamps_i64.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2406465,
+     "razao": 3.4858632890983245,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "2ad5f13dd2df2ac6ea38eb64b5eb6e1762425c1322ea77bbd8c3df7b461d4519",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 32,
+       "zl.private.bitpack_int": 33,
+       "zl.private.splitN": 2,
+       "zl.store": 104
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "3\\n Header size: 0\"];\nS173 -> T173[label=\"#0\"];\nT174 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 174\\n Header size: 0\"];\nS174 -> T174[label=\"#0\"];\nT175 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 175\\n Header size: 0\"];\nS175 -> T175[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388608\\nCSize: 8388608\\nShare: 348.59%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "generico:serial@L9": {
+     "argumentos": [
+      "--profile",
+      "serial",
+      "--level",
+      "9",
+      "--strict",
+      "/dados/sint_timestamps_i64.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 2404725,
+     "razao": 3.48838557423406,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "e80b8a2c9c0c083473cc899fcd3f1f20744631e52037b9ac8d28aaf9ba7271ed",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 1,
+       "zl.lz": 1,
+       "zl.mux_lengths": 1,
+       "zl.partition": 1,
+       "zl.pivco_huffman": 32,
+       "zl.private.bitpack_int": 33,
+       "zl.private.splitN": 2,
+       "zl.store": 104
+      }
+     },
+     "grafo_estrutural": false,
+     "log": "3\\n Header size: 0\"];\nS173 -> T173[label=\"#0\"];\nT174 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 174\\n Header size: 0\"];\nS174 -> T174[label=\"#0\"];\nT175 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 175\\n Header size: 0\"];\nS175 -> T175[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388608\\nCSize: 8388608\\nShare: 348.84%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (7700, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "perfil:le-i64": {
+     "argumentos": [
+      "--profile",
+      "le-i64",
+      "--strict",
+      "/dados/sint_timestamps_i64.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 1020392,
+     "razao": 8.220966060102391,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "6bc916239b6900ab6ba7eeb96e10b13d932eedf2e4766afaf742d68fe5ce5d0e",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 8,
+       "zl.convert_num_to_struct_le": 1,
+       "zl.convert_serial_to_num8": 4,
+       "zl.convert_serial_to_num_le64": 1,
+       "zl.convert_struct_to_num_le": 1,
+       "zl.delta_int": 4,
+       "zl.field_lz": 1,
+       "zl.private.bitpack_int": 34,
+       "zl.private.constant_serial": 4,
+       "zl.private.fse_ncount": 1,
+       "zl.private.fse_v2": 1,
+       "zl.private.huffman_v2": 33,
+       "zl.private.splitN": 1,
+       "zl.private.zstd": 3,
+       "zl.quantize_lengths": 1,
+       "zl.store": 79,
+       "zl.tokenize_struct": 1,
+       "zl.transpose_split": 1
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "r size: 0\"];\nS174 -> T177[label=\"#0\"];\nT178 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 178\\n Header size: 0\"];\nS177 -> T178[label=\"#0\"];\nT179 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 179\\n Header size: 0\"];\nS178 -> T179[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388608\\nCSize: 8388608\\nShare: 822.10%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (301, 8), (300, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "perfil:le-i64@L7": {
+     "argumentos": [
+      "--profile",
+      "le-i64",
+      "--level",
+      "7",
+      "--strict",
+      "/dados/sint_timestamps_i64.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 899105,
+     "razao": 9.329953676155732,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "8135da330cfdb026d2caa165442942988a4a57bd71f96c64e0aecaea871165c9",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.convert_num_to_serial_le": 33,
+       "zl.convert_num_to_struct_le": 1,
+       "zl.convert_serial_to_num_le64": 1,
+       "zl.delta_int": 2,
+       "zl.private.fse_ncount": 33,
+       "zl.private.fse_v2": 33,
+       "zl.private.huffman_struct_v2": 32,
+       "zl.private.splitN_struct": 1,
+       "zl.private.tokenize_sorted": 1,
+       "zl.range_pack": 2,
+       "zl.store": 98
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "r size: 0\"];\nS232 -> T235[label=\"#0\"];\nT236 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 236\\n Header size: 0\"];\nS235 -> T236[label=\"#0\"];\nT237 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 237\\n Header size: 0\"];\nS236 -> T237[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388608\\nCSize: 8388608\\nShare: 933.00%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (301, 8), (300, 16777216)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false
+    },
+    "treinado:le-i64": {
+     "argumentos": [
+      "--compressor",
+      "/saida/treinados/sint_timestamps_i64.bin__le-i64.zlc",
+      "--strict",
+      "/dados/sint_timestamps_i64.bin/teste.bin"
+     ],
+     "estrito": true,
+     "falhou": false,
+     "bytes_comp": 892133,
+     "razao": 9.402867061301398,
+     "bit_exato": true,
+     "determinismo_duas_compressoes_identicas": true,
+     "sha256_quadro": "b9fad7122b39e954d08e0cffa43cfed623579f85dfaa99effe6cf9b4977b829e",
+     "trace": {
+      "frame_version": 27,
+      "library_version": 300,
+      "n_chunks": 2,
+      "codecs": {
+       "segmenter": 1,
+       "zl.#start": 2,
+       "zl.bitsplit_top8": 1,
+       "zl.convert_num_to_serial_le": 2,
+       "zl.convert_serial_to_num_le64": 1,
+       "zl.delta_int": 1,
+       "zl.private.fse_ncount": 64,
+       "zl.private.fse_v2": 64,
+       "zl.private.splitN": 2,
+       "zl.store": 128
+      }
+     },
+     "grafo_estrutural": true,
+     "log": "r size: 0\"];\nS260 -> T261[label=\"#0\"];\nT262 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 262\\n Header size: 0\"];\nS261 -> T262[label=\"#0\"];\nT263 [shape=Mrecord, label=\"zl.store(ID: 0)\\n Standard transform 263\\n Header size: 0\"];\nS262 -> T263[label=\"#0\"];\n}\ndigraph stream_topo {\nS0 [shape=record, label=\"Stream: 0\\nType: Serialized\\nOutputIdx: 0\\nEltWidth: 1\\n#Elts: 8388608\\nCSize: 8388608\\nShare: 940.29%\"];\n\nT0 [shape=Mrecord, label=\"zl.#start(ID: 0)\\n Standard transform 0\\n Header size: 0\"];\nT0 -> S0[label=\"#0\"];\nT1 [shape=Mrecord, label=\"segmenter(ID: 0)\\n Custom transform 1\\n Header size: 0\\nIntParams (paramId, paramValue): (300, 16777216), (301, 8)\"];\nS0 -> T1[label=\"#0\"];\n}",
+     "modo_estrito_falhou": false,
+     "perfil_treinado": "le-i64"
+    }
+   },
+   "treinos": {
+    "treinado:le-i64": {
+     "perfil": "le-i64",
+     "rc": 0,
+     "tamanho_compressor_bytes": 721,
+     "sha256_compressor": "ebdf6694e79dc04ff8e114a11360b450fc09e472f7f9684a1a457a255d96df20",
+     "tempo_relogio_s": 119.9,
+     "max_time_secs": 360,
+     "atingiu_limite_de_tempo": false,
+     "threads": 16,
+     "destino": "/saida/treinados/sint_timestamps_i64.bin__le-i64.zlc",
+     "log": "======--] Training ACE graph 1 / 1: ACE progress\n[=================================================-] Training ACE graph 1 / 1: ACE progress\n[==================================================] Training ACE graph 1 / 1: ACE progress\n[==================================================] Benchmarking candidates: 1 / 1\nTrained 1 compressors in 1.970783 minutes (wall time).\nBenchmarking trained compressor...\n1 files: 2097152 -> 223248 (9.39),  181.13 MB/s  1236.33 MB/s\n2 files: 4194304 -> 446274 (9.40),  181.64 MB/s  1235.49 MB/s\n3 files: 6291456 -> 669275 (9.40),  181.61 MB/s  1236.07 MB/s\n4 files: 8388608 -> 892329 (9.40),  181.53 MB/s  1236.16 MB/s\nTraining improved compression ratio by 14.41%",
+     "ganho_in_sample_pct": 14.41,
+     "benchmarks_in_sample": [
+      {
+       "arquivos": 1,
+       "bytes_orig": 2097152,
+       "bytes_comp": 223248,
+       "razao": 9.39
+      },
+      {
+       "arquivos": 2,
+       "bytes_orig": 4194304,
+       "bytes_comp": 446274,
+       "razao": 9.4
+      },
+      {
+       "arquivos": 3,
+       "bytes_orig": 6291456,
+       "bytes_comp": 669275,
+       "razao": 9.4
+      },
+      {
+       "arquivos": 4,
+       "bytes_orig": 8388608,
+       "bytes_comp": 892329,
+       "razao": 9.4
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "falhas": [],
+ "manifesto_fatias_resumo": {
+  "n_itens": 22,
+  "sinteticos_novos": {
+   "sint_vendas.csv": {
+    "classe": "sint_csv_vendas",
+    "sintetico": true,
+    "semente": 202611041,
+    "descricao": "CSV de vendas, 7 colunas: data crescente (800 a 1199 linhas por dia a partir de 2025-01-01), id sequencial (inicia em 1000001), cliente categorico (4000 nomes, zipf s=1,0), produto categorico (1500 codigos PRD-nnnnn, zipf s=0,9), quantidade inteira pequena (1 a 12, geometrica p=0,45), preco decimal com 2 casas (preco base por produto, desconto 0/5/10/15%), loja categorica (40, zipf s=0,7)",
+    "tamanho_bytes": 33554403,
+    "sha256": "caa1d6e98acf0bb8a2aa7716322f8b12e894d70093ae963bbf021472f6fc7275",
+    "segundos_geracao": 1.3
+   },
+   "sint_eventos.ndjson": {
+    "classe": "sint_ndjson_eventos",
+    "sintetico": true,
+    "semente": 202611042,
+    "descricao": "NDJSON de eventos de log com 10 campos uniformes na mesma ordem (ts ISO em ms crescente, level, service, host, event, user_id zipf, trace_id aleatorio de 64 bits, latency_ms lognormal, status, bytes lognormal)",
+    "tamanho_bytes": 33554252,
+    "sha256": "e510b561c55d2167f67af2eb6f6a812d8869d6ab27736623b1f8bddd6e0f31b5",
+    "segundos_geracao": 0.8
+   },
+   "sint_telemetria_f32.bin": {
+    "classe": "sint_float32_telemetria",
+    "sintetico": true,
+    "semente": 202611043,
+    "descricao": "float32 little-endian: 16 series de sensores contiguas (sensor-major), 524288 amostras cada, base + tendencia linear + senoide + ruido AR(1) phi=0,95, quantizadas na resolucao do sensor (0,01; 0,01; 0,1; 0,5 em rodizio)",
+    "tamanho_bytes": 33554432,
+    "sha256": "e5d90a469fb41dd4652cdb14d29d3df8d2bc59892bb5d2fdd16c02819247ad22",
+    "segundos_geracao": 3.5
+   },
+   "sint_timestamps_i64.bin": {
+    "classe": "sint_int64_timestamps",
+    "sintetico": true,
+    "semente": 202611044,
+    "descricao": "int64 little-endian de timestamps em ms crescentes a partir de 1793750400000: 98,99% com passo 1 + exponencial(media 40), 1% com passo 0 ou 1, 0,01% com salto de 1 a 6 s",
+    "tamanho_bytes": 16777216,
+    "sha256": "ed10bbda29ca20901ea8c2afc760c297f48b4efc8491ff05a276810abe2870eb",
+    "segundos_geracao": 0.5
+   }
+  }
+ },
+ "conferencia_dados": [
+  {
+   "nome": "dickens",
+   "presente": true,
+   "sha256": "b24c37886142e11d0ee687db6ab06f936207aa7f2ea1fd1d9a36763c7a507e6a",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "mozilla",
+   "presente": true,
+   "sha256": "657fc3764b0c75ac9de9623125705831ebbfbe08fed248df73bc2dc66e2a963b",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "mr",
+   "presente": true,
+   "sha256": "68637ed52e3e4860174ed2dc0840ac77d5f1a60abbcb13770d5754e3774d53e6",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "nci",
+   "presente": true,
+   "sha256": "fc63a31770947b8c2062d3b19ca94c00485a232bb91b502021948fee983e1635",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "ooffice",
+   "presente": true,
+   "sha256": "e7ee013880d34dd5208283d0d3d91b07f442e067454276095ded14f322a656eb",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "osdb",
+   "presente": true,
+   "sha256": "60f027179302ca3ad87c58ac90b6be72ec23588aaa7a3b7fe8ecc0f11def3fa3",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "reymont",
+   "presente": true,
+   "sha256": "0eac0114a3dfe6e2ee1f345a0f79d653cb26c3bc9f0ed79238af4933422b7578",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "samba",
+   "presente": true,
+   "sha256": "93ba07bc44d8267789c1d911992f40b089ffa2140b4a160fac11ccae9a40e7b2",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "sao",
+   "presente": true,
+   "sha256": "c2d0ea2cc59d4c21b7fe43a71499342a00cbe530a1d5548770e91ecd6214adcc",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "webster",
+   "presente": true,
+   "sha256": "6a68f69b26daf09f9dd84f7470368553194a0b294fcfa80f1604efb11143a383",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "x-ray",
+   "presente": true,
+   "sha256": "7de9fce1405dc44ae5e6813ed21cd5751e761bd4265655a005d39b9685d1c9ad",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "xml",
+   "presente": true,
+   "sha256": "0e82e54e695c1938e4193448022543845b33020c8be6bf3bf3ead2224903e08c",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "bible.txt",
+   "presente": true,
+   "sha256": "4e0a7e8dff7d9c82dbded57305c0ca3cdd3c4ca014db27121782fe9710f4723f",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "E.coli",
+   "presente": true,
+   "sha256": "9125dfd87315961ef4286f3856098069e050cc3a2abe65735fe43e69d1996f40",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "world192.txt",
+   "presente": true,
+   "sha256": "1aebdc97d29904b25791da9aa32be90b69d7da6dc0ac9b95512ed27ed40d2112",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "aleatorio.bin",
+   "presente": true,
+   "sha256": "d6049af107717c5feb59e8f7e459cd902084c33f42a4425cb8fd55235bb6666a",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "logs.log",
+   "presente": true,
+   "sha256": "6674e2b8fe54f124cedc805d63772b577ff23222e91d2303619f6f042e802905",
+   "confere_com_medicoes_json": true
+  },
+  {
+   "nome": "ja_comprimido.xz",
+   "presente": true,
+   "sha256": "872fb8ea4ebddf9e7bd27cb71d694ce8a7618b84f50577aea2beb0add14fc395",
+   "confere_com_medicoes_json": true
+  }
+ ],
+ "conferencia_zstd3_vs_medicoes": [
+  {
+   "arquivo": "dickens",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 3010565,
+   "zstd3_bytes_medicoes_json": 3010565,
+   "identico": true
+  },
+  {
+   "arquivo": "mozilla",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 4656376,
+   "zstd3_bytes_medicoes_json": 4656376,
+   "identico": true
+  },
+  {
+   "arquivo": "mr",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 2948445,
+   "zstd3_bytes_medicoes_json": 2948445,
+   "identico": true
+  },
+  {
+   "arquivo": "nci",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 751018,
+   "zstd3_bytes_medicoes_json": 751018,
+   "identico": true
+  },
+  {
+   "arquivo": "ooffice",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 3126146,
+   "zstd3_bytes_medicoes_json": 3126146,
+   "identico": true
+  },
+  {
+   "arquivo": "osdb",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 2914151,
+   "zstd3_bytes_medicoes_json": 2914151,
+   "identico": true
+  },
+  {
+   "arquivo": "reymont",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 1937973,
+   "zstd3_bytes_medicoes_json": 1937973,
+   "identico": true
+  },
+  {
+   "arquivo": "samba",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 2638802,
+   "zstd3_bytes_medicoes_json": 2638802,
+   "identico": true
+  },
+  {
+   "arquivo": "sao",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 5527504,
+   "zstd3_bytes_medicoes_json": 5527504,
+   "identico": true
+  },
+  {
+   "arquivo": "webster",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 2458857,
+   "zstd3_bytes_medicoes_json": 2458857,
+   "identico": true
+  },
+  {
+   "arquivo": "x-ray",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 6027774,
+   "zstd3_bytes_medicoes_json": 6027774,
+   "identico": true
+  },
+  {
+   "arquivo": "xml",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 635299,
+   "zstd3_bytes_medicoes_json": 635299,
+   "identico": true
+  },
+  {
+   "arquivo": "bible.txt",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 1171493,
+   "zstd3_bytes_medicoes_json": 1171493,
+   "identico": true
+  },
+  {
+   "arquivo": "E.coli",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 1392346,
+   "zstd3_bytes_medicoes_json": 1392346,
+   "identico": true
+  },
+  {
+   "arquivo": "world192.txt",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 655376,
+   "zstd3_bytes_medicoes_json": 655376,
+   "identico": true
+  },
+  {
+   "arquivo": "aleatorio.bin",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 8388810,
+   "zstd3_bytes_medicoes_json": 8388810,
+   "identico": true
+  },
+  {
+   "arquivo": "logs.log",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 2057194,
+   "zstd3_bytes_medicoes_json": 2057194,
+   "identico": true
+  },
+  {
+   "arquivo": "ja_comprimido.xz",
+   "sha256_fatia_confere": true,
+   "zstd3_bytes_aqui": 8386070,
+   "zstd3_bytes_medicoes_json": 8386070,
+   "identico": true
+  }
+ ],
+ "ambiente": {
+  "zli": "Demo CLI for OpenZL. Version 0.3.0",
+  "imagem": "syntra-openzl:pinned",
+  "commit_openzl": "32246b48faee46807f84183dac4db479089f5445",
+  "debian": [
+   "12.15"
+  ],
+  "zstd_python": "1.5.7",
+  "python": "3.14.4",
+  "xz_cli": "xz (XZ Utils) 5.8.3"
+ },
+ "violacoes_bit_exatidao": []
+}

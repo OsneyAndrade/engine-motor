@@ -521,4 +521,27 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(&dir);
     }
+
+    #[test]
+    fn id_com_separador_de_caminho_nao_resolve_arquivo_fora_do_diretorio() {
+        let raiz = tmpdir("travessia");
+        std::fs::create_dir_all(&raiz).unwrap();
+        let dicts = raiz.join("dicts");
+        let store = DictionaryStore::open(&dicts, true, None).unwrap();
+
+        let conteudo = b"conteudo plantado fora do diretorio de dicionarios".to_vec();
+        let digest = blake3::hash(&conteudo);
+        let sufixo = hex::encode(&digest.as_bytes()[..8]);
+        std::fs::write(raiz.join(format!("fora.{sufixo}.dict")), &conteudo).unwrap();
+
+        assert!(store.resolve(&format!("../fora.{sufixo}")).is_none());
+        assert!(store.resolve(&format!("sub/../../fora.{sufixo}")).is_none());
+
+        assert!(DictionaryStore::is_valid_id(&format!("text_csv.{sufixo}")));
+        for ruim in ["", "a/b", "../x", "x\\y", "a b", "ç", "a\0b"] {
+            assert!(!DictionaryStore::is_valid_id(ruim), "aceitou {ruim:?}");
+        }
+        assert!(!DictionaryStore::is_valid_id(&"a".repeat(129)));
+        assert!(DictionaryStore::is_valid_id(&"a".repeat(128)));
+    }
 }

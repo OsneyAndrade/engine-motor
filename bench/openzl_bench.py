@@ -952,7 +952,7 @@ def cmd_determinismo_treino(a):
     saida = {"id": a.id, "perfil": a.perfil, "rodadas": []}
     try:
         for k in range(a.rodadas):
-            tr = treinar(cont, a.id + "_r%d" % k, a.perfil, None, a.threads, a.treino_max_s)
+            tr = treinar(cont, a.id, a.perfil, None, a.threads, a.treino_max_s)
             r = medir_com_fallback(cont, "/dados/%s/teste.bin" % a.id, len(dados), sha, None, None, compressor=tr["destino"])
             saida["rodadas"].append(
                 {
@@ -1130,6 +1130,7 @@ def construir_relatorio(razao, tempo):
                 "zstd-3": bl["zstd-3"]["razao"],
                 "zstd-19": bl["zstd-19"]["razao"],
                 "xz-9e": bl["xz-9e"]["razao"],
+                "openzl_generico_L6": it["openzl"]["generico:serial"]["razao"],
                 "openzl_generico": rg,
                 "openzl_perfil": rp,
                 "openzl_treinado": rt,
@@ -1154,21 +1155,23 @@ def construir_relatorio(razao, tempo):
                 "xz-9e": bl["xz-9e"]["bytes_comp"],
                 "openzl_melhor": it["openzl"][mb]["bytes_comp"] if mb else None,
                 "openzl_generico": it["openzl"][mg]["bytes_comp"] if mg else None,
+                "openzl_generico_L6": it["openzl"]["generico:serial"]["bytes_comp"],
             },
         }
         linhas_item.append(linha)
-        c = por_classe.setdefault(it["classe"], {"teste_bytes": 0, "zstd-3": 0, "zstd-19": 0, "xz-9e": 0, "openzl_melhor": 0, "openzl_generico": 0, "arquivos": []})
+        c = por_classe.setdefault(it["classe"], {"teste_bytes": 0, "zstd-3": 0, "zstd-19": 0, "xz-9e": 0, "openzl_melhor": 0, "openzl_generico": 0, "openzl_generico_L6": 0, "arquivos": []})
         c["teste_bytes"] += it["teste_bytes"]
         c["zstd-3"] += linha["bytes_comp"]["zstd-3"]
         c["zstd-19"] += linha["bytes_comp"]["zstd-19"]
         c["xz-9e"] += linha["bytes_comp"]["xz-9e"]
         c["openzl_melhor"] += linha["bytes_comp"]["openzl_melhor"] or 0
         c["openzl_generico"] += linha["bytes_comp"]["openzl_generico"] or 0
+        c["openzl_generico_L6"] += linha["bytes_comp"]["openzl_generico_L6"]
         c["arquivos"].append(it["id"])
     classes = []
     for nome, c in sorted(por_classe.items()):
         t = c["teste_bytes"]
-        r = {k: t / c[k] for k in ("zstd-3", "zstd-19", "xz-9e", "openzl_melhor", "openzl_generico") if c[k]}
+        r = {k: t / c[k] for k in ("zstd-3", "zstd-19", "xz-9e", "openzl_melhor", "openzl_generico", "openzl_generico_L6") if c[k]}
         classes.append(
             {
                 "classe": nome,
@@ -1252,10 +1255,10 @@ def cmd_relatorio(a):
         r = c["razao"]
         linhas.append([
             c["classe"], c["teste_bytes"], fmt(r.get("zstd-3")), fmt(r.get("zstd-19")), fmt(r.get("xz-9e")),
-            fmt(r.get("openzl_generico")), fmt(r.get("openzl_melhor")),
+            fmt(r.get("openzl_generico_L6")), fmt(r.get("openzl_generico")), fmt(r.get("openzl_melhor")),
             fmt_pct(c["ganho_melhor_pct"]["sobre_zstd-3"]), fmt_pct(c["ganho_melhor_pct"]["sobre_zstd-19"]), fmt_pct(c["ganho_melhor_pct"]["sobre_xz-9e"]),
         ])
-    md.append(tabela_md(["classe", "bytes de teste", "zstd-3", "zstd-19", "xz-9e", "OpenZL generico", "OpenZL melhor", "ganho vs zstd-3", "vs zstd-19", "vs xz-9e"], linhas))
+    md.append(tabela_md(["classe", "bytes de teste", "zstd-3", "zstd-19", "xz-9e", "OZL generico L6", "OZL generico (melhor de L6/L9)", "OZL melhor", "ganho vs zstd-3", "vs zstd-19", "vs xz-9e"], linhas))
     md.append("")
     md.append("`OpenZL melhor` e o melhor entre generico, perfil e treinado, escolhido no proprio teste (otimista). Ganho = razao OpenZL / razao do baseline - 1.")
     md.append("")
@@ -1267,12 +1270,12 @@ def cmd_relatorio(a):
         linhas.append([
             l["id"], l["classe"], "SIM" if l["sintetico"] else "nao", l["teste_bytes"],
             fmt(r["zstd-1"]), fmt(r["zstd-3"]), fmt(r["zstd-19"]), fmt(r["xz-9e"]),
-            fmt(r["openzl_generico"]), fmt(r["openzl_perfil"]), fmt(r["openzl_treinado"]),
+            fmt(r["openzl_generico_L6"]), fmt(r["openzl_generico"]), fmt(r["openzl_perfil"]), fmt(r["openzl_treinado"]),
             l["melhor_configuracao"],
             fmt_pct(l["ganho_pct"]["sobre_zstd-3"]), fmt_pct(l["ganho_pct"]["sobre_zstd-19"]), fmt_pct(l["ganho_pct"]["sobre_xz-9e"]),
         ])
     md.append(tabela_md(
-        ["arquivo", "classe", "sintetico", "bytes teste", "zstd-1", "zstd-3", "zstd-19", "xz-9e", "OZL generico", "OZL perfil", "OZL treinado", "melhor OZL", "vs zstd-3", "vs zstd-19", "vs xz-9e"],
+        ["arquivo", "classe", "sintetico", "bytes teste", "zstd-1", "zstd-3", "zstd-19", "xz-9e", "OZL gen. L6", "OZL gen. melhor L6/L9", "OZL perfil", "OZL treinado", "melhor OZL", "vs zstd-3", "vs zstd-19", "vs xz-9e"],
         linhas))
     md.append("")
     md.append("## Onde o OpenZL perde ou nao usa codecs estruturais")

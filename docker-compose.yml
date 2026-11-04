@@ -1,13 +1,13 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: syntra-postgres
+    container_name: ${SYNTRA_CONTAINER_PREFIX:-syntra}-postgres
     environment:
       POSTGRES_USER: syntra
       POSTGRES_PASSWORD: syntra123
       POSTGRES_DB: syntra_monitoring
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:${SYNTRA_POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: syntra-engine
+    container_name: ${SYNTRA_CONTAINER_PREFIX:-syntra}-engine
     environment:
       SYNTRA_DB_URL: postgres://syntra:syntra123@postgres:5432/syntra_monitoring
 
@@ -41,10 +41,9 @@ services:
       SYNTRA_COMPRESS_MULTIPLIER: 4
       RUST_LOG: engine=debug,tower_http=info
     ports:
-      - "3002:3002"
+      - "${SYNTRA_PUBLISH_HOST:-127.0.0.1}:${SYNTRA_PUBLISH_PORT:-3002}:3002"
     volumes:
       - syntra_data_dev:/data
-      - ./watch_in:/data/watch_in
     depends_on:
       postgres:
         condition: service_healthy
